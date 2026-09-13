@@ -1,0 +1,22 @@
+# Jangan pernah commit konten game atau hasil ekstraksinya.
+# Semua teks di dalamnya berhak cipta NetEase / Everstone Studio,
+# dan pack pihak ketiga adalah karya turunan milik pembuatnya.
+*.jsonl
+*.gubackup
+translate_words_map*
+!docs/**
+*.map
+*.cleaned
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
