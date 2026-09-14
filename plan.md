@@ -19,7 +19,7 @@ teliti), fase belakang boleh lebih besar (kebanyakan string pendek/berulang pola
 | Fase | Rentang idx | Jumlah unik | Kumulatif baris tercakup* | Saran ukuran batch/sesi | Perkiraan sesi |
 |---|---|---|---|---|---|
 | 0 (selesai) | 0 – 799 | 800 | ~16.2% | — | selesai |
-| 1 (jalan, 1.300/2.000) | 800 – 1.999 | 1.200 | ~21.3% (di idx 1.299: ~18.7%) | 400–600/sesi | ~2–3 sesi (1 sesi terpakai, sisa ~1 sesi) |
+| 1 (selesai) | 800 – 1.999 | 1.200 | ~21.28% (aktual, terverifikasi) | — | selesai (3 sesi) |
 | 2 | 2.000 – 4.999 | 3.000 | ~25–28% | 600–800/sesi | ~4–5 sesi |
 | 3 | 5.000 – 9.999 | 5.000 | ~33.5% | 800–1.000/sesi | ~5–6 sesi |
 | 4 | 10.000 – 19.999 | 10.000 | ~40.0% | 1.000–1.500/sesi | ~7–10 sesi |

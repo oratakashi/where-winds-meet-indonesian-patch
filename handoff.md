@@ -6,30 +6,30 @@ kebenaran untuk "sudah sampai mana".
 
 ## Status saat ini
 
-- Fase saat ini (lihat tabel fase di `plan.md`): **Fase 1** (rentang idx 800–1.999,
-  saran batch 400–600/sesi) — **1.300/2.000 dari Fase 1 selesai, sisa idx 1.300–1.999
-  (700 lagi) untuk menuntaskan Fase 1**
+- **Fase 0 dan Fase 1 SELESAI** (idx 0–1.999). Fase saat ini: **Fase 2**
+  (rentang idx 2.000–4.999, saran batch 600–800/sesi) — belum dimulai.
 - Total baris di `strings.jsonl`: **963.050**
 - Total string unik (setelah dedup): **429.887**
-- **Sudah diterjemahkan: idx 0–1.299 dari 429.887 (1.300 string unik, ~0.30%)**
-- Sesi terakhir mengerjakan: 2026-09-14 (idx 800–1.299, 500 string, Fase 1 lanjut)
+- **Sudah diterjemahkan: idx 0–1.999 dari 429.887 (2.000 string unik, ~0.47%)**
+- Sesi terakhir mengerjakan: 2026-09-15 (idx 1.800–1.999, 200 string, menuntaskan Fase 1)
 - File progress: `translation_work/translations.jsonl` (append-only, `{"idx": N, "v": "..."}`,
   berurutan mulai idx 0). **Baris terakhir di file ini = idx terakhir yang selesai.**
   Cek dengan: `wc -l translation_work/translations.jsonl` (nilai ini dikurang 1 = idx terakhir).
 
 String diurutkan berdasarkan **frekuensi kemunculan** (bukan urutan asli file), jadi
 yang paling sering dipakai di 963rb baris asli dikerjakan duluan — coverage baris
-riil lebih cepat naik daripada persentase unik di atas. 1.300 unik pertama ini sudah
-mencakup **18.72% dari 963.050 baris total** (karena banyak string berulang ribuan
-kali, mis. "Talk" x11.299, "Loading..." x10.002). Semua 1.300 sudah lolos cek token
-format (`#E`, `#aabbcc`, `%s`, `%d`, `{0}`/`{value}` dst. — lihat script di bawah;
-1 mismatch sempat ketemu & sudah diperbaiki di idx 1056 — tag `#Y...#E` yang
-membungkus banyak kata sempat hilang saat translate, jadi hati-hati kalau tag
-membungkus lebih dari satu kalimat).
+riil lebih cepat naik daripada persentase unik di atas. 2.000 unik pertama ini sudah
+mencakup **21.28% dari 963.050 baris total** (karena banyak string berulang ribuan
+kali, mis. "Talk" x11.299, "Loading..." x10.002). Semua 2.000 sudah lolos cek token
+format (`#E`, `#aabbcc`, `%s`, `%d`, `{0}`/`{value}` dst., termasuk tag `<Label|id|#C|n>`
+— lihat script di bawah, sudah diperluas untuk ikut cek tag `<...>` juga. 1 mismatch
+sempat ketemu & sudah diperbaiki di idx 1056 — tag `#Y...#E` yang membungkus banyak
+kata sempat hilang saat translate, jadi hati-hati kalau tag membungkus lebih dari
+satu kalimat).
 
 ## PENTING: sisa pekerjaan sangat besar
 
-428.587 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
+427.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
 sesi per fase (kasar: 125–190+ sesi total sampai 100%). Sampaikan ini ke user kalau
 ditanya estimasi waktu, dan ingatkan opsi berhenti di ~50% baris (lihat "Titik berhenti
 yang masuk akal" di `plan.md`) kalau relevan.
@@ -66,7 +66,7 @@ yang masuk akal" di `plan.md`) kalau relevan.
 import json, re
 from collections import Counter
 
-TOKEN = re.compile(r'#[A-Za-z]|#[0-9a-fA-F]{6}|%s|%d|\{[^}]*\}')
+TOKEN = re.compile(r'#[A-Za-z]|#[0-9a-fA-F]{6}|%s|%d|\{[^}]*\}|<[^>]*>')
 
 src = {}
 with open('unique_strings.jsonl', encoding='utf-8') as f:
