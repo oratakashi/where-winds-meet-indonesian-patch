@@ -1,0 +1,102 @@
+# Konvensi Terjemahan — Where Winds Meet ID Patch
+
+Dokumen ini adalah aturan kerja yang dipakai konsisten di semua batch terjemahan
+`unique_strings.jsonl` -> `translations.jsonl`. Kalau user minta ubah satu keputusan
+di sini, cari & ganti di `translations.jsonl` supaya konsisten ulang (dedup = mudah revisi).
+
+## TIDAK diterjemahkan (dianggap "nama")
+
+- **Nama karakter/NPC personal**: Huajian Ke, Jiang Wulang, Lian Daozi, Feng Jisheng,
+  Han Xiangxun, Big Zhao, Little Fu, Ye Wanshan, Murong Yuan, Yi Dao, Qinghe, dll.
+- **Nama tempat/lokasi**: Sixteen Lanes, Hutuo River, Mirkvale, Kaifeng, Eastwind Pavilion,
+  Sunken City Lake, Unbound Cavern, Confinement Tower, Bandit Encampment,
+  Great Song Prefecture Hall, Heavenfall, Skybrim Market, Harvestfall Village,
+  Blissful Retreat, Wansheng Town, West Market, Forsaken Quarter, East City, dll.
+- **Nama faksi/organisasi**: Aureate Pavilion, Bloodscale Hall, Jade Serpent Hall,
+  Velvet Shade, Mercyheart Monastery, Ghost Revelry Hall, Sandstorm Tavern, Mohist Hill,
+  Greenwood (bandit), NetEase, dll.
+- **Nama senjata/aliran/skill berjudul** (proper noun ability/weapon): Thundercry Blade,
+  Strategic Sword, Inkwell Fan, Mortal Rope Dart, Infernal Twinblades, Noname Sword,
+  Soulshade Umbrella, Panacea Fan, "Peak's Springless Silence", "Rodent Rampage",
+  "Unwithering Bloom", "Inner Balance Strike III", "Sword Horizon", "Meridian Touch",
+  dll — nama skill dalam tanda kutip/tag `#Y...#E` dibiarkan bahasa Inggris.
+- **Nama boss/entitas unik**: The Void King, Windchaser, Meow Meow, dll.
+
+## Diterjemahkan (bukan "nama")
+
+- **Judul quest/chapter yang puitis** (bukan nama orang): "Death of the Governor",
+  "The Homeward Vow", "Where the Heart Stirs", "Melodies of Peace", "Universal Harmony",
+  "Karmic Reflections", "Glimmer Against the Dark", "Whispers Beneath the Moon",
+  "Parting Ways", "Changeless Heart", "Lucky Seventeen" -> diterjemahkan puitis/casual.
+- **Sebutan peran NPC generik**: Villager, Bandit, Soldier, Guard, Scholar, Servant,
+  Constable, Swordsman, Commoner, Official, Passerby, Player, Guest, Disciple, Member,
+  Resident, Laborer, Attendant, Maid -> diterjemahkan (mis. Villager -> Warga/Penduduk Desa).
+  Nama tempat yang menempel di depan sebutan peran TETAP bahasa Inggris
+  (mis. "East City Commoner" -> "Warga East City", bukan "Warga Kota Timur").
+- **Deskripsi item/lore/dialog** (kalimat penuh): diterjemahkan penuh ke Indonesia
+  casual, kecuali nama & tag format di dalamnya.
+- **Kalimat dialog percakapan** (first/second person, terasa seperti obrolan lisan):
+  pakai gue/lo bila natural.
+
+## Tetap bahasa Inggris (istilah game/UI yang "lebih bagus" bahasa Inggris)
+
+Label stat/attribute karakter selalu dibiarkan penuh bahasa Inggris (konvensi umum
+game RPG mobile/PC berbahasa Indonesia):
+Critical Rate, Precision Rate, Affinity Rate, Physical Attack/Defense, Max/Min HP,
+DMG Bonus/Reduction/Boost, HP Recovery/Bonus, Attack Bonus, DPS, Silkbind/Bellstrike/
+Bamboocut/Stonesplit/Formless Attack (nama tipe damage khas game ini), Tier, Stage, Lv.
+
+Loanword umum lain yang dibiarkan (dari instruksi user + genre gaming ID):
+Guild, Event, Login, Logout, Menu, Info, Reset, Boss, Skill, Item, Quest, Level,
+Buff/Debuff, Chat.
+
+## Istilah wuxia genre-spesifik (ditambahkan sesi Fase 1)
+
+- **"Sect" -> "Sekte"** — istilah wuxia standar dalam terjemahan Indonesia, DITERJEMAHKAN
+  (bukan dibiarkan Inggris). Contoh: "Sect Rules Violation Notice" -> "Pemberitahuan
+  Pelanggaran Aturan Sekte".
+- **"Wayfarer"/"Wanderer" -> "Pengembara"** — konsisten dipakai untuk kedua kata
+  Inggris ini (termasuk "Jianghu Wanderer" -> "Pengembara Jianghu").
+- **"Young Master" -> "Tuan Muda"** — honorifik wuxia standar.
+- **"Doctor" -> "Tabib"** (bukan "Dokter") — lebih cocok setting historis.
+- **Nama set kostum/gear** (Whirlsnow, Ebonward, Formbend, Flawless Guardian, dst.)
+  dan **nama boat/kapal khusus** (Painted Boat, Mirage Boat) DIBIARKAN bahasa Inggris
+  seperti nama senjata/skill.
+- **Nama festival budaya asli** (Spring Festival, Double Ninth Festival, dll.)
+  DITERJEMAHKAN ke istilah deskriptif Indonesia (bukan proper noun): "Spring Festival"
+  -> "Festival Musim Semi", "Double Ninth Festival" -> "Festival Sembilan Ganda".
+- **Istilah TCM (Traditional Chinese Medicine)** dalam teks lore penyakit/pengobatan:
+  konsep umum (qi stagnation, damp-heat, dll.) DITERJEMAHKAN ke Indonesia deskriptif
+  ("stagnasi qi", "lembap-panas"), tapi **nama penyakit spesifik bertitle** (Shegong's
+  Disease, Huhuo Syndrome, Wind-Damp Bi Syndrome) mempertahankan kata inti aslinya
+  (Shegong, Huhuo, Bi) + kata generik diterjemahkan ("Syndrome" -> "Sindrom",
+  "Disease" -> "Penyakit").
+
+## Catatan ambiguitas yang belum konsisten sempurna (untuk direview kalau ketemu lagi)
+
+- **"Power"**: kadang diterjemahkan "Kekuatan" (kata umum berdiri sendiri), tapi kalau
+  muncul sebagai bagian dari daftar "Five Attributes" (bersama Constitution, Defense,
+  Agility, Momentum) sebaiknya dibiarkan Inggris seperti stat lain. Idx 282 sudah
+  terlanjur "Kekuatan" — biarkan saja (dampak kecil), tapi untuk kemunculan baru dalam
+  konteks stat-list, pertimbangkan biarkan Inggris.
+- **"Trial"** -> "Uji Coba" (dipakai konsisten untuk mode tantangan/dungeon trial).
+- **"Draw"** dibiarkan Inggris (gacha feature), termasuk "Draw Shop", "Draw Appearance".
+
+## Gaya/nada
+
+- Dialog karakter (percakapan orang pertama/kedua) -> casual: gue/lo.
+- Label UI/tombol/sistem (Loading, Confirm, Cancel, dst.) -> netral-casual, TANPA gue/lo.
+- Placeholder/format token (`{0}`, `{}`, `%s`, `%d`, `#E`, `#aabbcc`, `#X`) WAJIB dipertahankan
+  persis, jumlah & urutan sama seperti sumber (dicek otomatis oleh `tools/qa_check.py`).
+
+## Progress tracking
+
+- `unique_strings.jsonl` — 429.887 string unik, terurut frekuensi terbanyak dulu (idx 0..N-1).
+- `translations.jsonl` — hasil terjemahan, append-only, `{"idx": N, "v": "..."}` per baris,
+  ditulis berurutan sesuai idx (0, 1, 2, ...). **Baris terakhir di file ini menandai idx
+  terakhir yang sudah selesai** — untuk resume, cek jumlah baris file ini.
+- `handoff.md` — status naratif + instruksi resume untuk sesi berikutnya.
+- Final expansion (nanti setelah semua/sebagian besar selesai): script baca
+  `unique_strings.jsonl` + `translations.jsonl` -> bikin dict src->tgt, lalu stream
+  `../strings.jsonl` asli, replace `v` sesuai dict, tulis ke `strings.translated.jsonl`
+  (siap dipakai `qa_check.py` lalu `wwm_locmap.py patch`).

@@ -5,6 +5,8 @@
 !docs/**
 *.map
 *.cleaned
+strings.jsonl
+traslate_words_map_en
 
 # Python
 __pycache__/
