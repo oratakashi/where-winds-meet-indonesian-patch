@@ -1,0 +1,800 @@
+{"idx": 0, "v": "Bicara"}
+{"idx": 1, "v": "Memuat..."}
+{"idx": 2, "v": "Memberikan tampilan terkait saat digunakan."}
+{"idx": 3, "v": "Memuat"}
+{"idx": 4, "v": "Skill Truce Attunement"}
+{"idx": 5, "v": "Selamat Tinggal"}
+{"idx": 6, "v": "Lihat"}
+{"idx": 7, "v": "Komponen yang bisa digunakan untuk Pembangunan Guild."}
+{"idx": 8, "v": "Tidak diketahui..."}
+{"idx": 9, "v": "Sixteen Lanes"}
+{"idx": 10, "v": "Tamu Velvet Shade"}
+{"idx": 11, "v": "Mengobrol"}
+{"idx": 12, "v": "Pergi"}
+{"idx": 13, "v": "{3}Saya sempat kena {1} di {0}, tapi setelah diobati oleh tabib terkenal {2}, saya pulih total."}
+{"idx": 14, "v": "{2}Saya sempat sakit ringan, dan setelah diperiksa tabib yang dihormati{0}, saya didiagnosis mengidap {1}."}
+{"idx": 15, "v": "Pergi"}
+{"idx": 16, "v": "Selidiki"}
+{"idx": 17, "v": "Senjata, Cakram, Liontin"}
+{"idx": 18, "v": "Digunakan untuk membangun rumah."}
+{"idx": 19, "v": "Tekan {}"}
+{"idx": 20, "v": "Kalahkan semua musuh"}
+{"idx": 21, "v": "Helm, Zirah Dada, Pelindung Betis, Pelindung Lengan"}
+{"idx": 22, "v": "Ah..."}
+{"idx": 23, "v": "Sisa waktu lebih dari {}"}
+{"idx": 24, "v": "Talenta Boss terbuka "}
+{"idx": 25, "v": "Buka"}
+{"idx": 26, "v": "Ambil"}
+{"idx": 27, "v": "Chat"}
+{"idx": 28, "v": "Warga East City"}
+{"idx": 29, "v": "Masalah ini dipicu oleh kejadian besar yang memengaruhi pikiran."}
+{"idx": 30, "v": "Prajurit Kekaisaran"}
+{"idx": 31, "v": "Lanjut"}
+{"idx": 32, "v": "..."}
+{"idx": 33, "v": "Inner Way"}
+{"idx": 34, "v": "DMG Reduction"}
+{"idx": 35, "v": "Komponen Lambung Painted Boat"}
+{"idx": 36, "v": "Tanya"}
+{"idx": 37, "v": "Tahap 0"}
+{"idx": 38, "v": "Penyamaran"}
+{"idx": 39, "v": "Murid Nine Mortal Ways"}
+{"idx": 40, "v": "Max HP"}
+{"idx": 41, "v": "Komponen Lambung"}
+{"idx": 42, "v": "Cuaca Spesial"}
+{"idx": 43, "v": "Komponen konstruksi untuk membangun Painted Boat."}
+{"idx": 44, "v": "Tidak Bisa Bergerak"}
+{"idx": 45, "v": "Warga Desa"}
+{"idx": 46, "v": "Gradasi"}
+{"idx": 47, "v": "Dasar"}
+{"idx": 48, "v": "Highlight"}
+{"idx": 49, "v": "Konfirmasi"}
+{"idx": 50, "v": "Skill Ilmu Silat"}
+{"idx": 51, "v": "Heavy Attack"}
+{"idx": 52, "v": "Tandai"}
+{"idx": 53, "v": "Tahap 1"}
+{"idx": 54, "v": "Tahap 2"}
+{"idx": 55, "v": "Tahap 3"}
+{"idx": 56, "v": "Tampilan"}
+{"idx": 57, "v": "Senjata"}
+{"idx": 58, "v": "Berikutnya"}
+{"idx": 59, "v": "Komponen Bangunan"}
+{"idx": 60, "v": "Evil-Cleansing Tranquility"}
+{"idx": 61, "v": "Mengambil"}
+{"idx": 62, "v": "Pelayan istana muda yang mengurus hal sehari-hari seperti makanan dan pakaian. Yang gesit dan tajam bertugas dekat para selir; yang pandai membaca wajah dan menyimpan rahasia bisa saja melayani di hadapan Kaisar."}
+{"idx": 63, "v": "Pembaruan Toko"}
+{"idx": 64, "v": "Guild - Rumah Pemandian - Set Bangunan Gaya 1"}
+{"idx": 65, "v": "Dekorasi"}
+{"idx": 66, "v": "Tahap 4"}
+{"idx": 67, "v": "Warga Apricot"}
+{"idx": 68, "v": "Tahap 5"}
+{"idx": 69, "v": "Tahap 6"}
+{"idx": 70, "v": "Tahap 7"}
+{"idx": 71, "v": "Tahap 8"}
+{"idx": 72, "v": "Tahap 9"}
+{"idx": 73, "v": "Waktu Memuat"}
+{"idx": 74, "v": "Tamu Blissful Retreat"}
+{"idx": 75, "v": "Item"}
+{"idx": 76, "v": "Sisa waktu:"}
+{"idx": 77, "v": "Tag"}
+{"idx": 78, "v": "Physical Attack UP"}
+{"idx": 79, "v": "Pendekar Pedang Ghost Revelry Hall"}
+{"idx": 80, "v": "Kombo Tampilan Acak Sandstorm Tavern"}
+{"idx": 81, "v": "Eastwind Pavilion"}
+{"idx": 82, "v": "Supaya bisa low profile di Sandstorm Tavern, tampilan dan namamu sudah ditukar dengan yang acak."}
+{"idx": 83, "v": "Hanya Bisa Ditukar"}
+{"idx": 84, "v": "Membuka avatar terkait."}
+{"idx": 85, "v": "Kronik Para Pengembara"}
+{"idx": 86, "v": "Warga Harvestfall Village"}
+{"idx": 87, "v": "Batal"}
+{"idx": 88, "v": "Inskripsi"}
+{"idx": 89, "v": "Skill Spesial"}
+{"idx": 90, "v": "DMG Bonus"}
+{"idx": 91, "v": "Event telah berakhir"}
+{"idx": 92, "v": "Berhasil"}
+{"idx": 93, "v": "Dengar"}
+{"idx": 94, "v": "Windchaser"}
+{"idx": 95, "v": "Hindar"}
+{"idx": 96, "v": "Harta Meow Meow"}
+{"idx": 97, "v": "Formless Storm"}
+{"idx": 98, "v": "Selesai"}
+{"idx": 99, "v": "Transformasi"}
+{"idx": 100, "v": "Wind Slash"}
+{"idx": 101, "v": "Super Armor"}
+{"idx": 102, "v": "Howling Wind"}
+{"idx": 103, "v": "Sampai jumpa"}
+{"idx": 104, "v": "Konstabel"}
+{"idx": 105, "v": "Wind Flurry"}
+{"idx": 106, "v": "Whirlwind Frenzy"}
+{"idx": 107, "v": "Awakening Wind"}
+{"idx": 108, "v": "Huajian Ke"}
+{"idx": 109, "v": "Challenge Selesai"}
+{"idx": 110, "v": "The Void King mulai mengisi tenaga, lalu melepaskan raungan dahsyat ke area luas di depannya, memberikan damage ke musuhnya.\n\nStrategi: Hindari zona berbahaya."}
+{"idx": 111, "v": "The Void King mengayunkan pedangnya berulang kali, memberikan damage ke target di depannya.\n\nStrategi: Bersabar dan jaga jarak karena The Void King akan menyerang berkali-kali."}
+{"idx": 112, "v": "The Void King mengayunkan pedangnya membentuk badai angin, mendorong musuh di area luas ke depan sekaligus menciptakan zona angin yang memberikan damage ke musuh di dalamnya. Setiap kali dipakai, jangkauan zona angin ini bertambah luas.\n\nStrategi: Menjauh dari zona angin dan habisi dia sebelum zona anginnya melebar."}
+{"idx": 113, "v": "Critical Rate"}
+{"idx": 114, "v": "The Void King melompat ke udara, menembakkan Qi ke player yang jadi target.\n\nStrategi: Player yang ditandai berguling dan menghindar dari serangan, sementara player lain menjauh darinya."}
+{"idx": 115, "v": "The Void King menyerang semua target di dekatnya, lalu mengayunkan pedang besarnya untuk menyerang.\n\nStrategi: Jangan buru-buru mendekat lagi setelah menjauh."}
+{"idx": 116, "v": "Sunken City Lake"}
+{"idx": 117, "v": "Affinity Rate"}
+{"idx": 118, "v": "Periksa"}
+{"idx": 119, "v": "Detoksifikasi"}
+{"idx": 120, "v": "Pendekar Pedang"}
+{"idx": 121, "v": "Buruh Blissful Retreat"}
+{"idx": 122, "v": "The Void King memanggil beberapa pengikut Aureate Pavilion ke medan pertempuran. Para pengikut ini akan melancarkan dua kali bombardir.\n\nStrategi: Hindari bombardirnya. Perhatikan bahwa bombardir kedua datang dari arah yang berbeda."}
+{"idx": 123, "v": "Pengembara"}
+{"idx": 124, "v": "???"}
+{"idx": 125, "v": "The Void King mengunci target ke seorang player, mengisi tenaga, lalu melepaskan tebasan sambil menerjang.\n\nStrategi: Parry The Void King di antara dia dan targetnya untuk mengubah serangan ini jadi tebasan yang lebih lemah."}
+{"idx": 126, "v": "Gear Uji Manusia Standar"}
+{"idx": 127, "v": "Makanan Khas Daerah"}
+{"idx": 128, "v": "Gunakan"}
+{"idx": 129, "v": "Intro"}
+{"idx": 130, "v": "Physical Defense"}
+{"idx": 131, "v": "Gagal"}
+{"idx": 132, "v": "Quest Perception Forest"}
+{"idx": 133, "v": "Tier 1"}
+{"idx": 134, "v": "Orang Lewat"}
+{"idx": 135, "v": "Unbound Cavern"}
+{"idx": 136, "v": "Max Physical Attack"}
+{"idx": 137, "v": "Min Physical Attack"}
+{"idx": 138, "v": "Boss Rush, Bertarung Sampai Akhir"}
+{"idx": 139, "v": "Sedang menilaimu..."}
+{"idx": 140, "v": "Agility bisa meningkatkan Critical Rate."}
+{"idx": 141, "v": "Agility bisa meningkatkan Min Physical Attack."}
+{"idx": 142, "v": "Ajak Mengikuti"}
+{"idx": 143, "v": "Player"}
+{"idx": 144, "v": "Wahai, Angsa"}
+{"idx": 145, "v": "Harga Jual Langsung"}
+{"idx": 146, "v": "Duduk"}
+{"idx": 147, "v": "Talenta Ilmu Silat"}
+{"idx": 148, "v": "Memberikan tambahan EXP saat digunakan sebagai Tuning Material."}
+{"idx": 149, "v": "Saat digunakan sebagai tuning material, affix berikutnya yang di-tuning dijamin bernilai {} atau lebih tinggi"}
+{"idx": 150, "v": "Tersedia di Draw Shop"}
+{"idx": 151, "v": "Saat digunakan sebagai tuning material, affix berikutnya yang di-tuning dijamin bernilai maksimal"}
+{"idx": 152, "v": "Komponen bangunan untuk membangun Painted Boat."}
+{"idx": 153, "v": "Komponen konstruksi Hexi Jade Gate Pass."}
+{"idx": 154, "v": "Komponen bangunan Hexi Jade Gate Pass."}
+{"idx": 155, "v": "Warga yang Peduli"}
+{"idx": 156, "v": "Precision Rate"}
+{"idx": 157, "v": "Warga di Forsaken Quarter."}
+{"idx": 158, "v": "Pendatang Baru"}
+{"idx": 159, "v": "Tamu First Jar Banquet yang jelas-jelas suka minum arak."}
+{"idx": 160, "v": "Bentuk"}
+{"idx": 161, "v": "Murid Velvet Shade"}
+{"idx": 162, "v": "Light Attack"}
+{"idx": 163, "v": "Pelindung Betis"}
+{"idx": 164, "v": "Karakter Utama"}
+{"idx": 165, "v": "Penjaga"}
+{"idx": 166, "v": "Bamboocut Attribute UP"}
+{"idx": 167, "v": "Komponen yang bisa digunakan untuk pembangunan Homestead."}
+{"idx": 168, "v": "Kebal"}
+{"idx": 169, "v": "DPS"}
+{"idx": 170, "v": "Penjaga Aureate"}
+{"idx": 171, "v": "Interaksi"}
+{"idx": 172, "v": "Ambil foto bersama retainer yang sedang bekerja"}
+{"idx": 173, "v": "Keluar"}
+{"idx": 174, "v": "Defense"}
+{"idx": 175, "v": "Pejabat rendahan berjubah hijau yang belum diberi kantong ikan. Meski pangkatnya rendah, berada dekat Kaisar adalah kehormatan istimewa. Suatu hari, dengan cita-cita yang tinggi, ia akan membawa kebahagiaan bagi ribuan keluarga."}
+{"idx": 176, "v": "Kucing suka tempat yang nggak bakal lo tebak~"}
+{"idx": 177, "v": "Parry"}
+{"idx": 178, "v": "Berteman"}
+{"idx": 179, "v": "Kartu Madiao"}
+{"idx": 180, "v": "Lihat Detail"}
+{"idx": 181, "v": "Baca"}
+{"idx": 182, "v": "Lompat"}
+{"idx": 183, "v": "Pikiran Tenang"}
+{"idx": 184, "v": "10 Pemain"}
+{"idx": 185, "v": "Maaf ganggu ya"}
+{"idx": 186, "v": "Terkunci"}
+{"idx": 187, "v": "Attack Bonus"}
+{"idx": 188, "v": "Rekrutmen Retainer"}
+{"idx": 189, "v": "Detail"}
+{"idx": 190, "v": "Penggunaan"}
+{"idx": 191, "v": "Waktu Event"}
+{"idx": 192, "v": "Material Baru Terbuka"}
+{"idx": 193, "v": "Tamu"}
+{"idx": 194, "v": "Jelajahi"}
+{"idx": 195, "v": "Min Silkbind Attack"}
+{"idx": 196, "v": "Anggota Bloodscale Hall"}
+{"idx": 197, "v": "Max Stonesplit Attack"}
+{"idx": 198, "v": "Max Bellstrike Attack"}
+{"idx": 199, "v": "Min Bamboocut Attack"}
+{"idx": 200, "v": "Max Silkbind Attack"}
+{"idx": 201, "v": "Min Bellstrike Attack"}
+{"idx": 202, "v": "Gaya Rambut"}
+{"idx": 203, "v": "Min Stonesplit Attack"}
+{"idx": 204, "v": "Warga Skybrim Market"}
+{"idx": 205, "v": "[Mini Game] Kontes Memancing"}
+{"idx": 206, "v": "Celana Berlapis"}
+{"idx": 207, "v": "Multiplayer"}
+{"idx": 208, "v": "Hutuo River"}
+{"idx": 209, "v": "Prajurit Guiyi"}
+{"idx": 210, "v": "Putar"}
+{"idx": 211, "v": "Meningkatkan <Max HP|780|#C|13> berdasarkan Level Solo Mode (saat ini: #Y{0:.0f}#E)."}
+{"idx": 212, "v": "Critical Rate UP"}
+{"idx": 213, "v": "Deskripsi Tes"}
+{"idx": 214, "v": "Harapan Rakyat"}
+{"idx": 215, "v": "Bandit Greenwood"}
+{"idx": 216, "v": "Pratinjau Hadiah"}
+{"idx": 217, "v": "Pertarungan Jarak Dekat"}
+{"idx": 218, "v": "Bandit"}
+{"idx": 219, "v": "Pantengin terus, ya!"}
+{"idx": 220, "v": "Maximum Bamboocut Attack"}
+{"idx": 221, "v": "Guild"}
+{"idx": 222, "v": "Dorong"}
+{"idx": 223, "v": "Sealed Treasury"}
+{"idx": 224, "v": "Jiang Wulang"}
+{"idx": 225, "v": "Hadiah"}
+{"idx": 226, "v": "Lacak"}
+{"idx": 227, "v": "Damage"}
+{"idx": 228, "v": "Amati"}
+{"idx": 229, "v": "Sewa Rumah"}
+{"idx": 230, "v": "Dayang Istana Pangkat Rendah"}
+{"idx": 231, "v": "Menteri tingkat menengah berjubah merah tua, dengan kantong ikan perak di pinggangnya. Ia mendapat kehormatan untuk menghadap Kaisar dan mendengar titah suci. Hatinya memikirkan kedamaian rakyat; raganya bersumpah setia pada kebijakan negara."}
+{"idx": 232, "v": "Tempat Hati Tergerak"}
+{"idx": 233, "v": "Tinggalkan Sandstorm Tavern"}
+{"idx": 234, "v": "Otomatis terhapus setelah meninggalkan Sandstorm Tavern!"}
+{"idx": 235, "v": "Angin penuh harapan sudah bertiup ke tempat yang familiar tapi asing... Manusia, gue mau keluar sebentar. Bentar lagi balik kok."}
+{"idx": 236, "v": "Sudah sepuluh hari sejak pasukan Jin mundur dari Yingzhou dan menguasai Hutuo. Sang jenderal dalam bahaya, dan jembatan dalam ancaman. Siapa yang bisa menyelamatkan mereka? Hanya para pengembara dari seluruh penjuru dunia, yang berbondong-bondong menuju Hutuo..."}
+{"idx": 237, "v": "Murid Mohist Hill"}
+{"idx": 238, "v": "Karung Goni"}
+{"idx": 239, "v": "Skill Mistis"}
+{"idx": 240, "v": "Terbuka dalam %s hari"}
+{"idx": 241, "v": "Agility"}
+{"idx": 242, "v": "Lian Daozi"}
+{"idx": 243, "v": "Kematian Sang Gubernur"}
+{"idx": 244, "v": "Momentum"}
+{"idx": 245, "v": "Feng Jisheng"}
+{"idx": 246, "v": "Sentuh"}
+{"idx": 247, "v": "Kirim"}
+{"idx": 248, "v": "Member Premium NetEase"}
+{"idx": 249, "v": "Setelah memicu #R[Thunder Enlightenment - Might]#E\nGunakan #YCharged Skill#E atau #YMo Blade's Defensive Riposte#E untuk memberikan damage besar"}
+{"idx": 250, "v": "Pengemis di Forsaken Quarter, namanya tidak diketahui."}
+{"idx": 251, "v": "Skenario ini"}
+{"idx": 252, "v": "Gunakan #YCharged Skill#E atau #YMo Blade's Defensive Riposte#E\nuntuk mengumpulkan #R[Might]#E"}
+{"idx": 253, "v": "Melemah"}
+{"idx": 254, "v": "Saat ini tidak bisa bepergian ke wilayah lain"}
+{"idx": 255, "v": "Nggak apa-apa kok, dah."}
+{"idx": 256, "v": "Tempat"}
+{"idx": 257, "v": "Biksu Liar"}
+{"idx": 258, "v": "Memberikan total $D damage."}
+{"idx": 259, "v": "Intro Event"}
+{"idx": 260, "v": "Komponen yang bisa digunakan untuk pembangunan Legacy."}
+{"idx": 261, "v": "Buronan Greenwood"}
+{"idx": 262, "v": "Bunuh dia"}
+{"idx": 263, "v": "Group Attribute Attack"}
+{"idx": 264, "v": "Hah?"}
+{"idx": 265, "v": "Yan Shiliu sedang rajin menyusun deskripsi untuk item ini."}
+{"idx": 266, "v": "HP Bonus"}
+{"idx": 267, "v": "The Void King"}
+{"idx": 268, "v": "Confinement Tower"}
+{"idx": 269, "v": "Tidak Bisa Bergerak; tidak dapat bergerak atau menggunakan sebagian besar skill"}
+{"idx": 270, "v": "Ambil Foto"}
+{"idx": 271, "v": "Helm, Zirah Dada, Pelindung Lengan"}
+{"idx": 272, "v": "Logam"}
+{"idx": 273, "v": "Lo lagi ngapain?"}
+{"idx": 274, "v": "Murong Yuan"}
+{"idx": 275, "v": "Pilih"}
+{"idx": 276, "v": "Buruh di Blissful Retreat, sibuk mengangkut arak \"Parting Tears\"."}
+{"idx": 277, "v": "Kembali"}
+{"idx": 278, "v": "Meningkatkan Bamboocut Attack. Juga meningkatkan Bamboocut DMG Bonus berdasarkan Min Bamboocut Attack."}
+{"idx": 279, "v": "Tubuh"}
+{"idx": 280, "v": "Sedang menjelajahi sebuah wilayah"}
+{"idx": 281, "v": "Pengembara Jianghu"}
+{"idx": 282, "v": "Kekuatan"}
+{"idx": 283, "v": "Ahli"}
+{"idx": 284, "v": "Lo..."}
+{"idx": 285, "v": "1"}
+{"idx": 286, "v": "Penetralan Racun"}
+{"idx": 287, "v": "Minta joran pancing"}
+{"idx": 288, "v": "Yi Dao"}
+{"idx": 289, "v": "Qinghe"}
+{"idx": 290, "v": "Aktifkan"}
+{"idx": 291, "v": "Kondisi Fisik"}
+{"idx": 292, "v": "Silkbind Attribute UP"}
+{"idx": 293, "v": "Penyambungan Tulang"}
+{"idx": 294, "v": "Stonesplit Attribute UP"}
+{"idx": 295, "v": "Hadiah"}
+{"idx": 296, "v": "Bellstrike Attribute UP"}
+{"idx": 297, "v": "Ghost Master"}
+{"idx": 298, "v": "Sisa di Permukiman Saat Ini: {}"}
+{"idx": 299, "v": "Pitch Pot"}
+{"idx": 300, "v": "Dapatkan"}
+{"idx": 301, "v": "DMG Boost"}
+{"idx": 302, "v": "Warga West Market"}
+{"idx": 303, "v": "Han Xiangxun"}
+{"idx": 304, "v": "Perisai"}
+{"idx": 305, "v": "Cahaya Melawan Kegelapan"}
+{"idx": 306, "v": "Charged Skill"}
+{"idx": 307, "v": "Ada apa?"}
+{"idx": 308, "v": "Memuat data..."}
+{"idx": 309, "v": "Meow Meow"}
+{"idx": 310, "v": "Ilmu Silat"}
+{"idx": 311, "v": "Meow Meow - Uji Coba Ilmu Meringankan Tubuh"}
+{"idx": 312, "v": "Prajurit"}
+{"idx": 313, "v": "Apaan?"}
+{"idx": 314, "v": "Arena"}
+{"idx": 315, "v": "Big Zhao"}
+{"idx": 316, "v": "Lucky Seventeen"}
+{"idx": 317, "v": "Info"}
+{"idx": 318, "v": "Tahan {}"}
+{"idx": 319, "v": "Hero's Realm"}
+{"idx": 320, "v": "Waktu Terbatas"}
+{"idx": 321, "v": "Bisikan di Bawah Rembulan"}
+{"idx": 322, "v": "Kabut"}
+{"idx": 323, "v": "Apa itu Zhou?"}
+{"idx": 324, "v": "Pejabat"}
+{"idx": 325, "v": "Terapkan"}
+{"idx": 326, "v": "Tinggi Badan"}
+{"idx": 327, "v": "Dinding"}
+{"idx": 328, "v": "Angin di pepohonan. Ikan di sungai. Sesosok bayangan dengan keranjang, sekilas terlihat lalu menghilang lagi di antara dedaunan. Dengarkan baik-baik. Angin sedang memberitahumu ke mana harus pergi untuk menemukannya."}
+{"idx": 329, "v": "Harmoni Semesta"}
+{"idx": 330, "v": "Sixteen Lanes Windtail"}
+{"idx": 331, "v": "Warga West Market"}
+{"idx": 332, "v": "Damage Dasar Busur dan Anak Panah Naik"}
+{"idx": 333, "v": "Little Fu"}
+{"idx": 334, "v": "Dash"}
+{"idx": 335, "v": "Teka-teki Terpecahkan"}
+{"idx": 336, "v": "Peningkatan Damage Titik Lemah Busur"}
+{"idx": 337, "v": "Durasi Terbang Maksimal Panah Naik"}
+{"idx": 338, "v": "Kecepatan Terbang Panah Naik"}
+{"idx": 339, "v": "Pekerja yang mengurus operasi pertambangan di Mirkvale. Dia selalu penuh debu dan sibuk berlarian ke sana kemari."}
+{"idx": 340, "v": "Deflection"}
+{"idx": 341, "v": "Melodi Kedamaian"}
+{"idx": 342, "v": "Pesta Appraisal Banquet mengumpulkan setiap pendekar dan nama besar di jianghu dalam satu atap. Gelas-gelas diangkat, basa-basi dipertukarkan, tapi dendam lama tak pernah benar-benar tidur. Sebelum musik berhenti, seseorang akan datang menagih. Malam ini, bulan istana menyaksikan utang lama dibayar dengan darah."}
+{"idx": 343, "v": "Reset"}
+{"idx": 344, "v": "Sebuah kuas Inkbound Order mencatat dengan adil dan jujur. Satu halaman masa lalu tanpa disangka membawa ke tempat di mana bunga berwajah manusia mekar. Dendam, obsesi, diri dan bukan-diri - tak ada satu pun dalam kisah ini yang bebas dari ketidakadilan, dan semua kasih sayang menumbuhkan penderitaan. Kini saatnya telah tiba, darah harus dibalas darah dan utang harus dibayar utang. Jangan tanya lagi siapa yang salah waktu itu."}
+{"idx": 345, "v": "Tunggangan"}
+{"idx": 346, "v": "Cendekiawan"}
+{"idx": 347, "v": "Penambang Mirkvale"}
+{"idx": 348, "v": "Mirkvale"}
+{"idx": 349, "v": "Solo"}
+{"idx": 350, "v": "Pelayan Istana"}
+{"idx": 351, "v": "Melancarkan Peredaran Darah dan Mengatasi Sumbatan"}
+{"idx": 352, "v": "Deskripsi Event"}
+{"idx": 353, "v": "Rentan"}
+{"idx": 354, "v": "Renungan Karma"}
+{"idx": 355, "v": "Hadiah Check-in WeChat Mini Program"}
+{"idx": 356, "v": "Masalah ini disebabkan oleh cedera umum."}
+{"idx": 357, "v": "Depan/Belakang"}
+{"idx": 358, "v": "Resistance Kustom"}
+{"idx": 359, "v": "Peningkatan Strategi"}
+{"idx": 360, "v": "Haaah... Coba deh liat apa yang kita dapet..."}
+{"idx": 361, "v": "Penetration Kustom"}
+{"idx": 362, "v": "Daoist yang Tidur"}
+{"idx": 363, "v": "Petani di Harvestfall Village, pekerja keras dan berpikiran luas—dikenal suka membantu tetangga tanpa diminta."}
+{"idx": 364, "v": "Warga sederhana yang sudah tinggal bertahun-tahun dekat Blissful Retreat, bekerja keras setiap hari dari pagi sampai malam."}
+{"idx": 365, "v": "Anggota Jade Serpent Hall"}
+{"idx": 366, "v": "Ubah Bentuk"}
+{"idx": 367, "v": "Ikat Pinggang"}
+{"idx": 368, "v": "Eksekusi"}
+{"idx": 369, "v": "Bangsa Khitan sudah lama menduduki Dragonbend Mountain, dan tak seorang pun tahu tujuan mereka. Apakah Kepala Akademi Crane dan murid-muridnya benar-benar menyerah seperti Du Chongwei? Para pendekar berdatangan silih berganti untuk mencari kebenaran..."}
+{"idx": 370, "v": "Meow Meow - Uji Coba Wawasan"}
+{"idx": 371, "v": "Warga Heaven's Pier"}
+{"idx": 372, "v": "Data"}
+{"idx": 373, "v": "3"}
+{"idx": 374, "v": "Prajurit rendahan dari Dinas Kekaisaran, dipilih dari yang paling cakap dan tajam di ketentaraan. Mereka menjaga istana dan Kaisar sambil menyelidiki urusan rahasia."}
+{"idx": 375, "v": "Letakkan"}
+{"idx": 376, "v": "Biaya"}
+{"idx": 377, "v": "Penjaga Perjamuan"}
+{"idx": 378, "v": "2"}
+{"idx": 379, "v": "Tokoh Sejarah"}
+{"idx": 380, "v": "Warga yang Merayakan Festival Musim Semi"}
+{"idx": 381, "v": "Kekuatan Kebangkitan"}
+{"idx": 382, "v": "Komponen konstruksi gaya Liangzhou."}
+{"idx": 383, "v": "Dimiliki"}
+{"idx": 384, "v": "Pet"}
+{"idx": 385, "v": "Pratinjau Tampilan"}
+{"idx": 386, "v": "Komponen bangunan gaya Liangzhou."}
+{"idx": 387, "v": "Patah Tulang"}
+{"idx": 388, "v": "Mode"}
+{"idx": 389, "v": "Meningkatkan <Formless Attack|780|#C|209> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E-#Y{1:.1f}#E)."}
+{"idx": 390, "v": "Meningkatkan <Min Bellstrike Attack|780|#C|151> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E)."}
+{"idx": 391, "v": "Meningkatkan <Physical Defense|780|#C|17> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E)."}
+{"idx": 392, "v": "Meningkatkan <Precision Rate|780|#C|19> berdasarkan Level Solo Mode (saat ini: #Y{0:.1%}#E)."}
+{"idx": 393, "v": "Meningkatkan <Stonesplit Attack|780|#C|151> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E hingga #Y{1:.1f}#E)."}
+{"idx": 394, "v": "Kontrol"}
+{"idx": 395, "v": "Cara Mendapatkan"}
+{"idx": 396, "v": "Meningkatkan <Silkbind Attack|780|#C|151> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E hingga #Y{1:.1f}#E)."}
+{"idx": 397, "v": "Tekan di Mana Saja untuk Menutup"}
+{"idx": 398, "v": "Meningkatkan <Physical Attack|780|#C|15> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E hingga #Y{1:.1f}#E)."}
+{"idx": 399, "v": "Meningkatkan <Min Formless Attack|780|#C|209> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E)."}
+{"idx": 400, "v": "Meningkatkan <Max Formless Attack|780|#C|210> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E)."}
+{"idx": 401, "v": "Meningkatkan <Max Bellstrike Attack|780|#C|151> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E)."}
+{"idx": 402, "v": "Meningkatkan <Max Silkbind Attack|780|#C|151> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E)."}
+{"idx": 403, "v": "Tidak Diketahui"}
+{"idx": 404, "v": "Meningkatkan <Min Bamboocut Attack|780|#C|151> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E)."}
+{"idx": 405, "v": "Meningkatkan <Min Silkbind Attack|780|#C|151> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E)."}
+{"idx": 406, "v": "Meningkatkan <Critical Rate|780|#C|21> berdasarkan Level Solo Mode (saat ini: #Y{0:.1%}#E)."}
+{"idx": 407, "v": "Semua talenta prasyarat mencapai Lv.1"}
+{"idx": 408, "v": "Semua talenta prasyarat mencapai Lv.2"}
+{"idx": 409, "v": "Meningkatkan <Max Stonesplit Attack|780|#C|151> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E)."}
+{"idx": 410, "v": "Meningkatkan <Bamboocut Attack|780|#C|151> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E hingga #Y{1:.1f}#E)."}
+{"idx": 411, "v": "Meningkatkan <Affinity Rate|780|#C|23> berdasarkan Level Solo Mode (saat ini: #Y{0:.1%}#E)."}
+{"idx": 412, "v": "Meningkatkan <Min Physical Attack|780|#C|15> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E)."}
+{"idx": 413, "v": "Meningkatkan <Max Physical Attack|780|#C|15> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E)."}
+{"idx": 414, "v": "Meningkatkan <Bellstrike Attack|780|#C|151> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E hingga #Y{1:.1f}#E)."}
+{"idx": 415, "v": "Eksplorasi"}
+{"idx": 416, "v": "Meningkatkan <Max Bamboocut Attack|780|#C|151> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E)."}
+{"idx": 417, "v": "Meningkatkan <Min Stonesplit Attack|780|#C|151> berdasarkan Level Solo Mode (saat ini: #Y{0:.1f}#E)."}
+{"idx": 418, "v": "Set Kosmetik"}
+{"idx": 419, "v": "Tutup"}
+{"idx": 420, "v": "Gulat"}
+{"idx": 421, "v": "Latar Belakang"}
+{"idx": 422, "v": "Penghibur"}
+{"idx": 423, "v": "#YDual-Weapon Skills#E"}
+{"idx": 424, "v": "Sepatu Bot"}
+{"idx": 425, "v": "Ye Wanshan"}
+{"idx": 426, "v": "Tier 2"}
+{"idx": 427, "v": "Didapatkan"}
+{"idx": 428, "v": "Skill Mistis #YMeridian Touch#E"}
+{"idx": 429, "v": "Great Song Prefecture Hall"}
+{"idx": 430, "v": "Rasa Kenyang"}
+{"idx": 431, "v": "Semua"}
+{"idx": 432, "v": "Pakaian Atas"}
+{"idx": 433, "v": "Material untuk gameplay Tiny Scenery"}
+{"idx": 434, "v": "Tier 3"}
+{"idx": 435, "v": "Warga Wansheng Town"}
+{"idx": 436, "v": "Ganti"}
+{"idx": 437, "v": "Tidak."}
+{"idx": 438, "v": "Tier 6"}
+{"idx": 439, "v": "Tier 4"}
+{"idx": 440, "v": "Hm?"}
+{"idx": 441, "v": "Imun Kematian"}
+{"idx": 442, "v": "Memberikan damage langsung, melakukan deflect, atau dodge sempurna memberikan 1 stack #HMight#E. Efek ini bisa terpicu sekali tiap 3 detik. Pada 12 stack, #HMight#E memicu petir dari langit untuk memberimu #HThunder Enlightenment - Might#E selama 15 detik, memberikan peningkatan berikut: \n#YCharged Heavy Attack Avalanche#E milik Thundercry Blade langsung mendapat pengisian tahap ketiga. \n#YVaried Combo#E bisa dipakai berturut-turut jika dilakukan di saat yang tepat."}
+{"idx": 443, "v": "Memberikan damage langsung, melakukan deflect, atau dodge sempurna memberikan 1 stack #HUmbra#E. Efek ini bisa terpicu sekali tiap 3 detik. Pada 12 stack, #HUmbra#E memicu petir dari langit untuk memberimu #HThunder Enlightenment - Umbra#E, memberikan peningkatan berikut:\nMengurangi biaya Endurance dari #YSpecial Skill \"Inner Balance Strike III\"#E milik Strategic Sword sebesar 60%.\nMeningkatkan #Yhigh Bleed damage#E dari Inner Way \"Sword Horizon\" sebesar 80% dan mempertahankan 1 stack Bleed setelah memicu high Bleed damage."}
+{"idx": 444, "v": "Memberikan damage langsung, melakukan deflect, atau dodge sempurna memberikan 1 stack #HJade#E. Efek ini bisa terpicu sekali tiap 3 detik. Pada 12 stack, #HJade#E memicu petir dari langit untuk memberimu #HThunder Enlightenment - Jade#E, memberikan peningkatan berikut:\nMengurangi cooldown #YSpecial Skill \"Peak's Springless Silence\"#E milik Inkwell Fan sebesar 9 detik dan meningkatkan damage dari #Yaerial follow-up#E sebesar 40%.\nMemulihkan 20 Blossom setiap detik dan membuat #YSpecial Skill \"Unwithering Bloom\"#E milik Vernal Umbrella bisa dipakai terus-menerus."}
+{"idx": 445, "v": "HP Recovery"}
+{"idx": 446, "v": "Mulai Challenge"}
+{"idx": 447, "v": "Memberikan damage langsung, melakukan deflect, atau dodge sempurna memberikan 1 stack #HWind#E. Efek ini bisa terpicu sekali tiap 3 detik. Pada 12 stack, #HWind#E memicu petir dari langit untuk memberimu #HThunder Enlightenment - Wind#E, memberikan peningkatan berikut:\n#YSpecial Skill Rodent Rampage#E milik Mortal Rope Dart jadi diperkuat. Rat yang dipanggil memberikan damage lebih besar—Rat-nya lagi marah!\n#YMartial Art Skill Addled Mind#E milik Infernal Twinblades cooldown-nya berkurang jadi 6 detik, dan bisa memicu serangan gabungan dari #YRodent Rampage#E."}
+{"idx": 448, "v": "Sudah foto bareng retainer"}
+{"idx": 449, "v": "Berpisah Jalan"}
+{"idx": 450, "v": "Memberikan damage langsung, melakukan deflect, atau dodge sempurna memberikan 1 stack #HSplendor#E Efek ini bisa terpicu sekali tiap 3 detik. Pada 12 stack, #HSplendor#E memicu petir dari langit untuk memberimu #HThunder Enlightenment - Splendor#E selama 15 detik, memberikan peningkatan berikut: \n#YSpecial Skill [Shadow Step]#E dan #YVaried Combo [Sword Dash]#E milik Noname Sword sama-sama mendapat efek #YEnergy Surge#E yang diperkuat, membuat Drifter's Strike berikutnya melepaskan beberapa serangan energi pedang tambahan."}
+{"idx": 451, "v": "Familiar Faces datang membantumu bertarung, tapi awan petir akan muncul dan memberikan damage berkali-kali ke semua ally setiap 30 detik. #HJangan lupa sembuhkan Familiar Faces#E.\nMemberikan damage langsung, melakukan deflect, atau dodge sempurna memberikan 1 stack #HDeluge#E. Efek ini bisa terpicu sekali tiap 3 detik. Pada 12 stack, #HDeluge#E memicu petir dari langit untuk memberimu #HThunder Enlightenment - Deluge#E, memberikan peningkatan berikut:\nSaat #YHP pulih sampai 100%#E, kelebihan HP otomatis berubah jadi shield. Setiap kali berubah lagi, shield direset penuh dan menambahkan 1 #YFlowing Flame#E ke payung milik #YSpecial Skill \"Herbal Resonance\"#E dari Soulshade Umbrella. Maksimal 6 #YFlowing Flame#E bisa ada dalam waktu bersamaan, menyerang musuh lewat jejak unik dan memberikan damage besar."}
+{"idx": 452, "v": "Tier 5"}
+{"idx": 453, "v": "Berhenti!"}
+{"idx": 454, "v": "Pelayan"}
+{"idx": 455, "v": "Lepaskan semua musuh dan item"}
+{"idx": 456, "v": "Challenge"}
+{"idx": 457, "v": "Janji untuk Pulang"}
+{"idx": 458, "v": "Buruh tani rajin yang tinggal di pinggiran Kaifeng."}
+{"idx": 459, "v": "Bandit Encampment"}
+{"idx": 460, "v": "Hati yang Tak Berubah"}
+{"idx": 461, "v": "Bawah"}
+{"idx": 462, "v": "Pose Skenario"}
+{"idx": 463, "v": "Hadiah Event Waktu Terbatas"}
+{"idx": 464, "v": "Helm, Baju Zirah, Pelindung Betis, Pelindung Pergelangan"}
+{"idx": 465, "v": "Bintang jatuh baru aja ngirim barang bagus, buruan, ambil!"}
+{"idx": 466, "v": "Buat"}
+{"idx": 467, "v": "Hapus"}
+{"idx": 468, "v": "Takhta dan Badai I"}
+{"idx": 469, "v": "Cedera Luar"}
+{"idx": 470, "v": "Hadiah Eksplorasi"}
+{"idx": 471, "v": "Bamboocut"}
+{"idx": 472, "v": "Gunakan Soulshade Umbrella - #YFloating Grace#E \nBisa terus-menerus memulihkan HP ally"}
+{"idx": 473, "v": "Gunakan Panacea Fan - #YCloudburst Healing#E \nMemulihkan HP ally dalam jumlah besar"}
+{"idx": 474, "v": "Placeholder"}
+{"idx": 475, "v": "Sudut"}
+{"idx": 476, "v": "Gulungan & Naskah"}
+{"idx": 477, "v": "Sulit"}
+{"idx": 478, "v": "Ambil Item"}
+{"idx": 479, "v": "Klaim Hadiah"}
+{"idx": 480, "v": "Cerah"}
+{"idx": 481, "v": "Kunjungan meriah ke kota kekaisaran tiba-tiba berubah gelap. Menyamar jadi penjaga istana, mengorek rahasia di depan aula, dan lihat masalah apa yang tersembunyi di balik kemegahannya.\nDi Imperial Palace, tak ada yang pernah sesederhana kelihatannya."}
+{"idx": 482, "v": "Heavenfall"}
+{"idx": 483, "v": "Agen elit Aureate Pavilion yang ditempatkan di Mercyheart Monastery, dengan niat jahat."}
+{"idx": 484, "v": "Kaifeng"}
+{"idx": 485, "v": "Harga Apresiasi Spesial"}
+{"idx": 486, "v": "Gerbang"}
+{"idx": 487, "v": "Sepucuk surat misterius. Sealed Treasury penuh teka-teki. Terlalu banyak wajah, terlalu banyak intrik, terlalu banyak kekaburan untuk tahu di mana kesetiaan berakhir dan pengkhianatan dimulai. Di antara harta tersembunyi dan intrik istana, budi lama dan dendam lama terikat erat."}
+{"idx": 488, "v": "Petani di Harvestfall Village, rajin tapi sederhana—terlalu mudah percaya orang lain dalam urusan desa."}
+{"idx": 489, "v": "Area yang terkena jadi bengkak dan nyeri, dan orangnya bisa kehilangan sebagian atau seluruh fungsi anggota tubuh tersebut, atau mengalami kelainan bentuk atau gerakan yang tidak normal."}
+{"idx": 490, "v": "Silkbind Attack Up"}
+{"idx": 491, "v": "Ganti"}
+{"idx": 492, "v": "Selesaikan semua target di Martial Art Collection"}
+{"idx": 493, "v": "Kamu menghitung koinmu"}
+{"idx": 494, "v": "Bellstrike Attack Up"}
+{"idx": 495, "v": "Bellstrike"}
+{"idx": 496, "v": "Kumpulkan"}
+{"idx": 497, "v": "Tidak Ada"}
+{"idx": 498, "v": "Makanan"}
+{"idx": 499, "v": "Pengaturan"}
+{"idx": 500, "v": "Level 0"}
+{"idx": 501, "v": "Kembangkan"}
+{"idx": 502, "v": "Pindah"}
+{"idx": 503, "v": "Hadiah Achievement"}
+{"idx": 504, "v": "Blissful Retreat"}
+{"idx": 505, "v": "Bangun"}
+{"idx": 506, "v": "Tenacity"}
+{"idx": 507, "v": "Tersedia luas."}
+{"idx": 508, "v": "Masuk"}
+{"idx": 509, "v": "Bamboocut Attack Up"}
+{"idx": 510, "v": "Peningkatan Damage"}
+{"idx": 511, "v": "Moongazing Maiden"}
+{"idx": 512, "v": "Stonesplit Attack Up"}
+{"idx": 513, "v": "Buang"}
+{"idx": 514, "v": "Ikut Serta"}
+{"idx": 515, "v": "Kunci"}
+{"idx": 516, "v": "Pertarungan"}
+{"idx": 517, "v": "Selesaikan Uji Coba pada tingkat kesulitan Sulit ke atas"}
+{"idx": 518, "v": "Gelombang musuh berikutnya telah muncul"}
+{"idx": 519, "v": "Berakhir"}
+{"idx": 520, "v": "Mendapatkan bonus damage dan healing 5% selama 6 detik saat [Umbrella - Light Attack] mengenai unit yang staggered atau ter-CC. Efek ini bisa menumpuk hingga 3 kali."}
+{"idx": 521, "v": "Cedera pada tulang dan sendi, biasanya disebabkan oleh trauma atau benturan keras. Gejalanya meliputi bengkak, nyeri, kehilangan fungsi sebagian atau seluruhnya, dan bisa menyebabkan kelainan bentuk atau gerakan yang tidak normal."}
+{"idx": 522, "v": "Tampilan Draw"}
+{"idx": 523, "v": "Physical Resistance"}
+{"idx": 524, "v": "Aksesoris"}
+{"idx": 525, "v": "Kalahkan semua boss dalam batas waktu untuk menyelesaikan lantai ini. Lantai yang lebih tinggi membawa kesulitan lebih besar dan mekanisme boss tambahan."}
+{"idx": 526, "v": "Kondisi ini dipicu oleh sihir."}
+{"idx": 527, "v": "Formless Attack Up"}
+{"idx": 528, "v": "Physical Penetration"}
+{"idx": 529, "v": "Anak Kecil"}
+{"idx": 530, "v": "Jin Zhongyuan"}
+{"idx": 531, "v": "Sumbangkan item di Guild untuk ditukar dengan mata uang konstruksi (%)"}
+{"idx": 532, "v": "Cedera Dalam"}
+{"idx": 533, "v": "Filter"}
+{"idx": 534, "v": "Pemancing"}
+{"idx": 535, "v": "Aureate Pavilion"}
+{"idx": 536, "v": "Kisah Kuliner"}
+{"idx": 537, "v": "Pengrajin dari Imperial Construction Bureau, bertugas menjaga istana tetap dalam kondisi baik."}
+{"idx": 538, "v": "Resep untuk membuat komponen bangunan yang punya beberapa gaya tampilan yang bisa diganti-ganti."}
+{"idx": 539, "v": "Buka dulu Online Mode"}
+{"idx": 540, "v": "Aku"}
+{"idx": 541, "v": "Wanita"}
+{"idx": 542, "v": "Tidak"}
+{"idx": 543, "v": "Bagus"}
+{"idx": 544, "v": "Tukar"}
+{"idx": 545, "v": "Sembunyikan"}
+{"idx": 546, "v": "Siasat di Balik Kilauan"}
+{"idx": 547, "v": "Minuman Pahit Kampung Halaman"}
+{"idx": 548, "v": "Zhao Chengzong"}
+{"idx": 549, "v": "Kewaspadaan"}
+{"idx": 550, "v": "Kabarnya si Pencuri Ulung Jun Bujian berniat mencuri Mirage Boat kesayangan Master Wuhen, yang dibangun khusus untuk pesta ulang tahun. Sebagai balasannya, Master Wuhen menjanjikan hadiah pribadi, memanggil semua pendekar untuk memasang jebakan bagi si pencuri... Tapi dalam adu siasat ini, siapa sebenarnya pemburu dan siapa mangsanya?"}
+{"idx": 551, "v": "Berisi bagian tertentu dari set Whirlsnow. Direkomendasikan: Path #YSilkbind: Deluge#E."}
+{"idx": 552, "v": "Akan ditambahkan"}
+{"idx": 553, "v": "Komponen rumah yang bisa digunakan untuk pembangunan Homestead."}
+{"idx": 554, "v": "Bayangan yang Mekar"}
+{"idx": 555, "v": "Tingkatkan"}
+{"idx": 556, "v": "Berisi bagian tertentu dari set Ebonward. Direkomendasikan: Path #YStonesplit: Strength#E."}
+{"idx": 557, "v": "Berisi bagian tertentu dari set Formbend. Direkomendasikan: Path #YBellstrike: Splendor#E."}
+{"idx": 558, "v": "Seorang pengembara misterius..."}
+{"idx": 559, "v": "Berisi bagian tertentu dari set Flawless Guardian. Cocok untuk Path apa pun."}
+{"idx": 560, "v": "Berisi bagian tertentu dari set Beyond the Chill. Direkomendasikan: Path #YSilkbind: Jade#E."}
+{"idx": 561, "v": "Berisi bagian tertentu dari set Moonflare. Direkomendasikan: Path #YStonesplit: Might#E."}
+{"idx": 562, "v": "Berisi bagian tertentu dari set Ripple Step. Cocok untuk Path apa pun."}
+{"idx": 563, "v": "Lo siapa?"}
+{"idx": 564, "v": "Meningkatkan Physical Bonus Attack dan Attribute Bonus Attack dari semua Martial Art Skill saat ini."}
+{"idx": 565, "v": "Teleport"}
+{"idx": 566, "v": "Berisi bagian tertentu dari set Eaglerise. Direkomendasikan: Path #YBellstrike: Umbra#E."}
+{"idx": 567, "v": "Berisi bagian tertentu dari set Jadeclasp. Direkomendasikan: Path #YBamboocut: Dust#E."}
+{"idx": 568, "v": "Tersedia untuk dibeli di \"Draw Shop\""}
+{"idx": 569, "v": "Selesaikan Uji Coba pada tingkat kesulitan Abyss tanpa menerima damage"}
+{"idx": 570, "v": "Berisi bagian tertentu dari set Calmwaters. Direkomendasikan: Path #YBamboocut: Wind#E."}
+{"idx": 571, "v": "Additional Attack Up"}
+{"idx": 572, "v": "Prajurit Khitan"}
+{"idx": 573, "v": "Catatan geografis yang ditulis oleh seorang Pengembara."}
+{"idx": 574, "v": "Feng Ruzhi"}
+{"idx": 575, "v": "Normal"}
+{"idx": 576, "v": "Sinergi tim dalam Ilmu Silat dan Inner Way meningkatkan tingkat keberhasilan."}
+{"idx": 577, "v": "Draw"}
+{"idx": 578, "v": "Takhta dan Badai II"}
+{"idx": 579, "v": "Angin Selatan yang Lembut Tiba"}
+{"idx": 580, "v": "Mode Tim meningkatkan rate drop langka."}
+{"idx": 581, "v": "Untuk challenge yang sulit, gunakan AI Assist atau main tim biar lebih gampang."}
+{"idx": 582, "v": "Terjalin dengan Niat Jahat"}
+{"idx": 583, "v": "Melodi yang Anggun"}
+{"idx": 584, "v": "Lindungi Boss Campaign"}
+{"idx": 585, "v": "Terbuka nanti di Lv. 3 Homestead"}
+{"idx": 586, "v": "Jianghu - Kontes Musik Rombongan Bertopeng"}
+{"idx": 587, "v": "Tahap 12"}
+{"idx": 588, "v": "Tahap 14"}
+{"idx": 589, "v": "Default"}
+{"idx": 590, "v": "Boneka Mirkvale"}
+{"idx": 591, "v": "Tahap 11"}
+{"idx": 592, "v": "Murid Well of Heaven"}
+{"idx": 593, "v": "Puncak Forbidden City"}
+{"idx": 594, "v": "Tahap 13"}
+{"idx": 595, "v": "Pertarungan Jarak Jauh"}
+{"idx": 596, "v": "Resolve"}
+{"idx": 597, "v": "Silence"}
+{"idx": 598, "v": "Toko"}
+{"idx": 599, "v": "Para Qiongqi Artificer akhir-akhir ini gelisah, mengacak-acak Mirkvale untuk mencari sebuah harta karun..."}
+{"idx": 600, "v": "Cao Jing Guanyin"}
+{"idx": 601, "v": "Jinming Pool"}
+{"idx": 602, "v": "Boneka yang dirancang oleh pengrajin Mirkvale untuk menambang dan mengangkut barang. Sangat direkomendasikan oleh semua orang!"}
+{"idx": 603, "v": "Komponen rumah yang bisa digunakan untuk pembangunan Guild Base."}
+{"idx": 604, "v": "Orang Misterius"}
+{"idx": 605, "v": "Hidden Mountain"}
+{"idx": 606, "v": "Ketuk"}
+{"idx": 607, "v": "Stagnasi qi hati mengganggu fungsi hati, menyebabkan depresi, sesak dada, dan nyeri di bagian samping tubuh. Jika memengaruhi limpa, bisa muncul kembung, sering bersendawa, dan hilang nafsu makan. Saat \"stagnasi qi berubah jadi api\", gejalanya meliputi mulut kering, rasa pahit, sakit kepala, mudah marah, sesak dada, dan kembung. \"Stagnasi qi dengan dahak\" terasa seperti ada yang mengganjal di tenggorokan yang tidak bisa naik atau turun. \"Depresi berkepanjangan yang merusak jiwa\" menyebabkan kehilangan energi dan darah, membuat seseorang bingung, sedih, mudah menangis, dan gampang lelah. \"Defisiensi yin dengan kelebihan panas\" menyebabkan pusing, jantung berdebar, mudah marah, dan susah tidur."}
+{"idx": 608, "v": "Melodi di Antara Alang-Alang"}
+{"idx": 609, "v": "Ini merujuk pada penyakit yang muncul akibat tekanan emosional dan energi yang tersumbat, yang bisa berupa jenis kelebihan (excess) atau kekurangan (deficiency). Jenis excess meliputi stagnasi qi hati, stagnasi qi yang berubah jadi panas, dan stagnasi qi dengan dahak. Jenis deficiency meliputi penyakit akibat depresi berkepanjangan dan akibat terlalu sedikit yin dengan kelebihan panas dalam tubuh."}
+{"idx": 610, "v": "Belas Kasih Kekaisaran"}
+{"idx": 611, "v": "Penjaga rendahan dari Imperial Service. Dipilih langsung dari Imperial Guard untuk melindungi Hall of State. Dia mungkin masih hijau, tapi potensinya tak terbatas!"}
+{"idx": 612, "v": "Tahap 15"}
+{"idx": 613, "v": "Sepatu"}
+{"idx": 614, "v": "Wabah yang Sekejap"}
+{"idx": 615, "v": "HP Up"}
+{"idx": 616, "v": "Eh..."}
+{"idx": 617, "v": "Aturan"}
+{"idx": 618, "v": "Critical Rate Up"}
+{"idx": 619, "v": "Butuh Lv. 3 Homestead untuk membuka"}
+{"idx": 620, "v": "Gema di Antara Reruntuhan"}
+{"idx": 621, "v": "Tak Terlihat"}
+{"idx": 622, "v": "Mendapatkan bonus damage dan healing 6% selama 6 detik saat [Umbrella - Light Attack] mengenai unit yang tidak sedang bertahan. Efek ini bisa menumpuk hingga 3 kali."}
+{"idx": 623, "v": "Xiaoba"}
+{"idx": 624, "v": "Momentum Strike"}
+{"idx": 625, "v": "Meningkatkan Additional Attack"}
+{"idx": 626, "v": "Meningkatkan Physical Bonus Attack dan Attribute Bonus Attack untuk semua skill dari Martial Art saat ini."}
+{"idx": 627, "v": "Komponen rumah yang bisa digunakan untuk pembangunan Legacy."}
+{"idx": 628, "v": "Sepuluh tahun memelihara ulat sutra, sepuluh tahun lagi memintal benangnya. Untuk sejengkal kain, setetes darah pun ditumpahkan. Kau bertanya-tanya rahasia tersembunyi apa yang mendalangi rentetan pembunuhan yang terkait dengan \"Celestial Silk Garment\"."}
+{"idx": 629, "v": "Hmm..."}
+{"idx": 630, "v": "RCMD"}
+{"idx": 631, "v": "Rekomendasi Windtail"}
+{"idx": 632, "v": "Guo Xin"}
+{"idx": 633, "v": "Membasmi Kejahatan"}
+{"idx": 634, "v": "Setelah Assassination Night, Zhao Pu memperketat keamanan mansionnya untuk mencegah pembunuh lain menyusup."}
+{"idx": 635, "v": "Pengembara yang terhormat,\r\nHadiah check-in harian WeChat mini program-mu sudah dibagikan. Silakan diambil."}
+{"idx": 636, "v": "Ada tas berisi pedang terkenal di tukang besi tepi sungai. Coba pakai Gift of Gab buat lihat apa kamu bisa merayu untuk mendapatkannya!"}
+{"idx": 637, "v": "Belas kasih tak bisa menyelamatkan yang benar-benar jahat. Keserakahan mereka tak mengenal batas. Angkat pedangmu dan berikan mereka penebusan!"}
+{"idx": 638, "v": "Warga Verdant Hill Village"}
+{"idx": 639, "v": "Max HP +100."}
+{"idx": 640, "v": "5"}
+{"idx": 641, "v": "Penjaga Zhao Mansion"}
+{"idx": 642, "v": "Di tengah ladang bunga dingin dan lapisan racun di Mistveil Forest, penyembuh dari Silver Needle, Zhai Xu, berjuang sendirian melawan wabah Dawn-to-Dusk Blossom. Berikan bantuanmu."}
+{"idx": 643, "v": "Tuan Tanah"}
+{"idx": 644, "v": "4"}
+{"idx": 645, "v": "Meong!"}
+{"idx": 646, "v": "Sedang Berlangsung"}
+{"idx": 647, "v": "Sudah Diklaim"}
+{"idx": 648, "v": "Yuan Tiantian"}
+{"idx": 649, "v": "Dual-Weapon Skill"}
+{"idx": 650, "v": "Ultimate Slap"}
+{"idx": 651, "v": "Jenderal"}
+{"idx": 652, "v": "Hadiah Hero's Realm bisa diklaim sekali seminggu. Ada kejutan ekstra kalau main bareng anggota Guild!"}
+{"idx": 653, "v": "Luancheng diduduki oleh bangsa Khitan dan penuh bahaya. Warga bernama Zhao Tie nekat memasuki Luancheng berkali-kali untuk mencari putranya, Zhao Buyi. Tersentuh oleh tekadnya, kamu memutuskan untuk menemaninya."}
+{"idx": 654, "v": "Twin Lions"}
+{"idx": 655, "v": "Selesaikan Main Story: \"Pendatang Baru di Kaifeng - Berangkat\""}
+{"idx": 656, "v": "Gadis"}
+{"idx": 657, "v": "Teka-teki"}
+{"idx": 658, "v": "Halaman Berikutnya"}
+{"idx": 659, "v": "Affinity Rate UP"}
+{"idx": 660, "v": "Dulu gue prajurit di bawah Shen Yiren. Kita kabur bareng-bareng setelah kalah dan jadi bandit."}
+{"idx": 661, "v": "Velvet Shade"}
+{"idx": 662, "v": "Little Lu"}
+{"idx": 663, "v": "Mimpi Apa yang Akan Datang"}
+{"idx": 664, "v": "Pratinjau"}
+{"idx": 665, "v": "Anak muda, balik lagi kalau lo udah punya cukup duit."}
+{"idx": 666, "v": "Kebenaran di balik Sealed Treasury akhirnya mulai terungkap, dan ini tidak pernah sekadar pencurian emas dan permata.\nDi balik atap istana, siasat lama mulai bergerak, dendam lama mulai terbangun, dan malam ini, setiap utang yang belum lunas mungkin akan dibayar. Istana atau jianghu—tidak banyak bedanya kalau pedang sudah terhunus."}
+{"idx": 667, "v": "Ganti Pakaian"}
+{"idx": 668, "v": "Menjadi Tidak Bisa Bergerak dan kehilangan semua indra. Menerima damage akan menghapus efek ini"}
+{"idx": 669, "v": "Jamban"}
+{"idx": 670, "v": "Direkomendasikan"}
+{"idx": 671, "v": "Tim"}
+{"idx": 672, "v": "Sembuhkan"}
+{"idx": 673, "v": "Berisi bagian tertentu dari set Honorbound. Direkomendasikan: Path #YBamboocut - Kite#E."}
+{"idx": 674, "v": "Phantom Thief Goose"}
+{"idx": 675, "v": "Setelah memicu #R[Thunder Enlightenment - Splendor]#E \nGunakan #YCharged Skill#E untuk memberikan damage besar"}
+{"idx": 676, "v": "Beri hadiah"}
+{"idx": 677, "v": "Gunakan #YSpecial Skill#E \nUntuk mengumpulkan #R[Dust]#E"}
+{"idx": 678, "v": "Gunakan #Ypukulan terakhir dari Light Attack#E \nUntuk mengumpulkan #R[Wind]#E"}
+{"idx": 679, "v": "Vernal Umbrella"}
+{"idx": 680, "v": "Gunakan #YMartial Art Skill#E \nUntuk mengumpulkan #R[Splendor]#E"}
+{"idx": 681, "v": "Setelah memicu #R[Thunder Enlightenment - Jade]#E \nGunakan #YSpecial Skill#E untuk memberikan damage besar"}
+{"idx": 682, "v": "Gunakan #YMartial Art Skill#E \nUntuk mengumpulkan #R[Jade]#E"}
+{"idx": 683, "v": "Setelah memicu #R[Thunder Enlightenment - Wind]#E \nGunakan #YCelestial Fury#E untuk memberikan damage besar"}
+{"idx": 684, "v": "Lakukan pose ini untuk berinteraksi dengan orang lain."}
+{"idx": 685, "v": "Setelah memicu #R[Thunder Enlightenment - Umbra]#E \nGunakan #YSpecial Skill#E untuk memberikan damage besar"}
+{"idx": 686, "v": "Ambil"}
+{"idx": 687, "v": "Undangan terkirim. Player lain akan bergabung denganmu."}
+{"idx": 688, "v": "Berbalas Sajak dengan Rival"}
+{"idx": 689, "v": "Whitecrown Fortress"}
+{"idx": 690, "v": "Gunakan #YMartial Art Skill#E \nUntuk mengumpulkan #R[Umbra]#E"}
+{"idx": 691, "v": "Setelah memicu #R[Thunder Enlightenment - Dust]#E \nGunakan #YMartial Art Skill#E untuk memberikan damage besar"}
+{"idx": 692, "v": "Akan diselesaikan"}
+{"idx": 693, "v": "Draw: Celestial Echo untuk mendapatkan"}
+{"idx": 694, "v": "Penjaga Palace of Annals, ditempatkan permanen di bawah Dragon Abyss menantikan reuni keluarga"}
+{"idx": 695, "v": "Slide pemandangan dari Vivid Album. Masukkan ke kotak mekanisme untuk ditampilkan."}
+{"idx": 696, "v": "Nameless General"}
+{"idx": 697, "v": "Selamatkan"}
+{"idx": 698, "v": "Veiled Lady"}
+{"idx": 699, "v": "Diskon waktu terbatas"}
+{"idx": 700, "v": "Buka"}
+{"idx": 701, "v": "Terawat dengan baik. Langsung bisa dipahami saat didapatkan."}
+{"idx": 702, "v": "Warga"}
+{"idx": 703, "v": "Aku pernah mengembara di puncak-puncak itu, dan melukis setiap pemandangan yang kutemukan. Ambil satu slide bebas dari kotaknya, angkat ke arah cahaya, dan gunung-gunung itu akan bangkit lagi, hewan-hewannya bernapas, dan angin lama kembali berhembus."}
+{"idx": 704, "v": "Kenapa?"}
+{"idx": 705, "v": "Stonesplit"}
+{"idx": 706, "v": "Draw: Celestial Echo"}
+{"idx": 707, "v": "Uncle Zhou"}
+{"idx": 708, "v": "Balas"}
+{"idx": 709, "v": "Simpan"}
+{"idx": 710, "v": "Silkbind"}
+{"idx": 711, "v": "Selesai"}
+{"idx": 712, "v": "Penjaga Istana"}
+{"idx": 713, "v": "Sword - Heavy Attack"}
+{"idx": 714, "v": "Macan dalam Rantai, Ye Wanshan"}
+{"idx": 715, "v": "Meow Meow dari Hidden Mountain juga dikenal sebagai \"Yang Paling Bijak dari Sekte Mohist\". Kabarnya topi bambu di kepalanya tidak cuma melindunginya dari panas dan hujan, tapi juga membuatnya bisa menemukan naga dan harta karun. Ke mana pun Dragonfinder menunjuk, di situ pasti ada permata dan harta langka. Kalau seorang pendekar bisa memecahkan teka-teki Meow Meow, hadiah besar menanti."}
+{"idx": 716, "v": "Komandan Penjaga Aureate Pavilion, The Void King"}
+{"idx": 717, "v": "Mulai"}
+{"idx": 718, "v": "Amarah Sungai"}
+{"idx": 719, "v": "Serap Item"}
+{"idx": 720, "v": "He Wanchun"}
+{"idx": 721, "v": "Boneka Tidur, Boneka Tidur Frost Fungus"}
+{"idx": 722, "v": "Celestial Seize"}
+{"idx": 723, "v": "Digunakan untuk membangun bengkel Blacksmith."}
+{"idx": 724, "v": "#8c5823Profession Base Attribute#E meningkat sebesar %s"}
+{"idx": 725, "v": "Charged Attack"}
+{"idx": 726, "v": "Tinggi"}
+{"idx": 727, "v": "Kenakan"}
+{"idx": 728, "v": "Selesaikan total {value} quest challenge {liupai_name}"}
+{"idx": 729, "v": "Attack"}
+{"idx": 730, "v": "Membuka background nameplate ini untuk digunakan di halaman profilmu."}
+{"idx": 731, "v": "Ada masalah?"}
+{"idx": 732, "v": "Aktif"}
+{"idx": 733, "v": "{total_day:d}d{diff_hour:d}h"}
+{"idx": 734, "v": "Bagikan"}
+{"idx": 735, "v": "Tekan {} saat target Kelelahan"}
+{"idx": 736, "v": "Lima Atribut"}
+{"idx": 737, "v": "Pelarian Cerdik Yingying"}
+{"idx": 738, "v": "Pelacakan di Alam Liar"}
+{"idx": 739, "v": "Harta Sandy Meow"}
+{"idx": 740, "v": "Perlengkapan Uji Pria Standar"}
+{"idx": 741, "v": "Gleaming Abyss"}
+{"idx": 742, "v": "Scarlet Spin"}
+{"idx": 743, "v": "Mudah"}
+{"idx": 744, "v": "Selesaikan target Season Challenge: Combat Challenge"}
+{"idx": 745, "v": "Little Shou"}
+{"idx": 746, "v": "Panjat Menara"}
+{"idx": 747, "v": "Sedang mengukur Resolve-mu..."}
+{"idx": 748, "v": "Dodge Skill 3"}
+{"idx": 749, "v": "Damage Tahap 1"}
+{"idx": 750, "v": "Surat"}
+{"idx": 751, "v": "Heavenquaker Spear"}
+{"idx": 752, "v": "Syarat Membuka"}
+{"idx": 753, "v": "Dodge Skill 2"}
+{"idx": 754, "v": "Nggak, itu belum cukup Resolve buat gue."}
+{"idx": 755, "v": "Tas"}
+{"idx": 756, "v": "Dodge Skill 1"}
+{"idx": 757, "v": "Nama"}
+{"idx": 758, "v": "Zheng E"}
+{"idx": 759, "v": "Earth Fiend Deity"}
+{"idx": 760, "v": "Damage Tahap 2"}
+{"idx": 761, "v": "Pelan-Pelan"}
+{"idx": 762, "v": "Pramusaji"}
+{"idx": 763, "v": "6"}
+{"idx": 764, "v": "Battle Pass"}
+{"idx": 765, "v": "Jubah Luar"}
+{"idx": 766, "v": "Di Bawah Atap Orang Lain"}
+{"idx": 767, "v": "Lihat Quest"}
+{"idx": 768, "v": "Serbuan"}
+{"idx": 769, "v": "Beberapa tahun lalu, sekelompok kucing unik, mengenakan sutra dari langit, tiba-tiba muncul di Central Plains. Konon berasal dari Weiyang City di Changle Island, mereka adalah kucing roh pemburu harta yang dipelihara oleh keluarga kaya Wen. Meski tak ada yang tahu kenapa mereka menjelajah ke jianghu, di mana pun mereka muncul, harta pasti mengikuti. Warga setempat menyebut mereka \"Miaomiao Meow\". \nSelesaikan uji coba Meow Meow untuk mendapatkan Meow Meow Coin, yang bisa ditukar dengan persembahan berharga di Meow Meow Temple."}
+{"idx": 770, "v": "Seorang pelayan berpengalaman bertahun-tahun. Di Six Offices, dia menguasai segala urusan, membantu pelayan junior dan menyelesaikan perselisihan. Dekat dengan para selir, dia adalah orang kepercayaan."}
+{"idx": 771, "v": "Hadiah Quest"}
+{"idx": 772, "v": "Target Tercapai"}
+{"idx": 773, "v": "Isi Pesan"}
+{"idx": 774, "v": "Meningkatkan Bellstrike Attack. Juga meningkatkan Bellstrike DMG Bonus berdasarkan Max Bellstrike Attack."}
+{"idx": 775, "v": "Memberikan damage langsung, melakukan deflect, atau dodge sempurna memberikan 1 stack #HStrength#E Efek ini bisa terpicu sekali tiap 3 detik. Pada 12 stack, #HStrength#E memicu petir dari langit untuk memberimu #HThunder Enlightenment - Strength#E selama 15 detik, memberikan peningkatan berikut: \n#YSpecial Skill \"Fleeting Trace\"#E milik Snowparting Blade cooldown-nya direset. Setiap kali memakai #YCharged Light Attack \"Grave Frost\"#E, #YVaried Combo \"Snowbreak Spring\"#E, atau #YCharged Heavy Attack \"Burning Heart\"#E milik Phalanxbane Blade, cooldown #YFleeting Trace#E berkurang 4 detik. \nSaat #YInner Passion#E aktif, #YGrave Frost#E dan #YBurning Heart#E terisi jauh lebih cepat."}
+{"idx": 776, "v": "Infeksi dengan penyebab yang tidak diketahui."}
+{"idx": 777, "v": "Seorang pengrajin yang membuat suku cadang di Mirkvale. Dia terkubur dalam gunungan pesanan setiap sepuluh hari sekali!"}
+{"idx": 778, "v": "Kegilaan"}
+{"idx": 779, "v": "Gue tahu."}
+{"idx": 780, "v": "Burst"}
+{"idx": 781, "v": "Affinity Resistance"}
+{"idx": 782, "v": "Meningkatkan Stonesplit Attack. Juga meningkatkan Stonesplit Penetration berdasarkan Min Stonesplit Attack."}
+{"idx": 783, "v": "Giliran"}
+{"idx": 784, "v": "Ganti Level"}
+{"idx": 785, "v": "Zirah"}
+{"idx": 786, "v": "Meningkatkan Bamboocut Attack. Juga meningkatkan Bamboocut Penetration berdasarkan Min Bamboocut Attack."}
+{"idx": 787, "v": "Meningkatkan Bellstrike Attack. Juga meningkatkan Bellstrike Penetration berdasarkan Max Bellstrike Attack."}
+{"idx": 788, "v": "Song Jiu"}
+{"idx": 789, "v": "Meningkatkan Stonesplit Attack. Juga meningkatkan Stonesplit DMG Bonus berdasarkan Min Stonesplit Attack."}
+{"idx": 790, "v": "Lima Atribut: #G+1#E untuk Constitution, Power, Defense, Agility, dan Momentum"}
+{"idx": 791, "v": "Meningkatkan Silkbind Attack. Juga meningkatkan Silkbind Penetration berdasarkan Min Silkbind Attack."}
+{"idx": 792, "v": "Anggota Unbound Cavern."}
+{"idx": 793, "v": "Critical Resistance"}
+{"idx": 794, "v": "Attribute Inner Way"}
+{"idx": 795, "v": "Cerita"}
+{"idx": 796, "v": "Refresh"}
+{"idx": 797, "v": "Berkas Kasus: Raungan Sang Penjaga"}
+{"idx": 798, "v": "Break Control"}
+{"idx": 799, "v": "Shi Yimo"}

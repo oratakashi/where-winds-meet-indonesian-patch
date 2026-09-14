@@ -16,21 +16,27 @@ teliti), fase belakang boleh lebih besar (kebanyakan string pendek/berulang pola
 
 ## Fase & target
 
-| Fase | Rentang idx | Jumlah unik | Kumulatif baris tercakup* | Saran ukuran batch/sesi | Perkiraan sesi |
-|---|---|---|---|---|---|
-| 0 (selesai) | 0 – 799 | 800 | ~16.2% | — | selesai |
-| 1 (selesai) | 800 – 1.999 | 1.200 | ~21.28% (aktual, terverifikasi) | — | selesai (3 sesi) |
-| 2 | 2.000 – 4.999 | 3.000 | ~25–28% | 600–800/sesi | ~4–5 sesi |
-| 3 | 5.000 – 9.999 | 5.000 | ~33.5% | 800–1.000/sesi | ~5–6 sesi |
-| 4 | 10.000 – 19.999 | 10.000 | ~40.0% | 1.000–1.500/sesi | ~7–10 sesi |
-| 5 | 20.000 – 49.999 | 30.000 | ~50.1% | 1.500–2.000/sesi | ~15–20 sesi |
-| 6 | 50.000 – 99.999 | 50.000 | ~60.5% | 2.000–3.000/sesi | ~17–25 sesi |
-| 7 | 100.000 – 199.999 | 100.000 | ~76.1% | 2.500–3.500/sesi | ~29–40 sesi |
-| 8 | 200.000 – 429.886 | 229.887 | 100% | 3.000–5.000/sesi | ~46–77 sesi |
+| Fase | Rentang idx | Jumlah unik | Kumulatif baris tercakup* | Saran ukuran batch/sesi | Perkiraan sesi | File output |
+|---|---|---|---|---|---|---|
+| 0 (selesai) | 0 – 799 | 800 | ~16.2% | — | selesai | `locale/phase0.jsonl` |
+| 1 (selesai) | 800 – 1.999 | 1.200 | ~21.28% (aktual, terverifikasi) | — | selesai (3 sesi) | `locale/phase1.jsonl` |
+| 2 (jalan, 1.000/3.000) | 2.000 – 4.999 | 3.000 | ~25–28% | 600–800/sesi | ~4–5 sesi | `locale/phase2.jsonl` |
+| 3 | 5.000 – 9.999 | 5.000 | ~33.5% | 800–1.000/sesi | ~5–6 sesi | `locale/phase3.jsonl` |
+| 4 | 10.000 – 19.999 | 10.000 | ~40.0% | 1.000–1.500/sesi | ~7–10 sesi | `locale/phase4.jsonl` |
+| 5 | 20.000 – 49.999 | 30.000 | ~50.1% | 1.500–2.000/sesi | ~15–20 sesi | `locale/phase5.jsonl` |
+| 6 | 50.000 – 99.999 | 50.000 | ~60.5% | 2.000–3.000/sesi | ~17–25 sesi | `locale/phase6.jsonl` |
+| 7 | 100.000 – 199.999 | 100.000 | ~76.1% | 2.500–3.500/sesi | ~29–40 sesi | `locale/phase7.jsonl` |
+| 8 | 200.000 – 429.886 | 229.887 | 100% | 3.000–5.000/sesi | ~46–77 sesi | `locale/phase8.jsonl` |
 
 \* Persentase dari 963.050 baris total di `strings.jsonl`, dihitung dari distribusi
 frekuensi aktual (lihat catatan di bawah). Angka fase 2–8 adalah interpolasi kasar,
 bukan hitungan presisi per-idx — jangan dianggap eksak.
+
+**Kenapa file dipecah per fase**: satu file JSONL besar (semua 429.887 baris) tidak
+praktis dibaca/di-diff/dibuka. Tiap fase punya file output sendiri di `locale/`, berisi
+`{"idx": N, "v": "..."}` per baris dengan `idx` **absolut** sesuai `unique_strings.jsonl`
+(bukan direset ke 0 tiap file) — jadi gampang digabung lagi nanti tanpa remapping. Detail
+teknis (cara resume, validasi) ada di `handoff.md`.
 
 **Total perkiraan realistis: 125–190+ sesi** untuk mencapai 100% string unik. Ini
 proyeksi kasar, bisa jauh berubah tergantung seberapa banyak string di ekor
@@ -58,9 +64,10 @@ konteks supaya keputusan itu punya data.
 
 1. Baca `handoff.md` → tahu idx terakhir yang selesai & fase saat ini.
 2. Baca `translation_work/GLOSSARY.md` → ikuti konvensi yang sudah dikunci.
-3. Ambil batch berikutnya dari `unique_strings.jsonl` sesuai ukuran yang disarankan
-   fase saat ini (lihat tabel di atas).
-4. Terjemahkan, append ke `translation_work/translations.jsonl`.
+3. Ambil batch berikutnya dari `translation_work/unique_strings.jsonl` sesuai ukuran
+   yang disarankan fase saat ini (lihat tabel di atas).
+4. Terjemahkan, append ke `locale/phase{N}.jsonl` (N = nomor fase saat ini — lihat
+   kolom "File output" di tabel). Jangan campur idx dari fase lain ke file yang salah.
 5. Jalankan script validasi token (di `handoff.md`) — wajib 0 mismatch sebelum lanjut.
 6. Update `handoff.md`: idx terakhir baru, fase saat ini, tanggal, catatan istilah
    baru (kalau ada keputusan baru → tambahkan juga ke `GLOSSARY.md`).
@@ -70,7 +77,7 @@ konteks supaya keputusan itu punya data.
 
 ## Setelah semua fase (atau titik berhenti yang dipilih) selesai
 
-Expand hasil `translations.jsonl` (per-unique) ke `strings.jsonl` penuh (per-baris),
-lalu jalankan `tools/qa_check.py` dan `wwm_locmap.py patch`. Detail rencana expand
-ada di bagian akhir `handoff.md` (belum diimplementasi sebagai script — dikerjakan
+Gabungkan semua `locale/phase*.jsonl` (per-unique) lalu expand ke `strings.jsonl` penuh
+(per-baris), lalu jalankan `tools/qa_check.py` dan `wwm_locmap.py patch`. Detail rencana
+expand ada di bagian akhir `handoff.md` (belum diimplementasi sebagai script — dikerjakan
 setelah cukup banyak string selesai, atau di titik berhenti yang dipilih user).

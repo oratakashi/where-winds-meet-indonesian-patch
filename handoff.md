@@ -7,20 +7,30 @@ kebenaran untuk "sudah sampai mana".
 ## Status saat ini
 
 - **Fase 0 dan Fase 1 SELESAI** (idx 0–1.999). Fase saat ini: **Fase 2**
-  (rentang idx 2.000–4.999, saran batch 600–800/sesi) — belum dimulai.
+  (rentang idx 2.000–4.999, saran batch 600–800/sesi) — **1.000/3.000 dari Fase 2
+  selesai, sisa idx 3.000–4.999 (2.000 lagi)**.
 - Total baris di `strings.jsonl`: **963.050**
 - Total string unik (setelah dedup): **429.887**
-- **Sudah diterjemahkan: idx 0–1.999 dari 429.887 (2.000 string unik, ~0.47%)**
-- Sesi terakhir mengerjakan: 2026-09-15 (idx 1.800–1.999, 200 string, menuntaskan Fase 1)
-- File progress: `translation_work/translations.jsonl` (append-only, `{"idx": N, "v": "..."}`,
-  berurutan mulai idx 0). **Baris terakhir di file ini = idx terakhir yang selesai.**
-  Cek dengan: `wc -l translation_work/translations.jsonl` (nilai ini dikurang 1 = idx terakhir).
+- **Sudah diterjemahkan: idx 0–2.999 dari 429.887 (3.000 string unik, ~0.70%)**
+- Sesi terakhir mengerjakan: 2026-09-15 (idx 2.000–2.999, 1.000 string, Fase 2 lanjut —
+  termasuk satu batch besar berisi dialog quest "Debate/River Crossing" yang sangat
+  banyak percakapan casual gue/lo panjang)
+- **File progress dipecah per fase** di `locale/phase{N}.jsonl` (mis. `locale/phase0.jsonl`,
+  `locale/phase1.jsonl`, `locale/phase2.jsonl`, dst. — mengikuti nomor fase & rentang idx
+  di tabel `plan.md`). Tiap file berisi `{"idx": N, "v": "..."}` per baris, `idx` yang
+  dipakai adalah idx **absolut** dari `unique_strings.jsonl` (bukan di-reset ke 0 per file),
+  jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
+  baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
+  (1.000 baris dari target 3.000 — belum lengkap, lanjutkan append di file ini).
+  **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
+  Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase saat ini dari `plan.md`);
+  next idx = idx_awal_fase + jumlah_baris.
 
 String diurutkan berdasarkan **frekuensi kemunculan** (bukan urutan asli file), jadi
 yang paling sering dipakai di 963rb baris asli dikerjakan duluan — coverage baris
-riil lebih cepat naik daripada persentase unik di atas. 2.000 unik pertama ini sudah
-mencakup **21.28% dari 963.050 baris total** (karena banyak string berulang ribuan
-kali, mis. "Talk" x11.299, "Loading..." x10.002). Semua 2.000 sudah lolos cek token
+riil lebih cepat naik daripada persentase unik di atas. 3.000 unik pertama ini sudah
+mencakup **23.99% dari 963.050 baris total** (karena banyak string berulang ribuan
+kali, mis. "Talk" x11.299, "Loading..." x10.002). Semua 3.000 sudah lolos cek token
 format (`#E`, `#aabbcc`, `%s`, `%d`, `{0}`/`{value}` dst., termasuk tag `<Label|id|#C|n>`
 — lihat script di bawah, sudah diperluas untuk ikut cek tag `<...>` juga. 1 mismatch
 sempat ketemu & sudah diperbaiki di idx 1056 — tag `#Y...#E` yang membungkus banyak
@@ -29,29 +39,35 @@ satu kalimat).
 
 ## PENTING: sisa pekerjaan sangat besar
 
-427.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
+426.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
 sesi per fase (kasar: 125–190+ sesi total sampai 100%). Sampaikan ini ke user kalau
 ditanya estimasi waktu, dan ingatkan opsi berhenti di ~50% baris (lihat "Titik berhenti
 yang masuk akal" di `plan.md`) kalau relevan.
 
 ## Cara resume di sesi berikutnya
 
-1. Baca `plan.md` → cek fase saat ini & saran ukuran batch untuk fase itu.
+1. Baca `plan.md` → cek fase saat ini (nomor N), rentang idx-nya, & saran ukuran batch.
 2. Baca `translation_work/GLOSSARY.md` — berisi semua aturan konsisten yang HARUS diikuti
    (nama yang tidak diterjemahkan, istilah yang tetap bahasa Inggris, gaya bahasa per
    konteks). **Jangan menerjemahkan tanpa baca file ini dulu**, supaya konsisten dengan
    yang sudah dikerjakan.
-3. Cek idx terakhir yang selesai: `wc -l translation_work/translations.jsonl` (baris N
-   berarti idx 0..N-1 sudah selesai, next idx = N).
-4. Baca batch berikutnya dari `translation_work/unique_strings.jsonl` mulai baris N+1
-   (1-indexed) sebanyak sesuai saran batch fase saat ini (`Read` dengan `offset`/`limit`).
+3. Cek idx terakhir yang selesai: `wc -l locale/phase{N}.jsonl` (kalau file belum ada,
+   berarti fase ini belum mulai — next idx = idx_awal fase itu; kalau sudah ada, next
+   idx = idx_awal_fase + jumlah_baris_di_file).
+4. Baca batch berikutnya dari `translation_work/unique_strings.jsonl` mulai baris
+   (next_idx + 1) (1-indexed) sebanyak sesuai saran batch fase saat ini (`Read` dengan
+   `offset`/`limit`).
 5. Terjemahkan tiap `v` sesuai aturan di GLOSSARY.md, tulis ke file sementara
-   `{"idx": N, "v": "..."}` per baris, urut naik dari idx yang sedang dikerjakan.
+   `{"idx": N, "v": "..."}` per baris (idx tetap idx **absolut** dari `unique_strings.jsonl`),
+   urut naik dari idx yang sedang dikerjakan.
 6. **WAJIB validasi sebelum append**: jalankan cek token/placeholder (lihat contoh
    script di bawah) untuk memastikan `#E`, `#aabbcc`, `#X`, `%s`, `%d`, `{0}` dst.
    jumlahnya sama persis dengan sumber. Ini yang nanti dicek juga oleh `tools/qa_check.py`.
-7. Append hasil batch ke `translation_work/translations.jsonl` (pastikan idx tetap
-   berurutan tanpa lompat/duplikat — bisa dicek dengan script kecil).
+7. Append hasil batch ke `locale/phase{N}.jsonl` (file fase yang sedang aktif — **jangan**
+   ditulis ke file fase lain, dan kalau rentang idx fase ini sudah habis di tengah batch,
+   potong batch itu supaya sisanya masuk ke `locale/phase{N+1}.jsonl` yang baru).
+   Pastikan idx tetap berurutan tanpa lompat/duplikat di dalam tiap file — bisa dicek
+   dengan script kecil (lihat contoh validasi di bawah, tinggal ganti nama filenya).
 8. Update bagian "Status saat ini" di file ini (idx terakhir, fase, tanggal sesi, dan
    catatan keputusan baru kalau ada istilah ambigu yang baru ditemui — tambahkan juga
    ke `GLOSSARY.md` supaya konsisten ke depannya). Kalau rentang idx fase saat ini sudah
@@ -60,7 +76,7 @@ yang masuk akal" di `plan.md`) kalau relevan.
    Lebih baik sesi pendek yang tercatat rapi daripada sesi panjang yang terputus
    di tengah tanpa sempat validasi & update handoff.
 
-### Script pengecekan token (jalankan dari folder `translation_work/`)
+### Script pengecekan token (jalankan dari root repo — ganti `phase{N}.jsonl` sesuai fase aktif)
 
 ```python
 import json, re
@@ -69,13 +85,13 @@ from collections import Counter
 TOKEN = re.compile(r'#[A-Za-z]|#[0-9a-fA-F]{6}|%s|%d|\{[^}]*\}|<[^>]*>')
 
 src = {}
-with open('unique_strings.jsonl', encoding='utf-8') as f:
+with open('translation_work/unique_strings.jsonl', encoding='utf-8') as f:
     for line in f:
         d = json.loads(line)
         src[d['idx']] = d['v']
 
 mismatches = []
-with open('translations.jsonl', encoding='utf-8') as f:
+with open('locale/phase2.jsonl', encoding='utf-8') as f:  # <- ganti sesuai fase aktif
     for line in f:
         d = json.loads(line)
         s = src[d['idx']]
@@ -90,12 +106,17 @@ for m in mismatches[:20]:
     print(m)
 ```
 
+Untuk validasi cepat semua fase sekaligus, loop `glob('locale/phase*.jsonl')` dan gabungkan
+semua baris sebelum dicek — juga bagus untuk sekalian memastikan tidak ada idx yang
+tertulis dobel di dua file fase berbeda.
+
 ## Setelah semua (atau cukup banyak) selesai: expand ke strings.jsonl penuh
 
-Belum dibuat scriptnya. Rencana: baca `unique_strings.jsonl` + `translations.jsonl`
-untuk bikin dict `src_v -> translated_v`, lalu stream `../strings.jsonl` asli, replace
-field `v` sesuai dict (skip/biarkan asli kalau belum diterjemahkan — partial translation
-didukung oleh `patch` sesuai CLAUDE.md), tulis ke `strings.translated.jsonl`. Baru lanjut
+Belum dibuat scriptnya. Rencana: baca `translation_work/unique_strings.jsonl` + semua
+`locale/phase*.jsonl` (gabungkan) untuk bikin dict `src_v -> translated_v`, lalu stream
+`strings.jsonl` asli, replace field `v` sesuai dict (skip/biarkan asli kalau belum
+diterjemahkan — partial translation didukung oleh `patch` sesuai CLAUDE.md), tulis ke
+`strings.translated.jsonl`. Baru lanjut
 `python tools/qa_check.py strings.jsonl strings.translated.jsonl` lalu
 `python wwm_locmap.py patch translate_words_map_en strings.translated.jsonl <out>`.
 
