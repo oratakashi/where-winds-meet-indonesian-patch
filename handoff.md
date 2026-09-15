@@ -8,15 +8,15 @@ kebenaran untuk "sudah sampai mana".
 
 - **Fase 0, Fase 1, Fase 2, dan Fase 3 SELESAI** (idx 0–9.999). Fase saat ini: **Fase 4**
   (rentang idx 10.000–19.999, saran batch 1.000–1.500/sesi) — **sedang berjalan**,
-  `locale/phase4.jsonl` sudah ada dengan 2.900 baris (idx 10.000–12.899), next idx = 12.900.
+  `locale/phase4.jsonl` sudah ada dengan 4.100 baris (idx 10.000–14.099), next idx = 14.100.
 - Total baris di `strings.jsonl`: **963.050**
 - Total string unik (setelah dedup): **429.887**
-- **Sudah diterjemahkan: idx 0–12.899 dari 429.887 (12.900 string unik, ~3.00%)**
-- Sesi terakhir mengerjakan: 2026-09-15 — Fase 4 dilanjutkan dari idx 12.600 sampai idx
-  12.899 (300 baris tambahan di `locale/phase4.jsonl`, total 2.900 baris di file itu),
+- **Sudah diterjemahkan: idx 0–14.099 dari 429.887 (14.100 string unik, ~3.28%)**
+- Sesi terakhir mengerjakan: 2026-09-15 — Fase 4 dilanjutkan dari idx 13.800 sampai idx
+  14.099 (300 baris tambahan di `locale/phase4.jsonl`, total 4.100 baris di file itu),
   tervalidasi 0 mismatch token & 0 duplikat/gap idx (dicek lintas semua file
-  `locale/phase*.jsonl` sekaligus, total 12.900 idx unik tercatat tanpa tabrakan). Sesi ini
-  berhenti di batas 2.900 baris fase 4 (kumulatif dari beberapa sesi lanjutan berturut-turut
+  `locale/phase*.jsonl` sekaligus, total 14.100 idx unik tercatat tanpa tabrakan). Sesi ini
+  berhenti di batas 4.100 baris fase 4 (kumulatif dari beberapa sesi lanjutan berturut-turut
   atas permintaan user) — masih dalam rentang wajar untuk sekali duduk pekerjaan.
 - **File progress dipecah per fase** di `locale/phase{N}.jsonl` (mis. `locale/phase0.jsonl`,
   `locale/phase1.jsonl`, `locale/phase2.jsonl`, dst. — mengikuti nomor fase & rentang idx
@@ -25,7 +25,7 @@ kebenaran untuk "sudah sampai mana".
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
   (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
-  (2.900 baris, sedang berjalan — target akhir fase ini idx 19.999).
+  (4.100 baris, sedang berjalan — target akhir fase ini idx 19.999).
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase saat ini dari `plan.md`);
   next idx = idx_awal_fase + jumlah_baris.
@@ -43,7 +43,7 @@ satu kalimat).
 
 ## PENTING: sisa pekerjaan sangat besar
 
-416.987 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
+415.787 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
 sesi per fase (kasar: 125–190+ sesi total sampai 100%). Sampaikan ini ke user kalau
 ditanya estimasi waktu, dan ingatkan opsi berhenti di ~50% baris (lihat "Titik berhenti
 yang masuk akal" di `plan.md`) kalau relevan.
