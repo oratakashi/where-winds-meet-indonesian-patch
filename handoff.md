@@ -7,23 +7,22 @@ kebenaran untuk "sudah sampai mana".
 ## Status saat ini
 
 - **Fase 0, Fase 1, dan Fase 2 SELESAI** (idx 0–4.999). Fase saat ini: **Fase 3**
-  (rentang idx 5.000–9.999, saran batch 800–1.000/sesi) — **2.000/5.000 dari Fase 3
-  selesai, sisa idx 7.000–9.999 (3.000 lagi)**.
+  (rentang idx 5.000–9.999, saran batch 800–1.000/sesi) — **4.300/5.000 dari Fase 3
+  selesai, sisa idx 9.300–9.999 (700 lagi)**.
 - Total baris di `strings.jsonl`: **963.050**
 - Total string unik (setelah dedup): **429.887**
-- **Sudah diterjemahkan: idx 0–6.999 dari 429.887 (7.000 string unik, ~1.63%)**
-- Sesi terakhir mengerjakan: 2026-09-15 (idx 6.000–6.999, 1.000 string, Fase 3 lanjut —
-  banyak string stat scaling berpola `Increases <Stat|id|#C|n> based on Agility...` yang
-  sangat berulang, lore rivalitas sekte "Silver Needle vs Apothecarium", puisi klasik, dan
-  deskripsi senjata Epic/Legendary `Contains a[n] Epic/Legendary <Nama> weapon...`)
+- **Sudah diterjemahkan: idx 0–9.299 dari 429.887 (9.300 string unik, ~2.16%)**
+- Sesi terakhir mengerjakan: 2026-09-15 (idx 8.500–9.299, 800 string, Fase 3 lanjut —
+  banyak mekanisme pertarungan/Inner Way, lore asal-usul Skygrasp rope art & Hu Li,
+  kisah Pertempuran Xiande Dinasti Zhou, deskripsi busana/senjata Imperial Guard, dan dialog NPC)
 - **File progress dipecah per fase** di `locale/phase{N}.jsonl` (mis. `locale/phase0.jsonl`,
   `locale/phase1.jsonl`, `locale/phase2.jsonl`, dst. — mengikuti nomor fase & rentang idx
   di tabel `plan.md`). Tiap file berisi `{"idx": N, "v": "..."}` per baris, `idx` yang
   dipakai adalah idx **absolut** dari `unique_strings.jsonl` (bukan di-reset ke 0 per file),
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
-  (3.000 baris, lengkap), `locale/phase3.jsonl` (2.000 baris dari target 5.000 — belum
-  lengkap, lanjutkan append di file ini).
+  (3.000 baris, lengkap), `locale/phase3.jsonl` (4.300 baris dari target 5.000 — belum
+  lengkap, sisa 700 baris untuk menuntaskan Fase 3).
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase saat ini dari `plan.md`);
   next idx = idx_awal_fase + jumlah_baris.
@@ -41,7 +40,7 @@ satu kalimat).
 
 ## PENTING: sisa pekerjaan sangat besar
 
-422.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
+420.587 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
 sesi per fase (kasar: 125–190+ sesi total sampai 100%). Sampaikan ini ke user kalau
 ditanya estimasi waktu, dan ingatkan opsi berhenti di ~50% baris (lihat "Titik berhenti
 yang masuk akal" di `plan.md`) kalau relevan.

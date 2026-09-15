@@ -104,8 +104,8 @@ Buff/Debuff, Chat.
 - **Nama senjata Legendary/Epic** (Jadeware, Swallowcall, Rainwhisper, Cleftpeak,
   Mistwillow, Starweave, Etherwrath, Hawkwing, Ivorybloom, Mountainfall, Whirlwind, dst.)
   DIBIARKAN Inggris — pola sama dengan nama set kostum yang sudah dikunci.
-- **String `"<Nama Skill> - EX"` / `"<Nama Skill> - Common"`** (varian skill icon, mis.
-  "Infernal Twinblades - EX") DIBIARKAN UTUH bahasa Inggris, sama seperti pola DMG Boost.
+- **String `"<Nama Skill> - EX"`, `"<Nama Skill> - Common"`, `"<Nama Skill>: Common"`, `"<Nama Skill>: Ultimate"`, `"<Nama Skill> - Edge"`, `"<Nama Skill> - Radiance"`** (varian skill icon/tipe, mis.
+  "Infernal Twinblades - EX", "Heavenwill Gauntlets: Ultimate", "Inkwell Fan - Radiance") DIBIARKAN UTUH bahasa Inggris, sama seperti pola DMG Boost.
 - **String stat-scaling panjang berpola `"Increases <Stat|id|#C|n> based on Agility.
   Current bonus: ... Maximum bonus requires ..."`** — kalimat pembuka diterjemahkan
   ("Meningkatkan ... berdasarkan Agility. Bonus saat ini: ... Bonus maksimum
