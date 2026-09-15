@@ -16,17 +16,17 @@ teliti), fase belakang boleh lebih besar (kebanyakan string pendek/berulang pola
 
 ## Fase & target
 
-| Fase | Rentang idx | Jumlah unik | Kumulatif baris tercakup* | Saran ukuran batch/sesi | Perkiraan sesi | File output |
-|---|---|---|---|---|---|---|
-| 0 (selesai) | 0 – 799 | 800 | ~16.2% | — | selesai | `locale/phase0.jsonl` |
-| 1 (selesai) | 800 – 1.999 | 1.200 | ~21.28% (aktual, terverifikasi) | — | selesai (3 sesi) | `locale/phase1.jsonl` |
-| 2 (selesai) | 2.000 – 4.999 | 3.000 | ~25–28% (aktual, terverifikasi) | — | selesai (2 sesi) | `locale/phase2.jsonl` |
-| 3 (selesai) | 5.000 – 9.999 | 5.000 | ~33.5% | — | selesai (~6 sesi) | `locale/phase3.jsonl` |
-| 4 (jalan) | 10.000 – 19.999 | 10.000 | ~40.0% | 1.000–1.500/sesi | ~7–10 sesi (1 sesi selesai) | `locale/phase4.jsonl` |
-| 5 | 20.000 – 49.999 | 30.000 | ~50.1% | 1.500–2.000/sesi | ~15–20 sesi | `locale/phase5.jsonl` |
-| 6 | 50.000 – 99.999 | 50.000 | ~60.5% | 2.000–3.000/sesi | ~17–25 sesi | `locale/phase6.jsonl` |
-| 7 | 100.000 – 199.999 | 100.000 | ~76.1% | 2.500–3.500/sesi | ~29–40 sesi | `locale/phase7.jsonl` |
-| 8 | 200.000 – 429.886 | 229.887 | 100% | 3.000–5.000/sesi | ~46–77 sesi | `locale/phase8.jsonl` |
+| Fase        | Rentang idx       | Jumlah unik | Kumulatif baris tercakup*       | Saran ukuran batch/sesi | Perkiraan sesi              | File output           |
+| ----------- | ----------------- | ----------- | ------------------------------- | ----------------------- | --------------------------- | --------------------- |
+| 0 (selesai) | 0 – 799           | 800         | ~16.2%                          | —                       | selesai                     | `locale/phase0.jsonl` |
+| 1 (selesai) | 800 – 1.999       | 1.200       | ~21.28% (aktual, terverifikasi) | —                       | selesai (3 sesi)            | `locale/phase1.jsonl` |
+| 2 (selesai) | 2.000 – 4.999     | 3.000       | ~25–28% (aktual, terverifikasi) | —                       | selesai (2 sesi)            | `locale/phase2.jsonl` |
+| 3 (selesai) | 5.000 – 9.999     | 5.000       | ~33.5%                          | —                       | selesai (~6 sesi)           | `locale/phase3.jsonl` |
+| 4 (jalan)   | 10.000 – 19.999   | 10.000      | ~40.0%                          | 1.000/sesi (fixed)      | ~9 sesi (2 sesi selesai)    | `locale/phase4.jsonl` |
+| 5           | 20.000 – 49.999   | 30.000      | ~50.1%                          | 1.500–2.000/sesi        | ~15–20 sesi                 | `locale/phase5.jsonl` |
+| 6           | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000–3.000/sesi        | ~17–25 sesi                 | `locale/phase6.jsonl` |
+| 7           | 100.000 – 199.999 | 100.000     | ~76.1%                          | 2.500–3.500/sesi        | ~29–40 sesi                 | `locale/phase7.jsonl` |
+| 8           | 200.000 – 429.886 | 229.887     | 100%                            | 3.000–5.000/sesi        | ~46–77 sesi                 | `locale/phase8.jsonl` |
 
 \* Persentase dari 963.050 baris total di `strings.jsonl`, dihitung dari distribusi
 frekuensi aktual (lihat catatan di bawah). Angka fase 2–8 adalah interpolasi kasar,
@@ -59,6 +59,11 @@ makin kecil:
 
 Keputusan berhenti di titik mana ada di tangan user — dokumen ini cuma kasih
 konteks supaya keputusan itu punya data.
+
+**Catatan preferensi user**: mulai sesi Fase 4 lanjutan (2026-09-15), user minta ukuran
+batch **tetap 1.000 string per iterasi/sesi** (bukan mengikuti rentang saran per-fase di
+tabel di atas) sampai ada instruksi lain. Kolom "Saran ukuran batch/sesi" tetap jadi
+referensi kasar untuk fase-fase berikutnya, tapi default aktual sekarang adalah 1.000/sesi.
 
 ## Prosedur satu sesi (ringkas — detail lengkap ada di handoff.md)
 

@@ -57,6 +57,12 @@ except ImportError:
 MAGIC = 0xDEADBEEF
 CODEC_ZSTD = 4
 
+# `translate_words_map_*_diff` (incremental patch shipped between game updates)
+# uses this exact same container/shard format, but only carries entries that
+# changed since the base map. A key removed since the base version is marked
+# with this single-byte sentinel instead of being absent from the shard.
+TOMBSTONE = b'\xff'
+
 
 # ---------------------------------------------------------------- container
 def read_container(path):
@@ -153,24 +159,43 @@ def cmd_info(a):
     total, nblocks = parse_index(blocks[0])
     print("version        :", ver)
     print("blocks         : %d (1 index + %d shard)" % (len(blocks), nblocks))
-    print("entries        :", total)
-    n = 0
+    print("entries (index):", total)
+    n, deleted = 0, 0
     for b in blocks[1:]:
-        n += parse_shard(b)[1] and len(parse_shard(b)[2])
+        _, _, ents = parse_shard(b)
+        n += len(ents)
+        deleted += sum(1 for _, _, v in ents if v == TOMBSTONE)
     print("entries parsed :", n)
+    if deleted:
+        print("  deleted (tombstone 0xFF):", deleted)
+    if n != total:
+        print("note: parsed count != index total -- file terlihat seperti "
+              "*_diff (hanya berisi key yang berubah/terhapus sejak versi dasar)")
 
 
 def cmd_dump(a):
     ver, blocks = read_container(a.src)
+    deleted = 0
     with open(a.out, 'w', encoding='utf-8') as f:
         for bi, blk in enumerate(blocks[1:], 1):
             _, _, ents = parse_shard(blk)
             for slot, h, v in ents:
-                f.write(json.dumps(
-                    {"b": bi, "s": slot, "h": "%016x" % h,
-                     "v": v.decode('utf-8', 'surrogateescape')},
-                    ensure_ascii=False) + "\n")
+                rec = {"b": bi, "s": slot, "h": "%016x" % h}
+                if v == TOMBSTONE:
+                    rec["deleted"] = True
+                    deleted += 1
+                else:
+                    try:
+                        rec["v"] = v.decode('utf-8')
+                    except UnicodeDecodeError as e:
+                        raise ValueError(
+                            "nilai biner tak terduga di blok %d slot %d "
+                            "(bukan UTF-8, bukan tombstone 0xFF): %r"
+                            % (bi, slot, v[:32])) from e
+                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
     print("ditulis:", a.out)
+    if deleted:
+        print("entri terhapus (tombstone):", deleted)
 
 
 def cmd_patch(a):
@@ -181,8 +206,9 @@ def cmd_patch(a):
             if not line.strip():
                 continue
             r = json.loads(line)
-            edits.setdefault(r["b"], {})[r["s"]] = \
+            v = TOMBSTONE if r.get("deleted") else \
                 r["v"].encode('utf-8', 'surrogateescape')
+            edits.setdefault(r["b"], {})[r["s"]] = v
     out = [blocks[0]]
     for bi, blk in enumerate(blocks[1:], 1):
         _, _, ents = parse_shard(blk)

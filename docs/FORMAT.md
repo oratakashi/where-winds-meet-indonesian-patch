@@ -140,6 +140,24 @@ Ini **tidak menghalangi** pembuatan pack bahasa, karena pendekatan di §4.3(b)
 tidak pernah menghitung ulang penempatan slot. Yang belum bisa dilakukan tanpa
 memecahkan hash: **menambahkan key yang benar-benar baru** ke map.
 
+### 4.5 Varian `_diff`: file incremental antar-versi
+
+`translate_words_map_en_diff` memakai **container dan shard yang identik** dengan file penuh —
+tidak ada perbedaan struktur biner. Bedanya cuma dua hal, keduanya terverifikasi pada file nyata
+(2,4 MB, 3762 shard, 31.471 entri hadir dari klaim `totalEntries` 973.284 di blok index):
+
+1. **Sparse.** Sebagian besar shard nyaris kosong — file ini hanya membawa key yang *berubah*
+   sejak versi dasar, bukan seluruh map. Karena itu `entries parsed` (dihitung dari `size` tiap
+   shard) akan jauh lebih kecil dari `totalEntries` pada blok index; itu bukan bug parser, itu
+   ciri file diff.
+2. **Tombstone.** Key yang **dihapus** sejak versi dasar tetap punya slot (ctrl/keyHash tidak
+   disentuh), tapi nilainya diganti satu byte tunggal `0xFF` — bukan UTF-8 valid, sengaja dipakai
+   sebagai sentinel karena `0xFF` tidak pernah muncul sebagai lead byte UTF-8. Cocok dicek dengan
+   `value == b'\xff'`.
+
+`wwm_locmap.py` menangani ini secara transparan lewat konstanta `TOMBSTONE` di `cmd_dump`/
+`cmd_patch` — tidak perlu flag CLI terpisah untuk file `_diff` vs file penuh.
+
 ---
 
 ## 5. Ringkasan alur decode

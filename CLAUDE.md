@@ -46,6 +46,12 @@ Two scripts implement one pipeline:
 Pipeline: `translate_words_map_en` --dump--> `strings.jsonl` --(edit `v` field)--> validate with
 `qa_check.py` --patch--> new `translate_words_map_en`.
 
+`translate_words_map_en_diff` (the incremental file shipped between game updates) uses the exact
+same container/shard format and is handled by the same `info`/`dump`/`patch` commands. The
+difference is purely semantic: most shards are sparse (only changed keys are present), and a key
+removed since the base version is stored as a single `0xFF` byte instead of being absent — see
+`TOMBSTONE` in `wwm_locmap.py` and the `deleted` JSONL field below.
+
 ### File format (see `docs/FORMAT.md` for the full spec)
 
 - Container: `magic(0xDEADBEEF) | version | blockCount | reserved`, followed by a
@@ -88,6 +94,8 @@ Three checks run per entry when comparing original vs. translated JSONL:
 
 Entries missing from the translated file are treated as intentionally left untranslated (not an
 error) — proper names (Pinyin character/sect names) are commonly left as-is by convention.
+Tombstone entries (`"deleted": true`, from `*_diff` files) are skipped by both loaders and never
+flagged — there is no source text to check.
 
 ## JSONL record shape
 
@@ -99,3 +107,13 @@ error) — proper names (Pinyin character/sect names) are commonly left as-is by
 reference-only — never modify it. `v` is the only field to edit. `patch` only overwrites entries
 present in the given JSONL; everything else is carried over from the source file, so partial
 patches are supported.
+
+A key removed since the base version (only seen in `*_diff` files) dumps as a tombstone instead,
+with no `v` field:
+
+```json
+{"b": 5, "s": 14, "h": "924f075a96b1ccf6", "deleted": true}
+```
+
+Never invent a `v` for these or turn them back into text — `patch` re-encodes `"deleted": true`
+as the raw `0xFF` sentinel byte regardless of what `v` would otherwise be.

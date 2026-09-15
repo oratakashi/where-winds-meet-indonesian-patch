@@ -43,6 +43,8 @@ def load(path):
             if not line.strip():
                 continue
             r = json.loads(line)
+            if r.get('deleted'):            # tombstone dari *_diff, bukan teks
+                continue
             d[(r['b'], r['s'])] = r['v']
     return d
 

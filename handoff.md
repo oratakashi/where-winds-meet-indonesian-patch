@@ -8,16 +8,16 @@ kebenaran untuk "sudah sampai mana".
 
 - **Fase 0, Fase 1, Fase 2, dan Fase 3 SELESAI** (idx 0–9.999). Fase saat ini: **Fase 4**
   (rentang idx 10.000–19.999, saran batch 1.000–1.500/sesi) — **sedang berjalan**,
-  `locale/phase4.jsonl` sudah ada dengan 4.100 baris (idx 10.000–14.099), next idx = 14.100.
+  `locale/phase4.jsonl` sudah ada dengan 5.100 baris (idx 10.000–15.099), next idx = 15.100.
 - Total baris di `strings.jsonl`: **963.050**
 - Total string unik (setelah dedup): **429.887**
-- **Sudah diterjemahkan: idx 0–14.099 dari 429.887 (14.100 string unik, ~3.28%)**
-- Sesi terakhir mengerjakan: 2026-09-15 — Fase 4 dilanjutkan dari idx 13.800 sampai idx
-  14.099 (300 baris tambahan di `locale/phase4.jsonl`, total 4.100 baris di file itu),
+- **Sudah diterjemahkan: idx 0–15.099 dari 429.887 (15.100 string unik, ~3.51%)**
+- Sesi terakhir mengerjakan: 2026-09-15 — Fase 4 dilanjutkan dari idx 14.100 sampai idx
+  15.099 (1.000 baris tambahan di `locale/phase4.jsonl`, total 5.100 baris di file itu),
   tervalidasi 0 mismatch token & 0 duplikat/gap idx (dicek lintas semua file
-  `locale/phase*.jsonl` sekaligus, total 14.100 idx unik tercatat tanpa tabrakan). Sesi ini
-  berhenti di batas 4.100 baris fase 4 (kumulatif dari beberapa sesi lanjutan berturut-turut
-  atas permintaan user) — masih dalam rentang wajar untuk sekali duduk pekerjaan.
+  `locale/phase*.jsonl` sekaligus, total 15.100 idx unik tercatat tanpa tabrakan, phase4
+  kontigu penuh 10.000–15.099 tanpa lubang). User minta batch 1.000 string per sesi untuk
+  fase ini ke depannya.
 - **File progress dipecah per fase** di `locale/phase{N}.jsonl` (mis. `locale/phase0.jsonl`,
   `locale/phase1.jsonl`, `locale/phase2.jsonl`, dst. — mengikuti nomor fase & rentang idx
   di tabel `plan.md`). Tiap file berisi `{"idx": N, "v": "..."}` per baris, `idx` yang
@@ -25,7 +25,7 @@ kebenaran untuk "sudah sampai mana".
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
   (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
-  (4.100 baris, sedang berjalan — target akhir fase ini idx 19.999).
+  (5.100 baris, sedang berjalan — target akhir fase ini idx 19.999).
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase saat ini dari `plan.md`);
   next idx = idx_awal_fase + jumlah_baris.
@@ -43,7 +43,7 @@ satu kalimat).
 
 ## PENTING: sisa pekerjaan sangat besar
 
-415.787 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
+414.787 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
 sesi per fase (kasar: 125–190+ sesi total sampai 100%). Sampaikan ini ke user kalau
 ditanya estimasi waktu, dan ingatkan opsi berhenti di ~50% baris (lihat "Titik berhenti
 yang masuk akal" di `plan.md`) kalau relevan.
@@ -109,6 +109,28 @@ print('mismatches:', len(mismatches))
 for m in mismatches[:20]:
     print(m)
 ```
+
+### Catatan istilah baru dari sesi lanjutan Fase 4 (idx 14100-15099)
+
+- **Nama lokasi majemuk generik** (mis. "Hutuo Region", "Kaifeng - Fairgrounds") dibiarkan
+  **utuh bahasa Inggris** (bukan diterjemahkan sebagian seperti pola "East City Commoner") —
+  konsisten dengan "Hutuo River"/"Sunken City Lake" yang sudah dikunci sebelumnya.
+- **"Sect Master" -> "Ketua Sekte"** (gelar pemimpin sekte, sama pola dengan "Master" =
+  pemimpin organisasi -> Ketua yang sudah dikunci).
+- **Aksi tempur singkat di instruksi kontrol (Press/Hold)** seperti "Deflect"/"Defense"/
+  "Guard" DITERJEMAHKAN jadi kata kerja pendek (Tangkis/Bertahan) ketika muncul sebagai
+  label instruksi tombol, BEDA dari nama skill/tag berjudul yang tetap Inggris.
+- **"Red Packets" (sinonim "Red Envelope") -> "Angpao"** juga, konsisten.
+- **Durasi campuran hari+jam "Nd Mh" (mis. "9 d 7 h")** -> "Nh Mj" (mis. "9 h 7 j") — "h"
+  untuk hari, "j" untuk jam, memperluas konvensi "Nd"->"Nh" yang sudah dikunci.
+- **"Inner Way" (fitur koleksi, mis. "Complete Inner Way Collection II")** dibiarkan Inggris
+  sebagai nama fitur, sama pola dengan Solo Mode/Co-op Mode dll.
+- **"Main Story" sebagai label kategori chapter** (mis. "Qinghe Main Story Boss Battle
+  Space", "Hidden Mountain Main Story P2 - ...") dibiarkan utuh Inggris — diperlakukan
+  sebagai internal quest-chapter label, bukan judul naratif yang diterjemahkan.
+- String Han (`"地图用-万古一人殿2层"`, idx 14850) muncul di data — label internal peta
+  (Chinese leftover), diterjemahkan strukturnya jadi "Untuk Peta - Wangu Yiren Hall Lantai 2"
+  (nama aula ditransliterasi apa adanya, mengikuti pola nama lokasi yang tidak diterjemahkan).
 
 Untuk validasi cepat semua fase sekaligus, loop `glob('locale/phase*.jsonl')` dan gabungkan
 semua baris sebelum dicek — juga bagus untuk sekalian memastikan tidak ada idx yang
