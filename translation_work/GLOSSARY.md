@@ -91,6 +91,32 @@ Buff/Debuff, Chat.
   Solo Mode, Co-op Mode, Endless - Solo/Duo/Quad, Arena, Sword Trial, Breakthrough,
   Bounty, Draw (sudah ada), Room (dalam konteks matchmaking, mis. "Add to Room").
 
+## Istilah baru yang dikunci sesi Fase 3 (idx 5000-6999)
+
+- **PENTING — tag `<...>` TANPA format `|id|#C|n>` (placeholder polos, mis.
+  `<Player Name 7 characters>`) harus dibiarkan PERSIS bahasa Inggris, JANGAN
+  diterjemahkan.** Beda dengan tag stat berformat `<Nama Stat|780|#C|15>` yang memang
+  nama statnya dibiarkan Inggris secara alami (karena memang tidak diterjemahkan) —
+  tag polos ini dianggap satu token utuh oleh `TOKEN` regex di `qa_check.py`
+  (`<[^>]*>`), jadi kalau isinya diterjemahkan, validasi token MISMATCH (pernah kejadian
+  di idx 6041, sudah diperbaiki). Cek ulang tiap ketemu tag `<...>` baru: kalau formatnya
+  bukan pola stat standar, JANGAN sentuh isinya sama sekali.
+- **Nama senjata Legendary/Epic** (Jadeware, Swallowcall, Rainwhisper, Cleftpeak,
+  Mistwillow, Starweave, Etherwrath, Hawkwing, Ivorybloom, Mountainfall, Whirlwind, dst.)
+  DIBIARKAN Inggris — pola sama dengan nama set kostum yang sudah dikunci.
+- **String `"<Nama Skill> - EX"` / `"<Nama Skill> - Common"`** (varian skill icon, mis.
+  "Infernal Twinblades - EX") DIBIARKAN UTUH bahasa Inggris, sama seperti pola DMG Boost.
+- **String stat-scaling panjang berpola `"Increases <Stat|id|#C|n> based on Agility.
+  Current bonus: ... Maximum bonus requires ..."`** — kalimat pembuka diterjemahkan
+  ("Meningkatkan ... berdasarkan Agility. Bonus saat ini: ... Bonus maksimum
+  membutuhkan..."), nama stat & angka di dalam tag `<...>`/`#...#` dibiarkan utuh.
+- **Gelar pahlawan (hero title) dalam tanda kutip** pada kalimat "Unlocks ... hero title
+  \"X\"" DIBIARKAN Inggris (perlakukan sebagai proper noun/achievement name), termasuk
+  versi tampilan berprefiks kode warna (mis. `#dee8d3Three Pillars of Power`). CATATAN:
+  idx 6211 "Best of the Best" sempat diterjemahkan jadi "Yang Terbaik dari yang Terbaik"
+  sebelum konvensi ini disadari — biarkan saja (dampak kecil, cuma satu baris), tapi
+  untuk kemunculan future gelar yang sama/serupa ikuti aturan gelar-tetap-Inggris ini.
+
 ## Catatan ambiguitas yang belum konsisten sempurna (untuk direview kalau ketemu lagi)
 
 - **"Power"**: kadang diterjemahkan "Kekuatan" (kata umum berdiri sendiri), tapi kalau
