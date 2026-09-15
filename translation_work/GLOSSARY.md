@@ -117,6 +117,29 @@ Buff/Debuff, Chat.
   sebelum konvensi ini disadari — biarkan saja (dampak kecil, cuma satu baris), tapi
   untuk kemunculan future gelar yang sama/serupa ikuti aturan gelar-tetap-Inggris ini.
 
+## Istilah baru yang dikunci sesi Fase 4 (idx 10000-10999)
+
+- **Sebutan kekerabatan/status yang menempel di depan nama NPC DITERJEMAHKAN** (pola sama
+  dengan "Young Master" -> "Tuan Muda"): Aunt -> Bibi, Uncle -> Paman, Grandpa -> Kakek,
+  Granny -> Nenek, Elder -> Tetua, Master (guru ilmu silat) -> Guru, Lady/Madam/Miss -> Nyonya/Nona,
+  Mr. -> Tuan. Contoh: "Aunt Han" -> "Bibi Han", "Elder Peng" -> "Tetua Peng", "Master Wuhen"
+  -> "Guru Wuhen", "Grandpa Zhang" -> "Kakek Zhang". Nama tetap tidak diterjemahkan.
+- **"Master" sebagai gelar pemimpin organisasi/faksi** (bukan guru ilmu silat perorangan)
+  -> "Ketua" (mis. "Bloodscale Hall Master" -> "Ketua Bloodscale Hall"). "Vice Master" ->
+  "Wakil Ketua".
+- **Musim dalam teks efek/buff (Spring/Summer/Autumn/Winter) DITERJEMAHKAN** jadi Musim
+  Semi/Musim Panas/Musim Gugur/Musim Dingin ketika dipakai sebagai label deskriptif efek
+  musiman (bukan nama fitur bertitel).
+- **"Red Envelope"/uang lebaran-style hadiah Tahun Baru -> "Angpao"** (istilah umum
+  digunakan di Indonesia untuk hadiah bertema keberuntungan ala Tahun Baru Imlek).
+- Placeholder non-standar tanpa tag (mis. `$STEADY_MIN_PRO_ATK_C:.1f$`, `$P`, `$N`,
+  atau literal seperti `Xd, Xh`) **tidak ditangkap regex TOKEN qa_check.py tapi tetap
+  WAJIB dipertahankan persis** — ini variabel substitusi runtime, bukan teks biasa.
+- Konfirmasi ulang: nama gear/senjata/skin (pattern "- Valor/Radiance/Edge/Guard" dst.),
+  nama tempat baru (Kaifeng Bathhouse, Crosswind Bazaar, Tubo Camp, dll.), dan istilah
+  mekanik CC (Taunt, Bind, Purify sebagai skill judul) tetap dibiarkan bahasa Inggris
+  mengikuti pola yang sudah dikunci sebelumnya.
+
 ## Catatan ambiguitas yang belum konsisten sempurna (untuk direview kalau ketemu lagi)
 
 - **"Power"**: kadang diterjemahkan "Kekuatan" (kata umum berdiri sendiri), tapi kalau

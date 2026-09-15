@@ -6,23 +6,24 @@ kebenaran untuk "sudah sampai mana".
 
 ## Status saat ini
 
-- **Fase 0, Fase 1, dan Fase 2 SELESAI** (idx 0–4.999). Fase saat ini: **Fase 3**
-  (rentang idx 5.000–9.999, saran batch 800–1.000/sesi) — **4.300/5.000 dari Fase 3
-  selesai, sisa idx 9.300–9.999 (700 lagi)**.
+- **Fase 0, Fase 1, Fase 2, dan Fase 3 SELESAI** (idx 0–9.999). Fase saat ini: **Fase 4**
+  (rentang idx 10.000–19.999, saran batch 1.000–1.500/sesi) — **sedang berjalan**,
+  `locale/phase4.jsonl` sudah ada dengan 1.000 baris (idx 10.000–10.999), next idx = 11.000.
 - Total baris di `strings.jsonl`: **963.050**
 - Total string unik (setelah dedup): **429.887**
-- **Sudah diterjemahkan: idx 0–9.299 dari 429.887 (9.300 string unik, ~2.16%)**
-- Sesi terakhir mengerjakan: 2026-09-15 (idx 8.500–9.299, 800 string, Fase 3 lanjut —
-  banyak mekanisme pertarungan/Inner Way, lore asal-usul Skygrasp rope art & Hu Li,
-  kisah Pertempuran Xiande Dinasti Zhou, deskripsi busana/senjata Imperial Guard, dan dialog NPC)
+- **Sudah diterjemahkan: idx 0–10.999 dari 429.887 (11.000 string unik, ~2.56%)**
+- Sesi terakhir mengerjakan: 2026-09-15 — Fase 4 dimulai dan dikerjakan sampai idx 10.999
+  (1.000 baris di `locale/phase4.jsonl`, dari target 1.000–1.500/sesi), tervalidasi 0
+  mismatch token & 0 duplikat/gap idx (dicek lintas semua file `locale/phase*.jsonl`
+  sekaligus, total 11.000 idx unik tercatat tanpa tabrakan).
 - **File progress dipecah per fase** di `locale/phase{N}.jsonl` (mis. `locale/phase0.jsonl`,
   `locale/phase1.jsonl`, `locale/phase2.jsonl`, dst. — mengikuti nomor fase & rentang idx
   di tabel `plan.md`). Tiap file berisi `{"idx": N, "v": "..."}` per baris, `idx` yang
   dipakai adalah idx **absolut** dari `unique_strings.jsonl` (bukan di-reset ke 0 per file),
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
-  (3.000 baris, lengkap), `locale/phase3.jsonl` (4.300 baris dari target 5.000 — belum
-  lengkap, sisa 700 baris untuk menuntaskan Fase 3).
+  (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
+  (1.000 baris, sedang berjalan — target akhir fase ini idx 19.999).
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase saat ini dari `plan.md`);
   next idx = idx_awal_fase + jumlah_baris.
@@ -40,7 +41,7 @@ satu kalimat).
 
 ## PENTING: sisa pekerjaan sangat besar
 
-420.587 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
+418.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
 sesi per fase (kasar: 125–190+ sesi total sampai 100%). Sampaikan ini ke user kalau
 ditanya estimasi waktu, dan ingatkan opsi berhenti di ~50% baris (lihat "Titik berhenti
 yang masuk akal" di `plan.md`) kalau relevan.
@@ -92,7 +93,7 @@ with open('translation_work/unique_strings.jsonl', encoding='utf-8') as f:
         src[d['idx']] = d['v']
 
 mismatches = []
-with open('locale/phase3.jsonl', encoding='utf-8') as f:  # <- ganti sesuai fase aktif
+with open('locale/phase4.jsonl', encoding='utf-8') as f:  # <- ganti sesuai fase aktif
     for line in f:
         d = json.loads(line)
         s = src[d['idx']]
@@ -132,6 +133,13 @@ diterjemahkan — partial translation didukung oleh `patch` sesuai CLAUDE.md), t
 - Tag format (`#Y...#E`, `#H...#E`, `#R...#E`, `<Label|id|#C|n>`, `{0}`, `%s`, dll.)
   WAJIB dipertahankan persis — termasuk teks di dalam tag `<...>` yang merujuk nama
   stat (biarkan bahasa Inggris juga, karena kebetulan konsisten dengan aturan stat di atas).
+- Sebutan kekerabatan/status di depan nama NPC (Aunt/Uncle/Grandpa/Granny/Elder/Master/
+  Lady/Madam/Miss/Mr.) DITERJEMAHKAN konsisten (Bibi/Paman/Kakek/Nenek/Tetua/Guru/Nyonya/
+  Nona/Tuan) — dikunci sesi Fase 4, lihat `GLOSSARY.md` bagian "Fase 4" untuk detail &
+  pengecualian (Master sebagai pemimpin organisasi -> Ketua, bukan Guru).
+- Placeholder non-standar tanpa tag (`$VAR:.1f$`, `$P`, `$N`, literal `Xd, Xh` dst.) tidak
+  tertangkap regex TOKEN di `qa_check.py` tapi WAJIB tetap dipertahankan persis karakter
+  demi karakter — ini variabel substitusi runtime.
 
 ## Catatan lain
 
