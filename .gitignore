@@ -6,7 +6,9 @@
 *.map
 *.cleaned
 strings.jsonl
-traslate_words_map_en
+strings.translated.jsonl
+qa_report.jsonl
+translate_words_map_*
 
 # Python
 __pycache__/

@@ -139,6 +139,31 @@ Buff/Debuff, Chat.
   nama tempat baru (Kaifeng Bathhouse, Crosswind Bazaar, Tubo Camp, dll.), dan istilah
   mekanik CC (Taunt, Bind, Purify sebagai skill judul) tetap dibiarkan bahasa Inggris
   mengikuti pola yang sudah dikunci sebelumnya.
+- **"Lord" (gelar bangsawan/pejabat di depan nama) -> "Tuan"**, konsisten dengan
+  "Mr."/"Young Master" (mis. "Lord Wang" -> "Tuan Wang", "Lord Shi" -> "Tuan Shi").
+- **"Old Man X" -> "Kakek X"** (sama seperti Grandpa). **"Old X" tanpa "Man"** (mis. "Old
+  Jin") dibiarkan bahasa Inggris karena ambigu apakah nickname formal atau deskriptif —
+  review lagi kalau nama yang sama muncul berulang dengan pola jelas.
+  **"Old Caravan Master" -> "Ketua Karavan Tua"** (Master di sini = pemimpin organisasi).
+- Tag `<...>` **tanpa penutup `>`** (string sumber terpotong/typo, mis. `"<Tangled Gauze...`)
+  memang muncul di data asli — pertahankan tanda `<` literal apa adanya di awal kalimat,
+  jangan dihapus maupun ditutup manual.
+- **Durasi berformat `Nd` (N hari, literal huruf "d" bukan token)** -> `Nh` (mis. "30d" ->
+  "30h"). Ini bukan token yang dicek `qa_check.py`, jadi aman diterjemahkan — beda dengan
+  placeholder `$VAR$`/`$P`/`$N` yang harus dipertahankan persis.
+- **"Achievements" -> "Pencapaian"** (bukan dibiarkan Inggris) untuk kategori UI umum,
+  beda dari achievement/title spesifik dalam tanda kutip yang tetap Inggris.
+- **"Healer" (peran trinity tank/DPS/healer)** dibiarkan Inggris seperti Tank/DPS, BEDA
+  dengan "Doctor"/"tabib" yang dipakai untuk konteks pengobatan tradisional/NPC in-universe.
+- **PENTING — tag `<...>` yang membungkus SATU KALIMAT PANJANG penuh (bukan pola
+  `<Label|id|#C|n>` pendek) dianggap SATU TOKEN UTUH oleh regex `qa_check.py`** karena
+  regex `<[^>]*>` mencocokkan dari `<` pertama sampai `>` berikutnya — termasuk `#warna`/
+  `#E` di dalamnya ikut "tertelan" jadi bagian token itu, BUKAN token terpisah. Akibatnya
+  isi di dalam `<...>` jenis ini (ditemukan di idx 12448, notifikasi item beku waktu)
+  **wajib dibiarkan 100% identik dengan sumber (bahasa Inggris)** — hanya teks DI LUAR
+  tanda `<...>` yang diterjemahkan. Beda dengan tag stat pendek yang isinya nama stat
+  (memang sudah dibiarkan Inggris secara alami). Selalu jalankan validasi token setelah
+  translate paragraf yang mengandung `<...>` panjang untuk menangkap kasus ini.
 
 ## Catatan ambiguitas yang belum konsisten sempurna (untuk direview kalau ketemu lagi)
 
