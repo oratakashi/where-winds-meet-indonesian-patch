@@ -491,7 +491,7 @@
 {"idx": 1290, "v": "Mahir"}
 {"idx": 1291, "v": "Hiruk-Pikuk Para Gelandangan"}
 {"idx": 1292, "v": "Tingkatkan Silkbind Attack saat Guild War"}
-{"idx": 1293, "v": "Di momen ini, kamu bukan lagi dirimu sendiri. Kamu adalah bintang yang dulu menyaingi kecemerlangannya. Kamu adalah pejuang yang rela dicaci demi tujuan yang lebih besar. Pergilah dan lakukan apa yang harus dilakukan, demi janji yang kalian berdua buat."}
+{"idx": 1293, "v": "Di momen ini, lo bukan lagi diri lo sendiri. Lo adalah bintang yang dulu menyaingi kecemerlangannya. Lo adalah pejuang yang rela dicaci demi tujuan yang lebih besar. Pergilah dan lakukan apa yang harus dilakukan, demi janji yang kalian berdua buat."}
 {"idx": 1294, "v": "Tarik"}
 {"idx": 1295, "v": "Tersedia untuk dibeli di \"Draw Shop\" dan termasuk avatar dinamis untuk karakter utama."}
 {"idx": 1296, "v": "Masa Lalu Hutuo River"}
@@ -528,7 +528,7 @@
 {"idx": 1327, "v": "Kondisi ini berasal dari paparan berulang terhadap sumber panas ringan, tidak cukup untuk membakar kulit, tapi cukup untuk menyebabkan masalah berkelanjutan."}
 {"idx": 1328, "v": "Ke Dungeon"}
 {"idx": 1329, "v": "Soaring High"}
-{"idx": 1330, "v": "Aku adalah angsa yang terbang tinggi, cahaya bulan yang lembut, bunga di bawah kakimu. Aku adalah dunia dalam segala bentuknya. Katakan padaku, aku ini apa hari ini?"}
+{"idx": 1330, "v": "Gue adalah angsa yang terbang tinggi, cahaya bulan yang lembut, bunga di bawah kaki lo. Gue adalah dunia dalam segala bentuknya. Katakan sama gue, gue ini apa hari ini?"}
 {"idx": 1331, "v": "Biar gue pikir dulu"}
 {"idx": 1332, "v": "*Menghela napas*..."}
 {"idx": 1333, "v": "Kirim"}
@@ -992,7 +992,7 @@
 {"idx": 1791, "v": "Cinta di Bawah Bulan"}
 {"idx": 1792, "v": "Jika Martial Art Skill - Celestial Mandate memicu Perfect Dodge saat backstep, pulihkan 10 Qi dan dapatkan imunitas terhadap Qi Damage selama skill berlangsung. Cooldown: 3 detik."}
 {"idx": 1793, "v": "<Min Physical Attack|780|#C|15> bisa ditingkatkan berdasarkan Agility. Bonus saat ini: #Y{0:.1f}#E. Bonus maksimal membutuhkan #Y150#E <Agility|780|#C|10> ($STEADY_CRI:.0f$ sekarang)."}
-{"idx": 1794, "v": "Para burung nasar mengawasi dan menunggu. Rasa haus mengeringkanmu. Jalan terus berlanjut, tak terlihat, tak berujung, mustahil. Dari mana kau berasal memudar. Ke mana kau pergi lenyap. Di mana kau berada hilang. Tanah ini, langit ini... mereka tak membiarkan apa pun bertahan hidup."}
+{"idx": 1794, "v": "Para burung nasar mengawasi dan menunggu. Rasa haus mengeringkan lo. Jalan terus berlanjut, tak terlihat, tak berujung, mustahil. Dari mana lo berasal memudar. Ke mana lo pergi lenyap. Di mana lo berada hilang. Tanah ini, langit ini... mereka tak membiarkan apa pun bertahan hidup."}
 {"idx": 1795, "v": "Tangisan dari Kejauhan"}
 {"idx": 1796, "v": "Demam Kucing"}
 {"idx": 1797, "v": "Mengenai unit yang sedang Tenacity dengan Special Skill - All Under Justice memberikan Tenacity selama 1.5 detik. Cooldown: 15 detik."}
@@ -1183,7 +1183,7 @@
 {"idx": 1982, "v": "Healing Fan - Panacea Fan Ultimate"}
 {"idx": 1983, "v": "Pip Rat"}
 {"idx": 1984, "v": "Familiar Faces datang membantumu bertarung, tapi awan petir tetap ada dan melukai semua ally. #HPerhatikan healing-nya#E.\nMendapatkan 1 stack #H[Deluge]#E setelah memberikan damage, melakukan Deflect, atau Perfect Dodge. Efek ini bisa terpicu sekali tiap 3 detik. Mendapatkan buff #H[Thunder Enlightenment - Deluge]#E pada #H12 stack#E:\nSaat #YHP pulih sepenuhnya#E, pemulihan HP selanjutnya otomatis berubah jadi shield. Setiap kali berubah, menambahkan 1 #YFlowing Flame#E ke #YSpecial Skill \"Herbal Resonance\"#E milik Soulshade Umbrella, menyerang musuh lewat jalur unik. Maksimal 6 Flowing Flame bisa ada dalam waktu bersamaan."}
-{"idx": 1985, "v": "Aku meninggalkan desaku sejak muda, tangisanku menyapu pasir; Kubawa busur yang anggun, tapi anak panah di tanganku kasar. Bangga akan lenganku, namun batangnya sedikit dan bengkok. Kesombongan masa muda pupus, bidikanku tak pernah tepat."}
+{"idx": 1985, "v": "Gue meninggalkan desa gue sejak muda, tangisan gue menyapu pasir; Gue bawa busur yang anggun, tapi anak panah di tangan gue kasar. Bangga akan lengan gue, namun batangnya sedikit dan bengkok. Kesombongan masa muda pupus, bidikan gue tak pernah tepat."}
 {"idx": 1986, "v": "Mengenai unit yang tidak sedang bertahan dengan <Spear: Light Attack> mengurangi cooldown Active Skill Martial Art saat ini sebesar 0.5 detik. Efek ini bisa terpicu sekali per detik."}
 {"idx": 1987, "v": "Single Target Umbrella - Vernal Umbrella Ultimate"}
 {"idx": 1988, "v": "Saat Defense Counter Skill mengenai unit yang tidak sedang bertahan, memberikan damage langsung ke target tersebut selagi mereka terkena efek Stagger atau Crowd Control dalam 6 detik berikutnya akan memberikan tambahan 4 Qi Damage. Bisa terpicu hingga 4 kali."}

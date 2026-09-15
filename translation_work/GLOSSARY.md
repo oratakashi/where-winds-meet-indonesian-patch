@@ -165,6 +165,45 @@ Buff/Debuff, Chat.
   (memang sudah dibiarkan Inggris secara alami). Selalu jalankan validasi token setelah
   translate paragraf yang mengandung `<...>` panjang untuk menangkap kasus ini.
 
+## Istilah baru yang dikunci sesi Fase 4 lanjutan (idx 18100-19099)
+
+- **Frasa puitis pendek berdiri sendiri (1-4 kata, tanpa penomoran/struktur quest)** yang
+  berfungsi sebagai nama item/skin/mount/emote (mis. "Fleeting Dream", "Clear Glow",
+  "Eternal Watch", "Night Glow", "Wildtrail", "Steady Ascent", "Spring's Bounty",
+  "Winter's Bloom", "Oats in the Wind", "Paired Shadows", "Haven Astray", "Bright Sky")
+  DIBIARKAN Inggris, sama pola dengan nama set kostum/gear. Judul quest/chapter yang
+  punya struktur jelas (angka, "Tales Retold:", "Volume", tanda "-" + peran) tetap
+  DITERJEMAHKAN seperti biasa.
+- **Tag `<...>` yang membungkus dialog/kalimat panjang** (bukan cuma nama stat) — mis.
+  ucapan NPC non-manusia idx 18461 `<Pft. One round...>` — dibiarkan 100% identik
+  Inggris termasuk isi dialognya, mengikuti aturan tag-panjang-satu-token yang sudah
+  dikunci sebelumnya (idx 12448).
+- **Tag highlight pendek `#H...#E`/`#Y...#E` yang membungkus SATU KATA instruksi umum**
+  (Press, night, dst.) isinya DITERJEMAHKAN (`#HPress#E` -> `#HTekan#E`, `#Ynight#E` ->
+  `#Ymalam#E`) — beda dari tag yang membungkus nama skill/weapon (dibiarkan Inggris,
+  mis. `#HFire Arrow#E`) atau kalimat panjang (dibiarkan Inggris). Regex `TOKEN` di
+  `qa_check.py` mencocokkan `#H`/`#Y`/`#E` sebagai token satu-huruf terpisah, jadi teks
+  di antaranya aman diterjemahkan.
+- **Item/hewan/tumbuhan bernama umum** (bukan proper noun fantasi buatan) seperti
+  "Pangolin", "Sparrow Egg", "Crane Egg", "Snow Ape", "Long-Tailed Pheasant",
+  "Lanternfish", "Bamboo Shoot" DITERJEMAHKAN ke istilah Indonesia wajar — beda dari
+  nama gear/weapon fantasi buatan (Swallowcall, Jadesong, Voidchant, Darkecho, dst.)
+  yang tetap Inggris. Kata majemuk campuran (nama fantasi + kata umum, mis. "Peltwing
+  Squirrel") -> kata fantasi dibiarkan Inggris, kata umum diterjemahkan ("Tupai Peltwing").
+
+## Istilah baru yang dikunci sesi penutup Fase 4 (idx 19100-19999)
+
+- **Tier/rank profesi generik format `"Profesi: Tier"`** (mis. "Healer: Novice",
+  "Healer: Adept", "Healer: Redemption", "Scholar: Novice") — kata tier-nya DIBIARKAN
+  Inggris (sama pola dengan Rank/Tier/Stage/Lv). Kalau tier-nya berupa gelar naratif
+  jelas (mis. "Scholar: Refined Gentleman", "Scholar: Silver Tongue") itu DITERJEMAHKAN
+  karena berfungsi sebagai gelar naratif, bukan tier numerik/tingkat generik.
+- **Nama bahasa di UI pemilihan bahasa** (mis. "Русский язык", "日本語",
+  "Español（Latino）") TIDAK diterjemahkan — dibiarkan dalam skrip/bahasa aslinya.
+- **Placeholder durasi gabungan format+literal** (mis. `{diff_hour:d}h ago`) — bagian
+  `{...}` wajib dipertahankan persis, literal suffix di luar kurung kurawal bebas
+  diterjemahkan mengikuti konvensi durasi (`d`->`h` hari, `h`->`j` jam).
+
 ## Catatan ambiguitas yang belum konsisten sempurna (untuk direview kalau ketemu lagi)
 
 - **"Power"**: kadang diterjemahkan "Kekuatan" (kata umum berdiri sendiri), tapi kalau
