@@ -6,22 +6,23 @@ kebenaran untuk "sudah sampai mana".
 
 ## Status saat ini
 
-- **Fase 0 dan Fase 1 SELESAI** (idx 0–1.999). Fase saat ini: **Fase 2**
-  (rentang idx 2.000–4.999, saran batch 600–800/sesi) — **1.000/3.000 dari Fase 2
-  selesai, sisa idx 3.000–4.999 (2.000 lagi)**.
+- **Fase 0, Fase 1, dan Fase 2 SELESAI** (idx 0–4.999). Fase saat ini: **Fase 3**
+  (rentang idx 5.000–9.999, saran batch 800–1.000/sesi) — **belum mulai**.
 - Total baris di `strings.jsonl`: **963.050**
 - Total string unik (setelah dedup): **429.887**
-- **Sudah diterjemahkan: idx 0–2.999 dari 429.887 (3.000 string unik, ~0.70%)**
-- Sesi terakhir mengerjakan: 2026-09-15 (idx 2.000–2.999, 1.000 string, Fase 2 lanjut —
-  termasuk satu batch besar berisi dialog quest "Debate/River Crossing" yang sangat
-  banyak percakapan casual gue/lo panjang)
+- **Sudah diterjemahkan: idx 0–4.999 dari 429.887 (5.000 string unik, ~1.16%)**
+- Sesi terakhir mengerjakan: 2026-09-15 (idx 3.000–4.999, 2.000 string dalam 1 sesi —
+  menyelesaikan sisa Fase 2 seluruhnya. Isi: banyak dialog debat "Confucius
+  says.../go to the authorities", blok lore TCM penyakit lanjutan, puisi klasik
+  Tiongkok, dan banyak sekali string skill/stat berpola `Thunder Enlightenment -
+  <Elemen>` 12-stack yang panjang & berulang)
 - **File progress dipecah per fase** di `locale/phase{N}.jsonl` (mis. `locale/phase0.jsonl`,
   `locale/phase1.jsonl`, `locale/phase2.jsonl`, dst. — mengikuti nomor fase & rentang idx
   di tabel `plan.md`). Tiap file berisi `{"idx": N, "v": "..."}` per baris, `idx` yang
   dipakai adalah idx **absolut** dari `unique_strings.jsonl` (bukan di-reset ke 0 per file),
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
-  (1.000 baris dari target 3.000 — belum lengkap, lanjutkan append di file ini).
+  (3.000 baris, **lengkap**). `locale/phase3.jsonl` belum ada — dibuat di sesi berikutnya.
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase saat ini dari `plan.md`);
   next idx = idx_awal_fase + jumlah_baris.
@@ -39,7 +40,7 @@ satu kalimat).
 
 ## PENTING: sisa pekerjaan sangat besar
 
-426.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
+424.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
 sesi per fase (kasar: 125–190+ sesi total sampai 100%). Sampaikan ini ke user kalau
 ditanya estimasi waktu, dan ingatkan opsi berhenti di ~50% baris (lihat "Titik berhenti
 yang masuk akal" di `plan.md`) kalau relevan.
@@ -91,7 +92,7 @@ with open('translation_work/unique_strings.jsonl', encoding='utf-8') as f:
         src[d['idx']] = d['v']
 
 mismatches = []
-with open('locale/phase2.jsonl', encoding='utf-8') as f:  # <- ganti sesuai fase aktif
+with open('locale/phase3.jsonl', encoding='utf-8') as f:  # <- ganti sesuai fase aktif
     for line in f:
         d = json.loads(line)
         s = src[d['idx']]

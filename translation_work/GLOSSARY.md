@@ -72,6 +72,25 @@ Buff/Debuff, Chat.
   (Shegong, Huhuo, Bi) + kata generik diterjemahkan ("Syndrome" -> "Sindrom",
   "Disease" -> "Penyakit").
 
+## Istilah baru yang dikunci sesi Fase 2 (idx 3000-3699)
+
+- **"N-th Realm" (mis. "1st Realm", "5th Realm") -> "Realm N"** (mis. "Realm 1", "Realm 5")
+  — pola stat/tier progression, dibiarkan Inggris sama seperti Tier/Stage/Lv.
+- **"Rank N" tetap dibiarkan Inggris** (mis. "Rank 9") — sama seperti "Level N"/"Lv.N".
+- **String `"<Nama Skill> - <Tipe Skill> DMG Boost"` (mis. "Everspring Umbrella -
+  Special Skill DMG Boost", "Unfettered Rope Dart - Charged Skill DMG Boost") DIBIARKAN
+  UTUH bahasa Inggris** — ini label stat skill upgrade, bukan kalimat naratif.
+- **Nama resource/meter tambahan yang dibiarkan Inggris** (mengikuti pola HP/Qi/Energy
+  yang sudah ada): Inspiration, Affection, Exploration, Heaven's Will, Battle Will,
+  Tenacity, Super Armor, Stagger, Exhaustion (Immunity), Bleed (mis. "Fivefold Bleed").
+- **Nama tipe damage/stat tambahan yang dibiarkan Inggris**: Thrust Damage, Deflection
+  (Boost), Critical (DMG), Control Immunity, HP Drain, Formless Penetration, Endurance
+  Recovery, Healing Boost, Energy Enhancement — pola sama dengan Silkbind/Bellstrike/
+  Bamboocut/Stonesplit/Formless Attack yang sudah dikunci sebelumnya.
+- **Mode/fitur game yang dibiarkan Inggris sebagai nama fitur** (bukan diterjemahkan):
+  Solo Mode, Co-op Mode, Endless - Solo/Duo/Quad, Arena, Sword Trial, Breakthrough,
+  Bounty, Draw (sudah ada), Room (dalam konteks matchmaking, mis. "Add to Room").
+
 ## Catatan ambiguitas yang belum konsisten sempurna (untuk direview kalau ketemu lagi)
 
 - **"Power"**: kadang diterjemahkan "Kekuatan" (kata umum berdiri sendiri), tapi kalau
