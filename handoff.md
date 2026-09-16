@@ -7,16 +7,16 @@ kebenaran untuk "sudah sampai mana".
 ## Status saat ini
 
 - **Fase 0, Fase 1, Fase 2, Fase 3, dan Fase 4 SELESAI** (idx 0–19.999). Fase saat ini:
-  **Fase 5** (rentang idx 20.000–49.999, 30.000 unik, batch 1.000/sesi) — **2 sesi
-  selesai**: idx 20.000–21.999 (2.000 baris) sudah ada di `locale/phase5.jsonl`, next idx
-  = 22.000.
+  **Fase 5** (rentang idx 20.000–49.999, 30.000 unik, batch 1.000/sesi) — **3 sesi
+  selesai**: idx 20.000–22.999 (3.000 baris) sudah ada di `locale/phase5.jsonl`, next idx
+  = 23.000.
 - Total baris di `strings.jsonl`: **963.050**
 - Total string unik (setelah dedup): **429.887**
-- **Sudah diterjemahkan: idx 0–21.999 dari 429.887 (22.000 string unik, ~5.12%)**
-- Sesi terakhir mengerjakan: 2026-09-16 — Fase 5 lanjut, batch kedua idx 21.000–21.999
+- **Sudah diterjemahkan: idx 0–22.999 dari 429.887 (23.000 string unik, ~5.35%)**
+- Sesi terakhir mengerjakan: 2026-09-16 — Fase 5 lanjut, batch ketiga idx 22.000–22.999
   (1.000 baris baru di `locale/phase5.jsonl`), tervalidasi 0 mismatch token & 0
   duplikat/gap idx (dicek lintas semua file `locale/phase*.jsonl` sekaligus, total
-  22.000 idx unik tercatat tanpa tabrakan, kontigu penuh 0–21.999 tanpa lubang).
+  23.000 idx unik tercatat tanpa tabrakan, kontigu penuh 0–22.999 tanpa lubang).
 - **File progress dipecah per fase** di `locale/phase{N}.jsonl` (mis. `locale/phase0.jsonl`,
   `locale/phase1.jsonl`, `locale/phase2.jsonl`, dst. — mengikuti nomor fase & rentang idx
   di tabel `plan.md`). Tiap file berisi `{"idx": N, "v": "..."}` per baris, `idx` yang
@@ -24,9 +24,9 @@ kebenaran untuk "sudah sampai mana".
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
   (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
-  (10.000 baris, lengkap), `locale/phase5.jsonl` (2.000 baris, **jalan** —
+  (10.000 baris, lengkap), `locale/phase5.jsonl` (3.000 baris, **jalan** —
   rentang penuh fase ini 30.000 baris/idx 20.000–49.999). Sesi berikutnya lanjutkan
-  `locale/phase5.jsonl` mulai idx 22.000.
+  `locale/phase5.jsonl` mulai idx 23.000.
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase saat ini dari `plan.md`);
   next idx = idx_awal_fase + jumlah_baris.
@@ -297,6 +297,41 @@ for m in mismatches[:20]:
   21551, kemungkinan typo sumber dari "Lone Cloud" — dipertahankan literal sesuai teks
   sumber, TIDAK dikoreksi), "Retainer" (sistem NPC pendamping homestead), "Static
   Atmosphere Group" (label internal).
+
+### Catatan istilah baru dari sesi Fase 5 lanjutan (idx 22000-22999)
+
+- **Label animasi/teknik combat internal berpola `"<Senjata/Style> - <Nama Gerakan>"`**
+  (mis. "Spear Red Spirit - Normal Attack Combo 2 - Sweep", "Chicken Simulator - Goose
+  Heavy Attack 1 - PvE", "Assist Tang Blade - Heavy Attack Chain Strikes", "Qianye
+  Showdown - Backward Dodge", "Gauntlets - Punch Slam", "Silkbind - Deluge: Default")
+  **DIBIARKAN UTUH bahasa Inggris** — dikunci sebagai kelanjutan pola nama senjata/tipe
+  serangan yang sudah Inggris, ini label dev-facing untuk animasi/hitbox, bukan teks
+  naratif untuk pemain. Konsisten dengan "Silkbind - Deluge" yang sudah ada di fase
+  sebelumnya. Pengecualian: kalau ada kata kerja instruksi eksplisit di depannya (mis.
+  "Use Skill Theft - Thundercry Blade") kata instruksinya (`Use`) tetap diterjemahkan
+  (`Gunakan`), tapi nama skill/animasinya sendiri tetap Inggris.
+- **"Player"/"player" dikonfirmasi ulang SELALU dibiarkan Inggris** (bukan "Pemain"),
+  termasuk saat muncul sebagai hitungan generik ("0 Player") — diverifikasi lewat grep
+  ke semua `locale/phase*.jsonl` sebelumnya, seluruh precedent dari fase 0-4 konsisten
+  memakai "player"/"Player" apa adanya. Ini mengoverride bacaan literal glosarium yang
+  memasukkan "Player" ke daftar peran NPC generik yang diterjemahkan — dalam praktiknya
+  istilah ini nyaris selalu dipakai sebagai istilah mekanik/teknis (system term), bukan
+  label NPC in-world, jadi konvensi de facto adalah dibiarkan Inggris.
+- **"Melodies of Peace" (judul chapter) DITERJEMAHKAN jadi "Melodi Kedamaian"**, termasuk
+  dalam bentuk gabungan seperti "Kaifeng - Melodi Kedamaian" — mengikuti precedent
+  terbaru di akhir Fase 4 (idx 18999), bukan precedent lama di Fase 3 yang membiarkannya
+  Inggris dalam bentuk gabungan (idx 5178, 6352, dst. — sudah terlanjur, dibiarkan apa
+  adanya, tidak diretrofit).
+- **Durasi literal `Ns` di dalam kalimat naratif biasa (bukan singkatan shorthand)
+  TIDAK dikonversi ke "Nd"** kalau kata "seconds"/"detik" ditulis penuh (bukan huruf
+  tunggal "s") — konversi `Ns`->`Nd` hanya berlaku untuk shorthand literal pendek
+  (mis. "18s", "#Y70s#E"), bukan untuk kalimat yang sudah eksplisit menulis kata
+  "seconds" secara penuh (itu diterjemahkan biasa jadi "detik").
+- **"Union" (struktur sosial pemain) tetap dibiarkan Inggris** (mis. "Scholars' Union",
+  "Total Weekly Union Contribution") — masih konsisten dengan ambiguitas yang dicatat
+  di Fase 5 sesi sebelumnya.
+- **Nama kartu remi/board-game internal** (Number Card, Wild Card, Big Landlord, Little
+  Landlord) dibiarkan Inggris sebagai istilah aturan permainan kartu spesifik.
 
 Untuk validasi cepat semua fase sekaligus, loop `glob('locale/phase*.jsonl')` dan gabungkan
 semua baris sebelum dicek — juga bagus untuk sekalian memastikan tidak ada idx yang
