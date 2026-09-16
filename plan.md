@@ -26,7 +26,16 @@ teliti), fase belakang boleh lebih besar (kebanyakan string pendek/berulang pola
 | 5 (jalan)   | 20.000 – 49.999   | 30.000      | ~50.1%                          | 1.000/sesi (fixed)      | ~30 sesi                    | `locale/phase5.jsonl` |
 | 6           | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000–3.000/sesi        | ~17–25 sesi                 | `locale/phase6.jsonl` |
 | 7           | 100.000 – 199.999 | 100.000     | ~76.1%                          | 2.500–3.500/sesi        | ~29–40 sesi                 | `locale/phase7.jsonl` |
-| 8           | 200.000 – 429.886 | 229.887     | 100%                            | 3.000–5.000/sesi        | ~46–77 sesi                 | `locale/phase8.jsonl` |
+| 8           | 200.000 – 429.886 | 229.887     | 100%*                           | 3.000–5.000/sesi        | ~46–77 sesi                 | `locale/phase8.jsonl` |
+| 9           | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 3.000–5.000/sesi        | ~7–11 sesi                  | `locale/phase9.jsonl` |
+
+**Fase 9** ditambahkan 2026-09-16 setelah update game — bukan bagian dari 429.887 unik semula.
+`tools/rebuild_unique_strings.py` menambah idx 429.887–461.703 (31.817 string baru) dari string
+yang baru muncul/berubah di `translate_words_map_en` (versi update), `_diff`, `__small`, dan
+`__small_diff` yang **belum pernah tercatat** di `unique_strings.jsonl`. idx 0–429.886 (fase 0–8)
+**tidak diubah sama sekali** — progress lama tetap valid tanpa remap. Lihat `handoff.md` bagian
+"Update game 2026-09" untuk detail & cara `patch_all.py` menerapkan dictionary ke keempat file
+sekaligus.
 
 \* Persentase dari 963.050 baris total di `strings.jsonl`, dihitung dari distribusi
 frekuensi aktual (lihat catatan di bawah). Angka fase 2–8 adalah interpolasi kasar,

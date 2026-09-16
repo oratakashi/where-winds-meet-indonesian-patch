@@ -7,8 +7,13 @@
 *.cleaned
 strings.jsonl
 strings.translated.jsonl
+strings_diff.jsonl
+strings_small.jsonl
+strings_small_diff.jsonl
 qa_report.jsonl
+qa_report_*.jsonl
 translate_words_map_*
+patched/
 
 # Python
 __pycache__/

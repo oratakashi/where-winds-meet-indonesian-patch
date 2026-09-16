@@ -42,6 +42,46 @@ sempat ketemu & sudah diperbaiki di idx 1056 — tag `#Y...#E` yang membungkus b
 kata sempat hilang saat translate, jadi hati-hati kalau tag membungkus lebih dari
 satu kalimat).
 
+## Update game 2026-09-16: tool & pipeline disesuaikan
+
+User update game-nya dan menemukan file locale baru: `translate_words_map_en__small` +
+`__small_diff`, berdampingan dengan `translate_words_map_en`/`_diff` yang sudah ada.
+
+- **Format binernya TIDAK berubah** — dikonfirmasi round-trip dump→patch→parse byte-identik
+  pada keempat file, tanpa mengubah `wwm_locmap.py` sama sekali. Detail temuan (98% key `__small`
+  overlap dengan file utama tapi 193 value beda, 27 key eksklusif) ada di `docs/FORMAT.md` §4.6
+  dan `CLAUDE.md`.
+- File utama versi baru **berkurang** dari 963.050 -> 826.388 entri (138.445 key dihapus, 1.783
+  ditambah, 32.397 berubah value) dan re-shard (3.762 -> 3.229 shard) — tidak masalah untuk tool
+  karena parser tidak pernah menghitung ulang shard index sendiri.
+- Ditemukan (dan diperbaiki) bug di `tools/expand_locale.py`: crash `KeyError: 'v'` kalau dijalankan
+  atas dump yang mengandung tombstone (`"deleted": true`, dari file `_diff`) — sekarang di-skip
+  sama seperti `qa_check.py`.
+- Dua script baru: `tools/rebuild_unique_strings.py` (menambah string baru yang ditemukan setelah
+  update ke `unique_strings.jsonl` **tanpa mengubah idx lama** — lihat "Fase 9" di `plan.md`) dan
+  `tools/patch_all.py` (menerapkan dictionary terjemahan yang sudah ada ke keempat file variant
+  sekaligus, tanpa perlu jalan manual satu-satu).
+- Sudah dijalankan di sesi ini: `strings.jsonl` di-dump ulang dari file utama versi baru,
+  `unique_strings.jsonl` diperluas ke idx 461.703 (+31.817 string baru dari update), dan dictionary
+  20.000 string yang sudah diterjemahkan (fase 0-4) diterapkan ke keempat file lewat `patch_all.py`
+  (hasil di folder `patched/`, tidak di-commit — lihat cakupan match per file di bawah). Semua
+  hasil lolos `qa_check.py` (0 PROMPT_LEAK/MARKUP/EMPTY).
+
+  | file                              | entri   | cocok (sudah diterjemahkan) |
+  | ---------------------------------- | ------- | ---------------------------- |
+  | `translate_words_map_en`           | 826.388 | 358.162 (43.34%)              |
+  | `translate_words_map_en_diff`      | 212.117 | 38.094 (17.96%)               |
+  | `translate_words_map_en__small`    | 4.009   | 2.148 (53.58%)                |
+  | `translate_words_map_en__small_diff` | 0     | 0                             |
+
+- **Belum dikerjakan** (di luar scope sesi ini, murni tooling/pipeline): menerjemahkan 31.817
+  string baru di idx 429.887–461.703 (Fase 9) — lanjutkan dengan prosedur biasa di `plan.md`/
+  bagian "Cara resume" di bawah, sama seperti fase lain.
+- Kalau update game berikutnya menambah variant file lagi (misal `translate_words_map_en__small2`
+  atau semacamnya), tinggal: `wwm_locmap.py dump <file> strings_<nama>.jsonl`, tambahkan path itu
+  ke `--extra` di `rebuild_unique_strings.py` (atau default list-nya), dan tambahkan nama filenya
+  ke `FILES` di `tools/patch_all.py`.
+
 ## PENTING: sisa pekerjaan sangat besar
 
 409.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah

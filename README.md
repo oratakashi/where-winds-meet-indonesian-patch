@@ -12,6 +12,11 @@ translate_words_map_en  ──dump──>  strings.jsonl  ──edit──>  str
 translate_words_map_en  <──patch───────────────────────────────────┘
 ```
 
+NetEase kadang mengirim update lewat file tambahan (`_diff` untuk perubahan inkremental,
+`__small`/`__small_diff` untuk tabel subset terpisah) di samping file utama di atas. Semuanya
+memakai container/codec yang sama — lihat [bagian update game](#kalau-game-update-dan-muncul-file-locale-baru-mis-small)
+di bawah untuk cara menanganinya tanpa kehilangan progress terjemahan yang sudah ada.
+
 ---
 
 ## Status
@@ -19,13 +24,17 @@ translate_words_map_en  <──patch──────────────�
 | | |
 |---|---|
 | Format terbongkar | ✅ penuh, lihat [`docs/FORMAT.md`](docs/FORMAT.md) |
-| Round-trip terverifikasi | ✅ 963.050 entri, 100% identik |
+| Round-trip terverifikasi | ✅ byte-identik, di file utama & varian `_diff`/`__small`/`__small_diff` |
 | Decode | ✅ |
 | Encode | ✅ |
 | Ubah nilai key yang sudah ada | ✅ |
 | Tambah key baru | ❌ butuh fungsi hash, belum dipecahkan |
 
-Diuji pada `translate_words_map_en` versi global (963.050 entri, 3.763 blok).
+Diuji pada `translate_words_map_en` versi global — jumlah entri **berubah tiap update game**
+(key ditambah/dihapus/diubah nilainya, jumlah shard ikut menyesuaikan), jadi jangan kaget
+kalau `entries`-mu beda dari contoh di bawah. Snapshot terbaru yang diverifikasi (2026-09):
+826.388 entri / 3.230 blok di file utama, plus varian `_diff` (212.117 entri hadir) dan
+`__small` (4.009 entri, tabel terpisah — lihat [§4.6 FORMAT.md](docs/FORMAT.md#46-varian-__small--__small_diff-tabel-terpisah-bukan-bagian-dari-_diff)).
 
 ---
 
@@ -66,12 +75,14 @@ python wwm_locmap.py info translate_words_map_en
 
 ```
 version        : 1
-blocks         : 3763 (1 index + 3762 shard)
-entries        : 963050
-entries parsed : 963050
+blocks         : 3230 (1 index + 3229 shard)
+entries (index): 826388
+entries parsed : 826388
 ```
 
-Kalau `entries parsed` sama dengan `entries`, parser cocok dengan file kamu.
+(Angka di atas contoh dari snapshot 2026-09 — punyamu bisa beda karena game terus di-update.)
+Kalau `entries parsed` sama dengan `entries (index)`, parser cocok dengan file kamu. Kalau
+beda dan file yang kamu buka bernama `*_diff`, itu normal — lihat [§4.5 FORMAT.md](docs/FORMAT.md).
 
 ### 3. Dump ke JSONL
 
@@ -79,7 +90,7 @@ Kalau `entries parsed` sama dengan `entries`, parser cocok dengan file kamu.
 python wwm_locmap.py dump translate_words_map_en strings.jsonl
 ```
 
-Menghasilkan satu baris JSON per entri (~107 MB untuk 963k entri):
+Menghasilkan satu baris JSON per entri (~90 MB untuk ~826k entri):
 
 ```json
 {"b": 1, "s": 3, "h": "c5cadbb857eee8b4", "v": "The leaf?"}
@@ -114,6 +125,10 @@ PROMPT_LEAK :   1817  (0.189%)
 MARKUP      :    693  (0.072%)
 EMPTY       :      0  (0.000%)
 ```
+
+(Angka contoh di atas dari audit pack komersial pada snapshot lama 963.050 entri — lihat
+["Kalau pakai MT/LLM"](#kalau-pakai-mtllm-validasi-output-nya) — bukan hasil dari
+`translate_words_map_en` versi terbaru.)
 
 Exit code 1 kalau ada temuan, jadi bisa langsung dipasang di CI atau
 pre-commit hook.
@@ -272,9 +287,12 @@ diam-diam.
 - **File verification menimpa patch.** Setiap kali launcher menjalankan
   verifikasi berkas, file kembali ke versi resmi. Apply ulang setelahnya.
   Ini bukan bug tool ini, melainkan konsekuensi mengganti file game.
-- **Patch ketinggalan setelah update konten.** String baru dari patch resmi
-  belum ada di pack lama dan akan tampil dalam bahasa Inggris sampai kamu
-  dump ulang lalu menerjemahkan selisihnya.
+- **Patch ketinggalan setelah update konten.** String baru/berubah dari update resmi
+  belum ada di pack lama dan akan tampil dalam bahasa Inggris sampai kamu dump ulang lalu
+  menerjemahkan selisihnya. `tools/rebuild_unique_strings.py` + `tools/patch_all.py`
+  mengotomasi bagian "terapkan ulang terjemahan yang sudah ada ke file baru" — lihat
+  [bagian update game](#kalau-game-update-dan-muncul-file-locale-baru-mis-small) — tapi
+  string yang benar-benar baru tetap harus diterjemahkan manual.
 - **Tidak bisa menambah key baru** (lihat [Cara kerjanya](#cara-kerjanya)).
 - **Hanya `codec = 4` (zstd)** yang ditangani. Kalau NetEase menambah codec
   lain, parser akan menolak dengan pesan jelas, bukan menghasilkan data rusak.
@@ -309,15 +327,33 @@ diam-diam.
 
 ```
 .
-├── wwm_locmap.py        tool utama: info / dump / patch
+├── wwm_locmap.py                    tool utama: info / dump / patch
 ├── tools/
-│   └── qa_check.py      validator prompt-leak, markup, string kosong
+│   ├── qa_check.py                  validator prompt-leak, markup, string kosong
+│   ├── expand_locale.py             bangun patch JSONL dari dictionary terjemahan untuk 1 file
+│   ├── rebuild_unique_strings.py    tambah string baru setelah update game (idx lama tak disentuh)
+│   └── patch_all.py                 terapkan dictionary ke semua varian translate_words_map_* sekaligus
 ├── docs/
-│   └── FORMAT.md        spesifikasi format lengkap
+│   └── FORMAT.md                    spesifikasi format lengkap
 ├── requirements.txt
 ├── .gitignore
 └── LICENSE
 ```
+
+### Kalau game update dan muncul file locale baru (mis. `__small`)
+
+Update NetEase kadang menambah file locale baru di samping `translate_words_map_en`/`_diff` yang
+sudah biasa dipakai (contoh nyata: `translate_words_map_en__small` + `__small_diff`). Selama
+`info` bisa membacanya (`python wwm_locmap.py info <file>`), formatnya tidak berubah — cukup:
+
+```bash
+python wwm_locmap.py dump translate_words_map_en__small strings_small.jsonl
+python tools/rebuild_unique_strings.py         # tambah string baru ke unique_strings.jsonl
+python tools/patch_all.py --outdir patched     # terapkan semua terjemahan yang sudah ada
+```
+
+Lihat `docs/FORMAT.md` §4.6 untuk detail temuan soal `__small` dan `CLAUDE.md` untuk cara kerja
+tiap script.
 
 ## Kontribusi
 

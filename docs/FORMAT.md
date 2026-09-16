@@ -158,6 +158,28 @@ tidak ada perbedaan struktur biner. Bedanya cuma dua hal, keduanya terverifikasi
 `wwm_locmap.py` menangani ini secara transparan lewat konstanta `TOMBSTONE` di `cmd_dump`/
 `cmd_patch` — tidak perlu flag CLI terpisah untuk file `_diff` vs file penuh.
 
+### 4.6 Varian `__small` / `__small_diff`: tabel terpisah, bukan bagian dari `_diff`
+
+Update game (2026-09) menambahkan `translate_words_map_en__small` dan `__small_diff`. Keduanya
+memakai **container/shard yang identik** dengan file utama — dikonfirmasi lewat round-trip
+dump→patch→parse ulang yang byte-identik pada seluruh isinya, tidak ada perubahan format sama
+sekali. Bedanya bukan struktur biner, tapi isi:
+
+- Ini tabel hash **terpisah**, dengan address space (`b`/`s`) dan jumlah shard sendiri (16 shard
+  di `__small` vs. ribuan di file utama) — bukan delta/diff dari file utama meski namanya mirip.
+  Kemungkinan besar subset "hot" (loading screen, splash, dll.) yang di-load lebih cepat/awal.
+- Diukur pada update 2026-09: dari ~4.000 key di `__small`, **98% key hash-nya juga ada** di
+  `translate_words_map_en`, tapi **193 di antaranya punya value yang beda** dari kopi di file
+  utama (duplikat basi/kontekstual — perlakukan sebagai teks sendiri, jangan asumsikan sama), dan
+  **27 key hanya ada di `__small`**, tidak di file utama maupun versi sebelum update.
+- `__small_diff` mengikuti pola `_diff` yang sama (lihat §4.5) — pada sampel yang diperiksa,
+  isinya kosong sama sekali (0 shard data, index-nya cuma metadata tanpa perubahan).
+
+Konsekuensi praktis: jangan pernah asumsikan `keyHash` yang sama antar-file berarti teks yang
+sama saat ini. Selalu dump & cocokkan tiap file secara independen berdasarkan teks sumbernya
+(lihat `tools/expand_locale.py`/`tools/patch_all.py` — dictionary terjemahan dikunci ke teks
+literal, bukan ke hash/alamat, jadi ini otomatis benar untuk variasi file apa pun).
+
 ---
 
 ## 5. Ringkasan alur decode

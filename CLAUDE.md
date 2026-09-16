@@ -22,6 +22,22 @@ python wwm_locmap.py patch <src> <edits.jsonl> <out>  # re-encode: overlay edits
 python tools/qa_check.py <original.jsonl> <translated.jsonl> [--report qa.jsonl]
                                                        # validates a translated JSONL against the source JSONL
                                                        # exit code 1 if findings exist (CI/pre-commit friendly)
+
+python tools/expand_locale.py [--strings X.jsonl] [--out Y.jsonl]
+                                                       # build a patch JSONL for ANY single dump by matching its
+                                                       # `v` text against translation_work/unique_strings.jsonl +
+                                                       # locale/phase*.jsonl (defaults to strings.jsonl)
+
+python tools/rebuild_unique_strings.py [--dry-run]    # after a game update: append newly-seen strings to
+                                                       # unique_strings.jsonl WITHOUT touching existing idx
+                                                       # (keeps locale/phase*.jsonl valid), scanning
+                                                       # strings.jsonl + strings_diff.jsonl + strings_small.jsonl +
+                                                       # strings_small_diff.jsonl
+
+python tools/patch_all.py [--outdir patched] [--level N]
+                                                       # apply the translation dictionary to all four
+                                                       # translate_words_map_* variants at once, writing
+                                                       # repacked copies under --outdir
 ```
 
 There is no test suite; correctness is verified by round-tripping a real
@@ -36,21 +52,49 @@ in the working tree are local scratch data, not repo assets.
 
 ## Architecture
 
-Two scripts implement one pipeline:
-
 - `wwm_locmap.py` — the container/shard codec (`read_container`/`write_container`,
   `parse_shard`/`rebuild_shard`) plus a thin CLI (`info`/`dump`/`patch`) over it.
 - `tools/qa_check.py` — a standalone validator that diffs an original JSONL dump against a
   translated one and flags three defect classes before a patch is repacked.
+- `tools/expand_locale.py` — turns the per-idx translation work (`translation_work/unique_strings.jsonl`
+  + `locale/phase*.jsonl`) into a `patch`-ready JSONL for one dumped file, matching by literal
+  source text (not by address), so it works unmodified on any `translate_words_map_*` variant.
+- `tools/rebuild_unique_strings.py` — after a game update, appends newly-seen strings to
+  `unique_strings.jsonl` at new idx values without touching existing ones, so already-translated
+  `locale/phase*.jsonl` progress never needs remapping.
+- `tools/patch_all.py` — imports `expand_locale`'s dictionary builder and applies it to all known
+  `translate_words_map_*` files in one pass, in memory (no intermediate per-file JSONL needed).
 
 Pipeline: `translate_words_map_en` --dump--> `strings.jsonl` --(edit `v` field)--> validate with
-`qa_check.py` --patch--> new `translate_words_map_en`.
+`qa_check.py` --patch--> new `translate_words_map_en`. For an update with several file variants
+(base + `_diff` + `__small` + `__small_diff`), the recommended path is `rebuild_unique_strings.py`
+once, then `patch_all.py` to apply the dictionary everywhere at once.
 
 `translate_words_map_en_diff` (the incremental file shipped between game updates) uses the exact
 same container/shard format and is handled by the same `info`/`dump`/`patch` commands. The
 difference is purely semantic: most shards are sparse (only changed keys are present), and a key
 removed since the base version is stored as a single `0xFF` byte instead of being absent — see
 `TOMBSTONE` in `wwm_locmap.py` and the `deleted` JSONL field below.
+
+### The `__small` / `__small_diff` variant
+
+A game update introduced `translate_words_map_en__small` (and its own `__small_diff`) alongside
+the existing pair. **Same container/shard codec, zero format changes** — confirmed by a full
+byte-identical dump→patch→re-parse round trip. It is its own independent hash table with its own
+`b`/`s` address space and shard count (16 shards vs. thousands in the main file) — likely a
+small "hot"/fast-load subset (loading screen, splash, etc.), not a delta of the main file.
+
+Measured on the 2026-09 update: ~98% of its ~4,000 keys share a `keyHash` with the main file, but
+**193 of those have a different value than the main file's copy** (stale/context-specific
+duplicate — translate it as its own text, don't assume it matches the main file), and **27 keys
+exist only in `__small`**, nowhere else. Always treat every `translate_words_map_*` file as an
+independent thing to dump/patch — never assume identical hashes imply identical current text.
+
+Because the translation dictionary (`unique_strings.jsonl` + `locale/phase*.jsonl`) is keyed by
+literal source text, not by file/block/slot/hash, applying it to a new variant needs no format
+work: dump the file, match its `v` text against the dictionary (`tools/expand_locale.py` or
+`tools/patch_all.py`), patch it back. Same recipe for `__small_diff`, main `_diff`, and any future
+variant NetEase adds — add its name to `FILES` in `tools/patch_all.py`.
 
 ### File format (see `docs/FORMAT.md` for the full spec)
 

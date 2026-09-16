@@ -54,6 +54,8 @@ def main():
             if not line:
                 continue
             d = json.loads(line)
+            if d.get("deleted"):            # tombstone dari *_diff, tidak ada yang diterjemahkan
+                continue
             t = src_to_translated.get(d["v"])
             if t is None:
                 continue
