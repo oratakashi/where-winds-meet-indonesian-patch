@@ -19,6 +19,37 @@ di bawah untuk cara menanganinya tanpa kehilangan progress terjemahan yang sudah
 
 ---
 
+## Workflow harian (cheat sheet)
+
+Setelah `translation_work/unique_strings.jsonl` + `locale/phase*.jsonl` di-update dengan
+terjemahan baru, tiga perintah ini yang dipakai berulang-ulang untuk menghasilkan file
+`translate_words_map_en` yang sudah di-patch:
+
+```bash
+# 1. Bangun strings.translated.jsonl dari dictionary terjemahan (default: strings.jsonl -> strings.translated.jsonl)
+python tools/expand_locale.py
+
+# 2. Validasi: cek prompt-leak, token markup hilang/berubah, dan entri kosong
+python tools/qa_check.py strings.jsonl strings.translated.jsonl --report qa_report.jsonl
+
+# 3. Kalau qa_report.jsonl bersih (exit code 0, tidak ada temuan), repack ke file baru
+python wwm_locmap.py patch translate_words_map_en strings.translated.jsonl translate_words_map_en.id
+```
+
+Catatan:
+
+- Perintah 1 butuh `strings.jsonl` (hasil `wwm_locmap.py dump` dari `translate_words_map_en`)
+  sudah ada di root repo lebih dulu.
+- Kalau langkah 2 keluar dengan exit code 1, cek `qa_report.jsonl` dan perbaiki entri yang
+  ditandai sebelum lanjut ke langkah 3 — lihat [Kalau pakai MT/LLM](#kalau-pakai-mtllm-validasi-output-nya).
+- `translate_words_map_en.id` adalah file hasil akhir — salin/rename ke `translate_words_map_en`
+  di folder locale game untuk dipakai (lihat [langkah 6: Repack](#6-repack)).
+- Untuk update game dengan beberapa varian file (`_diff`, `__small`, dst.), pakai
+  `rebuild_unique_strings.py` + `patch_all.py` sebagai gantinya — lihat
+  [bagian update game](#kalau-game-update-dan-muncul-file-locale-baru-mis-small).
+
+---
+
 ## Status
 
 | | |
@@ -41,7 +72,7 @@ kalau `entries`-mu beda dari contoh di bawah. Snapshot terbaru yang diverifikasi
 ## Instalasi
 
 ```bash
-git clone https://github.com/<user>/where-winds-meet-indonesian-patch.git
+git clone https://github.com/oratakashi/where-winds-meet-indonesian-patch.git
 cd where-winds-meet-indonesian-patch
 pip install -r requirements.txt      # hanya butuh: zstandard
 ```

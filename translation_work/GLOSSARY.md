@@ -204,6 +204,45 @@ Buff/Debuff, Chat.
   `{...}` wajib dipertahankan persis, literal suffix di luar kurung kurawal bebas
   diterjemahkan mengikuti konvensi durasi (`d`->`h` hari, `h`->`j` jam).
 
+## Istilah baru yang dikunci sesi Fase 5 (idx 20000-20999)
+
+- **Placeholder durasi gabungan literal ganda format `%sd%sh`** (hari+jam, mis. "Remaining:
+  %sd%sh") -> `%sh%sj` — pola sama dengan konversi `Nd`->`Nh` (hari) dan tambahan `h`->`j`
+  (jam) yang sudah dikunci di Fase 4, diterapkan bersamaan saat literal "d" dan "h" muncul
+  berdampingan dalam satu string. `%s` tetap dipertahankan persis (itu placeholder token).
+- **"Loot" -> "Jarahan"** (item drop), **"Griefing" dibiarkan Inggris** (istilah komunitas
+  gaming umum, tidak ada padanan baku), **"Constable" -> "Konstabel"** (loanword umum untuk
+  gelar penjaga keamanan era historis, konsisten dengan "Guard"/"Soldier" yang diterjemahkan).
+- **"Union" (struktur sosial pemain, beda dari "Guild")** dibiarkan Inggris untuk sesi ini
+  karena belum jelas apakah ini sinonim Guild atau fitur terpisah — review lagi kalau
+  istilah ini muncul lebih sering dengan konteks lebih jelas.
+- **Nama currency/resource khusus tanpa terjemahan baku** (mis. "Bookworms" sebagai nama
+  resource, bukan kata umum "kutu buku") dibiarkan Inggris kapital, mengikuti pola
+  Inspiration/Affection/dll. yang sudah dikunci di Fase 2.
+
+## Istilah baru yang dikunci sesi Fase 5 lanjutan (idx 21000-21999)
+
+- **"Enhancement" pada label node skill-tree/talent DIBIARKAN UTUH bahasa Inggris**
+  (mis. "Momentum Enhancement", "Physical/Critical Resistance Enhancement", "Water
+  Clone Enhancement", "Perfect Catch Enhancement", "Scroll & Script Enhancement",
+  "Charge Calculation Enhancement", "Qi Struggle Enhancement") — pola sama dengan
+  "DMG Boost"/"DMG Bonus"/"DMG Reduction" yang sudah kompound-Inggris. "X Boost"
+  (mis. "Advanced Defense Boost") juga ikut aturan ini.
+- **"Appearance" sebagai kategori kosmetik/skin UI DITERJEMAHKAN jadi "Tampilan"**
+  (mis. "Spear Appearance" -> "Tampilan Spear") — kata umum, bukan proper noun. Nama
+  tipe senjata generik yang menempel (Spear, Blade, Gauntlets, dst.) tetap Inggris.
+- **Placeholder durasi literal detik (`Ns`) di DALAM tag `#Y...#E` dst. ikut dikonversi
+  jadi `Nd`** (mis. `#Y70s#E` -> `#Y70d#E`) — perluasan konvensi durasi detik dari Fase 4,
+  berlaku juga saat literalnya ada di dalam tag warna/highlight.
+- **Tag warna non-standar berpola `#<6-char-hex-ish>NNNN Word#E`**: regex `TOKEN` di
+  `qa_check.py` hanya mencocokkan 6 karakter pertama setelah `#` sebagai token warna;
+  sisanya (digit lanjutan + kata, mis. "120 Points") adalah teks bebas yang AMAN
+  diterjemahkan ("Points" -> "Poin").
+- **"Scholar"/"Healer" sebagai nama kelas Profession** (bukan sebutan NPC generik)
+  dikonfirmasi ulang dibiarkan Inggris (mis. "Scholar Jiang Huaiyuan", "Scholar Class 72").
+- Nama/istilah warna pigmen dalam kutip pada lore item cat (mis. "vermilion", "Lychee",
+  "white") dibiarkan Inggris — naming pun ala pengrajin, bukan teks naratif biasa.
+
 ## Catatan ambiguitas yang belum konsisten sempurna (untuk direview kalau ketemu lagi)
 
 - **"Power"**: kadang diterjemahkan "Kekuatan" (kata umum berdiri sendiri), tapi kalau
