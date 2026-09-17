@@ -243,6 +243,17 @@ Buff/Debuff, Chat.
 - Nama/istilah warna pigmen dalam kutip pada lore item cat (mis. "vermilion", "Lychee",
   "white") dibiarkan Inggris — naming pun ala pengrajin, bukan teks naratif biasa.
 
+## Istilah baru yang dikunci sesi Fase 5 lanjutan (idx 29000-30999)
+
+- **Placeholder durasi majemuk `%dm%ds` (menit+detik)** -> `%dm%dd`, dan `%sh` (jam)
+  -> `%sj` — memperluas konvensi konversi literal durasi (`s`->`d` detik, `h`->`j` jam)
+  ke format yang digabung dengan placeholder `%d`/`%s`. Huruf `m` (menit) dibiarkan
+  apa adanya.
+- **Placeholder tanggal runtime `@T[...]`** (kurung siku, mis. `@T[month_2,
+  day_6,type_noLocal;empty]`) TIDAK tertangkap regex `TOKEN` tapi WAJIB dipertahankan
+  persis karakter demi karakter — variabel substitusi tanggal, sama kelasnya dengan
+  `$VAR$`/`$P`/`$N` yang sudah dikunci sebelumnya.
+
 ## Catatan ambiguitas yang belum konsisten sempurna (untuk direview kalau ketemu lagi)
 
 - **"Power"**: kadang diterjemahkan "Kekuatan" (kata umum berdiri sendiri), tapi kalau

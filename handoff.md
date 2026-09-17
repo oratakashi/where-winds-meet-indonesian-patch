@@ -7,22 +7,22 @@ kebenaran untuk "sudah sampai mana".
 ## Status saat ini
 
 - **Fase 0, Fase 1, Fase 2, Fase 3, dan Fase 4 SELESAI** (idx 0–19.999). Fase saat ini:
-  **Fase 5** (rentang idx 20.000–49.999, 30.000 unik, batch **2.000/sesi**) — **7 sesi
-  selesai**: idx 20.000–28.999 (9.000 baris) sudah ada di `locale/phase5.jsonl`,
-  next idx = 29.000.
+  **Fase 5** (rentang idx 20.000–49.999, 30.000 unik, batch **2.000/sesi**) — **8 sesi
+  selesai**: idx 20.000–30.999 (11.000 baris) sudah ada di `locale/phase5.jsonl`,
+  next idx = 31.000.
 - Total baris di `strings.jsonl`: **963.050**
 - Total string unik (setelah dedup): **429.887**
-- **Sudah diterjemahkan: idx 0–28.999 dari 429.887 (29.000 string unik, ~6.75%)**
-- Sesi terakhir mengerjakan: 2026-09-17 — Fase 5 lanjut, batch ketujuh idx 27.000–28.999
+- **Sudah diterjemahkan: idx 0–30.999 dari 429.887 (31.000 string unik, ~7.21%)**
+- Sesi terakhir mengerjakan: 2026-09-17 — Fase 5 lanjut, batch kedelapan idx 29.000–30.999
   (2.000 baris baru di `locale/phase5.jsonl`, sesuai ukuran iterasi 2.000/sesi),
   tervalidasi 0 mismatch token & 0 duplikat/gap idx (dicek lintas semua file
-  `locale/phase*.jsonl` sekaligus, total 29.000 idx unik tercatat tanpa tabrakan,
-  kontigu penuh 0–28.999 tanpa lubang). Dua mismatch token sempat ketemu saat validasi
-  awal (idx 27130 — tag `#Y...#E` yang membungkus "Special Skill ..." dan "high Bleed
-  damage" sempat terlepas saat translate; idx 27138 — `<sound of rock collapsing>`
-  sempat diterjemahkan isinya padahal harus dibiarkan Inggris karena dianggap satu
-  token oleh regex `<[^>]*>`) — keduanya sudah diperbaiki sebelum di-append, 0 mismatch
-  final.
+  `locale/phase*.jsonl` sekaligus, total 31.000 idx unik tercatat tanpa tabrakan,
+  kontigu penuh 0–30.999 tanpa lubang). Satu mismatch token sempat ketemu saat validasi
+  awal (idx 30170 — tag `<...>` yang membungkus satu paragraf penuh berisi tag warna
+  `#8c5823...#E` di dalamnya sempat diterjemahkan isinya, padahal seluruh `<...>` itu
+  dianggap satu token utuh oleh regex `<[^>]*>` dan harus dibiarkan 100% identik Inggris
+  mengikuti aturan tag-panjang-satu-token yang sudah dikunci sejak idx 12448) — sudah
+  diperbaiki sebelum di-append, 0 mismatch final.
 - **File progress dipecah per fase** di `locale/phase{N}.jsonl` (mis. `locale/phase0.jsonl`,
   `locale/phase1.jsonl`, `locale/phase2.jsonl`, dst. — mengikuti nomor fase & rentang idx
   di tabel `plan.md`). Tiap file berisi `{"idx": N, "v": "..."}` per baris, `idx` yang
@@ -30,9 +30,9 @@ kebenaran untuk "sudah sampai mana".
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
   (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
-  (10.000 baris, lengkap), `locale/phase5.jsonl` (9.000 baris, **jalan** —
+  (10.000 baris, lengkap), `locale/phase5.jsonl` (11.000 baris, **jalan** —
   rentang penuh fase ini 30.000 baris/idx 20.000–49.999). Sesi berikutnya lanjutkan
-  `locale/phase5.jsonl` mulai idx 29.000.
+  `locale/phase5.jsonl` mulai idx 31.000.
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase saat ini dari `plan.md`);
   next idx = idx_awal_fase + jumlah_baris.
@@ -423,6 +423,33 @@ for m in mismatches[:20]:
   istilah-istilah ini di batch ini.
 - Batch ini (2.000 string, idx 27000-28999) dikerjakan sebagai satu sesi, diproses dalam
   4 sub-batch 500 saat penerjemahan lalu digabung & divalidasi sekaligus sebelum di-append.
+
+### Catatan istilah baru dari sesi Fase 5 lanjutan (idx 29000-30999)
+
+- **Placeholder durasi majemuk `%dm%ds` (menit+detik)** -> `%dm%dd` — memperluas konvensi
+  konversi literal detik `s`->`d` (dari Fase 4/Fase 5 sebelumnya) ke format gabungan
+  menit+detik; huruf `m` (menit) dibiarkan apa adanya karena kebetulan sama di kedua
+  bahasa, hanya `s`->`d` yang diubah. Pola sama juga dipakai untuk `%sh`->`%sj` (jam).
+- **Tag `<...>` yang membungkus SATU PARAGRAF PANJANG dengan tag warna di dalamnya**
+  (mis. idx 30170, surat ucapan Tahun Baru yang seluruh isinya — termasuk
+  `#8c5823...#E` — dibungkus satu tag `<...>` dari awal sampai akhir) — regex `TOKEN`
+  menelan seluruh blok itu jadi SATU token, jadi isinya WAJIB 100% identik Inggris;
+  sempat diterjemahkan penuh saat draf awal sebelum disadari, diperbaiki sebelum
+  validasi final. Konsisten dengan aturan tag-panjang-satu-token yang sudah dikunci
+  sejak idx 12448 (Fase 4) — pengingat: kalau sebuah tag `<...>` melingkupi lebih dari
+  satu kalimat, JANGAN sentuh isinya sama sekali, apa pun tag warna di dalamnya.
+- **String panjang berisi banyak placeholder `@T[...]`** (mis. idx 30393, deskripsi
+  Guild War League dengan banyak tanggal `@T[month_2, day_6,type_noLocal;empty]`) —
+  `@T[...]` pakai kurung siku, TIDAK tertangkap regex `TOKEN` (yang cuma cek `#`, `%s`,
+  `%d`, `{}`, `<>`), tapi tetap WAJIB dipertahankan persis karakter demi karakter karena
+  ini variabel substitusi tanggal runtime — sama seperti aturan placeholder non-standar
+  `$VAR$`/`$P`/`$N` yang sudah dikunci sebelumnya.
+- **"Union"/"Player"/"Enhancement"/"Sword Trial"/"Cultivation"/"Retainer"/pola label
+  kombat `"<Senjata> - <Aksi>"`/nama gear Swallowcall/Veilbright/Nightstar dst.**
+  dikonfirmasi ulang konsisten dengan keputusan Fase 5 sesi-sesi sebelumnya.
+- Batch ini (2.000 string, idx 29000-30999) dikerjakan sebagai satu sesi, diproses dalam
+  4 sub-batch 500 saat penerjemahan lalu digabung & divalidasi sekaligus sebelum
+  di-append — 1 mismatch token ketemu & diperbaiki (lihat catatan `<...>` panjang di atas).
 
 Untuk validasi cepat semua fase sekaligus, loop `glob('locale/phase*.jsonl')` dan gabungkan
 semua baris sebelum dicek — juga bagus untuk sekalian memastikan tidak ada idx yang
