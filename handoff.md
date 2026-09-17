@@ -8,31 +8,49 @@ kebenaran untuk "sudah sampai mana".
 
 - **Fase 0, Fase 1, Fase 2, Fase 3, dan Fase 4 SELESAI** (idx 0–19.999). **Fase 5**
   (rentang idx 20.000–49.999, 30.000 unik, batch 2.000/sesi) masih **jalan**: idx
-  20.000–36.999 (17.000 baris) ada di `locale/phase5.jsonl`, next idx (kalau lanjut
-  fase 5) = 37.000 — **tidak disentuh sesi ini**.
-- Sesi ini (2026-09-17) atas permintaan user **melompat ke Fase 9** (idx 429.887–461.703,
-  31.817 string baru dari update game 2026-09-16, lihat bagian "Update game 2026-09-16"
-  di bawah) alih-alih melanjutkan Fase 5 — pilihan eksplisit user, bukan urutan default.
-  **Fase 9 sekarang punya progress independen dari Fase 5**; sesi berikutnya harus
-  tanya/cek dulu fase mana yang mau dilanjutkan (baca kedua bagian "next idx" di bawah).
+  20.000–42.999 (23.000 baris) ada di `locale/phase5.jsonl`, next idx (kalau lanjut
+  fase 5) = 43.000.
+- Sesi ini (2026-09-17, batch keenam Fase 5) melanjutkan Fase 5 (bukan Fase 9) atas
+  permintaan user, dengan ukuran batch 2.000/sesi (tetap, sesuai default terkini).
+  **Fase 9 punya progress independen dari Fase 5** (lihat bagian "next idx" Fase 9 di
+  bawah, tidak disentuh sesi ini); sesi berikutnya harus tanya/cek dulu fase mana yang
+  mau dilanjutkan kalau tidak disebutkan eksplisit.
 - Total baris di `strings.jsonl`: **963.050** (versi lama; versi 2026-09 update = 826.388
   di file utama, lihat bagian "Update game 2026-09-16")
 - Total string unik: **461.704** (429.887 asli + 31.817 dari update game, idx 0–461.703)
-- **Progress Fase 0–5: idx 0–36.999 selesai (37.000/429.887 string dari batch asli)**
-- **Progress Fase 9: idx 429.887–433.886 selesai (4.000/31.817 string, ~12.57%
-  dari Fase 9) — `locale/phase9.jsonl`, next idx = 433.887.**
-- Sesi ini (2026-09-17, batch kedua): idx 431.887–433.886 (2.000 baris baru di
-  `locale/phase9.jsonl`, ukuran iterasi 2.000/sesi seperti biasa), diproses dalam 8
-  sub-batch 250 lalu digabung, tervalidasi 0 mismatch token pada percobaan final (4
-  mismatch sempat ditemukan saat validasi pertama — idx 432181 nambahin `#E` penutup
-  ekstra yang memecah satu span `#Y...#E` panjang jadi dua, idx 432654 & 433428 sama-sama
-  salah gabungin teks highlight `#Y3rd-Stage#E` ke dalam tag `<Heavy Attack Charged
-  Skill|...>` alih-alih menjaga keduanya terpisah [pola: `#YTahap ke-3#E <Tag>`, bukan
-  `#YTag isi Tahap ke-3#E`], dan idx 433342 kehilangan satu pasang `#Y...#E` di paragraf
-  kedua yang berpola "Applicable #YMartial Trigger Effects#E:" — keempatnya diperbaiki
-  sebelum di-append) & 0 duplikat/gap idx (dicek lintas semua file `locale/phase*.jsonl`
-  sekaligus + batch baru, total 41.000 baris/idx unik tercatat tanpa tabrakan,
-  `phase9.jsonl` sendiri kontigu penuh 429.887–433.886 tanpa lubang).
+- **Progress Fase 0–5: idx 0–42.999 selesai (43.000/429.887 string dari batch asli)**
+- **Progress Fase 9: idx 429.887–435.886 selesai (6.000/31.817 string, ~18.86%
+  dari Fase 9) — `locale/phase9.jsonl`, next idx = 435.887 — tidak disentuh sesi ini.**
+- Sesi ini (2026-09-17, batch keenam Fase 5): idx 41.000–42.999 (2.000 baris baru di
+  `locale/phase5.jsonl`, diproses dalam 4 sub-batch 500 lalu digabung, tervalidasi 0
+  mismatch token pada percobaan pertama (semua 4 sub-batch lolos langsung tanpa
+  perbaikan token). 0 duplikat/gap idx dicek lintas semua file `locale/phase*.jsonl`
+  sekaligus (total 49.000 baris/idx unik tercatat tanpa tabrakan), `phase5.jsonl`
+  sendiri kontigu penuh 20.000–42.999 tanpa lubang.
+
+### Riwayat batch Fase 9 sebelumnya (untuk referensi, tidak disentuh sesi ini)
+
+- Sesi 2026-09-17 (batch ketiga Fase 9): idx 433.887–435.886 (2.000 baris baru di
+  `locale/phase9.jsonl`, ukuran iterasi 2.000/sesi — user eksplisit konfirmasi ulang
+  ukuran ini di sesi ini), diproses dalam 8 sub-batch 250 lalu digabung, tervalidasi 0
+  mismatch token pada percobaan final (5 mismatch sempat ditemukan saat validasi
+  pertama — idx 434451 & 435245 & 435796 tiga tag `<...>` panjang satu-token yang
+  sempat diterjemahkan padahal harus dibiarkan 100% Inggris [aturan lama sejak idx
+  12448, masih sering kejadian ulang], idx 434808 kasus baru: string `"#Talk to the
+  Guard"` — `#` di sini BUKAN tag highlight sungguhan, tapi kebetulan cocok regex TOKEN
+  `#[A-Za-z]` sebagai `#T`; solusinya bukan menerjemahkan literal apa adanya, tapi
+  menyisakan `#Talk` utuh di awal & menerjemahkan sisanya (`#Talk dengan Penjaga`) supaya
+  token `#T` tetap cocok, dan idx 435165 kehilangan 1 dari 3 kemunculan
+  `#YMartial Art Triggered Effects#E` — paragraf kedua "Applicable #Y...#E include:"
+  sempat diterjemahkan sebagai teks polos tanpa tag — kelimanya diperbaiki sebelum
+  di-append). Ditemukan juga (di luar validasi token, lewat audit manual) 2 kasus
+  "steward" (idx 434159, 435261, huruf kecil/peran generik) yang sempat dibiarkan
+  Inggris — diperbaiki jadi "pelayan" supaya konsisten dengan aturan GLOSSARY.md lama
+  "Steward -> Pelayan" (Ritual Steward & #YSteward#E di idx 434848/435076 dibiarkan
+  Inggris karena berfungsi sebagai judul/label kapital, bukan sebutan generik). 0
+  duplikat/gap idx (dicek lintas semua file `locale/phase*.jsonl` sekaligus + batch
+  baru, total 43.000 baris/idx unik tercatat tanpa tabrakan, `phase9.jsonl` sendiri
+  kontigu penuh 429.887–435.886 tanpa lubang).
 - Sesi sebelumnya (2026-09-17, batch pertama): idx 429.887–431.886 (2.000 baris),
   diproses dalam 4 sub-batch 500 lalu digabung, tervalidasi 0 mismatch token pada
   percobaan final (2 mismatch sempat ditemukan di sub-batch keempat — idx 431459 salah
@@ -51,10 +69,10 @@ kebenaran untuk "sudah sampai mana".
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
   (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
-  (10.000 baris, lengkap), `locale/phase5.jsonl` (17.000 baris, **jalan, tidak disentuh
-  sesi ini** — rentang penuh fase ini 30.000 baris/idx 20.000–49.999, next idx = 37.000),
-  `locale/phase9.jsonl` (4.000 baris, **jalan** — rentang penuh fase ini 31.817 baris/idx
-  429.887–461.703, next idx = 433.887).
+  (10.000 baris, lengkap), `locale/phase5.jsonl` (23.000 baris, **jalan** — rentang penuh
+  fase ini 30.000 baris/idx 20.000–49.999, next idx = 43.000),
+  `locale/phase9.jsonl` (6.000 baris, **jalan, tidak disentuh sesi ini** — rentang penuh
+  fase ini 31.817 baris/idx 429.887–461.703, next idx = 435.887).
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase yang mau dilanjutkan — **sekarang
   ada dua fase jalan sekaligus, 5 dan 9, jadi tanya user dulu fase mana kalau tidak
@@ -130,9 +148,42 @@ User update game-nya dan menemukan file locale baru: `translate_words_map_en__sm
   ke `--extra` di `rebuild_unique_strings.py` (atau default list-nya), dan tambahkan nama filenya
   ke `FILES` di `tools/patch_all.py`.
 
+### Catatan istilah baru dari sesi Fase 5 lanjutan (idx 39000-40999)
+
+- **"Master" sebagai honorifik di depan nama tokoh (bukan pemimpin organisasi)
+  dikonfirmasi ulang DITERJEMAHKAN "Guru"** (mis. "Master Frost" -> "Guru Frost",
+  "Master Pu" -> "Guru Pu", "Master Qi" -> "Guru Qi") — konsisten dengan aturan lama
+  Fase 4 ("Master Wuhen" -> "Guru Wuhen"), diterapkan juga untuk nickname performer/
+  tokoh individual, bukan cuma guru ilmu silat formal.
+- **"Daoist" (sebagai gelar depan nama, mis. "Daoist Zhang") DITERJEMAHKAN "Daois"**
+  (transliterasi umum istilah Tao dalam bahasa Indonesia) — keputusan baru sesi ini,
+  konsisten diterapkan ke semua kemunculan (Daoist Zhang -> Daois Zhang, Daoist Xi ->
+  Daois Xi, Scabby Daoist -> Daois Berkudis).
+- **Tag `<LINK id='...' color='...' goto_id='...' is_underline='true'>teks</LINK>`**
+  ditemukan (idx 39080) — regex `TOKEN` mencocokkan tag pembuka `<LINK ...>` sebagai SATU
+  token (berhenti di `>` pertama) dan `</LINK>` sebagai token terpisah, jadi teks DI ANTARA
+  keduanya (mis. "Echo event") adalah teks bebas yang aman diterjemahkan — sama seperti
+  pola tag `<...>` pendek lainnya, bukan pola tag-panjang-satu-token.
+- **"Companion" (sistem pendamping non-mount, beda dari Retainer/Kitty/Doggy nickname)
+  dibiarkan Inggris** sebagai istilah sistem (mis. "Select Companion" -> "Pilih Companion",
+  "Companion Rotation" -> "Rotasi Companion").
+- **Kata benda umum untuk hewan/burung yang jarang dipakai (Muntjac, Bustard,
+  Blackberry Lily)** — muntjac diterjemahkan "Kijang Merah" (nama umum Indonesia untuk
+  kijang), Bustard dibiarkan sebagai nama burung (tidak ada padanan baku umum), Blackberry
+  Lily (bunga) dibiarkan Inggris karena tidak ada nama umum Indonesia yang mapan.
+- **String Han/Chinese leftover TIDAK ditemukan di batch ini** (beda dari beberapa batch
+  Fase 5 sebelumnya) — kemungkinan area distribusi frekuensi ini sudah habis stok leftover-
+  nya untuk sementara.
+- **"Grandmaster"/"Master Artisan" (gelar tertinggi sekte Mohist Hill, setara istilah
+  sistem) dikonfirmasi dibiarkan Inggris**, beda dari "Core Disciple"/"Outer Disciple"
+  yang diterjemahkan (Disciple = role generik yang sudah dikunci diterjemahkan).
+- Batch ini (2.000 string, idx 39000-40999) dikerjakan sebagai satu sesi, diproses dalam
+  4 sub-batch 500 lalu digabung & divalidasi sekaligus sebelum di-append — 0 mismatch
+  token pada percobaan pertama di semua 4 sub-batch (tidak ada koreksi diperlukan).
+
 ## PENTING: sisa pekerjaan sangat besar
 
-392.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
+388.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
 sesi per fase (kasar: 125–190+ sesi total sampai 100%). Sampaikan ini ke user kalau
 ditanya estimasi waktu, dan ingatkan opsi berhenti di ~50% baris (lihat "Titik berhenti
 yang masuk akal" di `plan.md`) kalau relevan.
@@ -546,6 +597,38 @@ for m in mismatches[:20]:
   pada percobaan pertama (setelah koreksi 1 idx yang sempat terlewat dibaca dari sumber,
   idx 36999, ditangkap saat validasi count sebelum append).
 
+### Catatan istilah baru dari sesi Fase 5 lanjutan (idx 37000-38999)
+
+- **Building/furniture component internal Homestead** (mis. "Red Roof Surface", "Red Roof
+  Outer Corner", "Rainbow Resort Partition/Gable Wall/Beam/Double Door", "Greenwood Mansion
+  Partition/Bracket/Railing Pillar Head/Arch Bridge/Indoor Stairs", "Bamboo Leaf Screen
+  5/6", "Diamond-Patterned Screen") **dikonfirmasi ulang DIBIARKAN UTUH bahasa Inggris** —
+  diperlakukan sebagai label internal identifier komponen bangunan/furnitur, konsisten
+  dengan precedent lama ("Roof Outer Corner" idx 32086, "Greenwood Mansion Long Railing I"
+  idx 36373), bukan diterjemahkan sebagai deskripsi umum.
+- **`"Trial: <Nama>"` (mis. "Trial: Gatekeeper's Stand", "Trial: Unbounded World", "Trial:
+  Malefic Stars", "Trial: Anchor the Ark") dikonfirmasi ulang DIBIARKAN UTUH bahasa
+  Inggris** (termasuk prefix "Trial:"-nya, TIDAK diterjemahkan jadi "Uji Coba:") — mengikuti
+  precedent TERBARU (idx 35748 "Trial: Fleeting Trace", idx 36072 "Trial: Master of
+  Spectacles", idx 36739 "Trial: Blades in Question", semua tepat sebelum batch ini),
+  bukan precedent lebih lama yang sempat menerjemahkan jadi "Uji Coba: ..." — pola nama
+  dungeon/trial berjudul dianggap proper noun sejak idx ~35000-an.
+- **String Han leftover keempat**: idx 37377 `"地图用-万古一人殿4层"` (label internal peta,
+  identik strukturnya dengan idx 14850 tapi lantai 4, bukan 2) diterjemahkan jadi "Untuk
+  Peta - Wangu Yiren Hall Lantai 4" — nama aula ditransliterasi apa adanya, konsisten
+  dengan pola idx 14850/19719/36975 (Han leftover = label dev, diterjemahkan penuh kecuali
+  nama). Sempat terlewat (dibiarkan Han) di draf awal, ditangkap & diperbaiki lewat audit
+  manual sebelum di-append (bukan lewat validasi token, karena string CJK tanpa tag tidak
+  memicu mismatch pada regex `TOKEN`).
+- **"Union"/"Player"/"Enhancement"/"Sword Trial"/"Cultivation"/"Retainer"/"Wanderer"/"Farmer"
+  (belum muncul batch ini)/pola label kombat `"<Senjata> - <Aksi>"`/nama gear panjang**
+  dikonfirmasi ulang konsisten dengan keputusan Fase 5 sesi-sesi sebelumnya — tidak ada
+  perubahan konvensi besar lain untuk istilah-istilah ini di batch ini.
+- Batch ini (2.000 string, idx 37000-38999) dikerjakan sebagai satu sesi, diproses dalam
+  4 sub-batch 500 lalu digabung & divalidasi sekaligus sebelum di-append — 0 mismatch token
+  pada validasi pertama (skrip token); 1 koreksi non-token (Han leftover di atas) ditemukan
+  lewat audit manual terpisah.
+
 ### Catatan istilah baru dari sesi Fase 9 (idx 429887-431886, batch pertama)
 
 Fase 9 adalah string baru dari update game 2026-09-16 (bukan lanjutan `unique_strings.jsonl`
@@ -642,6 +725,90 @@ GLOSSARY.md lama tetap berlaku; tambahan/klarifikasi baru sesi ini:
   token ditemukan & diperbaiki (lihat tiga poin di atas), semuanya ketangkap di validasi
   pertama sebelum append (bukan lewat sub-batch bertahap seperti sesi sebelumnya, karena
   batch ini digabung dan divalidasi sekali di akhir, bukan per sub-batch).
+
+### Catatan istilah baru dari sesi Fase 9 lanjutan (idx 433887-435886, batch ketiga)
+
+- **Material/resource crafting Homestead berpola `"<Nama> Tier N"` dikonfirmasi ulang**
+  (mis. "Cinnabar Tier II") tetap dibiarkan Inggris, konsisten dengan keputusan batch
+  kedua.
+- **Nama fitur/industri baru "Cloudfore" (varian Beyond Mundane) DIBIARKAN UTUH bahasa
+  Inggris** sebagai nama sistem/fitur, pola sama dengan Arcadian Homestead/Beyond
+  Mundane yang sudah dikunci.
+- **"Fengputer" (perangkat/oracle mekanis yang menjawab pertanyaan pemain, muncul
+  berkali-kali di batch ini) DIBIARKAN UTUH bahasa Inggris** — nama alat/mekanisme
+  spesifik-game, bukan kata umum.
+- **Nama makanan Tiongkok umum (Hulatang, Tofu Pudding, Pan-Fried Buns, dst.) dalam
+  teks lore kuliner panjang DIBIARKAN UTUH bahasa Inggris/pinyin** — loanword kuliner,
+  konsisten dengan pola nama makanan lain yang sudah dikunci sebelumnya (mis. He'le
+  noodles).
+- **"Steward" (peran generik huruf kecil) DITERJEMAHKAN "Pelayan"** — dikunci ulang
+  dari GLOSSARY.md lama; sempat lolos dibiarkan Inggris 2x di draf awal batch ini,
+  diperbaiki setelah audit manual pasca-validasi token (validasi token TIDAK
+  menangkap kasus ini karena "steward" tanpa tag bukan token yang dicek regex).
+  **PENTING**: "Steward" berhuruf besar sebagai bagian judul/label kapital (mis.
+  "Ritual Steward", `#YSteward#E`) tetap dibiarkan Inggris — beda konteks, berfungsi
+  sebagai judul bukan sebutan generik.
+- **PENTING — string yang diawali `#` tapi BUKAN tag highlight sungguhan** (ditemukan
+  1 kasus baru: idx 434808 `"#Talk to the Guard"` — nama label quest yang kebetulan
+  diawali `#`, bukan format token `#Y...#E`): regex `TOKEN` di `qa_check.py` tetap
+  mencocokkan `#T` (huruf pertama setelah `#`) sebagai token satu-huruf, JADI kalau
+  diterjemahkan biasa (mis. jadi "#Bicara..."), validasi MISMATCH karena huruf
+  pertama berubah. Solusi: biarkan `#` + kata pertama tetap Inggris apa adanya kalau
+  itu bagian dari string yang jelas bukan pola highlight (`#Talk` dibiarkan, sisanya
+  diterjemahkan jadi "#Talk dengan Penjaga") — TIDAK sama dengan menerjemahkan
+  seluruhnya lalu berharap huruf pertama kebetulan sama.
+- **Paragraf panjang dengan >2 kemunculan tag `#Y...#E` yang membungkus istilah yang
+  SAMA berulang kali** (mis. idx 435165, "Martial Art Triggered Effects" muncul 3x
+  dalam satu string, masing-masing dibungkus `#Y...#E` terpisah) — sempat ada 1
+  kemunculan ketiga (di awal paragraf kedua, "Applicable #Y...#E include:") yang
+  lolos tanpa tag saat draf awal. Pengingat: kalau istilah yang sama berulang lebih
+  dari 2x dalam satu string, cek SEMUA kemunculan satu per satu, jangan asumsikan
+  cuma ada 2 seperti pola umum sebelumnya.
+- **Tag `<...>` panjang satu-token (aturan lama sejak idx 12448) masih sering
+  kelewatan diterjemahkan** — 3 kasus lagi di batch ini (idx 434451 ucapan anjing
+  non-manusia, idx 435245 & 435796 tag placeholder/dialog dalam tanda kutip)
+  sebelum ketangkap validasi token. Pola berulang ini menegaskan: SETIAP kali ada
+  tag `<...>` baru, cek dulu apakah formatnya `<Label|id|#C|n>` (nama stat, aman
+  diterjemahkan sebagian) atau bukan (harus 100% identik Inggris) SEBELUM
+  menerjemahkan, bukan sesudahnya.
+- **Farmer/Qiongqi Master/Cultivation/Union/Sword Trial/Wanderer/pola label kombat
+  `"<Senjata> - <Aksi>"`/nama gear panjang** dikonfirmasi ulang konsisten dengan
+  keputusan Fase 9 batch pertama & kedua serta Fase 5 sesi-sesi sebelumnya.
+- Batch ini (2.000 string, idx 433887-435886) dikerjakan sebagai satu sesi, diproses
+  dalam 8 sub-batch 250 lalu digabung & divalidasi sekaligus di akhir — 5 mismatch
+  token ditemukan & diperbaiki (lihat poin-poin di atas) plus 2 inkonsistensi
+  "steward" ditemukan lewat audit manual terpisah dari validasi token otomatis.
+
+### Catatan istilah baru dari sesi Fase 5 lanjutan (idx 41000-42999, batch keenam)
+
+- **"Refine"/"Draft"/"Interface"/"Melee"/"AoE"/"Pet"/"Dodge"/"Attuning"/"Cultivator"**
+  dan istilah sistem/UI generik sejenis **dibiarkan Inggris** sebagai loanword gaming
+  umum, konsisten dengan Guild/Event/Login/Menu/Skill/Item/Quest yang sudah dikunci.
+- **"Bustard"/"Black Brant"/"Brant"** (nama burung langka tanpa padanan baku Indonesia)
+  tetap dibiarkan Inggris, konsisten dengan keputusan Fase 5 sebelumnya. **"Jackal"**
+  DITERJEMAHKAN jadi "Jakal" (loanword umum, beda dari nama burung yang tak ada
+  padanannya sama sekali).
+- **Label lokasi/dekor berpola `"<Nama Set/Lokasi> <Deskripsi Komponen>"`** (mis.
+  "Rainbow Resort Small Roof Inner Corner", "Greenwood Mansion Board Wall", "Chai
+  Mansion - Secret Observation") — nama set/lokasi (Rainbow Resort, Greenwood Mansion,
+  dst.) dibiarkan Inggris seperti nama lokasi lain, tapi deskripsi komponennya
+  (Small Roof Inner Corner, Board Wall, dst.) DITERJEMAHKAN sebagai kata benda umum
+  — beda dari label kombat `"<Senjata> - <Aksi>"` yang seluruhnya dibiarkan Inggris.
+- **"Hongbao" (transliterasi Tionghoa untuk angpao) DITERJEMAHKAN jadi "Angpao"**
+  konsisten dengan "Red Packets"/"Red Envelope" -> "Angpao" yang sudah dikunci Fase 4.
+- **String Han leftover ditemukan lagi**: idx 42741 `"待确认文本"` (label dev internal
+  berarti "teks yang perlu dikonfirmasi") — diterjemahkan strukturnya ke Indonesia
+  sepenuhnya, sama seperti pola string Han leftover sebelumnya (label internal, bukan
+  nama yang perlu ditransliterasi).
+- **"Union"/"Player"/"Cultivation"/"Sword Trial"/"Retainer"/"Enhancement"/"Dispatch"/
+  pola label kombat `"<Senjata> - <Aksi>"`/nama gear panjang (Swallowcall, Etherwrath,
+  Hawkwing, Starweave, dst.)** dikonfirmasi ulang konsisten dengan keputusan Fase 5
+  sesi-sesi sebelumnya — tidak ada perubahan konvensi besar baru untuk istilah-istilah
+  ini di batch ini.
+- Batch ini (2.000 string, idx 41000-42999) dikerjakan sebagai satu sesi, diproses
+  dalam 4 sub-batch 500 lalu digabung & divalidasi sekaligus sebelum di-append — 0
+  mismatch token pada percobaan pertama di semua 4 sub-batch (tidak ada koreksi
+  diperlukan).
 
 Untuk validasi cepat semua fase sekaligus, loop `glob('locale/phase*.jsonl')` dan gabungkan
 semua baris sebelum dicek — juga bagus untuk sekalian memastikan tidak ada idx yang

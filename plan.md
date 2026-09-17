@@ -23,11 +23,11 @@ teliti), fase belakang boleh lebih besar (kebanyakan string pendek/berulang pola
 | 2 (selesai) | 2.000 – 4.999     | 3.000       | ~25–28% (aktual, terverifikasi) | —                       | selesai (2 sesi)            | `locale/phase2.jsonl` |
 | 3 (selesai) | 5.000 – 9.999     | 5.000       | ~33.5%                          | —                       | selesai (~6 sesi)           | `locale/phase3.jsonl` |
 | 4 (selesai) | 10.000 – 19.999   | 10.000      | ~40.0%                          | —                       | selesai (7 sesi)            | `locale/phase4.jsonl` |
-| 5 (jalan)   | 20.000 – 49.999   | 30.000      | ~50.1%                          | 2.000/sesi (fixed)      | ~15 sesi (8.5/15 selesai)   | `locale/phase5.jsonl` |
+| 5 (jalan)   | 20.000 – 49.999   | 30.000      | ~50.1%                          | 2.000/sesi (fixed)      | ~15 sesi (11.5/15 selesai)  | `locale/phase5.jsonl` |
 | 6           | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000–3.000/sesi        | ~17–25 sesi                 | `locale/phase6.jsonl` |
 | 7           | 100.000 – 199.999 | 100.000     | ~76.1%                          | 2.500–3.500/sesi        | ~29–40 sesi                 | `locale/phase7.jsonl` |
 | 8           | 200.000 – 429.886 | 229.887     | 100%*                           | 3.000–5.000/sesi        | ~46–77 sesi                 | `locale/phase8.jsonl` |
-| 9 (jalan)   | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 2.000/sesi (fixed)      | ~16 sesi (2/16 selesai)      | `locale/phase9.jsonl` |
+| 9 (jalan)   | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 2.000/sesi (fixed)      | ~16 sesi (3/16 selesai)      | `locale/phase9.jsonl` |
 
 **Fase 9** ditambahkan 2026-09-16 setelah update game — bukan bagian dari 429.887 unik semula.
 `tools/rebuild_unique_strings.py` menambah idx 429.887–461.703 (31.817 string baru) dari string
@@ -37,11 +37,24 @@ yang baru muncul/berubah di `translate_words_map_en` (versi update), `_diff`, `_
 "Update game 2026-09" untuk detail & cara `patch_all.py` menerapkan dictionary ke keempat file
 sekaligus.
 
-**Update 2026-09-17**: atas permintaan eksplisit user, sesi ini melompat ke Fase 9 duluan
-(batch pertama, idx 429.887–431.886) meski Fase 5 belum selesai (berhenti di idx 37.000).
-**Kedua fase sekarang jalan paralel** — Fase 5 dan Fase 9 sama-sama punya progress belum
-tuntas. Sesi berikutnya **harus tanya user dulu fase mana yang mau dilanjutkan** kalau tidak
-disebutkan eksplisit (lihat "Status saat ini" di `handoff.md` untuk next idx masing-masing).
+**Update 2026-09-17 (awal sesi)**: atas permintaan eksplisit user, sesi itu melompat ke
+Fase 9 duluan (batch pertama, idx 429.887–431.886) meski Fase 5 belum selesai (berhenti di
+idx 37.000). **Kedua fase sekarang jalan paralel** — Fase 5 dan Fase 9 sama-sama punya
+progress belum tuntas. Sesi berikutnya **harus tanya user dulu fase mana yang mau
+dilanjutkan** kalau tidak disebutkan eksplisit (lihat "Status saat ini" di `handoff.md`
+untuk next idx masing-masing).
+
+**Update 2026-09-17 (lanjutan)**: user eksplisit minta lanjut Fase 5 (bukan Fase 9), batch
+2.000 string/iterasi dikonfirmasi ulang. idx 37.000–38.999 selesai, next idx Fase 5 = 39.000.
+Fase 9 tetap di next idx 435.887, tidak disentuh sesi ini.
+
+**Update 2026-09-17 (batch kelima)**: lanjut Fase 5 lagi dengan batch 2.000 string/iterasi.
+idx 39.000–40.999 selesai, next idx Fase 5 = 41.000. Fase 9 tetap di next idx 435.887,
+tidak disentuh sesi ini.
+
+**Update 2026-09-17 (batch keenam)**: lanjut Fase 5 lagi dengan batch 2.000 string/iterasi
+(dikonfirmasi ulang). idx 41.000–42.999 selesai, next idx Fase 5 = 43.000. Fase 9 tetap
+di next idx 435.887, tidak disentuh sesi ini.
 
 \* Persentase dari 963.050 baris total di `strings.jsonl`, dihitung dari distribusi
 frekuensi aktual (lihat catatan di bawah). Angka fase 2–8 adalah interpolasi kasar,
