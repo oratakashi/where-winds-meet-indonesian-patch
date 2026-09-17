@@ -23,7 +23,7 @@ teliti), fase belakang boleh lebih besar (kebanyakan string pendek/berulang pola
 | 2 (selesai) | 2.000 – 4.999     | 3.000       | ~25–28% (aktual, terverifikasi) | —                       | selesai (2 sesi)            | `locale/phase2.jsonl` |
 | 3 (selesai) | 5.000 – 9.999     | 5.000       | ~33.5%                          | —                       | selesai (~6 sesi)           | `locale/phase3.jsonl` |
 | 4 (selesai) | 10.000 – 19.999   | 10.000      | ~40.0%                          | —                       | selesai (7 sesi)            | `locale/phase4.jsonl` |
-| 5 (jalan)   | 20.000 – 49.999   | 30.000      | ~50.1%                          | 1.000/sesi (fixed)      | ~30 sesi (3/30 selesai)     | `locale/phase5.jsonl` |
+| 5 (jalan)   | 20.000 – 49.999   | 30.000      | ~50.1%                          | 2.000/sesi (fixed)      | ~15 sesi (4.5/15 selesai)   | `locale/phase5.jsonl` |
 | 6           | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000–3.000/sesi        | ~17–25 sesi                 | `locale/phase6.jsonl` |
 | 7           | 100.000 – 199.999 | 100.000     | ~76.1%                          | 2.500–3.500/sesi        | ~29–40 sesi                 | `locale/phase7.jsonl` |
 | 8           | 200.000 – 429.886 | 229.887     | 100%*                           | 3.000–5.000/sesi        | ~46–77 sesi                 | `locale/phase8.jsonl` |
@@ -72,7 +72,9 @@ konteks supaya keputusan itu punya data.
 **Catatan preferensi user**: mulai sesi Fase 4 lanjutan (2026-09-15), user minta ukuran
 batch **tetap 1.000 string per iterasi/sesi** (bukan mengikuti rentang saran per-fase di
 tabel di atas) sampai ada instruksi lain. Kolom "Saran ukuran batch/sesi" tetap jadi
-referensi kasar untuk fase-fase berikutnya, tapi default aktual sekarang adalah 1.000/sesi.
+referensi kasar untuk fase-fase berikutnya. **Update 2026-09-17**: user menaikkan ukuran
+batch jadi **2.000 string/sesi** (dua kali lipat dari sebelumnya) — ini sekarang default
+aktual sampai ada instruksi lain, dan tabel fase di atas sudah disesuaikan untuk Fase 5.
 
 ## Prosedur satu sesi (ringkas — detail lengkap ada di handoff.md)
 

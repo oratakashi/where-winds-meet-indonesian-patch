@@ -19,34 +19,20 @@ di bawah untuk cara menanganinya tanpa kehilangan progress terjemahan yang sudah
 
 ---
 
-## Workflow harian (cheat sheet)
+## Daftar isi
 
-Setelah `translation_work/unique_strings.jsonl` + `locale/phase*.jsonl` di-update dengan
-terjemahan baru, tiga perintah ini yang dipakai berulang-ulang untuk menghasilkan file
-`translate_words_map_en` yang sudah di-patch:
-
-```bash
-# 1. Bangun strings.translated.jsonl dari dictionary terjemahan (default: strings.jsonl -> strings.translated.jsonl)
-python tools/expand_locale.py
-
-# 2. Validasi: cek prompt-leak, token markup hilang/berubah, dan entri kosong
-python tools/qa_check.py strings.jsonl strings.translated.jsonl --report qa_report.jsonl
-
-# 3. Kalau qa_report.jsonl bersih (exit code 0, tidak ada temuan), repack ke file baru
-python wwm_locmap.py patch translate_words_map_en strings.translated.jsonl translate_words_map_en.id
-```
-
-Catatan:
-
-- Perintah 1 butuh `strings.jsonl` (hasil `wwm_locmap.py dump` dari `translate_words_map_en`)
-  sudah ada di root repo lebih dulu.
-- Kalau langkah 2 keluar dengan exit code 1, cek `qa_report.jsonl` dan perbaiki entri yang
-  ditandai sebelum lanjut ke langkah 3 — lihat [Kalau pakai MT/LLM](#kalau-pakai-mtllm-validasi-output-nya).
-- `translate_words_map_en.id` adalah file hasil akhir — salin/rename ke `translate_words_map_en`
-  di folder locale game untuk dipakai (lihat [langkah 6: Repack](#6-repack)).
-- Untuk update game dengan beberapa varian file (`_diff`, `__small`, dst.), pakai
-  `rebuild_unique_strings.py` + `patch_all.py` sebagai gantinya — lihat
-  [bagian update game](#kalau-game-update-dan-muncul-file-locale-baru-mis-small).
+- [Status](#status)
+- [Instalasi](#instalasi)
+- [Cara pakai](#cara-pakai)
+- [Workflow harian (cheat sheet)](#workflow-harian-cheat-sheet)
+- [Kalau game update dan muncul file locale baru (mis. `__small`)](#kalau-game-update-dan-muncul-file-locale-baru-mis-small)
+- [Cara kerjanya](#cara-kerjanya)
+- [Panduan menerjemahkan](#panduan-menerjemahkan)
+- [Batasan yang diketahui](#batasan-yang-diketahui)
+- [Legal & risiko](#legal--risiko)
+- [Struktur repo](#struktur-repo)
+- [Kontribusi](#kontribusi)
+- [Lisensi](#lisensi)
 
 ---
 
@@ -175,6 +161,54 @@ untuk iterasi cepat; pakai 19 untuk rilis.
 
 Salin hasilnya ke folder locale dengan nama `translate_words_map_en`, lalu
 jalankan game dengan **Settings → Language → Game Language = English**.
+
+---
+
+## Workflow harian (cheat sheet)
+
+Setelah `translation_work/unique_strings.jsonl` + `locale/phase*.jsonl` di-update dengan
+terjemahan baru, tiga perintah ini yang dipakai berulang-ulang untuk menghasilkan file
+`translate_words_map_en` yang sudah di-patch:
+
+```bash
+# 1. Bangun strings.translated.jsonl dari dictionary terjemahan (default: strings.jsonl -> strings.translated.jsonl)
+python tools/expand_locale.py
+
+# 2. Validasi: cek prompt-leak, token markup hilang/berubah, dan entri kosong
+python tools/qa_check.py strings.jsonl strings.translated.jsonl --report qa_report.jsonl
+
+# 3. Kalau qa_report.jsonl bersih (exit code 0, tidak ada temuan), repack ke file baru
+python wwm_locmap.py patch translate_words_map_en strings.translated.jsonl translate_words_map_en.id
+```
+
+Catatan:
+
+- Perintah 1 butuh `strings.jsonl` (hasil `wwm_locmap.py dump` dari `translate_words_map_en`)
+  sudah ada di root repo lebih dulu.
+- Kalau langkah 2 keluar dengan exit code 1, cek `qa_report.jsonl` dan perbaiki entri yang
+  ditandai sebelum lanjut ke langkah 3 — lihat [Kalau pakai MT/LLM](#kalau-pakai-mtllm-validasi-output-nya).
+- `translate_words_map_en.id` adalah file hasil akhir — salin/rename ke `translate_words_map_en`
+  di folder locale game untuk dipakai (lihat [langkah 6: Repack](#6-repack)).
+- Untuk update game dengan beberapa varian file (`_diff`, `__small`, dst.), pakai
+  `rebuild_unique_strings.py` + `patch_all.py` sebagai gantinya — lihat
+  [bagian update game](#kalau-game-update-dan-muncul-file-locale-baru-mis-small).
+
+---
+
+## Kalau game update dan muncul file locale baru (mis. `__small`)
+
+Update NetEase kadang menambah file locale baru di samping `translate_words_map_en`/`_diff` yang
+sudah biasa dipakai (contoh nyata: `translate_words_map_en__small` + `__small_diff`). Selama
+`info` bisa membacanya (`python wwm_locmap.py info <file>`), formatnya tidak berubah — cukup:
+
+```bash
+python wwm_locmap.py dump translate_words_map_en__small strings_small.jsonl
+python tools/rebuild_unique_strings.py         # tambah string baru ke unique_strings.jsonl
+python tools/patch_all.py --outdir patched     # terapkan semua terjemahan yang sudah ada
+```
+
+Lihat `docs/FORMAT.md` §4.6 untuk detail temuan soal `__small` dan `CLAUDE.md` untuk cara kerja
+tiap script.
 
 ---
 
@@ -315,9 +349,19 @@ diam-diam.
 
 ## Batasan yang diketahui
 
-- **File verification menimpa patch.** Setiap kali launcher menjalankan
-  verifikasi berkas, file kembali ke versi resmi. Apply ulang setelahnya.
-  Ini bukan bug tool ini, melainkan konsekuensi mengganti file game.
+- **`translate_words_map_en` (base) dan `__small` stabil, tapi `_diff` yang ter-install TIDAK
+  bisa dipatch permanen.** Game punya dua salinan terpisah `translate_words_map_en_diff`: satu di
+  `Package\HD\oversea\locale\` (yang di-patch tool ini, aman — tidak pernah diverifikasi ulang),
+  satu lagi di `LocalData\Patch\HD\oversea\locale\` yang benar-benar dipakai game untuk layer
+  `_diff`. Salinan kedua ini **diverifikasi checksum & di-restore otomatis dari CDN NetEase setiap
+  kali game start** (`StagePatchList`/`StageCheck`/`StageDownload`, lihat log di
+  `LocalData\patch_log\`) — dikonfirmasi langsung lewat pengujian: file yang sudah dipatch balik
+  jadi byte-identik dengan versi asli dalam hitungan menit. Memblokir satu hostname CDN saja tidak
+  cukup (manifest checksum fallback ke cache lokal, dan file download-nya sendiri lewat host
+  lain). Implikasinya: fokuskan patch ke `translate_words_map_en` + `__small` saja — keduanya
+  permanen. Isi `_diff` (~213rb entri di update 2026-09, ~26% dari total) tetap English sampai
+  NetEase suatu saat merge `_diff` itu balik ke base package lewat update resmi. Detail teknis
+  lengkap ada di `CLAUDE.md` bagian "Deployment gotcha".
 - **Patch ketinggalan setelah update konten.** String baru/berubah dari update resmi
   belum ada di pack lama dan akan tampil dalam bahasa Inggris sampai kamu dump ulang lalu
   menerjemahkan selisihnya. `tools/rebuild_unique_strings.py` + `tools/patch_all.py`
@@ -371,20 +415,7 @@ diam-diam.
 └── LICENSE
 ```
 
-### Kalau game update dan muncul file locale baru (mis. `__small`)
-
-Update NetEase kadang menambah file locale baru di samping `translate_words_map_en`/`_diff` yang
-sudah biasa dipakai (contoh nyata: `translate_words_map_en__small` + `__small_diff`). Selama
-`info` bisa membacanya (`python wwm_locmap.py info <file>`), formatnya tidak berubah — cukup:
-
-```bash
-python wwm_locmap.py dump translate_words_map_en__small strings_small.jsonl
-python tools/rebuild_unique_strings.py         # tambah string baru ke unique_strings.jsonl
-python tools/patch_all.py --outdir patched     # terapkan semua terjemahan yang sudah ada
-```
-
-Lihat `docs/FORMAT.md` §4.6 untuk detail temuan soal `__small` dan `CLAUDE.md` untuk cara kerja
-tiap script.
+---
 
 ## Kontribusi
 
@@ -398,6 +429,8 @@ Yang paling membantu:
 - Konfirmasi format pada file locale bahasa lain (`_de`, `_fr`, `_ja`, ...).
 
 Sertakan versi game dan jumlah entri saat melaporkan masalah parsing.
+
+---
 
 ## Lisensi
 

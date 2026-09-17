@@ -7,16 +7,22 @@ kebenaran untuk "sudah sampai mana".
 ## Status saat ini
 
 - **Fase 0, Fase 1, Fase 2, Fase 3, dan Fase 4 SELESAI** (idx 0–19.999). Fase saat ini:
-  **Fase 5** (rentang idx 20.000–49.999, 30.000 unik, batch 1.000/sesi) — **3 sesi
-  selesai**: idx 20.000–22.999 (3.000 baris) sudah ada di `locale/phase5.jsonl`, next idx
-  = 23.000.
+  **Fase 5** (rentang idx 20.000–49.999, 30.000 unik, batch **2.000/sesi**) — **7 sesi
+  selesai**: idx 20.000–28.999 (9.000 baris) sudah ada di `locale/phase5.jsonl`,
+  next idx = 29.000.
 - Total baris di `strings.jsonl`: **963.050**
 - Total string unik (setelah dedup): **429.887**
-- **Sudah diterjemahkan: idx 0–22.999 dari 429.887 (23.000 string unik, ~5.35%)**
-- Sesi terakhir mengerjakan: 2026-09-16 — Fase 5 lanjut, batch ketiga idx 22.000–22.999
-  (1.000 baris baru di `locale/phase5.jsonl`), tervalidasi 0 mismatch token & 0
-  duplikat/gap idx (dicek lintas semua file `locale/phase*.jsonl` sekaligus, total
-  23.000 idx unik tercatat tanpa tabrakan, kontigu penuh 0–22.999 tanpa lubang).
+- **Sudah diterjemahkan: idx 0–28.999 dari 429.887 (29.000 string unik, ~6.75%)**
+- Sesi terakhir mengerjakan: 2026-09-17 — Fase 5 lanjut, batch ketujuh idx 27.000–28.999
+  (2.000 baris baru di `locale/phase5.jsonl`, sesuai ukuran iterasi 2.000/sesi),
+  tervalidasi 0 mismatch token & 0 duplikat/gap idx (dicek lintas semua file
+  `locale/phase*.jsonl` sekaligus, total 29.000 idx unik tercatat tanpa tabrakan,
+  kontigu penuh 0–28.999 tanpa lubang). Dua mismatch token sempat ketemu saat validasi
+  awal (idx 27130 — tag `#Y...#E` yang membungkus "Special Skill ..." dan "high Bleed
+  damage" sempat terlepas saat translate; idx 27138 — `<sound of rock collapsing>`
+  sempat diterjemahkan isinya padahal harus dibiarkan Inggris karena dianggap satu
+  token oleh regex `<[^>]*>`) — keduanya sudah diperbaiki sebelum di-append, 0 mismatch
+  final.
 - **File progress dipecah per fase** di `locale/phase{N}.jsonl` (mis. `locale/phase0.jsonl`,
   `locale/phase1.jsonl`, `locale/phase2.jsonl`, dst. — mengikuti nomor fase & rentang idx
   di tabel `plan.md`). Tiap file berisi `{"idx": N, "v": "..."}` per baris, `idx` yang
@@ -24,9 +30,9 @@ kebenaran untuk "sudah sampai mana".
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
   (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
-  (10.000 baris, lengkap), `locale/phase5.jsonl` (3.000 baris, **jalan** —
+  (10.000 baris, lengkap), `locale/phase5.jsonl` (9.000 baris, **jalan** —
   rentang penuh fase ini 30.000 baris/idx 20.000–49.999). Sesi berikutnya lanjutkan
-  `locale/phase5.jsonl` mulai idx 23.000.
+  `locale/phase5.jsonl` mulai idx 29.000.
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase saat ini dari `plan.md`);
   next idx = idx_awal_fase + jumlah_baris.
@@ -41,6 +47,25 @@ format (`#E`, `#aabbcc`, `%s`, `%d`, `{0}`/`{value}` dst., termasuk tag `<Label|
 sempat ketemu & sudah diperbaiki di idx 1056 — tag `#Y...#E` yang membungkus banyak
 kata sempat hilang saat translate, jadi hati-hati kalau tag membungkus lebih dari
 satu kalimat).
+
+## Update 2026-09-17: `_diff` yang ter-install tidak bisa dipatch permanen
+
+Ditemukan (lewat investigasi langsung ke folder instalasi game + `LocalData\patch_log\`):
+game punya **dua salinan terpisah** `translate_words_map_en_diff` — satu di `Package\HD\oversea\locale\`
+(yang selama ini di-patch tools repo ini, stabil/permanen), satu lagi di
+`LocalData\Patch\HD\oversea\locale\` yang benar-benar dipakai game untuk layer `_diff`. Salinan
+kedua ini **diverifikasi checksum & di-restore otomatis dari CDN NetEase tiap game start**
+(`StagePatchList`/`StageCheck`/`StageDownload` di log launcher) — dikonfirmasi langsung: file yang
+sudah dipatch balik jadi ukuran byte identik dengan versi asli dalam hitungan menit setelah
+dipatch. Detail teknis lengkap & alasan kenapa ini tidak bisa diakali dengan aman ada di
+`CLAUDE.md` bagian "Deployment gotcha: the installed `_diff` file gets re-verified by the game's
+own CDN patcher".
+
+**Implikasi ke progress terjemahan**: fokuskan ke `translate_words_map_en` (base) + `__small` saja
+— dua-duanya permanen begitu di-deploy. Isi `_diff` (~213rb entri, ~26% dari total entri versi
+2026-09) akan tetap English di in-game sampai NetEase suatu saat merge `_diff` itu balik ke base
+package (siklus update normal mereka), titik di mana bagian yang sudah diterjemahkan otomatis ikut
+permanen tanpa kerja tambahan.
 
 ## Update game 2026-09-16: tool & pipeline disesuaikan
 
@@ -84,7 +109,7 @@ User update game-nya dan menemukan file locale baru: `translate_words_map_en__sm
 
 ## PENTING: sisa pekerjaan sangat besar
 
-407.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
+404.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
 sesi per fase (kasar: 125–190+ sesi total sampai 100%). Sampaikan ini ke user kalau
 ditanya estimasi waktu, dan ingatkan opsi berhenti di ~50% baris (lihat "Titik berhenti
 yang masuk akal" di `plan.md`) kalau relevan.
@@ -332,6 +357,72 @@ for m in mismatches[:20]:
   di Fase 5 sesi sebelumnya.
 - **Nama kartu remi/board-game internal** (Number Card, Wild Card, Big Landlord, Little
   Landlord) dibiarkan Inggris sebagai istilah aturan permainan kartu spesifik.
+
+### Catatan istilah baru dari sesi Fase 5 lanjutan (idx 23000-24999)
+
+- **User menaikkan ukuran batch jadi 2.000 string/sesi** mulai sesi ini (sebelumnya 1.000,
+  lihat catatan preferensi di `plan.md`) — dikerjakan sebagai satu batch besar dalam satu
+  sesi tanpa masalah validasi, jadi 2.000/sesi jadi default baru sampai ada instruksi lain.
+- **"Sword Trial" dikonfirmasi ulang sebagai nama mode dibiarkan Inggris** (dipakai ratusan
+  kali di batch ini sebagai bagian dari kalimat "Defeat #YBoss#E in Sword Trial..."),
+  konsisten dengan "Hero's Realm" yang sudah dikunci sebelumnya.
+- **"Cultivation" (istilah latihan internal wuxia)** dibiarkan Inggris sebagai loanword
+  ketika muncul sebagai label sistem (mis. "Cultivation Instructions" -> "Instruksi
+  Cultivation") — belum ada padanan baku yang dikunci, mengikuti pola Qi/Energy yang
+  dibiarkan Inggris.
+- **Label animasi/kombat internal berpola `"<Senjata> - <Aksi>"`** (mis. "Gauntlets - Leg
+  Slam", "Assist Dual Blades - Right Dodge", "Spear Red Spirit - Ground Attack") terus
+  dikonfirmasi dibiarkan Inggris utuh, sangat banyak muncul di batch ini — pola dev-facing
+  yang sudah dikunci sejak Fase 5 sesi sebelumnya (idx 22000-22999).
+- **"Player" dikonfirmasi lagi dibiarkan Inggris** di semua konteks (bukan "Pemain"),
+  termasuk "The player canceled the invitation." -> "Player membatalkan undangan."
+- **Kalimat pembicaraan dengan honorifik "My lord"** (dari NPC ke karakter pemain, konteks
+  bukan bangsawan spesifik) diterjemahkan "Tuan"/"Tuanku" konsisten dengan pola
+  Lord->Tuan yang sudah dikunci.
+- Tidak ada keputusan konvensi besar baru lain di batch ini — mayoritas nama NPC/gear/
+  skill/label kombat mengikuti pola yang sudah terkunci di sesi-sesi Fase 4 dan Fase 5
+  sebelumnya.
+
+### Catatan istilah baru dari sesi Fase 5 lanjutan (idx 25000-26999)
+
+- **Suffix stat-node baru "X Optimization"** (mis. "Shadow Optimization") **DIBIARKAN UTUH
+  bahasa Inggris**, mengikuti pola "X Enhancement"/"X Boost" yang sudah dikunci — kelanjutan
+  konvensi label skill-tree/talent tetap Inggris.
+- **Tag `#YSpecial Skill "..."#E`** (nama skill spesifik dalam tanda kutip yang dibungkus tag
+  highlight) — WAJIB dipertahankan seluruh tag `#Y...#E`-nya persis, jangan cuma menerjemahkan
+  kalimat luar dan membuang tag pembungkusnya (sempat kejadian di idx 26388 pada sesi ini,
+  sudah diperbaiki sebelum divalidasi — dua kemunculan "Special Skill" dalam satu string yang
+  sama harus dicek satu per satu, bukan cuma yang pertama).
+- **"Union"/"Player"/"Enhancement"/"Sword Trial"/"Cultivation"/pola label kombat
+  `"<Senjata> - <Aksi>"`** dikonfirmasi ulang konsisten dengan keputusan Fase 5 sesi-sesi
+  sebelumnya — tidak ada perubahan konvensi baru untuk istilah-istilah ini di batch ini.
+- Batch ini dikerjakan sebagai satu sesi 2.000 string (idx 25000-26999), diproses dalam
+  4 sub-batch 500 saat penerjemahan lalu digabung & divalidasi sekaligus sebelum di-append.
+
+### Catatan istilah baru dari sesi Fase 5 lanjutan (idx 27000-28999)
+
+- **"Feast Moment" (fitur boat/gathering event) dibiarkan Inggris** sebagai nama fitur,
+  konsisten dipakai berkali-kali di batch ini (mis. "Feast Moment remaining time",
+  "Extend Feast Moment Duration") — pola sama dengan Painted Boat/Solo Mode/Co-op Mode.
+- **"Farmland"/"Farming" (sistem pertanian umum, bukan nama fitur bertitel) DITERJEMAHKAN**
+  jadi "Lahan Pertanian"/"Bertani" — kata umum, beda dari Homestead yang tetap Inggris
+  sebagai nama fitur/lokasi.
+- **Tag `<...>` pendek yang membungkus deskripsi suara/sound-effect** (mis. idx 27138
+  `<sound of rock collapsing>`) **dibiarkan 100% Inggris**, mengikuti aturan tag-satu-token
+  yang sudah dikunci — sempat salah diterjemahkan isinya saat draf awal, diperbaiki sebelum
+  validasi final.
+- **Tag `#Y...#E` yang membungkus dua frasa terpisah dalam satu string panjang** (mis. idx
+  27130, ada `#YSpecial Skill "..."#E` DAN `#Yhigh Bleed damage#E` di paragraf yang sama)
+  — WAJIB dicek satu-satu, jangan cuma yang pertama; sempat ada tag kedua yang terlepas
+  saat translate, sama seperti kejadian idx 26388 di sesi sebelumnya. Pola berulang ini
+  jadi pengingat: paragraf panjang dengan >1 tag highlight butuh pengecekan tag per tag,
+  bukan sekali baca sekilas.
+- **"Union"/"Player"/"Enhancement"/"Sword Trial"/"Cultivation"/"Retainer"/pola label
+  kombat `"<Senjata> - <Aksi>"`/nama gear Swallowcall dst.** dikonfirmasi ulang konsisten
+  dengan keputusan Fase 5 sesi-sesi sebelumnya — tidak ada perubahan konvensi baru untuk
+  istilah-istilah ini di batch ini.
+- Batch ini (2.000 string, idx 27000-28999) dikerjakan sebagai satu sesi, diproses dalam
+  4 sub-batch 500 saat penerjemahan lalu digabung & divalidasi sekaligus sebelum di-append.
 
 Untuk validasi cepat semua fase sekaligus, loop `glob('locale/phase*.jsonl')` dan gabungkan
 semua baris sebelum dicek — juga bagus untuk sekalian memastikan tidak ada idx yang

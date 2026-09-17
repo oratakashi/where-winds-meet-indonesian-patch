@@ -96,6 +96,40 @@ work: dump the file, match its `v` text against the dictionary (`tools/expand_lo
 `tools/patch_all.py`), patch it back. Same recipe for `__small_diff`, main `_diff`, and any future
 variant NetEase adds — add its name to `FILES` in `tools/patch_all.py`.
 
+### Deployment gotcha: the installed `_diff` file gets re-verified by the game's own CDN patcher
+
+This is not a tool bug — it's a fact about the live game client that affects anyone trying to
+actually play with a patched file, so it's recorded here.
+
+The game install has **two separate copies** of `translate_words_map_en_diff`:
+
+- `Package\HD\oversea\locale\translate_words_map_en_diff` — the one this repo's tools read/write.
+  Patches here are **stable**: nothing in-game re-verifies or overwrites it.
+- `LocalData\Patch\HD\oversea\locale\translate_words_map_en_diff` — a **separate hot-patch overlay**
+  copy that the running game actually loads for the `_diff` layer. `LocalData\Patch\...` only
+  contains `_diff` variants (no `en`/`__small`/`__small_diff`), mirroring the `Package` structure.
+
+Every game launch, NetEase's own launcher/patcher (visible in
+`LocalData\patch_log\patch_log_*.txt`) runs a `StagePatchList` → `StageCheck` → `StageDownload`
+sequence: it fetches a checksum manifest from its update CDN (host seen in logs:
+`*.update.easebar.com`), compares every file's hash against it, and **silently re-downloads and
+overwrites any file that doesn't match** — including a manually patched
+`LocalData\Patch\...\translate_words_map_en_diff`. This was confirmed directly: after patching
+that file, it was found reverted (byte-identical to the pristine original, confirmed via file
+size and creation-time) within minutes, with the log showing `StageCheck:finish_submit
+bytes=9333638 #task=1` (the exact pristine file size) as the one file re-fetched. The manifest
+fetch also falls back to a locally cached copy (`fetch_patchlist res=ok from=cached`) when the
+CDN host is unreachable, and the actual file download appears to use a different host than the
+manifest-fetch host, so blocking a single CDN hostname does not stop the repair.
+
+**Practical implication**: only `Package\HD\oversea\locale\translate_words_map_en` (base) and
+`translate_words_map_en__small` hold permanently — patch and deploy those. The `_diff` layer
+(~213k entries in the 2026-09 update, ~26% of total entries, representing text changed/added
+since the base package was last rebuilt) cannot currently be made to stick via a simple file
+replacement in `LocalData\Patch\...`. If a future game update merges `_diff` content back into
+the base package (which NetEase does periodically), whatever fraction of it is already covered
+by the translation dictionary becomes permanent automatically at that point, no extra work needed.
+
 ### File format (see `docs/FORMAT.md` for the full spec)
 
 - Container: `magic(0xDEADBEEF) | version | blockCount | reserved`, followed by a
