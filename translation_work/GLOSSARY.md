@@ -14,7 +14,7 @@ di sini, cari & ganti di `translations.jsonl` supaya konsisten ulang (dedup = mu
   Blissful Retreat, Wansheng Town, West Market, Forsaken Quarter, East City, dll.
 - **Nama faksi/organisasi**: Aureate Pavilion, Bloodscale Hall, Jade Serpent Hall,
   Velvet Shade, Mercyheart Monastery, Ghost Revelry Hall, Sandstorm Tavern, Mohist Hill,
-  Greenwood (bandit), NetEase, dll.
+  Greenwood (bandit), NetEase, Raging Tides, dll.
 - **Nama senjata/aliran/skill berjudul** (proper noun ability/weapon): Thundercry Blade,
   Strategic Sword, Inkwell Fan, Mortal Rope Dart, Infernal Twinblades, Noname Sword,
   Soulshade Umbrella, Panacea Fan, "Peak's Springless Silence", "Rodent Rampage",
@@ -44,7 +44,7 @@ Label stat/attribute karakter selalu dibiarkan penuh bahasa Inggris (konvensi um
 game RPG mobile/PC berbahasa Indonesia):
 Critical Rate, Precision Rate, Affinity Rate, Physical Attack/Defense, Max/Min HP,
 DMG Bonus/Reduction/Boost, HP Recovery/Bonus, Attack Bonus, DPS, Silkbind/Bellstrike/
-Bamboocut/Stonesplit/Formless Attack (nama tipe damage khas game ini), Tier, Stage, Lv.
+Bamboocut/Stonesplit/Formless Attack (nama tipe damage khas game ini), Tier, Stage, Lv, Healer.
 
 Loanword umum lain yang dibiarkan (dari instruksi user + genre gaming ID):
 Guild, Event, Login, Logout, Menu, Info, Reset, Boss, Skill, Item, Quest, Level,

@@ -7,22 +7,24 @@ kebenaran untuk "sudah sampai mana".
 ## Status saat ini
 
 - **Fase 0, Fase 1, Fase 2, Fase 3, dan Fase 4 SELESAI** (idx 0–19.999). Fase saat ini:
-  **Fase 5** (rentang idx 20.000–49.999, 30.000 unik, batch **2.000/sesi**) — **8 sesi
-  selesai**: idx 20.000–30.999 (11.000 baris) sudah ada di `locale/phase5.jsonl`,
-  next idx = 31.000.
+  **Fase 5** (rentang idx 20.000–49.999, 30.000 unik, batch **2.000/sesi**) — **10 sesi
+  selesai**: idx 20.000–34.999 (15.000 baris) sudah ada di `locale/phase5.jsonl`,
+  next idx = 35.000.
 - Total baris di `strings.jsonl`: **963.050**
 - Total string unik (setelah dedup): **429.887**
-- **Sudah diterjemahkan: idx 0–30.999 dari 429.887 (31.000 string unik, ~7.21%)**
-- Sesi terakhir mengerjakan: 2026-09-17 — Fase 5 lanjut, batch kedelapan idx 29.000–30.999
+- **Sudah diterjemahkan: idx 0–34.999 dari 429.887 (35.000 string unik, ~8.14%)**
+- Sesi terakhir mengerjakan: 2026-09-17 — Fase 5 lanjut, batch kesepuluh idx 33.000–34.999
   (2.000 baris baru di `locale/phase5.jsonl`, sesuai ukuran iterasi 2.000/sesi),
-  tervalidasi 0 mismatch token & 0 duplikat/gap idx (dicek lintas semua file
-  `locale/phase*.jsonl` sekaligus, total 31.000 idx unik tercatat tanpa tabrakan,
-  kontigu penuh 0–30.999 tanpa lubang). Satu mismatch token sempat ketemu saat validasi
-  awal (idx 30170 — tag `<...>` yang membungkus satu paragraf penuh berisi tag warna
-  `#8c5823...#E` di dalamnya sempat diterjemahkan isinya, padahal seluruh `<...>` itu
-  dianggap satu token utuh oleh regex `<[^>]*>` dan harus dibiarkan 100% identik Inggris
-  mengikuti aturan tag-panjang-satu-token yang sudah dikunci sejak idx 12448) — sudah
-  diperbaiki sebelum di-append, 0 mismatch final.
+  diproses dalam 4 sub-batch 500 lalu digabung, tervalidasi 0 mismatch token & 0
+  duplikat/gap idx (dicek lintas semua file `locale/phase*.jsonl` sekaligus, total
+  35.000 idx unik tercatat tanpa tabrakan, kontigu penuh 0–34.999 tanpa lubang). Batch
+  ini dimulai dari `translation_work/batch_1.jsonl` (2.001 baris sumber idx 33.000–35.000
+  yang sudah disiapkan sesi sebelumnya) — 2.000 baris pertama (33.000–34.999) dipakai
+  untuk sesi ini, sisa 1 baris (idx 35.000) jadi awal batch berikutnya. 2 mismatch token
+  ketemu & diperbaiki sebelum append final: idx 34071 (tag polos `<Nods.>` sempat
+  diterjemahkan jadi `<Mengangguk.>`) dan idx 34671 (tag polos `<ears drooping>` sempat
+  diterjemahkan jadi `<telinga terkulai>`) — keduanya dikembalikan ke bahasa Inggris asli
+  sesuai aturan tag-polos-tanpa-format di `GLOSSARY.md`.
 - **File progress dipecah per fase** di `locale/phase{N}.jsonl` (mis. `locale/phase0.jsonl`,
   `locale/phase1.jsonl`, `locale/phase2.jsonl`, dst. — mengikuti nomor fase & rentang idx
   di tabel `plan.md`). Tiap file berisi `{"idx": N, "v": "..."}` per baris, `idx` yang
@@ -30,9 +32,9 @@ kebenaran untuk "sudah sampai mana".
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
   (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
-  (10.000 baris, lengkap), `locale/phase5.jsonl` (11.000 baris, **jalan** —
+  (10.000 baris, lengkap), `locale/phase5.jsonl` (13.000 baris, **jalan** —
   rentang penuh fase ini 30.000 baris/idx 20.000–49.999). Sesi berikutnya lanjutkan
-  `locale/phase5.jsonl` mulai idx 31.000.
+  `locale/phase5.jsonl` mulai idx 33.000.
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase saat ini dari `plan.md`);
   next idx = idx_awal_fase + jumlah_baris.
@@ -450,6 +452,56 @@ for m in mismatches[:20]:
 - Batch ini (2.000 string, idx 29000-30999) dikerjakan sebagai satu sesi, diproses dalam
   4 sub-batch 500 saat penerjemahan lalu digabung & divalidasi sekaligus sebelum
   di-append — 1 mismatch token ketemu & diperbaiki (lihat catatan `<...>` panjang di atas).
+
+### Catatan istilah baru dari sesi Fase 5 lanjutan (idx 31000-32999)
+
+- **"Wanderer" dikonfirmasi ulang konsisten diterjemahkan "Pengembara"** (mis. "Young
+  Wanderer" -> "Pengembara Muda"), sesuai aturan lama di `GLOSSARY.md` — sempat banyak
+  muncul di batch ini dan diterapkan konsisten (beda dari "Player" yang selalu dibiarkan
+  Inggris).
+- **Placeholder durasi shorthand `Ns`/`Nh` di dalam kalimat/tag terus dikonversi**
+  `s`->`d` (detik) dan `h`->`j` (jam) sesuai konvensi lama, termasuk saat digabung dengan
+  literal menit `m` (mis. "7h57m Remaining" -> "7j57m Tersisa", "%sm%ss" -> "%sm%sd").
+- **Placeholder tanggal/waktu runtime `@t[...]` (huruf kecil, kurung siku)** — varian baru
+  dari `@T[...]` yang sudah dikunci di Fase 5 sesi sebelumnya (idx 29000-30999) — WAJIB
+  dipertahankan persis sama, tidak tertangkap regex `TOKEN`.
+- **Nama fitur/mode/sistem baru yang dibiarkan Inggris**: Feast Moment, Cultivation,
+  Sword Trial, Union, Path (skill tree path), Plan (build/loadout plan — diterjemahkan
+  jadi "Rencana" karena kata umum, bukan nama fitur bertitel), label animasi kombat
+  `"<Senjata> - <Aksi>"`, nama gear/kostum panjang (Swallowcall, Starweave, dll.) — semua
+  konsisten dengan keputusan sesi-sesi Fase 5 sebelumnya.
+- **"Loot" dikonfirmasi "Jarahan"/"Jarah"** (kata benda/kerja) sesuai kunci Fase 5 idx
+  20000-20999, dipakai di "Loot & Extract" -> "Jarah & Ekstraksi".
+- **"Sect Shop" -> "Toko Sekte"** (Sect diterjemahkan konsisten dengan aturan wuxia lama).
+- Batch ini (2.000 string, idx 31000-32999) dikerjakan sebagai satu sesi, diproses dalam
+  4 sub-batch 500 saat penerjemahan lalu digabung & divalidasi sekaligus sebelum
+  di-append — 0 mismatch token pada percobaan pertama.
+
+### Catatan istilah baru dari sesi Fase 5 lanjutan (idx 33000-34999)
+
+- **Tag polos `<...>` tanpa format `|id|#C|n>` yang membungkus deskripsi aksi/suara non-dialog
+  singkat** (mis. idx 34071 `<Nods.>`, idx 34671 `<ears drooping> Mmnh...`) **sempat 2x
+  diterjemahkan sebelum divalidasi** — pengingat tegas: aturan tag-polos-dibiarkan-Inggris
+  (dikunci sejak Fase 3, idx 6041) berlaku juga untuk aksi/deskripsi pendek non-dialog, bukan
+  cuma placeholder nama. Regex `TOKEN` menelan seluruh `<...>` sebagai satu token, jadi isinya
+  WAJIB 100% identik sumber kalau tidak berformat `|id|#C|n>`.
+- **"Steward" -> "Pelayan"** (kepala pelayan/pengurus rumah tangga), **"Squire" -> "Pengawal"**
+  (pengawal muda ksatria) — keduanya gelar deskriptif umum, konsisten dengan pola role NPC
+  generik yang diterjemahkan.
+- **"Passerby" (role NPC generik) DITERJEMAHKAN jadi "Orang Lewat"** — sebelumnya sempat
+  muncul tanpa keputusan eksplisit; dikunci sekarang mengikuti daftar role generik
+  (Villager/Bandit/dst.) di `GLOSSARY.md`.
+- **"Cold Loading" (istilah teknis dev/loading asset) dibiarkan Inggris** — bukan istilah
+  gameplay, kemungkinan label debug/internal.
+- **Durasi literal `/h` (per jam) di luar tag warna dikonversi ke `/j`** (mis. `0#85d67c +
+  0#E/h` -> `0#85d67c + 0#E/j`) — konsisten dengan konvensi `h`->`j` yang sudah dikunci,
+  berlaku juga saat literalnya nempel langsung setelah token warna/tag.
+- **"Wanderer"/"Union"/"Retainer"/"Cultivation"/"Sword Trial"/pola label kombat
+  `"<Senjata> - <Aksi>"`/nama gear panjang** dikonfirmasi ulang konsisten dengan keputusan
+  Fase 5 sesi-sesi sebelumnya — tidak ada perubahan konvensi besar untuk istilah-istilah ini.
+- Batch ini (2.000 string, idx 33000-34999) dikerjakan sebagai satu sesi, diproses dalam
+  4 sub-batch 500 lalu digabung & divalidasi sekaligus sebelum di-append — 2 mismatch tag
+  polos ketemu & diperbaiki (lihat poin pertama di atas).
 
 Untuk validasi cepat semua fase sekaligus, loop `glob('locale/phase*.jsonl')` dan gabungkan
 semua baris sebelum dicek — juga bagus untuk sekalian memastikan tidak ada idx yang
