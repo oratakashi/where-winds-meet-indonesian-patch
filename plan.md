@@ -27,7 +27,7 @@ teliti), fase belakang boleh lebih besar (kebanyakan string pendek/berulang pola
 | 6           | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000–3.000/sesi        | ~17–25 sesi                 | `locale/phase6.jsonl` |
 | 7           | 100.000 – 199.999 | 100.000     | ~76.1%                          | 2.500–3.500/sesi        | ~29–40 sesi                 | `locale/phase7.jsonl` |
 | 8           | 200.000 – 429.886 | 229.887     | 100%*                           | 3.000–5.000/sesi        | ~46–77 sesi                 | `locale/phase8.jsonl` |
-| 9           | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 3.000–5.000/sesi        | ~7–11 sesi                  | `locale/phase9.jsonl` |
+| 9 (jalan)   | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 2.000/sesi (fixed)      | ~16 sesi (1/16 selesai)      | `locale/phase9.jsonl` |
 
 **Fase 9** ditambahkan 2026-09-16 setelah update game — bukan bagian dari 429.887 unik semula.
 `tools/rebuild_unique_strings.py` menambah idx 429.887–461.703 (31.817 string baru) dari string
@@ -36,6 +36,12 @@ yang baru muncul/berubah di `translate_words_map_en` (versi update), `_diff`, `_
 **tidak diubah sama sekali** — progress lama tetap valid tanpa remap. Lihat `handoff.md` bagian
 "Update game 2026-09" untuk detail & cara `patch_all.py` menerapkan dictionary ke keempat file
 sekaligus.
+
+**Update 2026-09-17**: atas permintaan eksplisit user, sesi ini melompat ke Fase 9 duluan
+(batch pertama, idx 429.887–431.886) meski Fase 5 belum selesai (berhenti di idx 37.000).
+**Kedua fase sekarang jalan paralel** — Fase 5 dan Fase 9 sama-sama punya progress belum
+tuntas. Sesi berikutnya **harus tanya user dulu fase mana yang mau dilanjutkan** kalau tidak
+disebutkan eksplisit (lihat "Status saat ini" di `handoff.md` untuk next idx masing-masing).
 
 \* Persentase dari 963.050 baris total di `strings.jsonl`, dihitung dari distribusi
 frekuensi aktual (lihat catatan di bawah). Angka fase 2–8 adalah interpolasi kasar,

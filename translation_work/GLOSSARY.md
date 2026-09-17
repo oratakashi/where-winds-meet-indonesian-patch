@@ -254,6 +254,19 @@ Buff/Debuff, Chat.
   persis karakter demi karakter — variabel substitusi tanggal, sama kelasnya dengan
   `$VAR$`/`$P`/`$N` yang sudah dikunci sebelumnya.
 
+## Istilah baru yang dikunci sesi Fase 9 (idx 429887-431886, update game 2026-09-16)
+
+- **"Farmer" (unit sistem Homestead yang bisa direkrut/dikerahkan) DIBIARKAN UTUH bahasa
+  Inggris** (kapital) — istilah sistem Homestead seperti Retainer/Homestead, BUKAN
+  diterjemahkan sebagai kata umum "petani".
+- **"Qiongqi Master"/"Qiongqi Warrior"/"Qiongqi Soldier"/"Qiongqi Artificer"** (rank/role
+  anggota faksi antagonis "Qiongqi") DIBIARKAN UTUH bahasa Inggris sebagai compound title.
+- **Royal/imperial title generik (Prince, Empress) DITERJEMAHKAN**: "Prince Teng" ->
+  "Pangeran Teng", "Empress Wu" -> "Permaisuri Wu" — konsisten dengan Lord->Tuan.
+- **"Treasury" (kata umum) DITERJEMAHKAN "Perbendaharaan"** di semua compound-nya
+  (Pledged/Sealed/Imperial Treasury) — beda dari nama lokasi majemuk unik yang tetap Inggris.
+- **"Lantern Festival" -> "Festival Lampion"**, konsisten dengan pola nama festival lain.
+
 ## Catatan ambiguitas yang belum konsisten sempurna (untuk direview kalau ketemu lagi)
 
 - **"Power"**: kadang diterjemahkan "Kekuatan" (kata umum berdiri sendiri), tapi kalau

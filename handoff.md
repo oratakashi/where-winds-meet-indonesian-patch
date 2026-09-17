@@ -6,26 +6,35 @@ kebenaran untuk "sudah sampai mana".
 
 ## Status saat ini
 
-- **Fase 0, Fase 1, Fase 2, Fase 3, dan Fase 4 SELESAI** (idx 0–19.999). Fase saat ini:
-  **Fase 5** (rentang idx 20.000–49.999, 30.000 unik, batch **2.000/sesi**) — **11 sesi
-  selesai**: idx 20.000–36.999 (17.000 baris) sudah ada di `locale/phase5.jsonl`,
-  next idx = 37.000.
-- Total baris di `strings.jsonl`: **963.050**
-- Total string unik (setelah dedup): **429.887**
-- **Sudah diterjemahkan: idx 0–36.999 dari 429.887 (37.000 string unik, ~8.61%)**
-- Sesi terakhir mengerjakan: 2026-09-17 — Fase 5 lanjut, batch kesebelas idx 35.000–36.999
-  (2.000 baris baru di `locale/phase5.jsonl`, sesuai ukuran iterasi 2.000/sesi),
-  diproses dalam 4 sub-batch 500 lalu digabung, tervalidasi 0 mismatch token & 0
-  duplikat/gap idx (dicek lintas semua file `locale/phase*.jsonl` sekaligus + batch baru,
-  total 37.000 idx unik tercatat tanpa tabrakan, kontigu penuh 0–36.999 tanpa lubang).
-  Batch ini diambil langsung dari `translation_work/unique_strings.jsonl` (baris 35.001–37.000,
-  1-indexed). 0 mismatch token pada validasi pertama. Keputusan baru: nickname companion
-  berpola **"Kitty: X"** / **"Doggy: X"** (mis. "Kitty: Youngest", "Doggy: Deng Deng")
-  **dibiarkan UTUH bahasa Inggris**, diperlakukan sebagai nickname companion seperti nama
-  karakter, bukan teks deskriptif biasa — konsisten dipakai di seluruh batch ini
-  (puluhan kemunculan). String Han leftover ketiga ditemukan: idx 36975 `"倒计时测试徽章"`
-  (label internal developer) diterjemahkan strukturnya jadi "Lencana Uji Coba Hitung Mundur",
-  konsisten dengan pola idx 14850/19719 sebelumnya.
+- **Fase 0, Fase 1, Fase 2, Fase 3, dan Fase 4 SELESAI** (idx 0–19.999). **Fase 5**
+  (rentang idx 20.000–49.999, 30.000 unik, batch 2.000/sesi) masih **jalan**: idx
+  20.000–36.999 (17.000 baris) ada di `locale/phase5.jsonl`, next idx (kalau lanjut
+  fase 5) = 37.000 — **tidak disentuh sesi ini**.
+- Sesi ini (2026-09-17) atas permintaan user **melompat ke Fase 9** (idx 429.887–461.703,
+  31.817 string baru dari update game 2026-09-16, lihat bagian "Update game 2026-09-16"
+  di bawah) alih-alih melanjutkan Fase 5 — pilihan eksplisit user, bukan urutan default.
+  **Fase 9 sekarang punya progress independen dari Fase 5**; sesi berikutnya harus
+  tanya/cek dulu fase mana yang mau dilanjutkan (baca kedua bagian "next idx" di bawah).
+- Total baris di `strings.jsonl`: **963.050** (versi lama; versi 2026-09 update = 826.388
+  di file utama, lihat bagian "Update game 2026-09-16")
+- Total string unik: **461.704** (429.887 asli + 31.817 dari update game, idx 0–461.703)
+- **Progress Fase 0–5: idx 0–36.999 selesai (37.000/429.887 string dari batch asli)**
+- **Progress Fase 9 (BARU): idx 429.887–431.886 selesai (2.000/31.817 string, ~6.29%
+  dari Fase 9) — `locale/phase9.jsonl`, next idx = 431.887.**
+- Sesi ini (2026-09-17): batch pertama Fase 9, idx 429.887–431.886 (2.000 baris baru
+  di `locale/phase9.jsonl`, sesuai ukuran iterasi 2.000/sesi), diproses dalam 4
+  sub-batch 500 lalu digabung, tervalidasi 0 mismatch token pada percobaan final (2
+  mismatch sempat ditemukan di sub-batch keempat — idx 431459 salah tag `#G` alih-alih
+  `#Y` pada satu segmen, dan idx 431600 nambahin `#E` penutup yang tidak ada di sumber —
+  keduanya diperbaiki sebelum di-append) & 0 duplikat/gap idx (dicek lintas semua file
+  `locale/phase*.jsonl` sekaligus + batch baru, total 39.000 baris/idx unik tercatat
+  tanpa tabrakan, `phase9.jsonl` sendiri kontigu penuh 429.887–431.886 tanpa lubang).
+  **Catatan penting**: karena ini fase baru dari update game (bukan lanjutan dari
+  `unique_strings.jsonl` versi lama), semua istilah wuxia standar dari GLOSSARY.md tetap
+  dipakai, tapi ada beberapa keputusan baru untuk istilah spesifik konten update ini
+  (lihat "Catatan istilah baru Fase 9" di bawah) — termasuk keputusan **"Farmer" (unit
+  sistem Homestead) dibiarkan UTUH bahasa Inggris** (kapital, seperti Retainer), berbeda
+  dari role NPC generik biasa yang diterjemahkan.
 - **File progress dipecah per fase** di `locale/phase{N}.jsonl` (mis. `locale/phase0.jsonl`,
   `locale/phase1.jsonl`, `locale/phase2.jsonl`, dst. — mengikuti nomor fase & rentang idx
   di tabel `plan.md`). Tiap file berisi `{"idx": N, "v": "..."}` per baris, `idx` yang
@@ -33,12 +42,14 @@ kebenaran untuk "sudah sampai mana".
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
   (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
-  (10.000 baris, lengkap), `locale/phase5.jsonl` (17.000 baris, **jalan** —
-  rentang penuh fase ini 30.000 baris/idx 20.000–49.999). Sesi berikutnya lanjutkan
-  `locale/phase5.jsonl` mulai idx 37.000.
+  (10.000 baris, lengkap), `locale/phase5.jsonl` (17.000 baris, **jalan, tidak disentuh
+  sesi ini** — rentang penuh fase ini 30.000 baris/idx 20.000–49.999, next idx = 37.000),
+  `locale/phase9.jsonl` (2.000 baris, **jalan** — rentang penuh fase ini 31.817 baris/idx
+  429.887–461.703, next idx = 431.887).
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
-  Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase saat ini dari `plan.md`);
-  next idx = idx_awal_fase + jumlah_baris.
+  Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase yang mau dilanjutkan — **sekarang
+  ada dua fase jalan sekaligus, 5 dan 9, jadi tanya user dulu fase mana kalau tidak
+  disebutkan eksplisit**); next idx = idx_awal_fase + jumlah_baris.
 
 String diurutkan berdasarkan **frekuensi kemunculan** (bukan urutan asli file), jadi
 yang paling sering dipakai di 963rb baris asli dikerjakan duluan — coverage baris
@@ -525,6 +536,58 @@ for m in mismatches[:20]:
   4 sub-batch 500 lalu digabung & divalidasi sekaligus sebelum di-append — 0 mismatch token
   pada percobaan pertama (setelah koreksi 1 idx yang sempat terlewat dibaca dari sumber,
   idx 36999, ditangkap saat validasi count sebelum append).
+
+### Catatan istilah baru dari sesi Fase 9 (idx 429887-431886, batch pertama)
+
+Fase 9 adalah string baru dari update game 2026-09-16 (bukan lanjutan `unique_strings.jsonl`
+lama), banyak berisi teks dari chapter/area baru (Hidden Mountain/Mohist Hill lanjutan, Sky
+Citadel, Luan City, Qiongqi Artificer, dll.) dan compound gear-name baru. Semua konvensi
+GLOSSARY.md lama tetap berlaku; tambahan/klarifikasi baru sesi ini:
+
+- **"Farmer" (unit sistem Homestead yang bisa direkrut/dikerahkan) DIBIARKAN UTUH bahasa
+  Inggris** (kapital), mis. "Farmer Management", "Insufficient Farmers", "Ambil foto bersama
+  Farmer yang sedang bekerja" — diperlakukan sebagai istilah sistem Homestead seperti
+  Retainer/Homestead, BUKAN diterjemahkan sebagai kata umum "petani". Sangat sering muncul
+  di batch ini (rekrutmen, dispatch, cohabitation, dll).
+- **"Qiongqi Master"/"Qiongqi Warrior"/"Qiongqi Soldier"/"Qiongqi Artificer"** (rank/role
+  anggota faksi antagonis "Qiongqi") **DIBIARKAN UTUH bahasa Inggris** sebagai compound
+  title/proper-noun, BUKAN diterjemahkan sebagian ("Qiongqi" faksi + rank kata umum) —
+  beda dari pola role NPC generik lama (Villager/Bandit) karena rank ini terasa seperti
+  label internal/rank musuh spesifik-game, bukan sebutan sosial umum.
+- **Royal/imperial title generik (Prince, Empress) DITERJEMAHKAN** konsisten dengan pola
+  Lord->Tuan/Young Master->Tuan Muda yang sudah dikunci: "Prince Teng" -> "Pangeran Teng",
+  "Empress Wu" -> "Permaisuri Wu".
+- **"Master" di depan nama sebagai gelar guru/pemimpin (bukan rank Qiongqi)
+  DITERJEMAHKAN "Guru"** konsisten dengan aturan lama Fase 4: "Master Jin" -> "Guru Jin"
+  (Jin Zhongyuan, tokoh utama chapter ini, dipanggil begitu berkali-kali), "Academy Master
+  Crane" -> "Ketua Akademi Crane" (Master = pemimpin institusi -> Ketua).
+- **Nama festival "Lantern Festival" DITERJEMAHKAN "Festival Lampion"** konsisten dengan
+  pola nama festival budaya lain yang sudah dikunci (Spring Festival -> Festival Musim Semi).
+- **"Treasury" (kata umum "perbendaharaan") DITERJEMAHKAN konsisten** di semua compound-nya:
+  "Pledged Treasury" -> "Perbendaharaan Terikat", "Sealed Treasury" -> "Perbendaharaan
+  Tersegel", "Imperial Treasury Halls" -> "Aula Perbendaharaan Kerajaan" — beda dari nama
+  lokasi majemuk yang dikunci utuh Inggris, karena "Treasury" di sini konsisten dipakai
+  sebagai kata umum deskriptif, bukan bagian nama tempat unik.
+- **Hewan/makhluk umum non-fantasi (Pangolin) DITERJEMAHKAN** konsisten dengan aturan lama:
+  "Pangolin's Trade Tales" -> "Kisah Dagang Trenggiling".
+- **Literal `\n` dua-karakter (backslash+n, BUKAN newline asli)** ditemukan di beberapa
+  string (idx 430082, 430083, 430581, 430615, 430622, 430699, 431245, 431278, 431731,
+  431860, 431862) — WAJIB dipertahankan sebagai literal 2-karakter persis, JANGAN diubah
+  jadi newline asli maupun dihapus. Bedakan dari string yang benar-benar punya newline asli
+  (mayoritas narasi panjang) — cek dengan `repr()` di Python kalau ragu, newline asli tampil
+  sebagai `\n` tunggal di `repr()`, literal dua-karakter tampil sebagai `\\n`.
+- **Tag warna `#Y...#E` vs `#G...#E` HARUS dicek presisi tiap kemunculan** — sempat ada 1
+  kasus (idx 431459) salah pilih tag warna (`#G` padahal sumbernya `#Y`) yang lolos draf
+  awal, ketangkap saat validasi token karena jumlah token per warna beda. Selalu jalankan
+  validasi token count-per-jenis (bukan cuma total token), terutama untuk paragraf dengan
+  banyak tag warna berbeda dalam satu string.
+- **Tag `#994242(...)` tanpa penutup `#E`** (idx 431600, label UI Auto-Management) — sempat
+  salah ditambahkan `#E` penutup yang tidak ada di sumber, ketangkap validasi. Selalu ikuti
+  jumlah token PERSIS seperti sumber, jangan "membetulkan" tag yang terlihat tidak simetris
+  di mata manusia — itu memang polanya di source.
+- Batch ini (2.000 string, idx 429887-431886) dikerjakan sebagai satu sesi, diproses dalam
+  4 sub-batch 500 lalu digabung & divalidasi sekaligus sebelum di-append — total 2 mismatch
+  token ditemukan & diperbaiki (lihat dua poin di atas), keduanya di sub-batch keempat.
 
 Untuk validasi cepat semua fase sekaligus, loop `glob('locale/phase*.jsonl')` dan gabungkan
 semua baris sebelum dicek — juga bagus untuk sekalian memastikan tidak ada idx yang
