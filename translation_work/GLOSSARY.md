@@ -267,6 +267,18 @@ Buff/Debuff, Chat.
   (Pledged/Sealed/Imperial Treasury) — beda dari nama lokasi majemuk unik yang tetap Inggris.
 - **"Lantern Festival" -> "Festival Lampion"**, konsisten dengan pola nama festival lain.
 
+## Istilah baru yang dikunci sesi Fase 9 lanjutan (idx 431887-433886, batch kedua)
+
+- **Material/resource crafting Homestead berpola `"<Nama> Tier N"`** (Magnet Stone, Cloud
+  Sand, Turquoise Stone, Iron Ore, Cinnabar, dan nama material majemuk seperti
+  "Mushroom-Iron Composite", "Pine-Copper Cloudsand Extract") DIBIARKAN UTUH bahasa
+  Inggris — diperlakukan sebagai identifier sistem crafting/resource seperti
+  Inspiration/Affection, bukan kata benda umum.
+- **PENTING — pola `"#Y<label>#E <Tag|id|#C|slot>"`**: label highlight dan tag placeholder
+  adalah DUA unit terpisah — terjemahkan isi `#Y...#E`, biarkan tag `<...>` utuh menyusul
+  TANPA digabung ke dalamnya. Jangan pernah menaruh teks di dalam tag `<...>` yang sudah
+  berformat `|id|#C|slot`.
+
 ## Catatan ambiguitas yang belum konsisten sempurna (untuk direview kalau ketemu lagi)
 
 - **"Power"**: kadang diterjemahkan "Kekuatan" (kata umum berdiri sendiri), tapi kalau

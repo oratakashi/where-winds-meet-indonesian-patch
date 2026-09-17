@@ -19,16 +19,25 @@ kebenaran untuk "sudah sampai mana".
   di file utama, lihat bagian "Update game 2026-09-16")
 - Total string unik: **461.704** (429.887 asli + 31.817 dari update game, idx 0–461.703)
 - **Progress Fase 0–5: idx 0–36.999 selesai (37.000/429.887 string dari batch asli)**
-- **Progress Fase 9 (BARU): idx 429.887–431.886 selesai (2.000/31.817 string, ~6.29%
-  dari Fase 9) — `locale/phase9.jsonl`, next idx = 431.887.**
-- Sesi ini (2026-09-17): batch pertama Fase 9, idx 429.887–431.886 (2.000 baris baru
-  di `locale/phase9.jsonl`, sesuai ukuran iterasi 2.000/sesi), diproses dalam 4
-  sub-batch 500 lalu digabung, tervalidasi 0 mismatch token pada percobaan final (2
-  mismatch sempat ditemukan di sub-batch keempat — idx 431459 salah tag `#G` alih-alih
-  `#Y` pada satu segmen, dan idx 431600 nambahin `#E` penutup yang tidak ada di sumber —
-  keduanya diperbaiki sebelum di-append) & 0 duplikat/gap idx (dicek lintas semua file
-  `locale/phase*.jsonl` sekaligus + batch baru, total 39.000 baris/idx unik tercatat
-  tanpa tabrakan, `phase9.jsonl` sendiri kontigu penuh 429.887–431.886 tanpa lubang).
+- **Progress Fase 9: idx 429.887–433.886 selesai (4.000/31.817 string, ~12.57%
+  dari Fase 9) — `locale/phase9.jsonl`, next idx = 433.887.**
+- Sesi ini (2026-09-17, batch kedua): idx 431.887–433.886 (2.000 baris baru di
+  `locale/phase9.jsonl`, ukuran iterasi 2.000/sesi seperti biasa), diproses dalam 8
+  sub-batch 250 lalu digabung, tervalidasi 0 mismatch token pada percobaan final (4
+  mismatch sempat ditemukan saat validasi pertama — idx 432181 nambahin `#E` penutup
+  ekstra yang memecah satu span `#Y...#E` panjang jadi dua, idx 432654 & 433428 sama-sama
+  salah gabungin teks highlight `#Y3rd-Stage#E` ke dalam tag `<Heavy Attack Charged
+  Skill|...>` alih-alih menjaga keduanya terpisah [pola: `#YTahap ke-3#E <Tag>`, bukan
+  `#YTag isi Tahap ke-3#E`], dan idx 433342 kehilangan satu pasang `#Y...#E` di paragraf
+  kedua yang berpola "Applicable #YMartial Trigger Effects#E:" — keempatnya diperbaiki
+  sebelum di-append) & 0 duplikat/gap idx (dicek lintas semua file `locale/phase*.jsonl`
+  sekaligus + batch baru, total 41.000 baris/idx unik tercatat tanpa tabrakan,
+  `phase9.jsonl` sendiri kontigu penuh 429.887–433.886 tanpa lubang).
+- Sesi sebelumnya (2026-09-17, batch pertama): idx 429.887–431.886 (2.000 baris),
+  diproses dalam 4 sub-batch 500 lalu digabung, tervalidasi 0 mismatch token pada
+  percobaan final (2 mismatch sempat ditemukan di sub-batch keempat — idx 431459 salah
+  tag `#G` alih-alih `#Y` pada satu segmen, dan idx 431600 nambahin `#E` penutup yang
+  tidak ada di sumber — keduanya diperbaiki sebelum di-append).
   **Catatan penting**: karena ini fase baru dari update game (bukan lanjutan dari
   `unique_strings.jsonl` versi lama), semua istilah wuxia standar dari GLOSSARY.md tetap
   dipakai, tapi ada beberapa keputusan baru untuk istilah spesifik konten update ini
@@ -44,8 +53,8 @@ kebenaran untuk "sudah sampai mana".
   (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
   (10.000 baris, lengkap), `locale/phase5.jsonl` (17.000 baris, **jalan, tidak disentuh
   sesi ini** — rentang penuh fase ini 30.000 baris/idx 20.000–49.999, next idx = 37.000),
-  `locale/phase9.jsonl` (2.000 baris, **jalan** — rentang penuh fase ini 31.817 baris/idx
-  429.887–461.703, next idx = 431.887).
+  `locale/phase9.jsonl` (4.000 baris, **jalan** — rentang penuh fase ini 31.817 baris/idx
+  429.887–461.703, next idx = 433.887).
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase yang mau dilanjutkan — **sekarang
   ada dua fase jalan sekaligus, 5 dan 9, jadi tanya user dulu fase mana kalau tidak
@@ -588,6 +597,51 @@ GLOSSARY.md lama tetap berlaku; tambahan/klarifikasi baru sesi ini:
 - Batch ini (2.000 string, idx 429887-431886) dikerjakan sebagai satu sesi, diproses dalam
   4 sub-batch 500 lalu digabung & divalidasi sekaligus sebelum di-append — total 2 mismatch
   token ditemukan & diperbaiki (lihat dua poin di atas), keduanya di sub-batch keempat.
+
+### Catatan istilah baru dari sesi Fase 9 lanjutan (idx 431887-433886, batch kedua)
+
+- **Material/resource crafting Homestead berpola `"<Nama> Tier N"`** (mis. "Magnet Stone
+  Tier I", "Cloud Sand Tier II", "Turquoise Stone Tier I", "Iron Ore Tier II", "Cinnabar
+  Tier I", dan puluhan nama material majemuk lain seperti "Mushroom-Iron Composite",
+  "Pine-Copper Cloudsand Extract") **DIBIARKAN UTUH bahasa Inggris** — keputusan baru sesi
+  ini: diperlakukan sebagai nama sistem resource/crafting seperti Inspiration/Affection
+  yang sudah dikunci di Fase 2, BUKAN kata benda umum yang diterjemahkan (beda dari aturan
+  lama "hewan/tumbuhan bernama umum diterjemahkan" karena di sini nama material sudah jadi
+  identifier sistem crafting spesifik, bukan makhluk hidup naratif). Konsisten diterapkan
+  ke sangat banyak kemunculan di batch ini (puluhan-ratusan item Tier I/II).
+- **PENTING — pola `"#Y<label>#E <Tag|id|#C|slot>"` (teks highlight pendek diikuti tag
+  placeholder terpisah, mis. sumber "a #Y3rd-Stage#E <Heavy Attack Charged
+  Skill|781|#C|20401|20401103>")**: WAJIB dipertahankan sebagai DUA unit terpisah — `#Y...#E`
+  membungkus teks yang diterjemahkan (jadi `#YTahap ke-3#E`), lalu tag `<...>` menyusul utuh
+  tak tersentuh. JANGAN gabungkan teks highlight ke DALAM tag placeholder (mis. jangan
+  ditulis `#YHeavy Attack Charged Skill|781|#C|20401|20401103 Tahap ke-3#E` — ini memecah
+  tag `<...>` jadi terbuka tanpa `>` penutup dan bikin `#C` di dalamnya lolos jadi token
+  liar). Kesalahan ini terjadi 2x di batch ini (idx 432654, 433428) sebelum ketangkap
+  validasi — pola sumber sama persis, jadi begitu ketemu sekali harus diingat buat sisa
+  batch.
+- **Paragraf dua-bagian dengan pola `"...deal damage...\nApplicable #YMartial Trigger
+  Effects#E: ..."`** — kalimat pembuka DAN baris "Applicable ...:" di paragraf kedua
+  SAMA-SAMA punya tag `#Y...#E` yang membungkus istilah yang sama (mis. "Martial Trigger
+  Effects"), keduanya harus diterjemahkan dan dipertahankan tag-nya secara konsisten.
+  Sempat ada 1 kasus (idx 433342) di mana baris kedua kehilangan tag `#Y...#E`-nya saat
+  draf awal (diterjemahkan sebagai teks polos "Martial Trigger Effect yang berlaku:"),
+  ketangkap validasi.
+- **Span `#Y...#E` panjang yang membungkus DUA frasa berurutan lewat satu pasang tag**
+  (mis. sumber idx 432181 `"#Y{} Personal Component(s), and {} Diagram(s)#E"` — satu `#Y`
+  di depan, satu `#E` di BELAKANG kedua frasa, bukan tiap frasa dapat tag sendiri) — WAJIB
+  dijaga sebagai satu span utuh saat diterjemahkan, jangan menutup `#E` di tengah lalu buka
+  lagi tanpa `#Y` baru (itu nambah token `#E` ekstra yang nggak ada pasangannya di sumber).
+  Ketangkap di idx 432181 sebelum di-append.
+- **Qiongqi Master/Farmer/Cultivation/Union/Sword Trial/Wanderer/pola label kombat
+  `"<Senjata> - <Aksi>"`/nama gear panjang (Swallowcall/Swallow's Return/Frostbane/
+  Nightfarer/dst.)** dikonfirmasi ulang konsisten dengan keputusan Fase 9 batch pertama &
+  Fase 5 sesi-sesi sebelumnya — tidak ada perubahan konvensi besar untuk istilah-istilah
+  ini di batch ini.
+- Batch ini (2.000 string, idx 431887-433886) dikerjakan sebagai satu sesi, diproses dalam
+  8 sub-batch 250 lalu digabung & divalidasi sekaligus sebelum di-append — total 4 mismatch
+  token ditemukan & diperbaiki (lihat tiga poin di atas), semuanya ketangkap di validasi
+  pertama sebelum append (bukan lewat sub-batch bertahap seperti sesi sebelumnya, karena
+  batch ini digabung dan divalidasi sekali di akhir, bukan per sub-batch).
 
 Untuk validasi cepat semua fase sekaligus, loop `glob('locale/phase*.jsonl')` dan gabungkan
 semua baris sebelum dicek — juga bagus untuk sekalian memastikan tidak ada idx yang
