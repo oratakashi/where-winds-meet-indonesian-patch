@@ -7,24 +7,25 @@ kebenaran untuk "sudah sampai mana".
 ## Status saat ini
 
 - **Fase 0, Fase 1, Fase 2, Fase 3, dan Fase 4 SELESAI** (idx 0–19.999). Fase saat ini:
-  **Fase 5** (rentang idx 20.000–49.999, 30.000 unik, batch **2.000/sesi**) — **10 sesi
-  selesai**: idx 20.000–34.999 (15.000 baris) sudah ada di `locale/phase5.jsonl`,
-  next idx = 35.000.
+  **Fase 5** (rentang idx 20.000–49.999, 30.000 unik, batch **2.000/sesi**) — **11 sesi
+  selesai**: idx 20.000–36.999 (17.000 baris) sudah ada di `locale/phase5.jsonl`,
+  next idx = 37.000.
 - Total baris di `strings.jsonl`: **963.050**
 - Total string unik (setelah dedup): **429.887**
-- **Sudah diterjemahkan: idx 0–34.999 dari 429.887 (35.000 string unik, ~8.14%)**
-- Sesi terakhir mengerjakan: 2026-09-17 — Fase 5 lanjut, batch kesepuluh idx 33.000–34.999
+- **Sudah diterjemahkan: idx 0–36.999 dari 429.887 (37.000 string unik, ~8.61%)**
+- Sesi terakhir mengerjakan: 2026-09-17 — Fase 5 lanjut, batch kesebelas idx 35.000–36.999
   (2.000 baris baru di `locale/phase5.jsonl`, sesuai ukuran iterasi 2.000/sesi),
   diproses dalam 4 sub-batch 500 lalu digabung, tervalidasi 0 mismatch token & 0
-  duplikat/gap idx (dicek lintas semua file `locale/phase*.jsonl` sekaligus, total
-  35.000 idx unik tercatat tanpa tabrakan, kontigu penuh 0–34.999 tanpa lubang). Batch
-  ini dimulai dari `translation_work/batch_1.jsonl` (2.001 baris sumber idx 33.000–35.000
-  yang sudah disiapkan sesi sebelumnya) — 2.000 baris pertama (33.000–34.999) dipakai
-  untuk sesi ini, sisa 1 baris (idx 35.000) jadi awal batch berikutnya. 2 mismatch token
-  ketemu & diperbaiki sebelum append final: idx 34071 (tag polos `<Nods.>` sempat
-  diterjemahkan jadi `<Mengangguk.>`) dan idx 34671 (tag polos `<ears drooping>` sempat
-  diterjemahkan jadi `<telinga terkulai>`) — keduanya dikembalikan ke bahasa Inggris asli
-  sesuai aturan tag-polos-tanpa-format di `GLOSSARY.md`.
+  duplikat/gap idx (dicek lintas semua file `locale/phase*.jsonl` sekaligus + batch baru,
+  total 37.000 idx unik tercatat tanpa tabrakan, kontigu penuh 0–36.999 tanpa lubang).
+  Batch ini diambil langsung dari `translation_work/unique_strings.jsonl` (baris 35.001–37.000,
+  1-indexed). 0 mismatch token pada validasi pertama. Keputusan baru: nickname companion
+  berpola **"Kitty: X"** / **"Doggy: X"** (mis. "Kitty: Youngest", "Doggy: Deng Deng")
+  **dibiarkan UTUH bahasa Inggris**, diperlakukan sebagai nickname companion seperti nama
+  karakter, bukan teks deskriptif biasa — konsisten dipakai di seluruh batch ini
+  (puluhan kemunculan). String Han leftover ketiga ditemukan: idx 36975 `"倒计时测试徽章"`
+  (label internal developer) diterjemahkan strukturnya jadi "Lencana Uji Coba Hitung Mundur",
+  konsisten dengan pola idx 14850/19719 sebelumnya.
 - **File progress dipecah per fase** di `locale/phase{N}.jsonl` (mis. `locale/phase0.jsonl`,
   `locale/phase1.jsonl`, `locale/phase2.jsonl`, dst. — mengikuti nomor fase & rentang idx
   di tabel `plan.md`). Tiap file berisi `{"idx": N, "v": "..."}` per baris, `idx` yang
@@ -32,9 +33,9 @@ kebenaran untuk "sudah sampai mana".
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
   (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
-  (10.000 baris, lengkap), `locale/phase5.jsonl` (13.000 baris, **jalan** —
+  (10.000 baris, lengkap), `locale/phase5.jsonl` (17.000 baris, **jalan** —
   rentang penuh fase ini 30.000 baris/idx 20.000–49.999). Sesi berikutnya lanjutkan
-  `locale/phase5.jsonl` mulai idx 33.000.
+  `locale/phase5.jsonl` mulai idx 37.000.
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase saat ini dari `plan.md`);
   next idx = idx_awal_fase + jumlah_baris.
@@ -111,7 +112,7 @@ User update game-nya dan menemukan file locale baru: `translate_words_map_en__sm
 
 ## PENTING: sisa pekerjaan sangat besar
 
-404.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
+392.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
 sesi per fase (kasar: 125–190+ sesi total sampai 100%). Sampaikan ini ke user kalau
 ditanya estimasi waktu, dan ingatkan opsi berhenti di ~50% baris (lihat "Titik berhenti
 yang masuk akal" di `plan.md`) kalau relevan.
@@ -502,6 +503,28 @@ for m in mismatches[:20]:
 - Batch ini (2.000 string, idx 33000-34999) dikerjakan sebagai satu sesi, diproses dalam
   4 sub-batch 500 lalu digabung & divalidasi sekaligus sebelum di-append — 2 mismatch tag
   polos ketemu & diperbaiki (lihat poin pertama di atas).
+
+### Catatan istilah baru dari sesi Fase 5 lanjutan (idx 35000-36999)
+
+- **Nickname companion berpola "Kitty: X" / "Doggy: X" DIBIARKAN UTUH bahasa Inggris**
+  (mis. "Kitty: Youngest", "Kitty: Ebony", "Doggy: Deng Deng", "Doggy: Tipsy") — keputusan
+  baru sesi ini: diperlakukan sebagai nickname/nama companion (seperti nama karakter),
+  BUKAN diterjemahkan sebagai kata sifat/benda umum, meski beberapa suffix-nya berupa kata
+  Inggris biasa (Youngest, Ball, Drifter, dst.). Konsisten diterapkan ke puluhan kemunculan
+  di batch ini — kalau nanti ada precedent lama yang bertentangan (belum ditemukan saat
+  audit sesi ini), review ulang.
+- **String Han leftover ketiga**: idx 36975 `"倒计时测试徽章"` (label internal developer,
+  "Countdown Test Badge") diterjemahkan strukturnya jadi "Lencana Uji Coba Hitung Mundur" —
+  konsisten dengan pola idx 14850/19719 (Han leftover = label dev, diterjemahkan penuh
+  karena tidak ada nama yang perlu ditransliterasi).
+- **"Union"/"Player"/"Enhancement"/"Sword Trial"/"Cultivation"/"Retainer"/"Wanderer"/pola
+  label kombat `"<Senjata> - <Aksi>"`/nama gear panjang** dikonfirmasi ulang konsisten
+  dengan keputusan Fase 5 sesi-sesi sebelumnya — tidak ada perubahan konvensi besar untuk
+  istilah-istilah ini di batch ini.
+- Batch ini (2.000 string, idx 35000-36999) dikerjakan sebagai satu sesi, diproses dalam
+  4 sub-batch 500 lalu digabung & divalidasi sekaligus sebelum di-append — 0 mismatch token
+  pada percobaan pertama (setelah koreksi 1 idx yang sempat terlewat dibaca dari sumber,
+  idx 36999, ditangkap saat validasi count sebelum append).
 
 Untuk validasi cepat semua fase sekaligus, loop `glob('locale/phase*.jsonl')` dan gabungkan
 semua baris sebelum dicek — juga bagus untuk sekalian memastikan tidak ada idx yang
