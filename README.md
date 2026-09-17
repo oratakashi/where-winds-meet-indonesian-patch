@@ -381,11 +381,6 @@ diam-diam.
 
 - Proyek ini **tidak berafiliasi** dengan NetEase, Everstone Studio, atau vendor
   translation pack mana pun. Semua merek dagang milik pemiliknya.
-- Repo ini **tidak mendistribusikan** teks game, pack terjemahan, atau aset
-  apa pun. Hanya tool dan dokumentasi format. Semua teks di dalam file
-  lokalisasi adalah karya berhak cipta NetEase, dan pack terjemahan pihak
-  ketiga adalah karya turunan milik pembuatnya. **Jangan commit hasil `dump`
-  atau pack jadi ke repo publik** — `.gitignore` sudah menyiapkan ini.
 - **Where Winds Meet adalah game online**, bahkan mode solo tetap terhubung ke
   server. Memodifikasi file client berpotensi melanggar ToS dan bisa terdeteksi
   oleh sistem anti-tamper, meskipun yang diubah hanya string dan tidak ada
