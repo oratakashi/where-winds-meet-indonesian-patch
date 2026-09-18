@@ -6,41 +6,63 @@ kebenaran untuk "sudah sampai mana".
 
 ## Status saat ini
 
-- **Fase 0, Fase 1, Fase 2, Fase 3, dan Fase 4 SELESAI** (idx 0–19.999). **Fase 5**
-  (rentang idx 20.000–49.999, 30.000 unik, batch 2.000/sesi) masih **jalan**: idx
-  20.000–44.999 (25.000 baris) ada di `locale/phase5.jsonl`, next idx (kalau lanjut
-  fase 5) = 45.000 — **diproses sesi ini**.
+- **Fase 0, Fase 1, Fase 2, Fase 3, Fase 4, dan Fase 5 SELESAI** (idx 0–49.999).
+  **Fase 6** (rentang idx 50.000–99.999, 50.000 unik, batch 2.000/sesi) baru **mulai**:
+  idx 50.000–50.999 (1.000 baris) ada di `locale/phase6.jsonl`, next idx = 51.000.
 - Total baris di `strings.jsonl`: **963.050** (versi lama; versi 2026-09 update = 826.388
   di file utama, lihat bagian "Update game 2026-09-16")
 - Total string unik: **461.704** (429.887 asli + 31.817 dari update game, idx 0–461.703)
-- **Progress Fase 0–5: idx 0–44.999 selesai (45.000/429.887 string dari batch asli).**
+- **Progress Fase 0–6: idx 0–50.999 selesai (51.000/429.887 string dari batch asli).**
 - **Progress Fase 9: idx 429.887–439.136 selesai (9.250/31.817 string, ~29.07%
   dari Fase 9) — `locale/phase9.jsonl`, next idx = 439.137 — tidak disentuh sesi ini.**
-- Sesi ini (2026-09-18, batch ketujuh Fase 5): idx 43.000–44.999 (2.000 baris baru,
-  batch penuh sesuai preferensi user) diterjemahkan langsung oleh sesi utama,
-  diproses dalam 4 sub-batch 500 lalu digabung. **2 mismatch token ditemukan &
-  diperbaiki** sebelum di-append: idx 43429 (typo tag — `#Ytargeted...#E` sempat
-  ditulis `#Ditarget` alih-alih `#Yditarget`, huruf highlight tag salah ketik jadi
-  huruf lain, bukan salah aturan konvensi), dan idx 44867 (surat ucapan Tahun Baru
-  yang seluruh kalimatnya — termasuk kode warna `#8c5823...#E` di dalamnya — dibungkus
-  satu tag `<...>` dari awal sampai akhir, sempat diterjemahkan penuh saat draf awal
-  sebelum disadari; dikembalikan ke Inggris 100% identik sesuai aturan tag-panjang-
-  satu-token yang sudah dikunci sejak idx 12448 — pola sama persis dengan idx 30170
-  sesi Fase 5 sebelumnya, jenis kesalahan yang berulang jadi pengingat kuat untuk
-  selalu curigai tag `<...>` yang membungkus lebih dari satu kalimat). Spot-check
-  manual tambahan untuk konvensi "Player selalu Inggris" dijalankan atas seluruh
-  batch (grep `[Pp]emain` di file output) — **0 pelanggaran ditemukan**. 0 duplikat/
-  gap idx dicek lintas semua file `locale/phase*.jsonl` sekaligus (total 54.250
-  baris/idx unik tercatat tanpa tabrakan), `phase5.jsonl` sendiri kontigu penuh
-  20.000–44.999 tanpa lubang.
-- **Catatan istilah baru sesi ini**: tidak ada keputusan konvensi besar baru — mayoritas
-  nama NPC/gear/skill/label kombat, "Union"/"Cultivation"/"Sword Trial"/"Retainer"/
-  "Companion"/"Homestead"/"Farmer"/label kombat `"<Senjata> - <Aksi>"` mengikuti pola
-  yang sudah terkunci di sesi-sesi Fase 5 sebelumnya. Dua catatan kecil: "Warfarer"
-  (idx 44824, dalam tanda kutip, kemungkinan typo sumber dari "Wayfarer") dipertahankan
-  literal apa adanya sesuai teks sumber (pola sama dengan "Loan Cloud" idx 21551 —
-  tidak dikoreksi); dan "Guild" dikonfirmasi ulang konsisten dibiarkan Inggris sebagai
-  loanword umum (mis. "guild token", "Dirikan guild").
+- Sesi ini (2026-09-18, batch penutup Fase 5 + batch pembuka Fase 6): user minta lanjut
+  dengan batch 2.000 string/iterasi (dikonfirmasi ulang). idx 49.000–49.999 (1.000 baris)
+  diterjemahkan dan di-append ke `locale/phase5.jsonl`, **menuntaskan Fase 5 sepenuhnya**
+  (30.000/30.000 baris, idx 20.000–49.999, kontigu tanpa lubang, divalidasi 0 mismatch
+  token). Sesuai prosedur "potong batch di batas fase" di bagian "Cara resume" (poin 7),
+  sisa 1.000 baris dari target 2.000/sesi (idx 50.000–50.999) otomatis masuk fase
+  berikutnya — file baru `locale/phase6.jsonl` dibuat (1.000/50.000 baris Fase 6
+  selesai, kontigu 50.000–50.999, next idx = 51.000). Seluruh 2.000 baris diproses
+  dalam 4 sub-batch 500, tervalidasi **0 mismatch token pada percobaan pertama** di
+  semua 4 sub-batch. Spot-check manual tambahan untuk konvensi "Player selalu Inggris"
+  (grep `pemain` case-insensitive di seluruh output sesi ini) — **0 pelanggaran
+  ditemukan**. 0 duplikat/gap idx dicek lintas semua file `locale/phase*.jsonl`
+  sekaligus (total 60.250 baris/idx unik tercatat tanpa tabrakan).
+- **Catatan istilah baru sesi ini**:
+  - **"Pangolin" dikonfirmasi DITERJEMAHKAN "Trenggiling"** sesuai aturan lama Fase 4
+    (idx 18100-19099) yang sempat terlewat saat draf awal untuk NPC "Pangolin Peddler"
+    (idx 49821, 49857, 50885) — diperbaiki jadi "Pedagang Trenggiling"/"Lapak
+    Trenggiling" sebelum divalidasi, konsisten di ketiga kemunculan.
+  - **Jam ganda ala zodiak Tiongkok (mis. "Hai Hour", "Xu hour")** — pola baru,
+    diputuskan **"Hour"/"hour" DITERJEMAHKAN "Jam"**, nama jam (Hai, Xu, dst.)
+    dibiarkan Inggris/Pinyin sebagai istilah waktu tradisional tanpa padanan baku
+    (mis. "Hai Hour" -> "Jam Hai", "Xu hour" -> "Jam Xu"). idx 49014, 50880.
+  - **"Form" sebagai status transformasi (mis. "Carp form", "Wind form", "Vulpine
+    Form", "Feline Form")** — diputuskan **DITERJEMAHKAN "Wujud"** (mis. "Vulpine
+    Form" -> "Wujud Vulpine", "Carp form" -> "wujud Carp") konsisten di semua
+    kemunculan sesi ini (idx 49218, 49451, 50686).
+  - **"master"/"Master" generik non-honorifik-nama (mis. "the only master who knew
+    how to mount it", "three masters" ahli peleburan)** dibiarkan Inggris huruf
+    kecil sebagai loanword umum untuk "ahli/pengrajin" — beda dari "Master" honorifik
+    di depan nama (tetap "Guru") dan "Master" pemimpin organisasi (tetap "Ketua").
+    idx 49566, 49978.
+  - **Placeholder durasi shorthand huruf tunggal terus dikonversi** `s`->`d` (detik)
+    dan `h`->`j` (jam) sesuai konvensi lama, termasuk di dalam tag warna (mis.
+    `#Y3#Es`->`#Y3#Ed`, "1h"->"1j" idx 50660) dan setelah placeholder `{}` langsung
+    (mis. `{}s`->`{}d`, idx 49991).
+  - **"Wanderer"/"Wayfarer" dikonfirmasi ulang konsisten "Pengembara"** (termasuk
+    "Wayfarer" berdiri sendiri idx 50695, bukan cuma "Wanderer"), **"Player" tetap
+    Inggris apa pun konteksnya** (dikonfirmasi lewat spot-check 0 pelanggaran),
+    "Retainer"/"Companion"/"Cultivation"/"Sect"->"Sekte"/nama gear-skill panjang
+    mengikuti pola yang sudah terkunci di sesi-sesi Fase 5 sebelumnya — tidak ada
+    perubahan konvensi baru untuk istilah-istilah ini di batch Fase 6 pembuka ini.
+  - **Placeholder khusus baru ditemukan & dipertahankan persis**: `$link<teks>^ID^$`
+    (idx 49413, 50398 — seluruh isi antara `$link` dan `^ID^$` termasuk teks
+    Inggris di dalamnya WAJIB dibiarkan identik, diperlakukan sebagai satu unit
+    opaque, bukan teks biasa yang diterjemahkan), `$S...$E` (pembuka/penutup blok
+    kutipan/narasi pada deskripsi skill, mis. idx 50135, 50583, 50716 — beda dari
+    `$D`/`$H`/`$F` yang murni angka, `$S...$E` MEMBUNGKUS kalimat naratif yang
+    tetap diterjemahkan isinya, hanya penanda `$S`/`$E` yang dipertahankan persis).
 
 ### Riwayat batch Fase 9 sebelumnya (untuk referensi)
 
@@ -83,10 +105,10 @@ kebenaran untuk "sudah sampai mana".
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
   (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
-  (10.000 baris, lengkap), `locale/phase5.jsonl` (23.000 baris, **jalan** — rentang penuh
-  fase ini 30.000 baris/idx 20.000–49.999, next idx = 43.000 — **tidak disentuh sesi
-  ini**), `locale/phase9.jsonl` (9.250 baris, **jalan** — rentang penuh fase ini
-  31.817 baris/idx 429.887–461.703, next idx = 439.137).
+  (10.000 baris, lengkap), `locale/phase5.jsonl` (29.000 baris, **jalan** — rentang penuh
+  fase ini 30.000 baris/idx 20.000–49.999, next idx = 49.000 — **diproses sesi ini**),
+  `locale/phase9.jsonl` (9.250 baris, **jalan** — rentang penuh fase ini
+  31.817 baris/idx 429.887–461.703, next idx = 439.137 — tidak disentuh sesi ini).
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase yang mau dilanjutkan — **sekarang
   ada dua fase jalan sekaligus, 5 dan 9, jadi tanya user dulu fase mana kalau tidak
@@ -197,7 +219,8 @@ User update game-nya dan menemukan file locale baru: `translate_words_map_en__sm
 
 ## PENTING: sisa pekerjaan sangat besar
 
-388.887 string unik lagi setelah progress ini. Lihat `plan.md` untuk perkiraan jumlah
+380.887 string unik lagi (Fase 0–8) setelah progress ini, plus 22.567 sisa Fase 9.
+Lihat `plan.md` untuk perkiraan jumlah
 sesi per fase (kasar: 125–190+ sesi total sampai 100%). Sampaikan ini ke user kalau
 ditanya estimasi waktu, dan ingatkan opsi berhenti di ~50% baris (lihat "Titik berhenti
 yang masuk akal" di `plan.md`) kalau relevan.

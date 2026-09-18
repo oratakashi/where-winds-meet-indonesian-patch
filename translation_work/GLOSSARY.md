@@ -295,6 +295,29 @@ Buff/Debuff, Chat.
   TANPA digabung ke dalamnya. Jangan pernah menaruh teks di dalam tag `<...>` yang sudah
   berformat `|id|#C|slot`.
 
+## Istilah baru yang dikunci sesi Fase 5 penutup + Fase 6 pembuka (idx 49000-50999)
+
+- **"Pangolin" -> "Trenggiling"** (konfirmasi ulang aturan lama Fase 4, sempat
+  terlewat untuk NPC "Pangolin Peddler" -> "Pedagang Trenggiling").
+- **Jam ganda ala zodiak Tiongkok ("X Hour"/"X hour") -> "Jam X"** (mis. "Hai Hour"
+  -> "Jam Hai", "Xu hour" -> "Jam Xu") — nama jam (Hai, Xu, dst.) dibiarkan Inggris/
+  Pinyin sebagai istilah waktu tradisional tanpa padanan baku, hanya kata "Hour"
+  yang diterjemahkan.
+- **"Form" sebagai status transformasi (Carp form, Wind form, Vulpine Form, Feline
+  Form) -> "Wujud"** (mis. "Vulpine Form" -> "Wujud Vulpine").
+- **"master"/"Master" huruf kecil generik (bukan honorifik di depan nama, bukan
+  pemimpin organisasi)** dibiarkan Inggris sebagai loanword "ahli/pengrajin" —
+  beda dari "Master" honorifik nama (-> "Guru") dan "Master" pemimpin org (-> "Ketua").
+- **Placeholder shorthand durasi huruf tunggal `s`->`d`/`h`->`j` juga berlaku** saat
+  menempel langsung ke placeholder `{}` (mis. `{}s`->`{}d`) dan di dalam tag warna.
+- **`$link<teks>^ID^$`** — placeholder link khusus, seluruh isi di antara `$link` dan
+  `^ID^$` (termasuk teks Inggris di dalamnya) WAJIB dipertahankan 100% identik,
+  diperlakukan sebagai satu unit opaque.
+- **`$S...$E`** — pembungkus blok kutipan/narasi pada deskripsi skill (beda dari
+  `$D`/`$H`/`$F` yang murni nilai angka) — isi di dalamnya tetap DITERJEMAHKAN
+  normal, hanya penanda `$S`/`$E` sendiri yang dipertahankan persis.
+- **"Wayfarer" (berdiri sendiri, bukan cuma "Wanderer") dikonfirmasi ulang -> "Pengembara"**.
+
 ## Catatan ambiguitas yang belum konsisten sempurna (untuk direview kalau ketemu lagi)
 
 - **"Power"**: kadang diterjemahkan "Kekuatan" (kata umum berdiri sendiri), tapi kalau

@@ -23,8 +23,8 @@ teliti), fase belakang boleh lebih besar (kebanyakan string pendek/berulang pola
 | 2 (selesai) | 2.000 – 4.999     | 3.000       | ~25–28% (aktual, terverifikasi) | —                       | selesai (2 sesi)           | `locale/phase2.jsonl` |
 | 3 (selesai) | 5.000 – 9.999     | 5.000       | ~33.5%                          | —                       | selesai (~6 sesi)          | `locale/phase3.jsonl` |
 | 4 (selesai) | 10.000 – 19.999   | 10.000      | ~40.0%                          | —                       | selesai (7 sesi)           | `locale/phase4.jsonl` |
-| 5 (jalan)   | 20.000 – 49.999   | 30.000      | ~50.1%                          | 2.000/sesi (fixed)      | ~15 sesi (12.5/15 selesai) | `locale/phase5.jsonl` |
-| 6           | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000–3.000/sesi        | ~17–25 sesi                | `locale/phase6.jsonl` |
+| 5 (selesai) | 20.000 – 49.999   | 30.000      | ~50.1%                          | —                        | selesai (15/15 sesi)       | `locale/phase5.jsonl` |
+| 6 (jalan)   | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000/sesi (fixed)      | ~17–25 sesi (1/~25 selesai) | `locale/phase6.jsonl` |
 | 7           | 100.000 – 199.999 | 100.000     | ~76.1%                          | 2.500–3.500/sesi        | ~29–40 sesi                | `locale/phase7.jsonl` |
 | 8           | 200.000 – 429.886 | 229.887     | 100%*                           | 3.000–5.000/sesi        | ~46–77 sesi                | `locale/phase8.jsonl` |
 | 9 (jalan)   | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 2.000/sesi (fixed)      | ~16 sesi (4.6/16 selesai)  | `locale/phase9.jsonl` |
@@ -72,6 +72,26 @@ disentuh sesi ini.
 2.000 string/iterasi (dikerjakan langsung oleh sesi utama, bukan didelegasikan ke
 subagent). idx 437.137–439.136 selesai, next idx Fase 9 = 439.137. Fase 5 tetap di
 next idx 43.000, tidak disentuh sesi ini.
+
+**Update 2026-09-18 (batch kedelapan Fase 5)**: user eksplisit minta lanjut Fase 5,
+batch 2.000 string/iterasi dikonfirmasi ulang. idx 45.000–46.999 selesai, next idx
+Fase 5 = 47.000 (12.5/15 sesi awal batch 2.000/sesi selesai — lihat kolom "Perkiraan
+sesi" di tabel di atas). Fase 9 tetap di next idx 439.137, tidak disentuh sesi ini.
+
+**Update 2026-09-18 (batch kesembilan Fase 5)**: user lanjut Fase 5 lagi, batch
+2.000 string/iterasi dikonfirmasi ulang. idx 47.000–48.999 selesai, next idx Fase 5
+= 49.000 (14.5/15 sesi awal batch 2.000/sesi selesai — hanya 1.000 baris tersisa di
+Fase 5, idx 49.000–49.999, sesi berikutnya akan jadi batch penutup fase ini). Fase 9
+tetap di next idx 439.137, tidak disentuh sesi ini.
+
+**Update 2026-09-18 (batch penutup Fase 5 + batch pembuka Fase 6)**: user minta
+lanjut dengan batch 2.000 string/iterasi. idx 49.000–49.999 (1.000 baris) menuntaskan
+Fase 5 sepenuhnya (idx 20.000–49.999, 30.000/30.000 baris) — `locale/phase5.jsonl`
+final, tidak akan ditambah lagi. Sisa 1.000 baris dari target 2.000/sesi (idx
+50.000–50.999) otomatis maju ke Fase 6 sesuai prosedur "potong batch di batas fase"
+di `handoff.md`, membuka file baru `locale/phase6.jsonl` (1.000/50.000 baris fase ini
+selesai). Next idx Fase 6 = 51.000. Fase 9 tetap di next idx 439.137, tidak disentuh
+sesi ini.
 
 \* Persentase dari 963.050 baris total di `strings.jsonl`, dihitung dari distribusi
 frekuensi aktual (lihat catatan di bawah). Angka fase 2–8 adalah interpolasi kasar,
