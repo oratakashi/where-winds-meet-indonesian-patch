@@ -8,26 +8,46 @@ kebenaran untuk "sudah sampai mana".
 
 - **Fase 0, Fase 1, Fase 2, Fase 3, Fase 4, dan Fase 5 SELESAI** (idx 0–49.999).
   **Fase 6** (rentang idx 50.000–99.999, 50.000 unik, batch 2.000/sesi) **jalan**:
-  idx 50.000–52.999 (3.000 baris) ada di `locale/phase6.jsonl`, next idx = 53.000.
+  idx 50.000–52.999 (3.000 baris) ada di `locale/phase6.jsonl`, next idx = 53.000
+  — tidak disentuh sesi ini.
 - Total baris di `strings.jsonl`: **963.050** (versi lama; versi 2026-09 update = 826.388
   di file utama, lihat bagian "Update game 2026-09-16")
 - Total string unik: **461.704** (429.887 asli + 31.817 dari update game, idx 0–461.703)
-- **Progress Fase 0–6: idx 0–52.999 selesai (53.000/429.887 string dari batch asli).**
-- **Progress Fase 9: idx 429.887–439.136 selesai (9.250/31.817 string, ~29.07%
-  dari Fase 9) — `locale/phase9.jsonl`, next idx = 439.137 — tidak disentuh sesi ini.**
-- Sesi ini (2026-09-18, batch kedua Fase 6): user minta lanjut Fase 6 dengan batch
-  2.000 string/iterasi (dikonfirmasi ulang). idx 51.000–52.999 (2.000 baris)
-  diterjemahkan dan di-append ke `locale/phase6.jsonl`, next idx Fase 6 = 53.000.
-  Seluruh 2.000 baris diproses dalam 4 sub-batch 500, tervalidasi **0 mismatch token
-  pada percobaan pertama** di semua 4 sub-batch (termasuk validasi ulang seluruh
-  3.000 baris `phase6.jsonl` sekaligus setelah append). Spot-check manual tambahan
+- **Progress Fase 0–6: idx 0–52.999 selesai (53.000/429.887 string dari batch asli) — tidak disentuh sesi ini.**
+- **Progress Fase 9: idx 429.887–441.136 selesai (11.250/31.817 string, ~35.36%
+  dari Fase 9) — `locale/phase9.jsonl`, next idx = 441.137 — diproses sesi ini.**
+- Sesi ini (2026-09-18, batch keenam Fase 9): user minta lanjut Fase 9 dengan batch
+  2.000 string/iterasi. idx 439.137–441.136 (2.000 baris) diterjemahkan dan
+  di-append ke `locale/phase9.jsonl`, next idx Fase 9 = 441.137. Seluruh 2.000 baris
+  diproses dalam 8 sub-batch 250, tervalidasi **0 mismatch token pada percobaan
+  pertama** di semua 8 sub-batch (termasuk validasi ulang penuh file `phase9.jsonl`
+  gabungan, 11.250 baris, sekaligus setelah append). Spot-check manual tambahan
   untuk konvensi "Player selalu Inggris" (grep `pemain` case-insensitive di seluruh
-  output sesi ini) — 1 hit ditemukan (idx 52612 "pemain api" = terjemahan sah dari
-  "fire-breathing performer", bukan pelanggaran konvensi "Player"). 0 duplikat/gap
-  idx dicek lintas semua file `locale/phase*.jsonl` sekaligus (total 62.250 baris/idx
-  unik tercatat tanpa tabrakan). Fase 9 tetap di next idx 439.137, tidak disentuh
-  sesi ini.
-- **Catatan istilah baru sesi ini (batch kedua Fase 6, idx 51000-52999)**:
+  output sesi ini) — 2 hit ditemukan (idx 440233 & 440527, keduanya "pemain" sebagai
+  terjemahan sah dari "performers" [musisi/pemain pertunjukan], bukan pelanggaran
+  konvensi "Player"). 0 duplikat/gap idx dicek lintas semua file `locale/phase*.jsonl`
+  sekaligus (total 64.250 baris/idx unik tercatat tanpa tabrakan, `phase9.jsonl`
+  sendiri kontigu penuh 429.887–441.136 tanpa lubang). Fase 6 tetap di next idx
+  53.000, tidak disentuh sesi ini.
+- **Catatan istilah baru sesi ini (batch keenam Fase 9, idx 439137-441136)**:
+  - Cerita lore panjang Zou/Yang (persahabatan lama Mohist Hill, idx 439837),
+    Heron/Gasping Cliff (idx 440503), dan Zhen Gui/Relief Bureau (idx 440551)
+    diterjemahkan penuh sebagai narasi wuxia standar tanpa istilah baru signifikan.
+  - "Senior Brother"/"Senior Sister"/"Junior Brother"/"Junior Sister" (lowercase
+    dalam kalimat, mis. "senior brother-ku") dikonfirmasi ulang dibiarkan Inggris
+    sesuai keputusan lama Fase 9 batch kelima — konsisten diterapkan di batch ini.
+  - "Elder Roc"/"Elder Crane"/"Elder Dove"/"Elder Guan"/"Elder Stork"/"Elder Shrike"
+    dst. (Tetua + nama) dikonfirmasi konsisten "Tetua X" sesuai aturan lama Fase 4.
+  - Nama dish/resep sistem (recipe list dengan placeholder #U/#H, mis. "Grilled Melon
+    with Garlic", "Braised Meat with Preserved Peaches") **dibiarkan Inggris**
+    sebagai nama item/recipe formal, beda dari deskripsi lore makanan naratif biasa
+    (mis. "Pine Rock Stewed Dove" sebagai nama dish standalone juga dibiarkan
+    Inggris — direvisi dari draf awal yang sempat menerjemahkannya, untuk konsistensi
+    dengan pola nama recipe/item lain).
+  - Tag `<...>` yang membungkus satu frasa/kalimat panjang (tag-panjang-satu-token)
+    ditemukan lagi beberapa kali (idx 440190, 440683) — dibiarkan 100% Inggris sesuai
+    aturan lama sejak idx 12448.
+- **Catatan istilah dari sesi sebelumnya (batch kedua Fase 6, idx 51000-52999) — untuk referensi**:
   - Tidak ada keputusan konvensi baru yang signifikan — batch ini didominasi nama
     NPC/username pemain acak (banyak string `freq: 2` unik seperti "ZaliThsOng",
     "MaleniaprocyoN"), dialog NPC generik, dan lore item/quest yang mengikuti pola
@@ -114,13 +134,14 @@ kebenaran untuk "sudah sampai mana".
   jadi antar-file tetap gampang di-cross-reference. Sudah ada: `locale/phase0.jsonl` (800
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
   (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
-  (10.000 baris, lengkap), `locale/phase5.jsonl` (29.000 baris, **jalan** — rentang penuh
-  fase ini 30.000 baris/idx 20.000–49.999, next idx = 49.000 — **diproses sesi ini**),
-  `locale/phase9.jsonl` (9.250 baris, **jalan** — rentang penuh fase ini
-  31.817 baris/idx 429.887–461.703, next idx = 439.137 — tidak disentuh sesi ini).
+  (10.000 baris, lengkap), `locale/phase5.jsonl` (30.000 baris, **SELESAI** — rentang penuh
+  fase ini 30.000 baris/idx 20.000–49.999), `locale/phase6.jsonl` (3.000 baris, **jalan** —
+  rentang penuh fase ini 50.000 baris/idx 50.000–99.999, next idx = 53.000 — tidak
+  disentuh sesi ini), `locale/phase9.jsonl` (11.250 baris, **jalan** — rentang penuh
+  fase ini 31.817 baris/idx 429.887–461.703, next idx = 441.137 — **diproses sesi ini**).
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase yang mau dilanjutkan — **sekarang
-  ada dua fase jalan sekaligus, 5 dan 9, jadi tanya user dulu fase mana kalau tidak
+  ada dua fase jalan sekaligus, 6 dan 9, jadi tanya user dulu fase mana kalau tidak
   disebutkan eksplisit**); next idx = idx_awal_fase + jumlah_baris.
 
 String diurutkan berdasarkan **frekuensi kemunculan** (bukan urutan asli file), jadi
@@ -228,7 +249,7 @@ User update game-nya dan menemukan file locale baru: `translate_words_map_en__sm
 
 ## PENTING: sisa pekerjaan sangat besar
 
-380.887 string unik lagi (Fase 0–8) setelah progress ini, plus 22.567 sisa Fase 9.
+376.887 string unik lagi (Fase 0–8) setelah progress ini, plus 20.567 sisa Fase 9.
 Lihat `plan.md` untuk perkiraan jumlah
 sesi per fase (kasar: 125–190+ sesi total sampai 100%). Sampaikan ini ke user kalau
 ditanya estimasi waktu, dan ingatkan opsi berhenti di ~50% baris (lihat "Titik berhenti

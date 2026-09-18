@@ -27,7 +27,7 @@ teliti), fase belakang boleh lebih besar (kebanyakan string pendek/berulang pola
 | 6 (jalan)   | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000/sesi (fixed)      | ~17–25 sesi (1.5/~25 selesai) | `locale/phase6.jsonl` |
 | 7           | 100.000 – 199.999 | 100.000     | ~76.1%                          | 2.500–3.500/sesi        | ~29–40 sesi                | `locale/phase7.jsonl` |
 | 8           | 200.000 – 429.886 | 229.887     | 100%*                           | 3.000–5.000/sesi        | ~46–77 sesi                | `locale/phase8.jsonl` |
-| 9 (jalan)   | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 2.000/sesi (fixed)      | ~16 sesi (4.6/16 selesai)  | `locale/phase9.jsonl` |
+| 9 (jalan)   | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 2.000/sesi (fixed)      | ~16 sesi (5.6/16 selesai)  | `locale/phase9.jsonl` |
 
 **Fase 9** ditambahkan 2026-09-16 setelah update game — bukan bagian dari 429.887 unik semula.
 `tools/rebuild_unique_strings.py` menambah idx 429.887–461.703 (31.817 string baru) dari string
@@ -97,6 +97,11 @@ sesi ini.
 string/iterasi dikonfirmasi ulang. idx 51.000–52.999 (2.000 baris) selesai
 (3.000/50.000 baris Fase 6 selesai). Next idx Fase 6 = 53.000. Fase 9 tetap di
 next idx 439.137, tidak disentuh sesi ini.
+
+**Update 2026-09-18 (batch keenam Fase 9)**: user lanjut Fase 9, batch 2.000
+string/iterasi dikonfirmasi ulang. idx 439.137–441.136 (2.000 baris) selesai
+(11.250/31.817 baris Fase 9 selesai, ~35.36%). Next idx Fase 9 = 441.137. Fase 6
+tetap di next idx 53.000, tidak disentuh sesi ini.
 
 \* Persentase dari 963.050 baris total di `strings.jsonl`, dihitung dari distribusi
 frekuensi aktual (lihat catatan di bawah). Angka fase 2–8 adalah interpolasi kasar,
