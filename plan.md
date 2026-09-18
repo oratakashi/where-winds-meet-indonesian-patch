@@ -27,7 +27,7 @@ teliti), fase belakang boleh lebih besar (kebanyakan string pendek/berulang pola
 | 6           | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000–3.000/sesi        | ~17–25 sesi                 | `locale/phase6.jsonl` |
 | 7           | 100.000 – 199.999 | 100.000     | ~76.1%                          | 2.500–3.500/sesi        | ~29–40 sesi                 | `locale/phase7.jsonl` |
 | 8           | 200.000 – 429.886 | 229.887     | 100%*                           | 3.000–5.000/sesi        | ~46–77 sesi                 | `locale/phase8.jsonl` |
-| 9 (jalan)   | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 2.000/sesi (fixed)      | ~16 sesi (3/16 selesai)      | `locale/phase9.jsonl` |
+| 9 (jalan)   | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 2.000/sesi (fixed)      | ~16 sesi (4.6/16 selesai)     | `locale/phase9.jsonl` |
 
 **Fase 9** ditambahkan 2026-09-16 setelah update game — bukan bagian dari 429.887 unik semula.
 `tools/rebuild_unique_strings.py` menambah idx 429.887–461.703 (31.817 string baru) dari string
@@ -55,6 +55,19 @@ tidak disentuh sesi ini.
 **Update 2026-09-17 (batch keenam)**: lanjut Fase 5 lagi dengan batch 2.000 string/iterasi
 (dikonfirmasi ulang). idx 41.000–42.999 selesai, next idx Fase 5 = 43.000. Fase 9 tetap
 di next idx 435.887, tidak disentuh sesi ini.
+
+**Update 2026-09-18 (batch keempat Fase 9)**: user eksplisit minta lanjut Fase 9 (bukan
+Fase 5), target awal 2.000 string/iterasi. Penerjemahan didelegasikan ke subagent
+background; user minta subagent dihentikan lebih awal setelah 1.250/2.000 string
+("sepertinya sudah cukup"), jadi batch sesi ini **1.250 string** (bukan 2.000 penuh).
+idx 435.887–437.136 selesai (setelah validasi token + perbaikan manual, lihat
+`handoff.md`), next idx Fase 9 = 437.137. Fase 5 tetap di next idx 43.000, tidak
+disentuh sesi ini.
+
+**Update 2026-09-18 (batch kelima Fase 9)**: user lanjut Fase 9 lagi, batch penuh
+2.000 string/iterasi (dikerjakan langsung oleh sesi utama, bukan didelegasikan ke
+subagent). idx 437.137–439.136 selesai, next idx Fase 9 = 439.137. Fase 5 tetap di
+next idx 43.000, tidak disentuh sesi ini.
 
 \* Persentase dari 963.050 baris total di `strings.jsonl`, dihitung dari distribusi
 frekuensi aktual (lihat catatan di bawah). Angka fase 2–8 adalah interpolasi kasar,

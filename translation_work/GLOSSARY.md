@@ -267,6 +267,22 @@ Buff/Debuff, Chat.
   (Pledged/Sealed/Imperial Treasury) — beda dari nama lokasi majemuk unik yang tetap Inggris.
 - **"Lantern Festival" -> "Festival Lampion"**, konsisten dengan pola nama festival lain.
 
+## Istilah baru yang dikunci sesi Fase 9 lanjutan (idx 437137-439136, batch kelima)
+
+- **"Mohist Sect" (nama sekte/ordo di Hidden Mountain, muncul pertama kali di batch
+  ini) DIBIARKAN UTUH bahasa Inggris** sebagai nama faksi proper noun — BEDA dari
+  kata umum "Sect" yang diterjemahkan "Sekte" (mis. "Sect Rules"). Konsisten dengan
+  pola "Mohist Hill"/"Mohist City" yang sudah dikunci sebelumnya sebagai nama tempat/
+  faksi tidak diterjemahkan.
+- **"Senior Sister"/"Junior Sister"/"Senior Brother"/"Junior Brother"** (sebutan wuxia
+  antar sesama murid seperguruan) **dibiarkan Inggris untuk sekarang** — belum ada
+  padanan Indonesia yang dikunci (opsi seperti "Kakak/Adik Seperguruan" dipertimbangkan
+  tapi belum diputuskan); review ulang kalau istilah ini terus sering muncul.
+- **Blok kode sumber developer (Lua) yang bocor ke data lokalisasi** (ditemukan di
+  idx 437267, satu string berisi kode lengkap dengan komentar bahasa Inggris)
+  **dibiarkan 100% tidak diterjemahkan** — bukan teks yang pernah dilihat pemain,
+  menerjemahkan sebagian berisiko merusak variabel/sintaks.
+
 ## Istilah baru yang dikunci sesi Fase 9 lanjutan (idx 431887-433886, batch kedua)
 
 - **Material/resource crafting Homestead berpola `"<Nama> Tier N"`** (Magnet Stone, Cloud

@@ -9,26 +9,40 @@ kebenaran untuk "sudah sampai mana".
 - **Fase 0, Fase 1, Fase 2, Fase 3, dan Fase 4 SELESAI** (idx 0–19.999). **Fase 5**
   (rentang idx 20.000–49.999, 30.000 unik, batch 2.000/sesi) masih **jalan**: idx
   20.000–42.999 (23.000 baris) ada di `locale/phase5.jsonl`, next idx (kalau lanjut
-  fase 5) = 43.000.
-- Sesi ini (2026-09-17, batch keenam Fase 5) melanjutkan Fase 5 (bukan Fase 9) atas
-  permintaan user, dengan ukuran batch 2.000/sesi (tetap, sesuai default terkini).
-  **Fase 9 punya progress independen dari Fase 5** (lihat bagian "next idx" Fase 9 di
-  bawah, tidak disentuh sesi ini); sesi berikutnya harus tanya/cek dulu fase mana yang
-  mau dilanjutkan kalau tidak disebutkan eksplisit.
+  fase 5) = 43.000 — **tidak disentuh sesi ini**.
 - Total baris di `strings.jsonl`: **963.050** (versi lama; versi 2026-09 update = 826.388
   di file utama, lihat bagian "Update game 2026-09-16")
 - Total string unik: **461.704** (429.887 asli + 31.817 dari update game, idx 0–461.703)
-- **Progress Fase 0–5: idx 0–42.999 selesai (43.000/429.887 string dari batch asli)**
-- **Progress Fase 9: idx 429.887–435.886 selesai (6.000/31.817 string, ~18.86%
-  dari Fase 9) — `locale/phase9.jsonl`, next idx = 435.887 — tidak disentuh sesi ini.**
-- Sesi ini (2026-09-17, batch keenam Fase 5): idx 41.000–42.999 (2.000 baris baru di
-  `locale/phase5.jsonl`, diproses dalam 4 sub-batch 500 lalu digabung, tervalidasi 0
-  mismatch token pada percobaan pertama (semua 4 sub-batch lolos langsung tanpa
-  perbaikan token). 0 duplikat/gap idx dicek lintas semua file `locale/phase*.jsonl`
-  sekaligus (total 49.000 baris/idx unik tercatat tanpa tabrakan), `phase5.jsonl`
-  sendiri kontigu penuh 20.000–42.999 tanpa lubang.
+- **Progress Fase 0–5: idx 0–42.999 selesai (43.000/429.887 string dari batch asli) —
+  tidak disentuh sesi ini.**
+- **Progress Fase 9: idx 429.887–439.136 selesai (9.250/31.817 string, ~29.07%
+  dari Fase 9) — `locale/phase9.jsonl`, next idx = 439.137.**
+- Sesi ini (2026-09-18, batch kelima Fase 9): idx 437.137–439.136 (2.000 baris baru,
+  batch penuh sesuai preferensi user) diterjemahkan langsung oleh sesi utama (bukan
+  didelegasikan ke subagent — beda dari batch sebelumnya), diproses dalam 4 sub-batch
+  500 lalu digabung. **1 mismatch token ditemukan & diperbaiki** sebelum di-append:
+  idx 438753 (tag pendek `<Refuses to enter the stone square>`, deskripsi aksi anjing
+  menggonggong, sempat ikut diterjemahkan jadi `<Menolak masuk ke alun-alun batu>` —
+  dikembalikan ke Inggris apa adanya sesuai aturan tag-pendek-non-format-dibiarkan-
+  Inggris, sama pola dengan idx 436442 sesi sebelumnya). Spot-check manual tambahan
+  untuk konvensi "Player selalu Inggris" dijalankan atas seluruh batch (grep
+  `[Pp]emain` di file output) — **0 pelanggaran ditemukan** kali ini (satu match
+  "pemain" di idx 438221 dikonfirmasi bukan pelanggaran: itu kalimat sastra
+  metaforis "Dalam permainan cinta, para pemainnya selalu buta" dalam cerita lore
+  Ding Jiexiang/Ye Zhuo, bukan istilah mekanik game). 0 duplikat/gap idx dicek lintas
+  semua file `locale/phase*.jsonl` sekaligus (total 52.250 baris/idx unik tercatat
+  tanpa tabrakan), `phase9.jsonl` sendiri kontigu penuh 429.887–439.136 tanpa lubang.
+- **Catatan istilah baru sesi ini**: "Mohist Sect" (nama sekte/ordo di Hidden Mountain,
+  BEDA dari "Sect" generik yang diterjemahkan "Sekte") **dibiarkan UTUH bahasa
+  Inggris** sebagai nama faksi proper noun, konsisten dengan pola "Mohist Hill",
+  "Mohist City" yang sudah dikunci. "Senior Sister"/"Junior Sister"/"Senior Brother"/
+  "Junior Brother" (sebutan wuxia untuk sesama murid seperguruan) **dibiarkan Inggris**
+  untuk sesi ini (belum ada padanan Indonesia yang dikunci — kandidat untuk direview
+  ulang kalau sering muncul lagi). String kode Lua developer yang bocor ke data
+  lokalisasi (idx 437267, blok kode lengkap dengan komentar Inggris) **dibiarkan 100%
+  tidak diterjemahkan** — bukan teks pemain, berisiko rusak kalau disentuh.
 
-### Riwayat batch Fase 9 sebelumnya (untuk referensi, tidak disentuh sesi ini)
+### Riwayat batch Fase 9 sebelumnya (untuk referensi)
 
 - Sesi 2026-09-17 (batch ketiga Fase 9): idx 433.887–435.886 (2.000 baris baru di
   `locale/phase9.jsonl`, ukuran iterasi 2.000/sesi — user eksplisit konfirmasi ulang
@@ -70,9 +84,9 @@ kebenaran untuk "sudah sampai mana".
   baris, lengkap), `locale/phase1.jsonl` (1.200 baris, lengkap), `locale/phase2.jsonl`
   (3.000 baris, lengkap), `locale/phase3.jsonl` (5.000 baris, lengkap), `locale/phase4.jsonl`
   (10.000 baris, lengkap), `locale/phase5.jsonl` (23.000 baris, **jalan** — rentang penuh
-  fase ini 30.000 baris/idx 20.000–49.999, next idx = 43.000),
-  `locale/phase9.jsonl` (6.000 baris, **jalan, tidak disentuh sesi ini** — rentang penuh
-  fase ini 31.817 baris/idx 429.887–461.703, next idx = 435.887).
+  fase ini 30.000 baris/idx 20.000–49.999, next idx = 43.000 — **tidak disentuh sesi
+  ini**), `locale/phase9.jsonl` (9.250 baris, **jalan** — rentang penuh fase ini
+  31.817 baris/idx 429.887–461.703, next idx = 439.137).
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase yang mau dilanjutkan — **sekarang
   ada dua fase jalan sekaligus, 5 dan 9, jadi tanya user dulu fase mana kalau tidak
