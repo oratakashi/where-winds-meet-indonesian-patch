@@ -8,39 +8,39 @@ kebenaran untuk "sudah sampai mana".
 
 - **Fase 0, Fase 1, Fase 2, Fase 3, dan Fase 4 SELESAI** (idx 0–19.999). **Fase 5**
   (rentang idx 20.000–49.999, 30.000 unik, batch 2.000/sesi) masih **jalan**: idx
-  20.000–42.999 (23.000 baris) ada di `locale/phase5.jsonl`, next idx (kalau lanjut
-  fase 5) = 43.000 — **tidak disentuh sesi ini**.
+  20.000–44.999 (25.000 baris) ada di `locale/phase5.jsonl`, next idx (kalau lanjut
+  fase 5) = 45.000 — **diproses sesi ini**.
 - Total baris di `strings.jsonl`: **963.050** (versi lama; versi 2026-09 update = 826.388
   di file utama, lihat bagian "Update game 2026-09-16")
 - Total string unik: **461.704** (429.887 asli + 31.817 dari update game, idx 0–461.703)
-- **Progress Fase 0–5: idx 0–42.999 selesai (43.000/429.887 string dari batch asli) —
-  tidak disentuh sesi ini.**
+- **Progress Fase 0–5: idx 0–44.999 selesai (45.000/429.887 string dari batch asli).**
 - **Progress Fase 9: idx 429.887–439.136 selesai (9.250/31.817 string, ~29.07%
-  dari Fase 9) — `locale/phase9.jsonl`, next idx = 439.137.**
-- Sesi ini (2026-09-18, batch kelima Fase 9): idx 437.137–439.136 (2.000 baris baru,
-  batch penuh sesuai preferensi user) diterjemahkan langsung oleh sesi utama (bukan
-  didelegasikan ke subagent — beda dari batch sebelumnya), diproses dalam 4 sub-batch
-  500 lalu digabung. **1 mismatch token ditemukan & diperbaiki** sebelum di-append:
-  idx 438753 (tag pendek `<Refuses to enter the stone square>`, deskripsi aksi anjing
-  menggonggong, sempat ikut diterjemahkan jadi `<Menolak masuk ke alun-alun batu>` —
-  dikembalikan ke Inggris apa adanya sesuai aturan tag-pendek-non-format-dibiarkan-
-  Inggris, sama pola dengan idx 436442 sesi sebelumnya). Spot-check manual tambahan
-  untuk konvensi "Player selalu Inggris" dijalankan atas seluruh batch (grep
-  `[Pp]emain` di file output) — **0 pelanggaran ditemukan** kali ini (satu match
-  "pemain" di idx 438221 dikonfirmasi bukan pelanggaran: itu kalimat sastra
-  metaforis "Dalam permainan cinta, para pemainnya selalu buta" dalam cerita lore
-  Ding Jiexiang/Ye Zhuo, bukan istilah mekanik game). 0 duplikat/gap idx dicek lintas
-  semua file `locale/phase*.jsonl` sekaligus (total 52.250 baris/idx unik tercatat
-  tanpa tabrakan), `phase9.jsonl` sendiri kontigu penuh 429.887–439.136 tanpa lubang.
-- **Catatan istilah baru sesi ini**: "Mohist Sect" (nama sekte/ordo di Hidden Mountain,
-  BEDA dari "Sect" generik yang diterjemahkan "Sekte") **dibiarkan UTUH bahasa
-  Inggris** sebagai nama faksi proper noun, konsisten dengan pola "Mohist Hill",
-  "Mohist City" yang sudah dikunci. "Senior Sister"/"Junior Sister"/"Senior Brother"/
-  "Junior Brother" (sebutan wuxia untuk sesama murid seperguruan) **dibiarkan Inggris**
-  untuk sesi ini (belum ada padanan Indonesia yang dikunci — kandidat untuk direview
-  ulang kalau sering muncul lagi). String kode Lua developer yang bocor ke data
-  lokalisasi (idx 437267, blok kode lengkap dengan komentar Inggris) **dibiarkan 100%
-  tidak diterjemahkan** — bukan teks pemain, berisiko rusak kalau disentuh.
+  dari Fase 9) — `locale/phase9.jsonl`, next idx = 439.137 — tidak disentuh sesi ini.**
+- Sesi ini (2026-09-18, batch ketujuh Fase 5): idx 43.000–44.999 (2.000 baris baru,
+  batch penuh sesuai preferensi user) diterjemahkan langsung oleh sesi utama,
+  diproses dalam 4 sub-batch 500 lalu digabung. **2 mismatch token ditemukan &
+  diperbaiki** sebelum di-append: idx 43429 (typo tag — `#Ytargeted...#E` sempat
+  ditulis `#Ditarget` alih-alih `#Yditarget`, huruf highlight tag salah ketik jadi
+  huruf lain, bukan salah aturan konvensi), dan idx 44867 (surat ucapan Tahun Baru
+  yang seluruh kalimatnya — termasuk kode warna `#8c5823...#E` di dalamnya — dibungkus
+  satu tag `<...>` dari awal sampai akhir, sempat diterjemahkan penuh saat draf awal
+  sebelum disadari; dikembalikan ke Inggris 100% identik sesuai aturan tag-panjang-
+  satu-token yang sudah dikunci sejak idx 12448 — pola sama persis dengan idx 30170
+  sesi Fase 5 sebelumnya, jenis kesalahan yang berulang jadi pengingat kuat untuk
+  selalu curigai tag `<...>` yang membungkus lebih dari satu kalimat). Spot-check
+  manual tambahan untuk konvensi "Player selalu Inggris" dijalankan atas seluruh
+  batch (grep `[Pp]emain` di file output) — **0 pelanggaran ditemukan**. 0 duplikat/
+  gap idx dicek lintas semua file `locale/phase*.jsonl` sekaligus (total 54.250
+  baris/idx unik tercatat tanpa tabrakan), `phase5.jsonl` sendiri kontigu penuh
+  20.000–44.999 tanpa lubang.
+- **Catatan istilah baru sesi ini**: tidak ada keputusan konvensi besar baru — mayoritas
+  nama NPC/gear/skill/label kombat, "Union"/"Cultivation"/"Sword Trial"/"Retainer"/
+  "Companion"/"Homestead"/"Farmer"/label kombat `"<Senjata> - <Aksi>"` mengikuti pola
+  yang sudah terkunci di sesi-sesi Fase 5 sebelumnya. Dua catatan kecil: "Warfarer"
+  (idx 44824, dalam tanda kutip, kemungkinan typo sumber dari "Wayfarer") dipertahankan
+  literal apa adanya sesuai teks sumber (pola sama dengan "Loan Cloud" idx 21551 —
+  tidak dikoreksi); dan "Guild" dikonfirmasi ulang konsisten dibiarkan Inggris sebagai
+  loanword umum (mis. "guild token", "Dirikan guild").
 
 ### Riwayat batch Fase 9 sebelumnya (untuk referensi)
 

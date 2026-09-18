@@ -16,18 +16,18 @@ teliti), fase belakang boleh lebih besar (kebanyakan string pendek/berulang pola
 
 ## Fase & target
 
-| Fase        | Rentang idx       | Jumlah unik | Kumulatif baris tercakup*       | Saran ukuran batch/sesi | Perkiraan sesi              | File output           |
-| ----------- | ----------------- | ----------- | ------------------------------- | ----------------------- | --------------------------- | --------------------- |
-| 0 (selesai) | 0 – 799           | 800         | ~16.2%                          | —                       | selesai                     | `locale/phase0.jsonl` |
-| 1 (selesai) | 800 – 1.999       | 1.200       | ~21.28% (aktual, terverifikasi) | —                       | selesai (3 sesi)            | `locale/phase1.jsonl` |
-| 2 (selesai) | 2.000 – 4.999     | 3.000       | ~25–28% (aktual, terverifikasi) | —                       | selesai (2 sesi)            | `locale/phase2.jsonl` |
-| 3 (selesai) | 5.000 – 9.999     | 5.000       | ~33.5%                          | —                       | selesai (~6 sesi)           | `locale/phase3.jsonl` |
-| 4 (selesai) | 10.000 – 19.999   | 10.000      | ~40.0%                          | —                       | selesai (7 sesi)            | `locale/phase4.jsonl` |
-| 5 (jalan)   | 20.000 – 49.999   | 30.000      | ~50.1%                          | 2.000/sesi (fixed)      | ~15 sesi (11.5/15 selesai)  | `locale/phase5.jsonl` |
-| 6           | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000–3.000/sesi        | ~17–25 sesi                 | `locale/phase6.jsonl` |
-| 7           | 100.000 – 199.999 | 100.000     | ~76.1%                          | 2.500–3.500/sesi        | ~29–40 sesi                 | `locale/phase7.jsonl` |
-| 8           | 200.000 – 429.886 | 229.887     | 100%*                           | 3.000–5.000/sesi        | ~46–77 sesi                 | `locale/phase8.jsonl` |
-| 9 (jalan)   | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 2.000/sesi (fixed)      | ~16 sesi (4.6/16 selesai)     | `locale/phase9.jsonl` |
+| Fase        | Rentang idx       | Jumlah unik | Kumulatif baris tercakup*       | Saran ukuran batch/sesi | Perkiraan sesi             | File output           |
+| ----------- | ----------------- | ----------- | ------------------------------- | ----------------------- | -------------------------- | --------------------- |
+| 0 (selesai) | 0 – 799           | 800         | ~16.2%                          | —                       | selesai                    | `locale/phase0.jsonl` |
+| 1 (selesai) | 800 – 1.999       | 1.200       | ~21.28% (aktual, terverifikasi) | —                       | selesai (3 sesi)           | `locale/phase1.jsonl` |
+| 2 (selesai) | 2.000 – 4.999     | 3.000       | ~25–28% (aktual, terverifikasi) | —                       | selesai (2 sesi)           | `locale/phase2.jsonl` |
+| 3 (selesai) | 5.000 – 9.999     | 5.000       | ~33.5%                          | —                       | selesai (~6 sesi)          | `locale/phase3.jsonl` |
+| 4 (selesai) | 10.000 – 19.999   | 10.000      | ~40.0%                          | —                       | selesai (7 sesi)           | `locale/phase4.jsonl` |
+| 5 (jalan)   | 20.000 – 49.999   | 30.000      | ~50.1%                          | 2.000/sesi (fixed)      | ~15 sesi (12.5/15 selesai) | `locale/phase5.jsonl` |
+| 6           | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000–3.000/sesi        | ~17–25 sesi                | `locale/phase6.jsonl` |
+| 7           | 100.000 – 199.999 | 100.000     | ~76.1%                          | 2.500–3.500/sesi        | ~29–40 sesi                | `locale/phase7.jsonl` |
+| 8           | 200.000 – 429.886 | 229.887     | 100%*                           | 3.000–5.000/sesi        | ~46–77 sesi                | `locale/phase8.jsonl` |
+| 9 (jalan)   | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 2.000/sesi (fixed)      | ~16 sesi (4.6/16 selesai)  | `locale/phase9.jsonl` |
 
 **Fase 9** ditambahkan 2026-09-16 setelah update game — bukan bagian dari 429.887 unik semula.
 `tools/rebuild_unique_strings.py` menambah idx 429.887–461.703 (31.817 string baru) dari string
@@ -55,6 +55,10 @@ tidak disentuh sesi ini.
 **Update 2026-09-17 (batch keenam)**: lanjut Fase 5 lagi dengan batch 2.000 string/iterasi
 (dikonfirmasi ulang). idx 41.000–42.999 selesai, next idx Fase 5 = 43.000. Fase 9 tetap
 di next idx 435.887, tidak disentuh sesi ini.
+
+**Update 2026-09-18 (batch ketujuh Fase 5)**: user eksplisit minta lanjut Fase 5 (bukan
+Fase 9), batch 2.000 string/iterasi dikonfirmasi ulang. idx 43.000–44.999 selesai,
+next idx Fase 5 = 45.000. Fase 9 tetap di next idx 439.137, tidak disentuh sesi ini.
 
 **Update 2026-09-18 (batch keempat Fase 9)**: user eksplisit minta lanjut Fase 9 (bukan
 Fase 5), target awal 2.000 string/iterasi. Penerjemahan didelegasikan ke subagent
