@@ -43,6 +43,12 @@ python tools/patch_all.py [--outdir patched] [--level N]
 There is no test suite; correctness is verified by round-tripping a real
 `translate_words_map_en` file through `info` → `dump` → `patch` → `info` and diffing entries.
 
+## Do not use subagents
+
+Do all work in this repo directly (Read/Edit/Bash/Grep/Glob etc.) instead of delegating to the
+Agent tool. The codebase is small enough that spawning subagents just adds overhead and loses
+context — only use one if the user explicitly asks for it by name.
+
 ## Never commit game content
 
 `.gitignore` already excludes `*.gubackup`, `*.map`, `*.cleaned`. Do not add `strings.jsonl`,
