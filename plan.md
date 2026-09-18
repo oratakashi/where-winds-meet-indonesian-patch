@@ -24,7 +24,7 @@ teliti), fase belakang boleh lebih besar (kebanyakan string pendek/berulang pola
 | 3 (selesai) | 5.000 – 9.999     | 5.000       | ~33.5%                          | —                       | selesai (~6 sesi)          | `locale/phase3.jsonl` |
 | 4 (selesai) | 10.000 – 19.999   | 10.000      | ~40.0%                          | —                       | selesai (7 sesi)           | `locale/phase4.jsonl` |
 | 5 (selesai) | 20.000 – 49.999   | 30.000      | ~50.1%                          | —                        | selesai (15/15 sesi)       | `locale/phase5.jsonl` |
-| 6 (jalan)   | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000/sesi (fixed)      | ~17–25 sesi (1/~25 selesai) | `locale/phase6.jsonl` |
+| 6 (jalan)   | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000/sesi (fixed)      | ~17–25 sesi (1.5/~25 selesai) | `locale/phase6.jsonl` |
 | 7           | 100.000 – 199.999 | 100.000     | ~76.1%                          | 2.500–3.500/sesi        | ~29–40 sesi                | `locale/phase7.jsonl` |
 | 8           | 200.000 – 429.886 | 229.887     | 100%*                           | 3.000–5.000/sesi        | ~46–77 sesi                | `locale/phase8.jsonl` |
 | 9 (jalan)   | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 2.000/sesi (fixed)      | ~16 sesi (4.6/16 selesai)  | `locale/phase9.jsonl` |
@@ -92,6 +92,11 @@ final, tidak akan ditambah lagi. Sisa 1.000 baris dari target 2.000/sesi (idx
 di `handoff.md`, membuka file baru `locale/phase6.jsonl` (1.000/50.000 baris fase ini
 selesai). Next idx Fase 6 = 51.000. Fase 9 tetap di next idx 439.137, tidak disentuh
 sesi ini.
+
+**Update 2026-09-18 (batch kedua Fase 6)**: user lanjut Fase 6, batch 2.000
+string/iterasi dikonfirmasi ulang. idx 51.000–52.999 (2.000 baris) selesai
+(3.000/50.000 baris Fase 6 selesai). Next idx Fase 6 = 53.000. Fase 9 tetap di
+next idx 439.137, tidak disentuh sesi ini.
 
 \* Persentase dari 963.050 baris total di `strings.jsonl`, dihitung dari distribusi
 frekuensi aktual (lihat catatan di bawah). Angka fase 2–8 adalah interpolasi kasar,

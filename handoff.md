@@ -7,28 +7,37 @@ kebenaran untuk "sudah sampai mana".
 ## Status saat ini
 
 - **Fase 0, Fase 1, Fase 2, Fase 3, Fase 4, dan Fase 5 SELESAI** (idx 0–49.999).
-  **Fase 6** (rentang idx 50.000–99.999, 50.000 unik, batch 2.000/sesi) baru **mulai**:
-  idx 50.000–50.999 (1.000 baris) ada di `locale/phase6.jsonl`, next idx = 51.000.
+  **Fase 6** (rentang idx 50.000–99.999, 50.000 unik, batch 2.000/sesi) **jalan**:
+  idx 50.000–52.999 (3.000 baris) ada di `locale/phase6.jsonl`, next idx = 53.000.
 - Total baris di `strings.jsonl`: **963.050** (versi lama; versi 2026-09 update = 826.388
   di file utama, lihat bagian "Update game 2026-09-16")
 - Total string unik: **461.704** (429.887 asli + 31.817 dari update game, idx 0–461.703)
-- **Progress Fase 0–6: idx 0–50.999 selesai (51.000/429.887 string dari batch asli).**
+- **Progress Fase 0–6: idx 0–52.999 selesai (53.000/429.887 string dari batch asli).**
 - **Progress Fase 9: idx 429.887–439.136 selesai (9.250/31.817 string, ~29.07%
   dari Fase 9) — `locale/phase9.jsonl`, next idx = 439.137 — tidak disentuh sesi ini.**
-- Sesi ini (2026-09-18, batch penutup Fase 5 + batch pembuka Fase 6): user minta lanjut
-  dengan batch 2.000 string/iterasi (dikonfirmasi ulang). idx 49.000–49.999 (1.000 baris)
-  diterjemahkan dan di-append ke `locale/phase5.jsonl`, **menuntaskan Fase 5 sepenuhnya**
-  (30.000/30.000 baris, idx 20.000–49.999, kontigu tanpa lubang, divalidasi 0 mismatch
-  token). Sesuai prosedur "potong batch di batas fase" di bagian "Cara resume" (poin 7),
-  sisa 1.000 baris dari target 2.000/sesi (idx 50.000–50.999) otomatis masuk fase
-  berikutnya — file baru `locale/phase6.jsonl` dibuat (1.000/50.000 baris Fase 6
-  selesai, kontigu 50.000–50.999, next idx = 51.000). Seluruh 2.000 baris diproses
-  dalam 4 sub-batch 500, tervalidasi **0 mismatch token pada percobaan pertama** di
-  semua 4 sub-batch. Spot-check manual tambahan untuk konvensi "Player selalu Inggris"
-  (grep `pemain` case-insensitive di seluruh output sesi ini) — **0 pelanggaran
-  ditemukan**. 0 duplikat/gap idx dicek lintas semua file `locale/phase*.jsonl`
-  sekaligus (total 60.250 baris/idx unik tercatat tanpa tabrakan).
-- **Catatan istilah baru sesi ini**:
+- Sesi ini (2026-09-18, batch kedua Fase 6): user minta lanjut Fase 6 dengan batch
+  2.000 string/iterasi (dikonfirmasi ulang). idx 51.000–52.999 (2.000 baris)
+  diterjemahkan dan di-append ke `locale/phase6.jsonl`, next idx Fase 6 = 53.000.
+  Seluruh 2.000 baris diproses dalam 4 sub-batch 500, tervalidasi **0 mismatch token
+  pada percobaan pertama** di semua 4 sub-batch (termasuk validasi ulang seluruh
+  3.000 baris `phase6.jsonl` sekaligus setelah append). Spot-check manual tambahan
+  untuk konvensi "Player selalu Inggris" (grep `pemain` case-insensitive di seluruh
+  output sesi ini) — 1 hit ditemukan (idx 52612 "pemain api" = terjemahan sah dari
+  "fire-breathing performer", bukan pelanggaran konvensi "Player"). 0 duplikat/gap
+  idx dicek lintas semua file `locale/phase*.jsonl` sekaligus (total 62.250 baris/idx
+  unik tercatat tanpa tabrakan). Fase 9 tetap di next idx 439.137, tidak disentuh
+  sesi ini.
+- **Catatan istilah baru sesi ini (batch kedua Fase 6, idx 51000-52999)**:
+  - Tidak ada keputusan konvensi baru yang signifikan — batch ini didominasi nama
+    NPC/username pemain acak (banyak string `freq: 2` unik seperti "ZaliThsOng",
+    "MaleniaprocyoN"), dialog NPC generik, dan lore item/quest yang mengikuti pola
+    istilah yang sudah terkunci di sesi-sesi sebelumnya (Wanderer->Pengembara, Player
+    tetap Inggris, tag `#Y...#E`/`<...>`/placeholder dipertahankan, durasi shorthand
+    s->d/h->j, dll). Satu paragraf lore panjang tentang Mozi/Mohist (idx 51284) dan
+    satu lagi tentang Skyward City (idx 51171) diterjemahkan penuh sebagai teks
+    naratif filosofis wuxia standar.
+
+### Catatan istilah baru sesi sebelumnya (batch pembuka Fase 6, idx 49000-50999)
   - **"Pangolin" dikonfirmasi DITERJEMAHKAN "Trenggiling"** sesuai aturan lama Fase 4
     (idx 18100-19099) yang sempat terlewat saat draf awal untuk NPC "Pangolin Peddler"
     (idx 49821, 49857, 50885) — diperbaiki jadi "Pedagang Trenggiling"/"Lapak
