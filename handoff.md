@@ -14,20 +14,26 @@ kebenaran untuk "sudah sampai mana".
   di file utama, lihat bagian "Update game 2026-09-16")
 - Total string unik: **461.704** (429.887 asli + 31.817 dari update game, idx 0–461.703)
 - **Progress Fase 0–6: idx 0–52.999 selesai (53.000/429.887 string dari batch asli) — tidak disentuh sesi ini.**
-- **Progress Fase 9: idx 429.887–441.136 selesai (11.250/31.817 string, ~35.36%
-  dari Fase 9) — `locale/phase9.jsonl`, next idx = 441.137 — diproses sesi ini.**
-- Sesi ini (2026-09-18, batch keenam Fase 9): user minta lanjut Fase 9 dengan batch
-  2.000 string/iterasi. idx 439.137–441.136 (2.000 baris) diterjemahkan dan
-  di-append ke `locale/phase9.jsonl`, next idx Fase 9 = 441.137. Seluruh 2.000 baris
-  diproses dalam 8 sub-batch 250, tervalidasi **0 mismatch token pada percobaan
-  pertama** di semua 8 sub-batch (termasuk validasi ulang penuh file `phase9.jsonl`
-  gabungan, 11.250 baris, sekaligus setelah append). Spot-check manual tambahan
-  untuk konvensi "Player selalu Inggris" (grep `pemain` case-insensitive di seluruh
-  output sesi ini) — 2 hit ditemukan (idx 440233 & 440527, keduanya "pemain" sebagai
-  terjemahan sah dari "performers" [musisi/pemain pertunjukan], bukan pelanggaran
-  konvensi "Player"). 0 duplikat/gap idx dicek lintas semua file `locale/phase*.jsonl`
-  sekaligus (total 64.250 baris/idx unik tercatat tanpa tabrakan, `phase9.jsonl`
-  sendiri kontigu penuh 429.887–441.136 tanpa lubang). Fase 6 tetap di next idx
+- **Progress Fase 9: idx 429.887–442.136 selesai (12.250/31.817 string, ~38.50%
+  dari Fase 9) — `locale/phase9.jsonl`, next idx = 442.137 — diproses sesi ini.**
+- Sesi ini (2026-09-19, batch ketujuh Fase 9): user minta lanjut Fase 9, tapi
+  **mengubah ukuran batch jadi 1.000 string/iterasi** (turun dari 2.000, berlaku
+  mulai sesi ini sampai ada instruksi lain — lihat catatan di `plan.md`). idx
+  441.137–442.136 (1.000 baris) diterjemahkan dan di-append ke `locale/phase9.jsonl`,
+  next idx Fase 9 = 442.137. Batch ini didominasi lore panjang Mohist Hill/Hidden
+  Mountain (banyak paragraf naratif >1000 karakter: kisah Zhang Wanshi, Roc, Goshawk,
+  parabel gagak-walet Mohist, surat perang Khitan, epik Ying Ying, dll.) — diproses
+  dalam 4 sub-batch 250 lalu digabung, tervalidasi **0 mismatch token pada percobaan
+  pertama** di seluruh 1.000 baris (dicek dengan script Python langsung, bukan
+  manual), termasuk validasi ulang penuh file `phase9.jsonl` gabungan (12.250 baris)
+  sekaligus setelah append. 0 duplikat/gap idx dicek lintas semua file
+  `locale/phase*.jsonl` sekaligus (total 65.250 baris/idx unik tercatat tanpa
+  tabrakan, `phase9.jsonl` sendiri kontigu penuh 429.887–442.136 tanpa lubang).
+  Spot-check `pemain` case-insensitive: 1 hit (idx 441819, surat pengumuman
+  developer/patch notes gaya out-of-game — "pengalaman pemain baru", "pemain bisa
+  berpartisipasi", dll. adalah terjemahan wajar "player" sebagai kata benda umum
+  audiens developer, BUKAN pelanggaran konvensi "Player" karakter in-game yang
+  tetap Inggris — dibedakan dari dialog/quest text biasa). Fase 6 tetap di next idx
   53.000, tidak disentuh sesi ini.
 - **Catatan istilah baru sesi ini (batch keenam Fase 9, idx 439137-441136)**:
   - Cerita lore panjang Zou/Yang (persahabatan lama Mohist Hill, idx 439837),
@@ -137,8 +143,8 @@ kebenaran untuk "sudah sampai mana".
   (10.000 baris, lengkap), `locale/phase5.jsonl` (30.000 baris, **SELESAI** — rentang penuh
   fase ini 30.000 baris/idx 20.000–49.999), `locale/phase6.jsonl` (3.000 baris, **jalan** —
   rentang penuh fase ini 50.000 baris/idx 50.000–99.999, next idx = 53.000 — tidak
-  disentuh sesi ini), `locale/phase9.jsonl` (11.250 baris, **jalan** — rentang penuh
-  fase ini 31.817 baris/idx 429.887–461.703, next idx = 441.137 — **diproses sesi ini**).
+  disentuh sesi ini), `locale/phase9.jsonl` (12.250 baris, **jalan** — rentang penuh
+  fase ini 31.817 baris/idx 429.887–461.703, next idx = 442.137 — **diproses sesi ini**).
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase yang mau dilanjutkan — **sekarang
   ada dua fase jalan sekaligus, 6 dan 9, jadi tanya user dulu fase mana kalau tidak

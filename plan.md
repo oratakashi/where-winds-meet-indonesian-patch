@@ -103,6 +103,13 @@ string/iterasi dikonfirmasi ulang. idx 439.137–441.136 (2.000 baris) selesai
 (11.250/31.817 baris Fase 9 selesai, ~35.36%). Next idx Fase 9 = 441.137. Fase 6
 tetap di next idx 53.000, tidak disentuh sesi ini.
 
+**Update 2026-09-19 (batch ketujuh Fase 9)**: user lanjut Fase 9, tapi **menurunkan
+ukuran batch jadi 1.000 string/iterasi** (dari 2.000 sebelumnya) — ini sekarang
+default baru sampai ada instruksi lain, menggantikan preferensi "2.000/sesi" yang
+tercatat di bagian "Catatan preferensi user" di bawah. idx 441.137–442.136
+(1.000 baris) selesai (12.250/31.817 baris Fase 9 selesai, ~38.50%). Next idx
+Fase 9 = 442.137. Fase 6 tetap di next idx 53.000, tidak disentuh sesi ini.
+
 \* Persentase dari 963.050 baris total di `strings.jsonl`, dihitung dari distribusi
 frekuensi aktual (lihat catatan di bawah). Angka fase 2–8 adalah interpolasi kasar,
 bukan hitungan presisi per-idx — jangan dianggap eksak.
@@ -141,6 +148,9 @@ tabel di atas) sampai ada instruksi lain. Kolom "Saran ukuran batch/sesi" tetap 
 referensi kasar untuk fase-fase berikutnya. **Update 2026-09-17**: user menaikkan ukuran
 batch jadi **2.000 string/sesi** (dua kali lipat dari sebelumnya) — ini sekarang default
 aktual sampai ada instruksi lain, dan tabel fase di atas sudah disesuaikan untuk Fase 5.
+**Update 2026-09-19**: user menurunkan lagi ukuran batch jadi **1.000 string/sesi**
+(kembali ke ukuran sebelum 2026-09-17) — ini sekarang default aktual sampai ada
+instruksi lain berikutnya.
 
 ## Prosedur satu sesi (ringkas — detail lengkap ada di handoff.md)
 
