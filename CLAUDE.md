@@ -62,13 +62,6 @@ Do all work in this repo directly (Read/Edit/Bash/Grep/Glob etc.) instead of del
 Agent tool. The codebase is small enough that spawning subagents just adds overhead and loses
 context — only use one if the user explicitly asks for it by name.
 
-## Never commit game content
-
-`.gitignore` already excludes `*.gubackup`, `*.map`, `*.cleaned`. Do not add `strings.jsonl`,
-`translate_words_map_*`, or any dump/patch output to git — all such content is NetEase's
-copyrighted game text. Working files like `strings.jsonl` and `translate_words_map_en` present
-in the working tree are local scratch data, not repo assets.
-
 ## Architecture
 
 - `wwm_locmap.py` — the container/shard codec (`read_container`/`write_container`,

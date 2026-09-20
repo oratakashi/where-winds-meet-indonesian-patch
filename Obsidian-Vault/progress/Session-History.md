@@ -155,6 +155,19 @@ rows/idx recorded with no collisions). Next idx Phase 9 = 444,137
 (14,250/31,817 rows of Phase 9 done, ~44.78%). Phase 6 untouched this
 session (still at next idx 53,000).
 
+## 2026-09-20 (continued) — Phase 9 batch 9, session paused mid-batch then resumed
+
+**Phase 9** idx 444,137–445,736 completed (batch 9, 1,600 rows — a shortened
+batch: the user asked to stop after 1,400 rows/7 sub-batches, then, since
+sub-batch 8 (200 rows) had already been drafted and validated, asked to
+include it anyway rather than discard it). Translated and validated in 8
+sub-batches of 200 each (0 token mismatches per sub-batch), then combined
+and re-validated as one file before appending: 0 mismatches across all
+1,600 rows, idx sequential with no gaps/duplicates, and a full re-validation
+of the resulting `phase9.jsonl` (15,850 rows) confirmed clean. Next idx
+Phase 9 = 445,737 (15,850/31,817 rows done, ~49.81%). Phase 6 untouched
+this session (still at next idx 53,000).
+
 ## Undated note
 
 At some point before this history was consolidated, `strings.jsonl` and

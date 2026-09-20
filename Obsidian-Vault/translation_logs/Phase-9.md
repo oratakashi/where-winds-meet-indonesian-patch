@@ -256,3 +256,41 @@ that happened alongside it.
   shortening, keeping only character/place names untranslated per the
   usual rule. Also present in this batch: Khitan/Du Zhongwei war letters and
   the dying monologue of the Sky Citadel Grandmaster (idx 442,978–442,979).
+
+## Batch 9 — idx 444,137–445,736
+
+- **A `<...>` tag wrapping one full sentence (the single-token-tag rule
+  locked since idx 12,448) was hit again** at idx 444,894
+  (`<This is where Senior Yu used to work...>`) — translating its contents
+  produced a token mismatch on first draft (the whole bracketed sentence is
+  swallowed as ONE token by `qa_check.py`'s regex), fixed by reverting the
+  content to 100% English. Reconfirms the existing rule; no new decision,
+  but worth flagging since it keeps recurring roughly once per batch.
+- **Ordinal sibling nicknames "Pi the Fourth"/"Pi the Fifth"** (idx
+  444,500, 444,904) → translated as **"Pi Keempat"/"Pi Kelima"** — the name
+  root "Pi" stays untranslated (per the names rule) while the English
+  ordinal is translated, consistent with how other Name+ordinal or
+  Name+kinship-term patterns are handled elsewhere in the glossary.
+- **"Master Crow" (a teacher honorific before a name) reconfirmed →
+  "Guru Crow"**, consistent with the Phase 4 Master→Guru rule (idx
+  444,321).
+- This batch was thick with long personal-letter and diary lore rather
+  than combat-skill strings: the Qin Fen origin story (idx 444,149, ~2,600
+  characters), the Fang Bai secret-message letter (idx 444,193), the
+  Old Mohist City wind-chime legend (idx 444,537), a Northern Vow New Year
+  gift-giving ledger letter (idx 445,157), a Zhenming-era travel diary
+  full of running gags about a bandit-slaying rival named Wang Qing (idx
+  445,194), and a long homesick letter about academy life, star-charting,
+  and a math-vs-feelings debate with Lone Cloud disciples (idx 445,178,
+  one of the longest single entries seen in Phase 9 so far). All
+  translated in full; only character/place names and the established
+  kept-in-English terms were left untouched.
+- Homestead facility names in square brackets (`[Stove]`, `[Dining
+  Table]`, `[Cloudrest Passage]`, `[Farmland]`, `[Bed]`) reconfirmed KEPT
+  in English, consistent with the existing bracketed-system-name
+  convention (e.g. `[Interlocking Joint]` locked earlier in Phase 9).
+- Session ended partway through a planned 2,000-row batch at the user's
+  request (see [[Session-History]] for why); the last sub-batch (200 rows,
+  idx 445,537–445,736) had already been drafted and validated before the
+  stop request landed, and the user then asked to keep it rather than
+  discard it — see [[Current-Status]].

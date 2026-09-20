@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "progress/Current-Status.md",
+                "file": "translation_logs/Phase-9.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Current-Status"
+              "title": "Phase-9"
             }
           }
         ]
@@ -99,7 +99,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "progress/Current-Status.md",
+                "file": "translation_logs/Phase-9.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -118,7 +118,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "progress/Current-Status.md",
+                "file": "translation_logs/Phase-9.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -161,7 +161,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "progress/Current-Status.md",
+                "file": "translation_logs/Phase-9.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -191,20 +191,21 @@
   },
   "active": "aa66843a3f820c88",
   "lastOpenFiles": [
+    "translation_logs/Phase-5.md",
+    "translation_logs/Phase-4.md",
+    "translation_logs/Phase-9.md",
     "knowladge/Glossary.md",
+    "knowladge/glossary",
+    "progress/Phase-Roadmap.md",
+    "progress/Resume-Procedure.md",
+    "progress/Session-History.md",
+    "progress/Current-Status.md",
     "knowladge/Initial-Brief.md",
     "knowladge/Format-Spec.md",
     "Current-Status.md",
-    "translation_logs/Phase-4.md",
-    "translation_logs/Phase-9.md",
     "translation_logs/Phase-6.md",
-    "translation_logs/Phase-5.md",
-    "progress/Resume-Procedure.md",
     "translation_logs/Phase-5.md.tmp.8808.25c4a57e4f93",
     "translation_logs/Phase-4.md.tmp.8808.da26682161b0",
-    "progress/Session-History.md",
-    "progress/Phase-Roadmap.md",
-    "progress/Current-Status.md",
     "progress/Current-Status.md.tmp.8808.c6c74f54dcd8",
     "progress/Session-History.md.tmp.8808.4da3e2bb46d3",
     "knowladge/Initial-Brief.md.tmp.8808.d02c1f637b81",
