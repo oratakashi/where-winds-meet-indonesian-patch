@@ -16,18 +16,18 @@ teliti), fase belakang boleh lebih besar (kebanyakan string pendek/berulang pola
 
 ## Fase & target
 
-| Fase        | Rentang idx       | Jumlah unik | Kumulatif baris tercakup*       | Saran ukuran batch/sesi | Perkiraan sesi             | File output           |
-| ----------- | ----------------- | ----------- | ------------------------------- | ----------------------- | -------------------------- | --------------------- |
-| 0 (selesai) | 0 – 799           | 800         | ~16.2%                          | —                       | selesai                    | `locale/phase0.jsonl` |
-| 1 (selesai) | 800 – 1.999       | 1.200       | ~21.28% (aktual, terverifikasi) | —                       | selesai (3 sesi)           | `locale/phase1.jsonl` |
-| 2 (selesai) | 2.000 – 4.999     | 3.000       | ~25–28% (aktual, terverifikasi) | —                       | selesai (2 sesi)           | `locale/phase2.jsonl` |
-| 3 (selesai) | 5.000 – 9.999     | 5.000       | ~33.5%                          | —                       | selesai (~6 sesi)          | `locale/phase3.jsonl` |
-| 4 (selesai) | 10.000 – 19.999   | 10.000      | ~40.0%                          | —                       | selesai (7 sesi)           | `locale/phase4.jsonl` |
-| 5 (selesai) | 20.000 – 49.999   | 30.000      | ~50.1%                          | —                        | selesai (15/15 sesi)       | `locale/phase5.jsonl` |
+| Fase        | Rentang idx       | Jumlah unik | Kumulatif baris tercakup*       | Saran ukuran batch/sesi | Perkiraan sesi                | File output           |
+| ----------- | ----------------- | ----------- | ------------------------------- | ----------------------- | ----------------------------- | --------------------- |
+| 0 (selesai) | 0 – 799           | 800         | ~16.2%                          | —                       | selesai                       | `locale/phase0.jsonl` |
+| 1 (selesai) | 800 – 1.999       | 1.200       | ~21.28% (aktual, terverifikasi) | —                       | selesai (3 sesi)              | `locale/phase1.jsonl` |
+| 2 (selesai) | 2.000 – 4.999     | 3.000       | ~25–28% (aktual, terverifikasi) | —                       | selesai (2 sesi)              | `locale/phase2.jsonl` |
+| 3 (selesai) | 5.000 – 9.999     | 5.000       | ~33.5%                          | —                       | selesai (~6 sesi)             | `locale/phase3.jsonl` |
+| 4 (selesai) | 10.000 – 19.999   | 10.000      | ~40.0%                          | —                       | selesai (7 sesi)              | `locale/phase4.jsonl` |
+| 5 (selesai) | 20.000 – 49.999   | 30.000      | ~50.1%                          | —                       | selesai (15/15 sesi)          | `locale/phase5.jsonl` |
 | 6 (jalan)   | 50.000 – 99.999   | 50.000      | ~60.5%                          | 2.000/sesi (fixed)      | ~17–25 sesi (1.5/~25 selesai) | `locale/phase6.jsonl` |
-| 7           | 100.000 – 199.999 | 100.000     | ~76.1%                          | 2.500–3.500/sesi        | ~29–40 sesi                | `locale/phase7.jsonl` |
-| 8           | 200.000 – 429.886 | 229.887     | 100%*                           | 3.000–5.000/sesi        | ~46–77 sesi                | `locale/phase8.jsonl` |
-| 9 (jalan)   | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 2.000/sesi (fixed)      | ~16 sesi (5.6/16 selesai)  | `locale/phase9.jsonl` |
+| 7           | 100.000 – 199.999 | 100.000     | ~76.1%                          | 2.500–3.500/sesi        | ~29–40 sesi                   | `locale/phase7.jsonl` |
+| 8           | 200.000 – 429.886 | 229.887     | 100%*                           | 3.000–5.000/sesi        | ~46–77 sesi                   | `locale/phase8.jsonl` |
+| 9 (jalan)   | 429.887 – 461.703 | 31.817      | tambahan (lihat catatan)        | 2.000/sesi (fixed)      | ~16 sesi (5.6/16 selesai)     | `locale/phase9.jsonl` |
 
 **Fase 9** ditambahkan 2026-09-16 setelah update game — bukan bagian dari 429.887 unik semula.
 `tools/rebuild_unique_strings.py` menambah idx 429.887–461.703 (31.817 string baru) dari string
@@ -110,6 +110,22 @@ tercatat di bagian "Catatan preferensi user" di bawah. idx 441.137–442.136
 (1.000 baris) selesai (12.250/31.817 baris Fase 9 selesai, ~38.50%). Next idx
 Fase 9 = 442.137. Fase 6 tetap di next idx 53.000, tidak disentuh sesi ini.
 
+**Update 2026-09-20 (batch kedelapan Fase 9)**: user eksplisit minta lanjut Fase 9
+lagi, kali ini dengan **ukuran batch 2.000 string/iterasi** (naik lagi dari 1.000
+di sesi sebelumnya) — dikonfirmasi ulang oleh user di awal sesi ini. idx
+442.137–444.136 (2.000 baris) selesai, diproses dalam 8 sub-batch 250 lalu
+digabung, tervalidasi **0 mismatch token** di seluruh 2.000 baris sekaligus
+setelah digabung (dicek dengan script Python, bukan manual), termasuk validasi
+ulang penuh `phase9.jsonl` gabungan (14.250 baris) dan cross-check 0
+duplikat/gap idx lintas semua file `locale/phase*.jsonl` (total 67.250 baris/idx
+unik, tanpa tabrakan). Next idx Fase 9 = 444.137 (14.250/31.817 baris Fase 9
+selesai, ~44.78%). Fase 6 tetap di next idx 53.000, tidak disentuh sesi ini.
+Batch ini banyak berisi lore panjang Mohist Hill/Hidden Mountain (kisah Zou/Yang
+"Together in One Boat", kisah asal-usul Kingfisher, drama keluarga Zou Bao/Tiger
+Fort, register Dragonbend Academy, dan satu entry raksasa berisi daftar ratusan
+nama karakter pemain Hall of Fame — idx 444.030, diperlakukan sebagai nama dan
+dibiarkan 100% tidak diterjemahkan, lihat `handoff.md`).
+
 \* Persentase dari 963.050 baris total di `strings.jsonl`, dihitung dari distribusi
 frekuensi aktual (lihat catatan di bawah). Angka fase 2–8 adalah interpolasi kasar,
 bukan hitungan presisi per-idx — jangan dianggap eksak.
@@ -150,7 +166,9 @@ batch jadi **2.000 string/sesi** (dua kali lipat dari sebelumnya) — ini sekara
 aktual sampai ada instruksi lain, dan tabel fase di atas sudah disesuaikan untuk Fase 5.
 **Update 2026-09-19**: user menurunkan lagi ukuran batch jadi **1.000 string/sesi**
 (kembali ke ukuran sebelum 2026-09-17) — ini sekarang default aktual sampai ada
-instruksi lain berikutnya.
+instruksi lain berikutnya. **Update 2026-09-20**: user menaikkan lagi ukuran
+batch jadi **2.000 string/sesi** (kembali ke ukuran 2026-09-17) — ini sekarang
+default aktual sampai ada instruksi lain berikutnya.
 
 ## Prosedur satu sesi (ringkas — detail lengkap ada di handoff.md)
 

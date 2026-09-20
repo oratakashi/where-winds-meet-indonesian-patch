@@ -318,6 +318,41 @@ Buff/Debuff, Chat.
   normal, hanya penanda `$S`/`$E` sendiri yang dipertahankan persis.
 - **"Wayfarer" (berdiri sendiri, bukan cuma "Wanderer") dikonfirmasi ulang -> "Pengembara"**.
 
+## Istilah baru yang dikunci sesi Fase 9 lanjutan (idx 442137-444136, batch kedelapan)
+
+- **Daftar nama karakter pemain/username (Hall of Fame "Max-Level Characters")
+  DIBIARKAN 100% TIDAK DITERJEMAHKAN**, disalin verbatim termasuk karakter Han
+  yang nyempil di beberapa nickname (mis. "Summer丶", "Worship灬") — ini
+  bukan teks naratif, melainkan kumpulan nama/username pemain, konsisten dengan
+  aturan lama "nama tidak diterjemahkan". Ditemukan sebagai satu entry JSONL
+  tunggal raksasa (idx 444030) berisi ratusan nama.
+- **"disciple" (huruf kecil, generik) dikonfirmasi ulang DIBIARKAN Inggris** di
+  seluruh batch ini — precedent lama campur aduk (kadang "murid", kadang
+  "disciple") tapi karena batch ini berdekatan dengan idx 432xxx yang
+  dominan pakai "disciple", konsistensi lokal diprioritaskan. Kalau ketemu
+  lagi di batch jauh berikutnya, cek dulu precedent idx terdekat sebelum
+  memutuskan.
+- **"Swordsman Sinan" dikonfirmasi ulang sebagai UNIT NAMA yang tidak
+  diterjemahkan** (bukan "Swordsman" diterjemahkan + "Sinan" nama) — dipakai
+  konsisten sebagai judul/nama gabungan sejak awal Fase 9.
+- **Placeholder tag aneh `#Ttext` yang kebetulan cocok regex TOKEN sebagai
+  `#T`** (bukan tag highlight asli) ditemukan lagi (idx 444071 `"#Talk to the
+  Dog"`) — solusi sama seperti idx 434808 sebelumnya: sisakan `#Talk` utuh di
+  awal, terjemahkan sisanya (`#Talk dengan Anjing`).
+- **"Chief of the Inner Court" -> "Kepala Istana Dalam"**, **"Field Commander"
+  -> "Komandan Lapangan"** — gelar/jabatan generik diterjemahkan konsisten
+  dengan pola Lord->Tuan/Commander->Komandan yang sudah ada.
+- **Kode sumber/leftover teks Cina sebagai dev note dalam tanda kurung**
+  (mis. idx 443681 `"(仅作为玩法名称)"` = "hanya sebagai nama mode permainan")
+  diterjemahkan strukturnya ke Indonesia karena berupa catatan developer biasa,
+  beda dari blok kode Lua panjang yang dibiarkan 100% utuh (aturan lama idx
+  437267).
+- Entry lore super panjang (>3000 karakter) makin sering muncul di rentang idx
+  ini (Zou/Yang "Together in One Boat" idx 443599, drama keluarga Su/Dragon
+  King idx 444044, register Dragonbend Academy idx 443803, kisah Zhang
+  bersaudara idx 442985) — semua diterjemahkan penuh tanpa disingkat, hanya
+  nama tokoh & tempat yang dipertahankan sesuai aturan biasa.
+
 ## Catatan ambiguitas yang belum konsisten sempurna (untuk direview kalau ketemu lagi)
 
 - **"Power"**: kadang diterjemahkan "Kekuatan" (kata umum berdiri sendiri), tapi kalau

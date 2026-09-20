@@ -14,27 +14,34 @@ kebenaran untuk "sudah sampai mana".
   di file utama, lihat bagian "Update game 2026-09-16")
 - Total string unik: **461.704** (429.887 asli + 31.817 dari update game, idx 0–461.703)
 - **Progress Fase 0–6: idx 0–52.999 selesai (53.000/429.887 string dari batch asli) — tidak disentuh sesi ini.**
-- **Progress Fase 9: idx 429.887–442.136 selesai (12.250/31.817 string, ~38.50%
-  dari Fase 9) — `locale/phase9.jsonl`, next idx = 442.137 — diproses sesi ini.**
-- Sesi ini (2026-09-19, batch ketujuh Fase 9): user minta lanjut Fase 9, tapi
-  **mengubah ukuran batch jadi 1.000 string/iterasi** (turun dari 2.000, berlaku
-  mulai sesi ini sampai ada instruksi lain — lihat catatan di `plan.md`). idx
-  441.137–442.136 (1.000 baris) diterjemahkan dan di-append ke `locale/phase9.jsonl`,
-  next idx Fase 9 = 442.137. Batch ini didominasi lore panjang Mohist Hill/Hidden
-  Mountain (banyak paragraf naratif >1000 karakter: kisah Zhang Wanshi, Roc, Goshawk,
-  parabel gagak-walet Mohist, surat perang Khitan, epik Ying Ying, dll.) — diproses
-  dalam 4 sub-batch 250 lalu digabung, tervalidasi **0 mismatch token pada percobaan
-  pertama** di seluruh 1.000 baris (dicek dengan script Python langsung, bukan
-  manual), termasuk validasi ulang penuh file `phase9.jsonl` gabungan (12.250 baris)
-  sekaligus setelah append. 0 duplikat/gap idx dicek lintas semua file
-  `locale/phase*.jsonl` sekaligus (total 65.250 baris/idx unik tercatat tanpa
-  tabrakan, `phase9.jsonl` sendiri kontigu penuh 429.887–442.136 tanpa lubang).
-  Spot-check `pemain` case-insensitive: 1 hit (idx 441819, surat pengumuman
-  developer/patch notes gaya out-of-game — "pengalaman pemain baru", "pemain bisa
-  berpartisipasi", dll. adalah terjemahan wajar "player" sebagai kata benda umum
-  audiens developer, BUKAN pelanggaran konvensi "Player" karakter in-game yang
-  tetap Inggris — dibedakan dari dialog/quest text biasa). Fase 6 tetap di next idx
-  53.000, tidak disentuh sesi ini.
+- **Progress Fase 9: idx 429.887–444.136 selesai (14.250/31.817 string, ~44.78%
+  dari Fase 9) — `locale/phase9.jsonl`, next idx = 444.137 — diproses sesi ini.**
+- Sesi ini (2026-09-20, batch kedelapan Fase 9): user minta lanjut Fase 9 lagi
+  dengan **ukuran batch dinaikkan lagi ke 2.000 string/iterasi** (dari 1.000 di
+  sesi sebelumnya, dikonfirmasi ulang user di awal sesi ini — lihat `plan.md`).
+  idx 442.137–444.136 (2.000 baris) diterjemahkan dan di-append ke
+  `locale/phase9.jsonl`, next idx Fase 9 = 444.137. Batch ini didominasi lore
+  panjang Mohist Hill/Hidden Mountain: kisah asal-usul Kingfisher (bayi hanyut di
+  peti kayu), kisah persahabatan lama Zou/Yang "Together in One Boat" (idx
+  443599, salah satu entry lore terpanjang yang ditemui sejauh ini), drama
+  keluarga penamaan Tiger Fort oleh tiga bersaudara Zhang (idx 442985), register
+  murid Dragonbend Academy lintas beberapa tahun (idx 443803), surat-surat
+  perang Khitan/Du Zhongwei, monolog sekarat Grandmaster Sky Citadel (idx
+  442978-442979), dan drama keluarga Su/Dragon King (idx 444044). Diproses
+  dalam 8 sub-batch 250 lalu digabung, tervalidasi **0 mismatch token** di
+  seluruh 2.000 baris (dicek dengan script Python, bukan manual), termasuk
+  validasi ulang penuh file `phase9.jsonl` gabungan (14.250 baris) sekaligus
+  setelah append. 0 duplikat/gap idx dicek lintas semua file
+  `locale/phase*.jsonl` sekaligus (total 67.250 baris/idx unik tercatat tanpa
+  tabrakan, `phase9.jsonl` sendiri kontigu penuh 429.887–444.136 tanpa lubang).
+  **Catatan khusus**: idx 444.030 adalah satu entry JSONL tunggal berisi daftar
+  ratusan nama karakter pemain (Hall of Fame "Max-Level Characters" dari trial
+  Ruibin & Huangzhong) — diperlakukan sebagai kumpulan nama/username (bukan teks
+  naratif) sesuai konvensi lama "nama tidak diterjemahkan", jadi **dibiarkan
+  100% identik dengan sumber Inggris**, disalin verbatim tanpa perubahan
+  sedikit pun (termasuk karakter Han yang ikut nyempil di beberapa nickname,
+  mis. "Summer丶", "Worship灬" — dipertahankan apa adanya sebagai bagian nama).
+  Fase 6 tetap di next idx 53.000, tidak disentuh sesi ini.
 - **Catatan istilah baru sesi ini (batch keenam Fase 9, idx 439137-441136)**:
   - Cerita lore panjang Zou/Yang (persahabatan lama Mohist Hill, idx 439837),
     Heron/Gasping Cliff (idx 440503), dan Zhen Gui/Relief Bureau (idx 440551)
@@ -143,8 +150,8 @@ kebenaran untuk "sudah sampai mana".
   (10.000 baris, lengkap), `locale/phase5.jsonl` (30.000 baris, **SELESAI** — rentang penuh
   fase ini 30.000 baris/idx 20.000–49.999), `locale/phase6.jsonl` (3.000 baris, **jalan** —
   rentang penuh fase ini 50.000 baris/idx 50.000–99.999, next idx = 53.000 — tidak
-  disentuh sesi ini), `locale/phase9.jsonl` (12.250 baris, **jalan** — rentang penuh
-  fase ini 31.817 baris/idx 429.887–461.703, next idx = 442.137 — **diproses sesi ini**).
+  disentuh sesi ini), `locale/phase9.jsonl` (14.250 baris, **jalan** — rentang penuh
+  fase ini 31.817 baris/idx 429.887–461.703, next idx = 444.137 — **diproses sesi ini**).
   **Baris terakhir di file fase AKTIF = idx terakhir yang selesai.**
   Cek dengan: `wc -l locale/phase{N}.jsonl` (N = nomor fase yang mau dilanjutkan — **sekarang
   ada dua fase jalan sekaligus, 6 dan 9, jadi tanya user dulu fase mana kalau tidak
@@ -255,7 +262,7 @@ User update game-nya dan menemukan file locale baru: `translate_words_map_en__sm
 
 ## PENTING: sisa pekerjaan sangat besar
 
-376.887 string unik lagi (Fase 0–8) setelah progress ini, plus 20.567 sisa Fase 9.
+376.887 string unik lagi (Fase 0–8) setelah progress ini, plus 17.567 sisa Fase 9.
 Lihat `plan.md` untuk perkiraan jumlah
 sesi per fase (kasar: 125–190+ sesi total sampai 100%). Sampaikan ini ke user kalau
 ditanya estimasi waktu, dan ingatkan opsi berhenti di ~50% baris (lihat "Titik berhenti
