@@ -14,6 +14,7 @@ qa_report.jsonl
 qa_report_*.jsonl
 translate_words_map_en.id
 patched/
+Obsidian-Vault/.obsidian
 
 # Python
 __pycache__/
