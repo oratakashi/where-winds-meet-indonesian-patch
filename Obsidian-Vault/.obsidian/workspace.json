@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "translation_logs/Phase-9.md",
+                "file": "knowladge/glossary/Wuxia-And-Cultural-Terms.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Phase-9"
+              "title": "Wuxia-And-Cultural-Terms"
             }
           }
         ]
@@ -99,7 +99,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "translation_logs/Phase-9.md",
+                "file": "knowladge/glossary/Wuxia-And-Cultural-Terms.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -118,7 +118,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "translation_logs/Phase-9.md",
+                "file": "knowladge/glossary/Wuxia-And-Cultural-Terms.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -161,7 +161,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "translation_logs/Phase-9.md",
+                "file": "knowladge/glossary/Wuxia-And-Cultural-Terms.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -191,17 +191,27 @@
   },
   "active": "aa66843a3f820c88",
   "lastOpenFiles": [
-    "translation_logs/Phase-5.md",
-    "translation_logs/Phase-4.md",
-    "translation_logs/Phase-9.md",
+    "knowladge/glossary/Translated-Common-Terms.md",
+    "knowladge/glossary/Tone-And-Style.md",
+    "knowladge/glossary/Special-Cases.md",
+    "knowladge/glossary/Placeholders-And-Formatting.md",
+    "knowladge/glossary/Open-Questions.md",
+    "knowladge/glossary/Names-Not-Translated.md",
+    "knowladge/glossary/Kept-In-English-Terms.md",
     "knowladge/Glossary.md",
-    "knowladge/glossary",
-    "progress/Phase-Roadmap.md",
+    "knowladge/Format-Spec.md",
+    "knowladge/glossary/Honorifics-And-Titles.md",
+    "knowladge/glossary/Placeholders-And-Formatting.md.tmp.9056.b09b1d4536fb",
+    "progress/Current-Status.md",
+    "knowladge/glossary/Wuxia-And-Cultural-Terms.md",
+    "knowladge/Initial-Brief.md",
     "progress/Resume-Procedure.md",
     "progress/Session-History.md",
-    "progress/Current-Status.md",
-    "knowladge/Initial-Brief.md",
-    "knowladge/Format-Spec.md",
+    "translation_logs/Phase-9.md",
+    "translation_logs/Phase-5.md",
+    "translation_logs/Phase-4.md",
+    "knowladge/glossary",
+    "progress/Phase-Roadmap.md",
     "Current-Status.md",
     "translation_logs/Phase-6.md",
     "translation_logs/Phase-5.md.tmp.8808.25c4a57e4f93",
@@ -212,7 +222,6 @@
     "progress",
     "knowladge",
     "Welcome.md",
-    "translation_logs",
-    "knowladge"
+    "translation_logs"
   ]
 }

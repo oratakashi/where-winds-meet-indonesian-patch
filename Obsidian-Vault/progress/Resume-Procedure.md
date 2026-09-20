@@ -5,6 +5,20 @@ validation script that must pass before any batch is appended. See
 [[Current-Status]] for where things stand right now and [[Glossary]] for the
 rules to apply while translating.
 
+## How these files relate
+
+- `translation_work/unique_strings.jsonl` — 429,887 unique strings, ordered by
+  descending frequency (idx 0..N-1), plus 31,817 more appended after the
+  2026-09 update (idx up to 461,703 — see [[Phase-9]]).
+- `locale/phase*.jsonl` — translation output, append-only,
+  `{"idx": N, "v": "..."}` per line, one file per phase (see
+  [[Phase-Roadmap]]). The last line in the active phase's file marks the
+  most recently completed idx.
+- Progress tracking itself lives in [[Current-Status]] (snapshot),
+  [[Session-History]] (chronological log), and this file (how to pick a
+  session back up, below). See "After all phases" further down for how
+  these two files eventually get merged into a deployable patch.
+
 ## How to resume a session
 
 1. Read [[Phase-Roadmap]] — check the active phase (number N), its idx
