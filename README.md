@@ -40,7 +40,7 @@ di bawah untuk cara menanganinya tanpa kehilangan progress terjemahan yang sudah
 
 | | |
 |---|---|
-| Format terbongkar | ✅ penuh, lihat [`docs/FORMAT.md`](docs/FORMAT.md) |
+| Format terbongkar | ✅ penuh, lihat [`Format-Spec.md`](Obsidian-Vault/knowladge/Format-Spec.md) |
 | Round-trip terverifikasi | ✅ byte-identik, di file utama & varian `_diff`/`__small`/`__small_diff` |
 | Decode | ✅ |
 | Encode | ✅ |
@@ -51,7 +51,7 @@ Diuji pada `translate_words_map_en` versi global — jumlah entri **berubah tiap
 (key ditambah/dihapus/diubah nilainya, jumlah shard ikut menyesuaikan), jadi jangan kaget
 kalau `entries`-mu beda dari contoh di bawah. Snapshot terbaru yang diverifikasi (2026-09):
 826.388 entri / 3.230 blok di file utama, plus varian `_diff` (212.117 entri hadir) dan
-`__small` (4.009 entri, tabel terpisah — lihat [§4.6 FORMAT.md](docs/FORMAT.md#46-varian-__small--__small_diff-tabel-terpisah-bukan-bagian-dari-_diff)).
+`__small` (4.009 entri, tabel terpisah — lihat [§4.6 Format-Spec.md](Obsidian-Vault/knowladge/Format-Spec.md#46-the-__small--__small_diff-variant-a-separate-table-not-part-of-_diff)).
 
 ---
 
@@ -99,7 +99,7 @@ entries parsed : 826388
 
 (Angka di atas contoh dari snapshot 2026-09 — punyamu bisa beda karena game terus di-update.)
 Kalau `entries parsed` sama dengan `entries (index)`, parser cocok dengan file kamu. Kalau
-beda dan file yang kamu buka bernama `*_diff`, itu normal — lihat [§4.5 FORMAT.md](docs/FORMAT.md).
+beda dan file yang kamu buka bernama `*_diff`, itu normal — lihat [§4.5 Format-Spec.md](Obsidian-Vault/knowladge/Format-Spec.md#45-the-_diff-variant-incremental-file-between-game-updates).
 
 ### 3. Dump ke JSONL
 
@@ -207,7 +207,7 @@ python tools/rebuild_unique_strings.py         # tambah string baru ke unique_st
 python tools/patch_all.py --outdir patched     # terapkan semua terjemahan yang sudah ada
 ```
 
-Lihat `docs/FORMAT.md` §4.6 untuk detail temuan soal `__small` dan `CLAUDE.md` untuk cara kerja
+Lihat `Obsidian-Vault/knowladge/Format-Spec.md` §4.6 untuk detail temuan soal `__small` dan `CLAUDE.md` untuk cara kerja
 tiap script.
 
 ---
@@ -277,7 +277,7 @@ Idiom C++ klasik supaya blok bisa di-`mmap` tanpa relokasi pointer. Kalau
 diasumsikan offset absolut, hasil dekode berupa potongan kalimat yang saling
 tumpang tindih — itu gejala khasnya.
 
-Spesifikasi lengkap: [`docs/FORMAT.md`](docs/FORMAT.md).
+Spesifikasi lengkap: [`Format-Spec.md`](Obsidian-Vault/knowladge/Format-Spec.md).
 
 ---
 
@@ -418,7 +418,7 @@ Yang paling membantu:
 
 - **Memecahkan derivasi H1/H2 dari `keyHash` + `seed`.** Ini membuka
   kemampuan menambah key baru, bukan sekadar mengubah nilai. Catatan
-  eksperimen ada di `docs/FORMAT.md` §4.4.
+  eksperimen ada di `Obsidian-Vault/knowladge/Format-Spec.md` §4.4.
 - Varian kebocoran prompt baru untuk `LEAK_SIGNATURES` di `qa_check.py`.
 - Token format engine yang belum terdaftar di tabel markup.
 - Konfirmasi format pada file locale bahasa lain (`_de`, `_fr`, `_ja`, ...).

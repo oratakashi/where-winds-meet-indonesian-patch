@@ -43,6 +43,19 @@ python tools/patch_all.py [--outdir patched] [--level N]
 There is no test suite; correctness is verified by round-tripping a real
 `translate_words_map_en` file through `info` → `dump` → `patch` → `info` and diffing entries.
 
+## Translation session workflow lives in the Obsidian vault
+
+This repo also hosts a multi-session Indonesian translation effort (see
+`translation_work/unique_strings.jsonl` and `locale/phase*.jsonl`). All of its
+process documentation — current progress, session history, the resume
+procedure, and the terminology glossary — lives under `Obsidian-Vault/`, not
+in this file. Before starting or continuing a translation session, read:
+
+- `Obsidian-Vault/progress/Current-Status.md` — where things stand right now.
+- `Obsidian-Vault/progress/Resume-Procedure.md` — how to pick up a session and validate a batch.
+- `Obsidian-Vault/knowladge/Glossary.md` — the terminology/tone rules that must be followed.
+- `Obsidian-Vault/translation_logs/Phase-N.md` — the historical reasoning behind past decisions, per phase.
+
 ## Do not use subagents
 
 Do all work in this repo directly (Read/Edit/Bash/Grep/Glob etc.) instead of delegating to the
@@ -136,7 +149,7 @@ replacement in `LocalData\Patch\...`. If a future game update merges `_diff` con
 the base package (which NetEase does periodically), whatever fraction of it is already covered
 by the translation dictionary becomes permanent automatically at that point, no extra work needed.
 
-### File format (see `docs/FORMAT.md` for the full spec)
+### File format (see `Obsidian-Vault/knowladge/Format-Spec.md` for the full spec)
 
 - Container: `magic(0xDEADBEEF) | version | blockCount | reserved`, followed by a
   `u32[blockCount]` table of block **end offsets**, relative to the end of that offset table.
@@ -162,7 +175,7 @@ an architectural fact, not a tool limitation.
 **Why no hash function is needed**: since keys aren't stored, changing language means overwriting
 *values* for existing keys — `ctrl`, `keyHash`, and slot positions are preserved byte-for-byte in
 `rebuild_shard()`; only `relOffset`/`byteLen` and the string blob are rewritten. This is also why
-adding genuinely new keys isn't currently possible (see `docs/FORMAT.md` §4.4 — the H1/H2
+adding genuinely new keys isn't currently possible (see `Obsidian-Vault/knowladge/Format-Spec.md` §4.4 — the H1/H2
 derivation from `keyHash`+`seed` hasn't been solved).
 
 ### QA checks (`tools/qa_check.py`)
