@@ -230,6 +230,48 @@ the full merged `locale/phase6.jsonl` (11,000 rows): idx sequential
 rows done, 22%). Phase 9 untouched this session (still at next idx
 445,737).
 
+## 2026-09-21 — Phase 6 batch 7
+
+**Phase 6** idx 61,000–62,999 completed (batch 7, 2,000 rows), at the
+user's requested 2,000-strings/iteration size. Translated and validated
+directly against `unique_strings.jsonl` for the full 2,000-row batch:
+found and fixed 1 issue (idx 62806, a source-side malformed tag —
+`#YFledgling Appearance Chests#` is missing its closing `E`, i.e. it's
+`#` not `#E` — the draft translation had "fixed" it to a proper `#E`,
+which broke the token-count match; corrected to reproduce the source's
+typo exactly rather than fixing it), then 0 mismatches, 0 EMPTY hits. No
+new terminology decisions — every case matched an existing [[Glossary]]
+entry; see [[Phase-6]] for the full batch notes. Appended and
+re-validated the full merged `locale/phase6.jsonl` (13,000 rows): idx
+sequential 50,000–62,999, no duplicates. Next idx Phase 6 = 63,000
+(13,000/50,000 rows done, 26%). Phase 9 untouched this session (still at
+next idx 445,737).
+
+## 2026-09-21 — Phase 6 batch 8
+
+**Phase 6** idx 63,000–64,999 completed (batch 8, 2,000 rows), at the
+user's requested 2,000-strings/iteration size. Translated and validated
+directly against `unique_strings.jsonl` for the full 2,000-row batch:
+found and fixed 2 token mismatches (idx 63835 and 64825, both a
+`<Name|id|#C|...>` stat-tag's apostrophe/plural dropped while
+restructuring the surrounding sentence), then 0 mismatches, 0 EMPTY hits,
+and 0 real hits on a separate untagged-placeholder check (`$VAR$`,
+`@T[...]`/`@t[...]`, `$link<...>^ID^$`, `$S...$E`). A manual
+honorific-consistency grep across the full batch also caught 6
+mistranslations before merging — "Master Moonstream", "Young Master"
+(×3), and "Granny" (×3, one NPC name appears twice) had been left
+kept-English by over-generalizing from other "Master"/proper-noun
+patterns instead of applying the [[Honorifics-And-Titles]] table
+directly; all fixed to Guru/Tuan Muda/Nenek. See [[Phase-6]] for the
+full batch notes, including the mid-batch bash-heredoc issue (very long
+single `cat >> file <<EOF` commands were silently truncated by the tool
+at very large sizes, producing a 10-line idx gap that was caught and
+refilled by a completeness check rather than lost — kept batches to
+~50 lines per shell call afterward). Appended and re-validated the full
+merged `locale/phase6.jsonl` (15,000 rows): idx sequential 50,000–64,999,
+no duplicates. Next idx Phase 6 = 65,000 (15,000/50,000 rows done, 30%).
+Phase 9 untouched this session (still at next idx 445,737).
+
 ## Undated note
 
 At some point before this history was consolidated, `strings.jsonl` and

@@ -270,3 +270,141 @@ color tag (both described above). Re-ran after fixes: **0 mismatches**.
 An EMPTY check (source non-blank, translation blank) also ran: **0 hits**.
 Full merged `locale/phase6.jsonl` (11,000 lines) re-validated: idx
 sequential 50,000–60,999, 11,000 unique idx, no duplicates.
+
+## idx 61,000–62,999 (batch 7, 2026-09-21)
+
+Another 2,000-row batch, same overall mix as batches 3–6: a large share of
+random player-username `freq: 2` strings (mixed-capitalization tokens with
+no spaces, many wrapped in `×...×`, e.g. "radIantvOiD", "MightyGriffin",
+"hyperfieRcebond") kept untranslated per precedent, Chinese-pinyin NPC/
+place names, gear/skill/costume UI labels (`Tier N <Set>: <Slot>`, `- EX`/
+`- Common`/`- Radiance` variants), and internal debug/dev-facing strings
+left untranslated (e.g. "HUD interaction button UI: visible=false",
+"Someone attacking player, entering the performance subtree.",
+"active_interact_exec_after_unlock_actions"). No new terminology
+decisions — every case matched an existing [[Glossary]] entry:
+
+- Duration shorthand `s`→`d`/`h`→`j` applied throughout, including inside
+  `#V...#E`/`#ffc89c...#E` tags and combined with `{}` placeholders (e.g.
+  idx 61010 "15s"→"15d" via `#V15#Ed`, idx 61023 `#ffc89c{0}#Es`→`#Ed`, idx
+  62822 "+%sh0m"→"+%sj0m").
+- `$link<...>^ID^$` (idx 61801) and the runtime date placeholder `@T[...]`
+  (idx 61580) opaque/wrapper handling reconfirmed — preserved
+  character-for-character.
+- `<LINK id='link2' color='#8c5823' goto_id='660188' is_underline='true'>`
+  (idx 61543) — a custom XML-style link tag distinct from the stat-tag
+  `<...>` pattern — the tag itself preserved exactly, only the visible
+  link text ("Press here to go" → "Tekan di sini untuk pergi") translated,
+  consistent with the `<TEXT id=...>...</TEXT>` handling seen at idx
+  61276.
+- Chinese zodiac double-hour "X Hour" → "Jam X" reconfirmed (idx 62712
+  "Wei Hour" → "Jam Wei"), "Form" as a transformation state → "Wujud"
+  reconfirmed (idx 61060, 62074, 61929 "Koi/Breeze form" → "Wujud Koi"/
+  "Wujud Breeze").
+- Honorifics per [[Honorifics-And-Titles]]: Master (teacher) → Guru (idx
+  61190 "Master Wen", 61985, 62147, 62417, 62484, 62608, 62771), Master
+  (org leader) → Ketua (idx 62154 "Sect Master", 62732 "Pavilion Master"),
+  Lord → Tuan, Old X (no "Man") kept English (idx 61126 "Old Lin",
+  reconfirmed per [[Open-Questions]]), Senior Brother/Sister kept English
+  (idx 61452, 62944, reconfirmed per [[Open-Questions]]).
+- A leftover-developer-note-style Chinese string (idx 61164,
+  "不建议作为术语，这其实是个UI，翻译为了Preset") translated
+  structurally into Indonesian per [[Special-Cases]], same as the
+  precedent from Phase 9.
+- Several long narrative/lore entries translated in full: the Buddhist
+  candle-ritual monastery notice (idx 61028), the Zhuxie Gule/Bei Xiaoyu
+  loyalty tale (idx 61550), the Meng Kuan wine-pouch elegy for fallen
+  brothers (idx 61565), the "old madman" Imperial Guards camp story about
+  Jing and Da (idx 61684, ~2,900 characters), the Mohist Hill imperial
+  edict triptych (idx 62897, ~2,000 characters, three dated decrees), and
+  the Liangzhou noblewoman/Aynur wine-vision passages (idx 62443, 62713).
+- One source-side malformed tag found and preserved as-is rather than
+  "corrected": idx 62806's `#YFledgling Appearance Chests#` is missing its
+  closing `E` in the English source (bare `#`, not `#E`) — the first
+  translation draft "fixed" it to a well-formed `#E`, which the validator
+  caught as a token-count mismatch; corrected to reproduce the source's
+  typo exactly, per the standing rule to never invent or repair tags that
+  don't match the source.
+
+Token/placeholder validation ran on the full 2,000-row batch (source-text
+token-count diff against `unique_strings.jsonl`): found and fixed **1
+issue** (idx 62806 above). Re-ran after the fix: **0 mismatches**. An
+EMPTY check (source non-blank, translation blank) also ran: **0 hits**.
+Full merged `locale/phase6.jsonl` (13,000 lines) re-validated: idx
+sequential 50,000–62,999, 13,000 unique idx, no duplicates.
+
+## idx 63,000–64,999 (batch 8)
+
+Same mix as prior batches: a very high proportion of `freq: 2` random
+player-username strings (kept verbatim per [[Special-Cases]]/
+[[Names-Not-Translated]]), Chinese-style NPC names, gear/skill UI labels
+(`Tier N <Set>: <Slot>`, `- EX`/`- Edge`/`- Radiance`/`- Umbra` variants),
+stat labels, and casual dialogue (gue/lo per [[Tone-And-Style]]). No new
+terminology decisions — every case matched an existing [[Glossary]] entry,
+though a few required going back to the table rather than pattern-matching
+on the surface word:
+
+- **Honorifics applied correctly this batch, all per [[Honorifics-And-Titles]]**:
+  Master (teacher, before a name) → Guru (idx 63062 "Master Moonstream" →
+  "Guru Moonstream", initially mistranslated kept-English and caught on
+  self-review before merging), Master (org/place leader) → Ketua (idx
+  64238 "Master of Weiyang City" → "Ketua Weiyang City"), Young Master →
+  Tuan Muda (idx 63611, 64290, 64666 — all three initially drafted
+  kept-English by pattern-matching on other "Master" cases, caught and
+  fixed before merging), Lord → Tuan (idx 64331 "Lord Zhu" → "Tuan Zhu"),
+  Granny → Nenek (idx 63703 "Granny Turtle", 64020 "Granny Ren", 64080
+  "Granny Yu" — all three initially left kept-English, caught on the same
+  review pass), Sect Master → Ketua Sekte (idx 64579 "Lone Cloud Sect
+  Master" → "Ketua Sekte Lone Cloud"), Old Man X → Kakek X (idx 64486
+  "Old Man Ma" → "Kakek Ma", correct on first pass).
+  - **"Young Master" as a standalone gameplay/role label** (idx 64820
+    "Young Master gameplay not yet available") was judged to be a
+    Profession/role name (same pattern as Scholar/Healer class names, see
+    [[Kept-In-English-Terms]]) rather than an honorific address, and kept
+    in English — different from the address form above. Flag for
+    re-check if more instances of this specific label turn up.
+  - **"Sect Rules - <Quest Name>" labels are translated ("Sect" →
+    "Sekte")** even in the `X - Y` compound-label format (idx 63740 "Sect
+    Rules - Hundred Herbs Trial" → "Aturan Sekte - Hundred Herbs Trial"),
+    consistent with the existing "Sect Rules Violation Notice" precedent
+    in [[Wuxia-And-Cultural-Terms]] — this is different from the
+    kept-English skill/gear `X - Y` label convention in
+    [[Kept-In-English-Terms]], because "Sect Rules" is ordinary
+    translated vocabulary, not a proper noun or stat label.
+- Several long narrative/lore entries translated in full: the Chai-family
+  loyalty stele (idx 63034), the Guo Xin/Chen Hu "arrow that would rather
+  break than bend" Anxi-army elegy (idx 63732, ~1,600 characters), the
+  Zhu Youjia Nine Mortal Ways escape story (idx 63755), the Yan Ying
+  chess-strategist tale (idx 63908), the age-reversal/disguise recipe
+  (idx 64650), and the Deepwave Vessel/Conch Vessel legend (idx 64139).
+- Duration/placeholder conventions reconfirmed with no exceptions this
+  batch: `s`→`d`/`h`→`j` shorthand (idx 63433 `{diff_day:d}d{diff_hour:d}h`
+  → `{diff_day:d}h{diff_hour:d}j`), `$link<...>^ID^$` opaque handling (idx
+  64876), `$S...$E` narrative-wrapper handling with translated content
+  (idx 64554, 64717), and `$D$F.../$STEADY_*$`-style pure numeric/runtime
+  placeholders preserved character-for-character (idx 63419, 63569, 64128,
+  64930, 63328, 63859, 63920 — all required escaping the `$` in the shell
+  heredoc used to write the batch, since an unescaped `$` triggers bash
+  variable expansion; verified post-write that every `$`-bearing line
+  landed with the literal `$` intact).
+- Two stat-tag content mistakes caught by validation and fixed before
+  merging: idx 63835 (`<Infernal Twinblades'|...>`/`<Light Attacks|...>`
+  had their apostrophe/plural dropped while restructuring the sentence
+  around them) and idx 64825 (`<Everspring Umbrella's|...>` lost its
+  possessive `'s`) — both are the same class of error as the batch 5/6/7
+  stat-tag mistakes logged above: the content inside a `<Name|id|#C|...>`
+  tag must be copied byte-for-byte from the source, never re-typed from
+  memory while translating around it.
+
+Token/placeholder validation ran on the full 2,000-row batch: found and
+fixed **2 issues** (idx 63835, 64825 above), then **0 mismatches**. A
+separate untagged-placeholder check (`$VAR$`/`$STEADY_*$`, `$P`/`$N`,
+`@T[...]`/`@t[...]`, `$link<...>^ID^$`, `$S...$E`) also ran: **0 real
+hits** (2 apparent hits on the `$S...$E` check were false positives from
+the check script comparing translated content against source content
+verbatim — the `$S`/`$E` markers themselves were confirmed intact). An
+EMPTY check also ran: **0 hits**. A manual honorific-consistency grep
+(`Master`, `Young Master`, `Lord `, `Granny `, `Sect `) caught the 6
+mistranslations listed above before merging. Full merged
+`locale/phase6.jsonl` (15,000 lines) re-validated: idx sequential
+50,000–64,999, 15,000 unique idx, no duplicates.
