@@ -168,6 +168,68 @@ of the resulting `phase9.jsonl` (15,850 rows) confirmed clean. Next idx
 Phase 9 = 445,737 (15,850/31,817 rows done, ~49.81%). Phase 6 untouched
 this session (still at next idx 53,000).
 
+## 2026-09-21 — Phase 6 batch 3
+
+**Phase 6** idx 53,000–54,999 completed (batch 3, 2,000 rows), at the
+user's requested 2,000-strings/iteration size — reconfirming the 2,000
+default. Translated and validated in 4 sub-batches of 500 each (0 token
+mismatches per sub-batch), then re-validated the full merged
+`locale/phase6.jsonl` (5,000 rows): 0 mismatches, idx sequential
+50,000–54,999, no duplicates. No new terminology decisions — see
+[[Phase-6]] for the one process note (internal mechanic/animation
+debug-style labels left untranslated, not yet promoted to a locked
+[[Glossary]] rule). Next idx Phase 6 = 55,000 (5,000/50,000 rows done, 10%).
+Phase 9 untouched this session (still at next idx 445,737).
+
+## 2026-09-21 — Phase 6 batch 4
+
+**Phase 6** idx 55,000–56,999 completed (batch 4, 2,000 rows), at the
+user's requested 2,000-strings/iteration size. Translated and validated
+directly against `unique_strings.jsonl` for the full 2,000-row batch: 0
+token mismatches, 0 EMPTY hits, then appended and re-validated the full
+merged `locale/phase6.jsonl` (7,000 rows): idx sequential 50,000–56,999, no
+duplicates. No new terminology decisions — every case matched an existing
+[[Glossary]] entry; see [[Phase-6]] for the one flagged-but-unresolved
+ambiguous case ("Master Qi"/"Master Pu" as a non-teacher, non-org-leader
+honorific, kept English pending a clearer rule if it recurs). Next idx
+Phase 6 = 57,000 (7,000/50,000 rows done, 14%). Phase 9 untouched this
+session (still at next idx 445,737).
+
+## 2026-09-21 — Phase 6 batch 5
+
+**Phase 6** idx 57,000–58,999 completed (batch 5, 2,000 rows), at the
+user's requested 2,000-strings/iteration size. Translated and validated
+directly against `unique_strings.jsonl` for the full 2,000-row batch: found
+and fixed 1 token mismatch (idx 57636, `<Light Attacks|...>` accidentally
+singularized to `<Light Attack|...>` inside a stat-formatted tag), then 0
+mismatches, 0 EMPTY hits, and 0 mismatches on a separate untagged-
+placeholder check (`$VAR$`, `@T[...]`, `$link<...>^ID^$`). Appended and
+re-validated the full merged `locale/phase6.jsonl` (9,000 rows): idx
+sequential 50,000–58,999, no duplicates. No new terminology decisions —
+every case matched an existing [[Glossary]] entry; see [[Phase-6]] for
+the full batch notes. Next idx Phase 6 = 59,000 (9,000/50,000 rows done,
+18%). Phase 9 untouched this session (still at next idx 445,737).
+
+## 2026-09-21 — Phase 6 batch 6
+
+**Phase 6** idx 59,000–60,999 completed (batch 6, 2,000 rows), at the
+user's requested 2,000-strings/iteration size. Translated and validated
+directly against `unique_strings.jsonl` for the full 2,000-row batch:
+found and fixed 2 issues (idx 60957, a `<...>`-tag long-sentence violation
+where the bracketed English content had been translated by mistake; idx
+60068, a garbled-number typo introduced while restructuring a sentence
+around a `#e9a358`-style color tag), then 0 mismatches, 0 EMPTY hits. Also
+caught and fixed a drafting error mid-batch: one source line (idx 59441)
+was skipped while translating, which shifted ~17 subsequent idx labels
+down by one and produced one fabricated line — found by re-reading the
+exact source range and comparing line-by-line, fixed before merging. No
+new terminology decisions — every case matched an existing [[Glossary]]
+entry; see [[Phase-6]] for the full batch notes. Appended and re-validated
+the full merged `locale/phase6.jsonl` (11,000 rows): idx sequential
+50,000–60,999, no duplicates. Next idx Phase 6 = 61,000 (11,000/50,000
+rows done, 22%). Phase 9 untouched this session (still at next idx
+445,737).
+
 ## Undated note
 
 At some point before this history was consolidated, `strings.jsonl` and
