@@ -16,3 +16,4 @@ of Phase 5 — see [[Phase-5]] and [[Session-History]] for that transition.
 - [[idx-61000-62999]] — idx 61,000–62,999 (batch 7, 2026-09-21)
 - [[idx-63000-64999]] — idx 63,000–64,999 (batch 8)
 - [[idx-65000-65999]] — idx 65,000–65,999 (batch 9, 2026-09-22, first batch at 1,000/iteration)
+- [[idx-74000-74999]] — idx 74,000–74,999 (batch 15, 2026-09-22, 1,000/iteration)

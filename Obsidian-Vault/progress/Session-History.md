@@ -429,6 +429,15 @@ fixed and re-validated to **0 mismatches**. Full merged `locale/phase6.jsonl`
 Next idx Phase 6 = 74,000 (24,000/50,000 rows done, 48%). Update-1 untouched
 this session (still at next idx 445,737).
 
+## 2026-09-22 — Session 5: Phase 6 batch 15 (1,000 strings/iteration)
+
+Phase 6, batch 15: idx 74,000–74,999 (1,000 rows) translated and appended
+to `locale/phase6.jsonl`. Total now 25,000/50,000 rows done for Phase 6
+(50.00% milestone reached). Mix of content: random player usernames
+(kept verbatim, e.g. `cAlmPath`, `AtlasminotauR`, `speCtralachilles`), Chinese-style pinyin NPC names (kept verbatim, e.g. `Lin Xiansheng`, `Wang Qing`, `Dongfang Yangyue`), gear/skill/stat UI labels kept English per [[Kept-In-English-Terms]] (`Battle Will`, `Tenacity`, `Nameless Sword`, `Breaking Army`, `Jade Fish`), casual gue/lo dialogue register, plus several longer narrative/lore entries (spear exile legend after Later Liang fall, Zhang Yichao/Guiyi Army liberation of Hexi lore, Han Dynasty Celestial Spring Station Dunhuang artifact description, Lucky Turtle/Lucky Bag event rules, and Zhao Pu/Wei Zhixi gossip). No new terminology decisions — everything matched existing [[Glossary]] entries.
+
+Token/placeholder validation via standard `TOKEN` regex script: passed with **0 mismatches** after adjusting plain tag `<Beast Tongue>` and stat tag `<Herbal Resonance's|...>` apostrophe precision. Full merged `locale/phase6.jsonl` (25,000 rows) re-validated: idx sequential 50,000–74,999, no duplicates. Next idx Phase 6 = 75,000 (25,000/50,000 rows done, 50.00%). Update-1 untouched this session (still at next idx 445,737).
+
 ## Undated note
 
 At some point before this history was consolidated, `strings.jsonl` and

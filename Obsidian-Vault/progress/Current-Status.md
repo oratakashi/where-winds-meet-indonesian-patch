@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-22 (session 4).** This is the single source of truth for "how
+**Last updated: 2026-09-22 (session 5).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -22,7 +22,7 @@ full timeline, see [[Session-History]]; for the phase plan, see
 | 3     | 5,000–9,999     | done        | —                                              |
 | 4     | 10,000–19,999   | done        | —                                              |
 | 5     | 20,000–49,999   | done        | —                                              |
-| 6     | 50,000–99,999   | **active**  | **74,000** (24,000/50,000 rows done)           |
+| 6     | 50,000–99,999   | **active**  | **75,000** (25,000/50,000 rows done, 50.00%)   |
 | 7     | 100,000–129,999 | not started | 100,000                                        |
 | 8     | 130,000–159,999 | not started | 130,000                                        |
 | 9     | 160,000–189,999 | not started | 160,000                                        |
@@ -47,24 +47,15 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 doesn't say which one to continue, ask before starting — see
 [[Resume-Procedure]].
 
-## Most recent session (2026-09-22, session 4)
+## Most recent session (2026-09-22, session 5)
 
-Phase 6, batch 14: idx 73,000–73,999 (1,000 rows) translated and appended
-to `locale/phase6.jsonl`. Total now 24,000/50,000 rows done for Phase 6
-(48%). Same mix as prior batches: heavy `freq: 2` random player-username
-entries with irregular internal capitalization (kept verbatim), Chinese-style
-NPC pinyin names, gear/skill/stat UI labels kept English per
-[[Kept-In-English-Terms]], casual gue/lo-register dialogue, plus several
-longer narrative/lore pieces (the Surangama Sutra history note, the Fu/Lu/Shou
-siblings' dictated letter, the Mahjong God Challenge vignette with Uncle
-Zhang, the nameless prodigy's swallow elegy, and the Shiye/wolf-pack Inner
-Way origin story). No new terminology decisions — every case matched an
-existing [[Glossary]] entry. Token/placeholder validation via the standard
-script: 2 mismatches on first pass (idx 73220 an extra `#E` closing early
-instead of at the string's end, idx 73924 a stat-tag `<Physical Defense|...>`
-translated inside the tag instead of kept literal) — both fixed and
-re-validated to 0 mismatches. Full merged `locale/phase6.jsonl` (24,000
-lines) re-validated: idx sequential 50,000–73,999, no duplicates.
+Phase 6, batch 15: idx 74,000–74,999 (1,000 rows) translated and appended
+to `locale/phase6.jsonl`. Total now 25,000/50,000 rows done for Phase 6
+(50.00% milestone reached). Mix of content: random player usernames
+(kept verbatim), Chinese-style NPC pinyin names, gear/skill/stat UI labels kept
+English per [[Kept-In-English-Terms]], casual gue/lo-register dialogue, plus several
+longer narrative/lore pieces (spear exile legend after Later Liang fall, Zhang Yichao/Guiyi Army liberation of Hexi lore, Han Dynasty Celestial Spring Station Dunhuang artifact description, Lucky Turtle/Lucky Bag event rules, and Zhao Pu/Wei Zhixi gossip). No new terminology decisions — every case matched an
+existing [[Glossary]] entry. Token/placeholder validation via standard `TOKEN` regex script passed with **0 mismatches** after resolving plain tag `<Beast Tongue>` and stat tag `<Herbal Resonance's|...>` apostrophe precision. Full merged `locale/phase6.jsonl` (25,000 lines) re-validated: idx sequential 50,000–74,999, no duplicates.
 
 Update-1 was not touched this session (still at next idx 445,737).
 
