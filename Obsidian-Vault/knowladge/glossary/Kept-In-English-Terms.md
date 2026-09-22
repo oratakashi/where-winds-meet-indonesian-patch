@@ -32,7 +32,7 @@ Healer. *(Phase 1)*
 - **Lowercase generic "disciple"** reconfirmed kept in English throughout the idx 442xxx
   range — older precedent was mixed ("murid" vs. "disciple"), but local idx-neighborhood
   consistency was prioritized. If it recurs in a much later batch, check the nearest idx
-  precedent before deciding. *([[Phase-9]], batch 8)*
+  precedent before deciding. *([[Update-1]], batch 8)*
 
 ## Common loanwords
 

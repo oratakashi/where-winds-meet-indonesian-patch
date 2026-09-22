@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-22.** This is the single source of truth for "how
+**Last updated: 2026-09-22 (session 2).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -22,40 +22,50 @@ full timeline, see [[Session-History]]; for the phase plan, see
 | 3     | 5,000–9,999     | done        | —                                              |
 | 4     | 10,000–19,999   | done        | —                                              |
 | 5     | 20,000–49,999   | done        | —                                              |
-| 6     | 50,000–99,999   | **active**  | **69,000** (19,000/50,000 rows done)           |
-| 7     | 100,000–199,999 | not started | 100,000                                        |
-| 8     | 200,000–429,886 | not started | 200,000                                        |
-| 9     | 429,887–461,703 | **active**  | **445,737** (15,850/31,817 rows done, ~49.81%) |
+| 6     | 50,000–99,999   | **active**  | **71,000** (21,000/50,000 rows done)           |
+| 7     | 100,000–129,999 | not started | 100,000                                        |
+| 8     | 130,000–159,999 | not started | 130,000                                        |
+| 9     | 160,000–189,999 | not started | 160,000                                        |
+| 10    | 190,000–219,999 | not started | 190,000                                        |
+| 11    | 220,000–249,999 | not started | 220,000                                        |
+| 12    | 250,000–279,999 | not started | 250,000                                        |
+| 13    | 280,000–309,999 | not started | 280,000                                        |
+| 14    | 310,000–339,999 | not started | 310,000                                        |
+| 15    | 340,000–369,999 | not started | 340,000                                        |
+| 16    | 370,000–399,999 | not started | 370,000                                        |
+| 17    | 400,000–429,886 | not started | 400,000                                        |
+| Update-1 | 429,887–461,703 | **active** | **445,737** (15,850/31,817 rows done, ~49.81%) |
 
 
-Phases 0–8 draw from the original `unique_strings.jsonl` (idx 0–429,886).
-Phase 9 is the addition from the 2026-09-16 game update (idx 429,887–461,703
-— see [[Phase-Roadmap]]).
+Phases 0–17 draw from the original `unique_strings.jsonl` (idx 0–429,886).
+Update-1 is the addition from the 2026-09-16 game update (idx
+429,887–461,703 — see [[Phase-Roadmap]]). Phases 7–17 replace the old
+100,000/229,887-string "Phase 7"/"Phase 8" split with eleven ~30,000-string
+phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
-**Phase 6 and Phase 9 are both in progress in parallel.** If the user
+**Phase 6 and Update-1 are both in progress in parallel.** If the user
 doesn't say which one to continue, ask before starting — see
 [[Resume-Procedure]].
 
-## Most recent session (2026-09-22)
+## Most recent session (2026-09-22, session 2)
 
-Phase 6, batch 11: idx 67,000–68,999 (2,000 rows) translated and appended
-to `locale/phase6.jsonl`, at the newly-requested **2,000-strings/iteration**
-size (up from 1,000 last session). Total now 19,000/50,000 rows done for
-Phase 6 (38%). Same mix as prior batches: heavy `freq: 2` random
-player-username entries with irregular internal capitalization (kept
-verbatim), Chinese-style NPC pinyin names, gear/skill/stat UI labels kept
-English per [[Kept-In-English-Terms]], casual gue/lo dialogue, plus several
-longer narrative/lore pieces (the Wingfall/Rampage/Argent Oath spear-reserve
-history note, the Liu Xiaomei Dragonbend Mountain ode, the Grand Historian's
-burnt-book fragment on the benefits/harms of water, the astronomer "Lord of
-Clouds" star-observation legend, and the "Righteous and Elusive Red Heroine"
-letter). No new terminology decisions — every case matched an existing
+Phase 6, batch 12: idx 69,000–70,999 (2,000 rows) translated and appended
+to `locale/phase6.jsonl`. Total now 21,000/50,000 rows done for Phase 6
+(42%). Same mix as prior batches: heavy `freq: 2` random player-username
+entries with irregular internal capitalization (kept verbatim), Chinese-style
+NPC pinyin names, gear/skill/stat UI labels kept English per
+[[Kept-In-English-Terms]], casual gue/lo dialogue, plus several longer
+narrative/lore pieces (the Li Tiegu/Khitan-raider vignette, the Gold Leaf
+Case murder-mystery excerpt, the Celestial Spring Station ghost-station
+legend, the vajra/Zhang Yichao reflection, the "Ten Sages' Collection" last
+testament, the Layla and Majnun folklore note, and the Poet's Soul rhapsody
+ghost story). No new terminology decisions — every case matched an existing
 [[Glossary]] entry. Token/placeholder validation via the standard script:
 0 mismatches on first pass across all 2,000 rows. Full merged
-`locale/phase6.jsonl` (19,000 lines) re-validated: idx sequential
-50,000–68,999, no duplicates.
+`locale/phase6.jsonl` (21,000 lines) re-validated: idx sequential
+50,000–70,999, no duplicates.
 
-Phase 9 was not touched this session (still at next idx 445,737).
+Update-1 was not touched this session (still at next idx 445,737).
 
 ## Batch size
 

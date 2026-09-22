@@ -10,7 +10,7 @@ Example: "Sect Rules Violation Notice" → "Pemberitahuan Pelanggaran Aturan Sek
 
 **Exception**: "Mohist Sect" (the sect/order at Hidden Mountain) is kept fully in English as
 a proper-noun faction name — see [[Names-Not-Translated]]. *(Phase 1; exception locked
-[[Phase-9]] batch 5)*
+[[Update-1]] batch 5)*
 
 ## Traditional Chinese Medicine (TCM) terms
 
@@ -24,7 +24,7 @@ generic word is translated ("Syndrome" → "Sindrom", "Disease" → "Penyakit").
 Translated into descriptive Indonesian (not treated as proper nouns): "Spring Festival" →
 "Festival Musim Semi", "Double Ninth Festival" → "Festival Sembilan Ganda". *(Phase 1)*
 
-- **"Lantern Festival" → "Festival Lampion"**, consistent with the others. *([[Phase-9]])*
+- **"Lantern Festival" → "Festival Lampion"**, consistent with the others. *([[Update-1]])*
 
 ## Other locked cultural terms
 

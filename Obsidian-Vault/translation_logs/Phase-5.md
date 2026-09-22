@@ -1,7 +1,7 @@
 # Phase 5 Translation Log (idx 20,000–49,999)
 
 Session-by-session terminology notes for Phase 5, sorted by idx (the
-original session notes were interleaved with Phase 9 batches worked in
+original session notes were interleaved with Update-1 batches worked in
 parallel — see [[Session-History]] for the actual session order). The
 current, consolidated rules live in [[Glossary]] — this file is the
 reasoning/history behind them.

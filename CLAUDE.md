@@ -26,7 +26,7 @@ python tools/qa_check.py <original.jsonl> <translated.jsonl> [--report qa.jsonl]
 python tools/expand_locale.py [--strings X.jsonl] [--out Y.jsonl]
                                                        # build a patch JSONL for ANY single dump by matching its
                                                        # `v` text against translation_work/unique_strings.jsonl +
-                                                       # locale/phase*.jsonl (defaults to strings.jsonl)
+                                                       # locale/phase*.jsonl + locale/update*.jsonl (defaults to strings.jsonl)
 
 python tools/rebuild_unique_strings.py [--dry-run]    # after a game update: append newly-seen strings to
                                                        # unique_strings.jsonl WITHOUT touching existing idx
@@ -73,8 +73,10 @@ context — only use one if the user explicitly asks for it by name.
 - `tools/qa_check.py` — a standalone validator that diffs an original JSONL dump against a
   translated one and flags three defect classes before a patch is repacked.
 - `tools/expand_locale.py` — turns the per-idx translation work (`translation_work/unique_strings.jsonl`
-  + `locale/phase*.jsonl`) into a `patch`-ready JSONL for one dumped file, matching by literal
-  source text (not by address), so it works unmodified on any `translate_words_map_*` variant.
+  + `locale/phase*.jsonl` + `locale/update*.jsonl` — the latter holds game-update string batches,
+  named `Update-N` rather than `Phase N` to keep them out of the main phase sequence) into a
+  `patch`-ready JSONL for one dumped file, matching by literal source text (not by address), so it
+  works unmodified on any `translate_words_map_*` variant.
 - `tools/rebuild_unique_strings.py` — after a game update, appends newly-seen strings to
   `unique_strings.jsonl` at new idx values without touching existing ones, so already-translated
   `locale/phase*.jsonl` progress never needs remapping.

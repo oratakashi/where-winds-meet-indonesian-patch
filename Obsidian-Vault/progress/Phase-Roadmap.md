@@ -28,22 +28,41 @@ strings).
 | 4 (done)   | 10,000 – 19,999   | 10,000       | ~40.0%                      | —                       | done (7 sessions)     | `locale/phase4.jsonl` |
 | 5 (done)   | 20,000 – 49,999   | 30,000       | ~50.1%                      | —                       | done (15/15 sessions) | `locale/phase5.jsonl` |
 | 6 (active) | 50,000 – 99,999   | 50,000       | ~60.5%                      | 2,000/session (fixed)   | ~17–25 sessions       | `locale/phase6.jsonl` |
-| 7          | 100,000 – 199,999 | 100,000      | ~76.1%                      | 2,500–3,500/session     | ~29–40 sessions       | `locale/phase7.jsonl` |
-| 8          | 200,000 – 429,886 | 229,887      | 100%*                       | 3,000–5,000/session     | ~46–77 sessions       | `locale/phase8.jsonl` |
-| 9 (active) | 429,887 – 461,703 | 31,817       | additional (see note below) | 2,000/session (fixed)   | ~16 sessions          | `locale/phase9.jsonl` |
+| 7          | 100,000 – 129,999 | 30,000       | ~64.6%                      | 2,000/session           | ~10–15 sessions       | `locale/phase7.jsonl` |
+| 8          | 130,000 – 159,999 | 30,000       | ~68.7%                      | 2,000/session           | ~10–15 sessions       | `locale/phase8.jsonl` |
+| 9          | 160,000 – 189,999 | 30,000       | ~72.8%                      | 2,000/session           | ~10–15 sessions       | `locale/phase9.jsonl` |
+| 10         | 190,000 – 219,999 | 30,000       | ~76.9%                      | 2,000/session           | ~10–15 sessions       | `locale/phase10.jsonl` |
+| 11         | 220,000 – 249,999 | 30,000       | ~81.0%                      | 2,000–3,000/session     | ~10–15 sessions       | `locale/phase11.jsonl` |
+| 12         | 250,000 – 279,999 | 30,000       | ~85.1%                      | 2,000–3,000/session     | ~10–15 sessions       | `locale/phase12.jsonl` |
+| 13         | 280,000 – 309,999 | 30,000       | ~89.2%                      | 2,000–3,000/session     | ~10–15 sessions       | `locale/phase13.jsonl` |
+| 14         | 310,000 – 339,999 | 30,000       | ~93.3%                      | 2,000–3,000/session     | ~10–15 sessions       | `locale/phase14.jsonl` |
+| 15         | 340,000 – 369,999 | 30,000       | ~96.3%                      | 3,000–5,000/session     | ~6–10 sessions        | `locale/phase15.jsonl` |
+| 16         | 370,000 – 399,999 | 30,000       | ~98.7%                      | 3,000–5,000/session     | ~6–10 sessions        | `locale/phase16.jsonl` |
+| 17         | 400,000 – 429,886 | 29,887       | 100%*                       | 3,000–5,000/session     | ~6–10 sessions        | `locale/phase17.jsonl` |
+| Update-1 (active) | 429,887 – 461,703 | 31,817 | additional (see note below) | 2,000/session (fixed) | ~16 sessions | `locale/update1.jsonl` |
 
 \* Percentage of the 963,050 total lines in `strings.jsonl`, based on actual
 frequency distribution. Phase 2–8 figures are rough interpolations, not
 precise per-idx counts — don't treat them as exact.
 
-**Phase 9** was added on 2026-09-16 after a game update — it is not part of
-the original 429,887 unique strings. `tools/rebuild_unique_strings.py`
-appended idx 429,887–461,703 (31,817 new strings) found in the updated
-`translate_words_map_en`, `_diff`, `__small`, and `__small_diff` that had
-**never been recorded** in `unique_strings.jsonl` before. idx 0–429,886
-(Phases 0–8) were **not touched at all** — old progress stays valid with no
-remapping needed. See [[Session-History]] and [[Phase-9]] for how
-`patch_all.py` applies the dictionary across all four files at once.
+**Update-1** (formerly labeled "Phase 9") was added on 2026-09-16 after a
+game update — it is not part of the original 429,887 unique strings.
+`tools/rebuild_unique_strings.py` appended idx 429,887–461,703 (31,817 new
+strings) found in the updated `translate_words_map_en`, `_diff`, `__small`,
+and `__small_diff` that had **never been recorded** in `unique_strings.jsonl`
+before. idx 0–429,886 (Phases 0–17) were **not touched at all** — old
+progress stays valid with no remapping needed. See [[Session-History]] and
+[[Update-1]] for how `patch_all.py` applies the dictionary across all four
+files at once.
+
+**Naming convention going forward:** a game-update string batch (appended by
+`rebuild_unique_strings.py`, always a disjoint idx block above the current
+max) is always labeled **`Update-N`** (Update-1, Update-2, ...) — never a
+`Phase N` number. This keeps the `Phase N` sequence meaning "progress through
+the original 429,887-string corpus" and avoids a patch update ever forcing a
+renumber of the main phase sequence again. `tools/expand_locale.py` and
+`tools/patch_all.py` pick up both `locale/phase*.jsonl` and
+`locale/update*.jsonl` automatically.
 
 Live status for each active phase (next idx, most recent batch) lives in
 [[Current-Status]]; the full history of which phase was worked when, and
@@ -71,7 +90,7 @@ more effort is needed for smaller gains:
 - **~50% of lines** (end of Phase 5, idx ~50,000) is a reasonable midpoint
   for a long pause and a re-evaluation of whether continuing into the tail
   is still worth it.
-- Strings deep in the tail (Phases 7–8) are often rare items/skills, debug
+- Strings deep in the tail (Phases 7–17) are often rare items/skills, debug
   text, or minor variations of already-translated strings — lower gameplay
   value per unit of effort.
 - `CLAUDE.md` and `patch` already support **partial translation** (an

@@ -36,7 +36,7 @@ exactly, same count and order as the source. This is automatically checked by
 - **The pattern `"#Y<label>#E <Tag|id|#C|slot>"`**: the highlight label and the placeholder
   tag are TWO separate units — translate the contents of `#Y...#E`, then leave the `<...>`
   tag intact right after it without merging text into it. Never put text inside a `<...>` tag
-  that already has the `|id|#C|slot` format. *([[Phase-9]], batch 2)*
+  that already has the `|id|#C|slot` format. *([[Update-1]], batch 2)*
 
 ## `#`-tag gotchas
 
@@ -52,7 +52,7 @@ exactly, same count and order as the source. This is automatically checked by
   [[Translated-Common-Terms]]. *(Phase 5 continuation, idx 21000–21999)*
 - **The stray tag pattern `#Ttext` that happens to match the `TOKEN` regex as `#T`** (not a
   real highlight tag) — e.g. idx 434808 and idx 444071 `"#Talk to the Dog"` — leave `#Talk`
-  intact at the start, translate the rest (`#Talk dengan Anjing`). *([[Phase-9]], batch 8)*
+  intact at the start, translate the rest (`#Talk dengan Anjing`). *([[Update-1]], batch 8)*
 
 ## Duration/placeholder conversions
 

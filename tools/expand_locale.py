@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 expand_locale.py — gabungkan translation_work/unique_strings.jsonl + semua
-locale/phase*.jsonl (per-idx-unik) menjadi patch per-baris di atas strings.jsonl
-(format {"b","s","h","v"} yang dipakai wwm_locmap.py patch).
+locale/phase*.jsonl DAN locale/update*.jsonl (per-idx-unik) menjadi patch per-baris
+di atas strings.jsonl (format {"b","s","h","v"} yang dipakai wwm_locmap.py patch).
 
     python tools/expand_locale.py [--strings strings.jsonl] [--out strings.translated.jsonl]
 
@@ -23,7 +23,10 @@ def load_translated_map():
             idx_to_src[d["idx"]] = d["v"]
 
     src_to_translated = {}
-    phase_files = sorted(glob.glob(os.path.join(ROOT, "locale", "phase*.jsonl")))
+    phase_files = sorted(
+        glob.glob(os.path.join(ROOT, "locale", "phase*.jsonl"))
+        + glob.glob(os.path.join(ROOT, "locale", "update*.jsonl"))
+    )
     for path in phase_files:
         with open(path, encoding="utf-8") as f:
             for line in f:

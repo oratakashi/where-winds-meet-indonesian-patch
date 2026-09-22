@@ -57,7 +57,7 @@ closing / Phase 6 opening, idx 49000–50999)*
 - **"Chief of the Inner Court" → "Kepala Istana Dalam"**
 - **"Field Commander" → "Komandan Lapangan"**
 
-Translated consistently with the Lord→Tuan / Commander→Komandan pattern. *([[Phase-9]],
+Translated consistently with the Lord→Tuan / Commander→Komandan pattern. *([[Update-1]],
 batch 8)*
 
 ## Not yet locked
@@ -65,7 +65,7 @@ batch 8)*
 - **"Senior Sister"/"Junior Sister"/"Senior Brother"/"Junior Brother"** (wuxia terms of
   address between fellow disciples) are kept in English for now — no locked Indonesian
   equivalent yet (options like "Kakak/Adik Seperguruan" were considered but not decided).
-  See [[Open-Questions]]. *([[Phase-9]], batch 5)*
+  See [[Open-Questions]]. *([[Update-1]], batch 5)*
 
 ## See also
 

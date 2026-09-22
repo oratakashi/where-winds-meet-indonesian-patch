@@ -9,7 +9,7 @@ Huajian Ke, Jiang Wulang, Lian Daozi, Feng Jisheng, Han Xiangxun, Big Zhao, Litt
 Wanshan, Murong Yuan, Yi Dao, Qinghe, etc. *(Phase 1)*
 
 - **"Swordsman Sinan" is a combined name-unit**, not "Swordsman" (translated) + "Sinan" (a
-  name) — used consistently as one title/name since early Phase 9. *([[Phase-9]])*
+  name) — used consistently as one title/name since early Update-1. *([[Update-1]])*
 
 ## Place / location names
 
@@ -30,7 +30,7 @@ Tides, etc. *(Phase 1)*
 - **"Mohist Sect"** (the sect/order at Hidden Mountain) is also kept fully in English as a
   proper-noun faction name — consistent with "Mohist Hill"/"Mohist City". This is
   **different** from the generic word "Sect", which IS translated — see
-  [[Wuxia-And-Cultural-Terms]]. *([[Phase-9]], batch 5)*
+  [[Wuxia-And-Cultural-Terms]]. *([[Update-1]], batch 5)*
 
 ## Named weapons, styles, and skills
 
@@ -83,7 +83,7 @@ Materials in `"<Name> Tier N"` form (Magnet Stone, Cloud Sand, Turquoise Stone, 
 Cinnabar, and compound material names like "Mushroom-Iron Composite", "Pine-Copper
 Cloudsand Extract") are kept fully in English — treated as crafting/resource system
 identifiers like Inspiration/Affection (see [[Kept-In-English-Terms]]), not ordinary common
-nouns. *([[Phase-9]], batch 2)*
+nouns. *([[Update-1]], batch 2)*
 
 ## Qiongqi faction ranks and "Farmer"
 
@@ -93,7 +93,7 @@ nouns. *([[Phase-9]], batch 2)*
 - **"Qiongqi Master"/"Qiongqi Warrior"/"Qiongqi Soldier"/"Qiongqi Artificer"** (ranks/roles
   of the antagonist "Qiongqi" faction) are kept fully in English as compound titles.
 
-*([[Phase-9]])*
+*([[Update-1]])*
 
 ## Artisan / pigment names
 

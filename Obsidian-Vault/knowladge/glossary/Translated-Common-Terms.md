@@ -40,7 +40,7 @@ name). *(Phase 1)*
   (e.g. the Zou/Yang "Together in One Boat" tale, the Su/Dragon King family drama, the
   Dragonbend Academy register, the Zhang siblings' story) — all translated in full without
   shortening, keeping only character/place names untranslated per the usual rule. No special
-  handling needed beyond the standard rules on this page. *([[Phase-9]], batch 8)*
+  handling needed beyond the standard rules on this page. *([[Update-1]], batch 8)*
 
 ## Single-term locks (ordinary translated vocabulary)
 
@@ -53,11 +53,11 @@ name). *(Phase 1)*
   idx 21000–21999)*
 - **"Treasury" (a common word) is translated as "Perbendaharaan"** in all its compounds
   (Pledged/Sealed/Imperial Treasury) — different from a unique compound place name, which
-  stays in English. *([[Phase-9]])*
+  stays in English. *([[Update-1]])*
 - **"Loot" → "Jarahan"** (item drops). *(Phase 5, idx 20000–20999)*
 - **Generic royal/imperial titles (Prince, Empress) are translated**: "Prince Teng" →
   "Pangeran Teng", "Empress Wu" → "Permaisuri Wu" — consistent with Lord → Tuan (see
-  [[Honorifics-And-Titles]]). *([[Phase-9]])*
+  [[Honorifics-And-Titles]]). *([[Update-1]])*
 - **Common-noun animals/plants** (not a made-up fantasy proper noun) such as "Pangolin",
   "Sparrow Egg", "Crane Egg", "Snow Ape", "Long-Tailed Pheasant", "Lanternfish", "Bamboo
   Shoot" are translated into natural Indonesian terms — different from made-up fantasy
@@ -71,7 +71,7 @@ name). *(Phase 1)*
 - **Leftover Chinese developer notes in parentheses** (e.g. idx 443681 `"(仅作为玩法名称)"` =
   "for gameplay-mode naming only") are translated structurally into Indonesian since they're
   ordinary developer notes — different from the long Lua code block left 100% untouched, see
-  [[Special-Cases]]. *([[Phase-9]], batch 8)*
+  [[Special-Cases]]. *([[Update-1]], batch 8)*
 
 ## Non-standard color tag free text
 

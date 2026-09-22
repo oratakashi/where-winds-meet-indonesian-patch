@@ -1,14 +1,14 @@
-# Phase 9 Translation Log (idx 429,887–461,703)
+# Update-1 Translation Log (idx 429,887–461,703)
 
-Session-by-session terminology notes for Phase 9, in idx order. Phase 9 is
-the batch of strings added by the 2026-09-16 game update (not a continuation
-of the original `unique_strings.jsonl`) — see [[Phase-Roadmap]] for how it
-was created and [[Session-History]] for the full session timeline (Phase 9
-ran in parallel with Phase 5/6 for most of its history). All standard
-[[Glossary]] conventions still apply; this file adds Phase-9-specific
-decisions.
+Session-by-session terminology notes for Update-1, in idx order. Update-1
+(formerly labeled "Phase 9") is the batch of strings added by the
+2026-09-16 game update (not a continuation of the original
+`unique_strings.jsonl`) — see [[Phase-Roadmap]] for how it was created and
+[[Session-History]] for the full session timeline (Update-1 ran in parallel
+with Phase 5/6 for most of its history). All standard [[Glossary]]
+conventions still apply; this file adds Update-1-specific decisions.
 
-Phase 9 content leans heavily on new chapters/areas (Hidden Mountain/Mohist
+Update-1 content leans heavily on new chapters/areas (Hidden Mountain/Mohist
 Hill continuation, Sky Citadel, Luan City, Qiongqi Artificer faction, etc.)
 and new compound gear names.
 

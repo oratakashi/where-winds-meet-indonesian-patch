@@ -37,12 +37,12 @@ The user updated the game client and found two new locale files:
   `_diff` files) — now skipped, same as `qa_check.py` already did.
 - Added two new scripts: `tools/rebuild_unique_strings.py` (appends newly
   observed strings after a game update to `unique_strings.jsonl` **without
-  touching old idx values** — this is how Phase 9 was created) and
+  touching old idx values** — this is how Update-1 was created) and
   `tools/patch_all.py` (applies the existing translation dictionary to all
   known `translate_words_map_*` variants in one pass).
 - Re-dumped `strings.jsonl` from the updated main file. Expanded
   `unique_strings.jsonl` to idx 461,703 (+31,817 new strings — this became
-  Phase 9). Applied the existing dictionary (Phases 0–4, 20,000 translated
+  Update-1). Applied the existing dictionary (Phases 0–4, 20,000 translated
   strings) to all four file variants via `patch_all.py`:
 
   | file                                  | entries | matched (already translated) |
@@ -53,20 +53,20 @@ The user updated the game client and found two new locale files:
   | `translate_words_map_en__small_diff`   | 0       | 0                               |
 
   All patched output passed `qa_check.py` with 0 findings.
-- Translating the 31,817 new Phase 9 strings was deferred to later sessions
+- Translating the 31,817 new Update-1 strings was deferred to later sessions
   (out of scope for this tooling-focused session).
 
-## 2026-09-17 — Phase 9 opened; `_diff` deployment limitation found; Phase 5 continues
+## 2026-09-17 — Update-1 opened; `_diff` deployment limitation found; Phase 5 continues
 
-- **Phase 9 opened.** At the user's explicit request, the session jumped to
-  Phase 9 first (batch 1, idx 429,887–431,886) even though Phase 5 was still
-  unfinished (stopped at idx 37,000). From this point, **Phase 5 and Phase 9
+- **Update-1 opened.** At the user's explicit request, the session jumped to
+  Update-1 first (batch 1, idx 429,887–431,886) even though Phase 5 was still
+  unfinished (stopped at idx 37,000). From this point, **Phase 5 and Update-1
   run in parallel** — a session must ask the user which phase to continue if
   not stated explicitly. Processed in 4 sub-batches of 500, validated
   together; 2 token mismatches found and fixed before appending.
-- **Phase 9 batch 2** (idx 431,887–433,886): processed in 8 sub-batches of
+- **Update-1 batch 2** (idx 431,887–433,886): processed in 8 sub-batches of
   250, validated together; 4 token mismatches found and fixed.
-- **Phase 9 batch 3** (idx 433,887–435,886): processed in 8 sub-batches of
+- **Update-1 batch 3** (idx 433,887–435,886): processed in 8 sub-batches of
   250; 5 token mismatches found via validation, plus 2 non-token
   inconsistencies ("steward") found via a separate manual audit.
 - User then explicitly asked to switch back to **Phase 5** instead of Phase
@@ -101,19 +101,19 @@ The user updated the game client and found two new locale files:
   point whatever fraction is already translated becomes permanent
   automatically.
 
-## 2026-09-18 — Alternating Phase 5 and Phase 9 batches (dense session day)
+## 2026-09-18 — Alternating Phase 5 and Update-1 batches (dense session day)
 
 A high-throughput day covering both active phases:
 
 1. **Phase 5** idx 43,000–44,999 completed (batch 7). Next idx Phase 5 =
    45,000.
-2. **Phase 9** idx 435,887–437,136 completed (batch 4, 1,250 of a planned
+2. **Update-1** idx 435,887–437,136 completed (batch 4, 1,250 of a planned
    2,000 rows) — translation was delegated to a background subagent; the
    user asked to stop it early after 1,250/2,000 strings ("looks like
    enough"), so this batch is smaller than the usual 2,000. Validated (token
-   check + manual fixes) before appending. Next idx Phase 9 = 437,137.
-3. **Phase 9** idx 437,137–439,136 completed (batch 5, full 2,000 rows, done
-   directly by the main session rather than delegated). Next idx Phase 9 =
+   check + manual fixes) before appending. Next idx Update-1 = 437,137.
+3. **Update-1** idx 437,137–439,136 completed (batch 5, full 2,000 rows, done
+   directly by the main session rather than delegated). Next idx Update-1 =
    439,137.
 4. **Phase 5** idx 45,000–46,999 completed (batch 8). Next idx Phase 5 =
    47,000 (12.5 of the original 15 sessions-at-2,000 estimate for Phase 5
@@ -129,43 +129,43 @@ A high-throughput day covering both active phases:
    (1,000/50,000 rows of this phase done). Next idx Phase 6 = 51,000.
 7. **Phase 6** idx 51,000–52,999 completed (batch 2, 2,000 rows;
    3,000/50,000 rows of Phase 6 done). Next idx Phase 6 = 53,000.
-8. **Phase 9** idx 439,137–441,136 completed (batch 6, 2,000 rows;
-   11,250/31,817 rows of Phase 9 done, ~35.36%). Next idx Phase 9 =
+8. **Update-1** idx 439,137–441,136 completed (batch 6, 2,000 rows;
+   11,250/31,817 rows of Update-1 done, ~35.36%). Next idx Update-1 =
    441,137.
 
-## 2026-09-19 — Phase 9 continues, batch size lowered
+## 2026-09-19 — Update-1 continues, batch size lowered
 
-**Phase 9** idx 441,137–442,136 completed (batch 7, 1,000 rows;
-12,250/31,817 rows of Phase 9 done, ~38.50%). The user **lowered the batch
+**Update-1** idx 441,137–442,136 completed (batch 7, 1,000 rows;
+12,250/31,817 rows of Update-1 done, ~38.50%). The user **lowered the batch
 size to 1,000 strings/session** (down from 2,000) — this becomes the new
 default until further notice, superseding the 2026-09-17 preference. Next
-idx Phase 9 = 442,137. Phase 6 untouched this session (still at next idx
+idx Update-1 = 442,137. Phase 6 untouched this session (still at next idx
 53,000).
 
-## 2026-09-20 — Phase 9 continues, batch size raised again
+## 2026-09-20 — Update-1 continues, batch size raised again
 
-**Phase 9** idx 442,137–444,136 completed (batch 8, 2,000 rows). The user
+**Update-1** idx 442,137–444,136 completed (batch 8, 2,000 rows). The user
 **raised the batch size back to 2,000 strings/session** (reconfirmed at the
 start of the session) — current default. Processed in 8 sub-batches of 250,
 merged and validated together: 0 token mismatches across all 2,000 rows
 after merging, including a full re-validation of the combined
-`phase9.jsonl` (14,250 rows at the time) and a cross-check for 0
+`update1.jsonl` (14,250 rows at the time) and a cross-check for 0
 duplicate/gap idx across every `locale/phase*.jsonl` file (67,250 total
-rows/idx recorded with no collisions). Next idx Phase 9 = 444,137
-(14,250/31,817 rows of Phase 9 done, ~44.78%). Phase 6 untouched this
+rows/idx recorded with no collisions). Next idx Update-1 = 444,137
+(14,250/31,817 rows of Update-1 done, ~44.78%). Phase 6 untouched this
 session (still at next idx 53,000).
 
-## 2026-09-20 (continued) — Phase 9 batch 9, session paused mid-batch then resumed
+## 2026-09-20 (continued) — Update-1 batch 9, session paused mid-batch then resumed
 
-**Phase 9** idx 444,137–445,736 completed (batch 9, 1,600 rows — a shortened
+**Update-1** idx 444,137–445,736 completed (batch 9, 1,600 rows — a shortened
 batch: the user asked to stop after 1,400 rows/7 sub-batches, then, since
 sub-batch 8 (200 rows) had already been drafted and validated, asked to
 include it anyway rather than discard it). Translated and validated in 8
 sub-batches of 200 each (0 token mismatches per sub-batch), then combined
 and re-validated as one file before appending: 0 mismatches across all
 1,600 rows, idx sequential with no gaps/duplicates, and a full re-validation
-of the resulting `phase9.jsonl` (15,850 rows) confirmed clean. Next idx
-Phase 9 = 445,737 (15,850/31,817 rows done, ~49.81%). Phase 6 untouched
+of the resulting `update1.jsonl` (15,850 rows) confirmed clean. Next idx
+Update-1 = 445,737 (15,850/31,817 rows done, ~49.81%). Phase 6 untouched
 this session (still at next idx 53,000).
 
 ## 2026-09-21 — Phase 6 batch 3
@@ -179,7 +179,7 @@ mismatches per sub-batch), then re-validated the full merged
 [[Phase-6]] for the one process note (internal mechanic/animation
 debug-style labels left untranslated, not yet promoted to a locked
 [[Glossary]] rule). Next idx Phase 6 = 55,000 (5,000/50,000 rows done, 10%).
-Phase 9 untouched this session (still at next idx 445,737).
+Update-1 untouched this session (still at next idx 445,737).
 
 ## 2026-09-21 — Phase 6 batch 4
 
@@ -192,7 +192,7 @@ duplicates. No new terminology decisions — every case matched an existing
 [[Glossary]] entry; see [[Phase-6]] for the one flagged-but-unresolved
 ambiguous case ("Master Qi"/"Master Pu" as a non-teacher, non-org-leader
 honorific, kept English pending a clearer rule if it recurs). Next idx
-Phase 6 = 57,000 (7,000/50,000 rows done, 14%). Phase 9 untouched this
+Phase 6 = 57,000 (7,000/50,000 rows done, 14%). Update-1 untouched this
 session (still at next idx 445,737).
 
 ## 2026-09-21 — Phase 6 batch 5
@@ -208,7 +208,7 @@ re-validated the full merged `locale/phase6.jsonl` (9,000 rows): idx
 sequential 50,000–58,999, no duplicates. No new terminology decisions —
 every case matched an existing [[Glossary]] entry; see [[Phase-6]] for
 the full batch notes. Next idx Phase 6 = 59,000 (9,000/50,000 rows done,
-18%). Phase 9 untouched this session (still at next idx 445,737).
+18%). Update-1 untouched this session (still at next idx 445,737).
 
 ## 2026-09-21 — Phase 6 batch 6
 
@@ -227,7 +227,7 @@ new terminology decisions — every case matched an existing [[Glossary]]
 entry; see [[Phase-6]] for the full batch notes. Appended and re-validated
 the full merged `locale/phase6.jsonl` (11,000 rows): idx sequential
 50,000–60,999, no duplicates. Next idx Phase 6 = 61,000 (11,000/50,000
-rows done, 22%). Phase 9 untouched this session (still at next idx
+rows done, 22%). Update-1 untouched this session (still at next idx
 445,737).
 
 ## 2026-09-21 — Phase 6 batch 7
@@ -244,7 +244,7 @@ new terminology decisions — every case matched an existing [[Glossary]]
 entry; see [[Phase-6]] for the full batch notes. Appended and
 re-validated the full merged `locale/phase6.jsonl` (13,000 rows): idx
 sequential 50,000–62,999, no duplicates. Next idx Phase 6 = 63,000
-(13,000/50,000 rows done, 26%). Phase 9 untouched this session (still at
+(13,000/50,000 rows done, 26%). Update-1 untouched this session (still at
 next idx 445,737).
 
 ## 2026-09-21 — Phase 6 batch 8
@@ -270,7 +270,7 @@ refilled by a completeness check rather than lost — kept batches to
 ~50 lines per shell call afterward). Appended and re-validated the full
 merged `locale/phase6.jsonl` (15,000 rows): idx sequential 50,000–64,999,
 no duplicates. Next idx Phase 6 = 65,000 (15,000/50,000 rows done, 30%).
-Phase 9 untouched this session (still at next idx 445,737).
+Update-1 untouched this session (still at next idx 445,737).
 
 ## 2026-09-22 — Phase 6 continuation, batch size dropped to 1,000
 
@@ -305,7 +305,7 @@ Granny, Grandpa, Aunt, Uncle, Elder, Lord, Mr., Sect, Doctor, Wanderer,
 Wayfarer) found nothing left un-converted after the one fix above. Full
 merged `locale/phase6.jsonl` (16,000 rows) re-validated: idx sequential
 50,000–65,999, no duplicates. Next idx Phase 6 = 66,000 (16,000/50,000
-rows done, 32%). Phase 9 untouched this session (still at next idx
+rows done, 32%). Update-1 untouched this session (still at next idx
 445,737).
 
 ## 2026-09-22 — Phase 6 batch 10
@@ -328,7 +328,7 @@ text), and idx 66897 (the second of two `#Yresonance#E` occurrences left
 as untagged plain text). All three fixed and re-validated: 0 mismatches, 0
 EMPTY values. Full merged `locale/phase6.jsonl` (17,000 rows) re-validated:
 idx sequential 50,000–66,999, no duplicates. Next idx Phase 6 = 67,000
-(17,000/50,000 rows done, 34%). Phase 9 untouched this session (still at
+(17,000/50,000 rows done, 34%). Update-1 untouched this session (still at
 next idx 445,737).
 
 ## 2026-09-22 — Phase 6 batch 11, batch size restored to 2,000
@@ -354,7 +354,28 @@ Token/placeholder validation via the standard `TOKEN` regex script: **0
 mismatches** on the first pass across all 2,000 rows. Full merged
 `locale/phase6.jsonl` (19,000 rows) re-validated: idx sequential
 50,000–68,999, no duplicates. Next idx Phase 6 = 69,000 (19,000/50,000
-rows done, 38%). Phase 9 untouched this session (still at next idx
+rows done, 38%). Update-1 untouched this session (still at next idx
+445,737).
+
+## 2026-09-22 — Phase 6, batch 12 (2,000-strings/iteration continued)
+
+Phase 6: idx 69,000–70,999 (2,000 rows) translated in one pass and appended
+to `locale/phase6.jsonl`. Same content mix as prior batches: heavy `freq: 2`
+random player-username entries with irregular internal capitalization (kept
+verbatim), Chinese-style NPC pinyin names, gear/skill/stat UI labels kept
+English per [[Kept-In-English-Terms]], casual gue/lo dialogue, plus several
+longer narrative/lore pieces (the Li Tiegu/Khitan-raider vignette, the Gold
+Leaf Case murder-mystery excerpt, the Celestial Spring Station ghost-station
+legend, the vajra/Zhang Yichao reflection, the "Ten Sages' Collection" last
+testament, the Layla and Majnun folklore note, and the Poet's Soul rhapsody
+ghost story). No new terminology decisions — every case matched an existing
+[[Glossary]] entry.
+
+Token/placeholder validation via the standard `TOKEN` regex script: **0
+mismatches** on the first pass across all 2,000 rows. Full merged
+`locale/phase6.jsonl` (21,000 rows) re-validated: idx sequential
+50,000–70,999, no duplicates. Next idx Phase 6 = 71,000 (21,000/50,000
+rows done, 42%). Update-1 untouched this session (still at next idx
 445,737).
 
 ## Undated note
