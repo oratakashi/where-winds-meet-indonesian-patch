@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-22 (session 3).** This is the single source of truth for "how
+**Last updated: 2026-09-22 (session 4).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -22,7 +22,7 @@ full timeline, see [[Session-History]]; for the phase plan, see
 | 3     | 5,000–9,999     | done        | —                                              |
 | 4     | 10,000–19,999   | done        | —                                              |
 | 5     | 20,000–49,999   | done        | —                                              |
-| 6     | 50,000–99,999   | **active**  | **73,000** (23,000/50,000 rows done)           |
+| 6     | 50,000–99,999   | **active**  | **74,000** (24,000/50,000 rows done)           |
 | 7     | 100,000–129,999 | not started | 100,000                                        |
 | 8     | 130,000–159,999 | not started | 130,000                                        |
 | 9     | 160,000–189,999 | not started | 160,000                                        |
@@ -47,31 +47,30 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 doesn't say which one to continue, ask before starting — see
 [[Resume-Procedure]].
 
-## Most recent session (2026-09-22, session 3)
+## Most recent session (2026-09-22, session 4)
 
-Phase 6, batch 13: idx 71,000–72,999 (2,000 rows) translated and appended
-to `locale/phase6.jsonl`. Total now 23,000/50,000 rows done for Phase 6
-(46%). Same mix as prior batches: heavy `freq: 2` random player-username
+Phase 6, batch 14: idx 73,000–73,999 (1,000 rows) translated and appended
+to `locale/phase6.jsonl`. Total now 24,000/50,000 rows done for Phase 6
+(48%). Same mix as prior batches: heavy `freq: 2` random player-username
 entries with irregular internal capitalization (kept verbatim), Chinese-style
 NPC pinyin names, gear/skill/stat UI labels kept English per
-[[Kept-In-English-Terms]], casual gue/lo dialogue, plus several longer
-narrative/lore pieces (the Well of Heaven/Guo Xie founding legend, the
-Sogdian merchant Kang's "homeland" monologue about Chang'an, the Star
-Stealer/Zhao Pu assassination legend, the Erguotou ledger-keeping vignette,
-and the River Master's Four Seas verse). No new terminology decisions —
-every case matched an existing [[Glossary]] entry. Token/placeholder
-validation via the standard script: 3 mismatches on first pass (idx 71099
-missing a `#Y...#E` wrap, idx 71923 a `<shakes head>` stage direction
-accidentally translated instead of kept literal, idx 72432 a stat-tag name
-typo dropping the source's apostrophe-s in `<Nameless Sword's|...>`) — all
-fixed and re-validated to 0 mismatches. Full merged `locale/phase6.jsonl`
-(23,000 lines) re-validated: idx sequential 50,000–72,999, no duplicates.
+[[Kept-In-English-Terms]], casual gue/lo-register dialogue, plus several
+longer narrative/lore pieces (the Surangama Sutra history note, the Fu/Lu/Shou
+siblings' dictated letter, the Mahjong God Challenge vignette with Uncle
+Zhang, the nameless prodigy's swallow elegy, and the Shiye/wolf-pack Inner
+Way origin story). No new terminology decisions — every case matched an
+existing [[Glossary]] entry. Token/placeholder validation via the standard
+script: 2 mismatches on first pass (idx 73220 an extra `#E` closing early
+instead of at the string's end, idx 73924 a stat-tag `<Physical Defense|...>`
+translated inside the tag instead of kept literal) — both fixed and
+re-validated to 0 mismatches. Full merged `locale/phase6.jsonl` (24,000
+lines) re-validated: idx sequential 50,000–73,999, no duplicates.
 
 Update-1 was not touched this session (still at next idx 445,737).
 
 ## Batch size
 
-Current default: **2,000 strings/session** (as of 2026-09-22, changed back
-up from 1,000 at the user's request this session). This has changed several
-times over the project — see [[Session-History]] for the full change log
-before assuming it's still 2,000 in a future session.
+Current default: **1,000 strings/session** (as of 2026-09-22, changed back
+down from 2,000 at the user's request this session). This has changed
+several times over the project — see [[Session-History]] for the full
+change log before assuming it's still 1,000 in a future session.

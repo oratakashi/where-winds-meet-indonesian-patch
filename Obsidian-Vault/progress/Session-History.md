@@ -403,6 +403,32 @@ All three fixed and re-validated to **0 mismatches**. Full merged
 rows done, 46%). Update-1 untouched this session (still at next idx
 445,737).
 
+## 2026-09-22 — Session 4: Phase 6 batch 14, batch size back to 1,000
+
+Batch size changed back down to **1,000 strings/session** at the user's
+request this session (was 2,000 as of session 3).
+
+Phase 6, batch 14: idx 73,000–73,999 (1,000 rows) translated and appended
+to `locale/phase6.jsonl`. Same recurring mix: `freq: 2` random
+player-username strings (kept verbatim), Chinese-style pinyin NPC names,
+gear/skill/stat UI labels kept English, casual dialogue register, plus a
+handful of longer lore/narrative entries (Surangama Sutra history, the
+Fu/Lu/Shou siblings' dictated letter, the Mahjong God Challenge vignette,
+the nameless prodigy's swallow elegy, the Shiye wolf-pack Inner Way origin
+story). No new terminology decisions — everything matched existing
+[[Glossary]] entries.
+
+Token/placeholder validation via the standard `TOKEN` regex script: 2
+mismatches on the first pass — idx 73220 (an extra `#E` closed right after
+"Komponen Pribadi" instead of only at the string's end, per the source's
+single `#Y...#E` span covering both `{}` placeholders), idx 73924 (translated
+text inside a stat tag, `<Pertahanan Fisik|780|#C|17>`, instead of keeping
+`<Physical Defense|780|#C|17>` literal per the standard stat-tag rule). Both
+fixed and re-validated to **0 mismatches**. Full merged `locale/phase6.jsonl`
+(24,000 rows) re-validated: idx sequential 50,000–73,999, no duplicates.
+Next idx Phase 6 = 74,000 (24,000/50,000 rows done, 48%). Update-1 untouched
+this session (still at next idx 445,737).
+
 ## Undated note
 
 At some point before this history was consolidated, `strings.jsonl` and
