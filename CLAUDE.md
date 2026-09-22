@@ -52,8 +52,12 @@ procedure, and the terminology glossary — lives under `Obsidian-Vault/`, not
 in this file. Before starting or continuing a translation session, read:
 
 - `Obsidian-Vault/progress/Current-Status.md` — where things stand right now.
-- `Obsidian-Vault/progress/Resume-Procedure.md` — how to pick up a session and validate a batch.
-- `Obsidian-Vault/knowladge/Glossary.md` — the terminology/tone rules that must be followed.
+- `Obsidian-Vault/progress/Resume-Procedure.md` — how to pick up a session, validate a batch,
+  and keep tool-call round-trips low (token cost driver).
+- `Obsidian-Vault/knowladge/Quick-Reference.md` — condensed terminology/tone rules; read this
+  instead of every file under `knowladge/glossary/` for a routine session.
+- `Obsidian-Vault/knowladge/Glossary.md` — the full topic-file index (only needed for a case
+  Quick-Reference doesn't cover, or its reasoning/history).
 - `Obsidian-Vault/translation_logs/Phase-N.md` — the historical reasoning behind past decisions, per phase.
 
 ## Do not use subagents

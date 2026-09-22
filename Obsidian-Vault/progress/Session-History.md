@@ -272,6 +272,91 @@ merged `locale/phase6.jsonl` (15,000 rows): idx sequential 50,000–64,999,
 no duplicates. Next idx Phase 6 = 65,000 (15,000/50,000 rows done, 30%).
 Phase 9 untouched this session (still at next idx 445,737).
 
+## 2026-09-22 — Phase 6 continuation, batch size dropped to 1,000
+
+User requested the per-iteration batch size be reduced from 2,000 to
+**1,000 strings/session** going forward — the new default until further
+notice (see [[Current-Status]] Batch size).
+
+**Phase 6** idx 65,000–65,999 completed (batch 9, 1,000 rows) at this new
+size. Read the full [[Glossary]] topic-file set before translating (all
+nine topic files under `knowladge/glossary/`), then translated the batch
+in ten internal sub-batches of ~100 rows each (written to scratch files
+and concatenated) to keep each `Write` call a manageable size, rather than
+one very long inline block. Same content mix as prior Phase 6 batches:
+heavy `freq: 2` random player-username entries with irregular internal
+capitalization (kept verbatim), Chinese-style NPC pinyin names, gear/skill/
+stat UI labels kept English per [[Kept-In-English-Terms]], casual gue/lo
+dialogue, plus several longer narrative/lore pieces — see [[Phase-6]] for
+the content list.
+
+One inline consistency catch during drafting: idx 65450 ("Auto Track"
+Complete 4 Sect Commands) was initially left with "Sect" untranslated,
+corrected to "Command Sekte" to match the locked Sect→Sekte rule (see
+[[Wuxia-And-Cultural-Terms]]) before merging — caught by comparing against
+the "Sect Rule"→"Aturan Sekte" translation used earlier in the same batch,
+not by the automated grep.
+
+Validation after merging the ten sub-batches: 0 token/placeholder
+mismatches via the standard `TOKEN` regex script, 0 mismatches on a
+separate untagged `$...$`/`@T[...]` placeholder check, 0 EMPTY values, and
+a grep sweep for stray untranslated honorifics (Master, Young Master,
+Granny, Grandpa, Aunt, Uncle, Elder, Lord, Mr., Sect, Doctor, Wanderer,
+Wayfarer) found nothing left un-converted after the one fix above. Full
+merged `locale/phase6.jsonl` (16,000 rows) re-validated: idx sequential
+50,000–65,999, no duplicates. Next idx Phase 6 = 66,000 (16,000/50,000
+rows done, 32%). Phase 9 untouched this session (still at next idx
+445,737).
+
+## 2026-09-22 — Phase 6 batch 10
+
+**Phase 6** idx 66,000–66,999 completed (batch 10, 1,000 rows) at the
+current 1,000-strings/iteration size. Translated in two ~500-row
+sub-batches (scratch files via the `Write` tool, no shell heredoc). Same
+content mix as prior Phase 6 batches: heavy `freq: 2` random
+player-username entries with irregular internal capitalization (kept
+verbatim), Chinese-style NPC pinyin names, gear/skill/stat UI labels kept
+English per [[Kept-In-English-Terms]], casual gue/lo dialogue, plus several
+longer narrative/lore pieces — see [[Phase-6/idx-66000-66999|the batch
+note]] for the content list. No new terminology decisions.
+
+Token/placeholder validation via the standard `TOKEN` regex script found
+**3 mismatches** on the first pass: idx 66159 (a plain, non-stat `<...>`
+tag mistakenly translated instead of kept verbatim), idx 66626 (an
+apostrophe-s dropped from inside a stat tag's content, changing the tag
+text), and idx 66897 (the second of two `#Yresonance#E` occurrences left
+as untagged plain text). All three fixed and re-validated: 0 mismatches, 0
+EMPTY values. Full merged `locale/phase6.jsonl` (17,000 rows) re-validated:
+idx sequential 50,000–66,999, no duplicates. Next idx Phase 6 = 67,000
+(17,000/50,000 rows done, 34%). Phase 9 untouched this session (still at
+next idx 445,737).
+
+## 2026-09-22 — Phase 6 batch 11, batch size restored to 2,000
+
+Batch size changed back up to **2,000 strings/session** at the user's
+request (was reduced to 1,000 for the previous session only) — the default
+until further notice.
+
+**Phase 6** idx 67,000–68,999 completed (batch 11, 2,000 rows) at the new
+2,000-strings/iteration size. Translated in four 500-row sub-batches
+(scratch files via the `Write` tool). Same content mix as prior Phase 6
+batches: heavy `freq: 2` random player-username entries with irregular
+internal capitalization (kept verbatim), Chinese-style NPC pinyin names,
+gear/skill/stat UI labels kept English per [[Kept-In-English-Terms]],
+casual gue/lo dialogue, plus several longer narrative/lore pieces (the
+Wingfall/Rampage/Argent Oath spear-reserve history note, the Liu Xiaomei
+Dragonbend Mountain ode, the Grand Historian's burnt-book fragment on the
+benefits/harms of water, the astronomer "Lord of Clouds" star-observation
+legend, and the "Righteous and Elusive Red Heroine" letter). No new
+terminology decisions — every case matched an existing [[Glossary]] entry.
+
+Token/placeholder validation via the standard `TOKEN` regex script: **0
+mismatches** on the first pass across all 2,000 rows. Full merged
+`locale/phase6.jsonl` (19,000 rows) re-validated: idx sequential
+50,000–68,999, no duplicates. Next idx Phase 6 = 69,000 (19,000/50,000
+rows done, 38%). Phase 9 untouched this session (still at next idx
+445,737).
+
 ## Undated note
 
 At some point before this history was consolidated, `strings.jsonl` and

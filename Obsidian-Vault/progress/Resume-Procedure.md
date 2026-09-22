@@ -23,10 +23,15 @@ rules to apply while translating.
 
 1. Read [[Phase-Roadmap]] — check the active phase (number N), its idx
    range, and the suggested batch size.
-2. Read [[Glossary]] — it contains every locked convention (names that
-   aren't translated, terms kept in English, style per context). **Don't
-   translate anything before reading this**, to stay consistent with
-   everything already done.
+2. Read [[Quick-Reference]] — a condensed cheat-sheet of the locked
+   conventions (names that aren't translated, terms kept in English, style
+   per context) used most often. **Don't translate anything before reading
+   this**, to stay consistent with everything already done. Only open a
+   specific file under `knowladge/glossary/` (see [[Glossary]] for the
+   index) when Quick-Reference doesn't cover a case in the batch, you need
+   the reasoning/history behind a rule, or the term is on the "not yet
+   locked" list — don't open all nine topic files by default, that's the
+   overhead Quick-Reference exists to avoid.
 3. Check the last completed idx: `wc -l locale/phase{N}.jsonl` (if the file
    doesn't exist yet, this phase hasn't started — next idx = the phase's
    starting idx; if it exists, next idx = phase start idx + number of lines
@@ -50,12 +55,40 @@ rules to apply while translating.
 8. Update [[Current-Status]] (last completed idx, phase, session date, and
    any new terminology decisions — also add those to [[Glossary]] and the
    matching `translation_logs/Phase-N` file) and append an entry to
-   [[Session-History]]. If the active phase's idx range is now exhausted,
-   advance to the next phase per [[Phase-Roadmap]].
+   [[Session-History]]. If a new decision is a high-value/frequently-
+   recurring pattern (not a one-off edge case), also add a one-line entry
+   to [[Quick-Reference]] — otherwise the cheat-sheet goes stale and future
+   sessions fall back to opening the full topic files anyway. Niche
+   edge-cases only need the topic file, not Quick-Reference. If the active
+   phase's idx range is now exhausted, advance to the next phase per
+   [[Phase-Roadmap]].
 9. **Stop cleanly at the end of the batch** — don't push until
    context/tokens are nearly exhausted. A short, cleanly logged session
    beats a long one that gets cut off mid-batch without validation or a
    status update.
+
+## Minimize round-trips per session
+
+Raw content isn't what drives token cost up: a 1,000-string batch is only
+~13k tokens of source text and ~15k of translated output. What actually
+balloons a session's token usage is the **number of tool-call round
+trips** — every `Read`/`Write`/`Bash` call resends the entire conversation
+so far, so splitting one batch into many small back-and-forths (translate
+50 → write → read back to check → translate 50 more → ...) makes the
+accumulated context (glossary + batch + prior output) get re-sent over and
+over. Keep it to a handful of calls per session:
+
+- One `Read` for the whole batch (`offset`/`limit`), not several partial
+  reads.
+- Translate the full batch in one pass, into one scratch file.
+- One append to `locale/phase{N}.jsonl` for the batch, not one per
+  sub-chunk.
+- Run the token/placeholder validation script **once** at the end and
+  trust its "0 mismatches" output — don't re-open the full phase file or
+  `unique_strings.jsonl` afterward just to double-check by eye.
+- If a batch feels too big to translate carefully in one pass, reduce the
+  batch size for next session (see [[Current-Status]]) rather than
+  splitting this session's batch into many small read/write/verify loops.
 
 ## Token/placeholder validation script
 

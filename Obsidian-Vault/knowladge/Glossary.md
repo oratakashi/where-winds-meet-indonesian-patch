@@ -10,6 +10,11 @@ See also: [[Format-Spec]] (why format tokens must be preserved byte-for-byte),
 `translation_logs/Phase-N` notes (the session-by-session reasoning behind each decision
 below — linked from the relevant rule in each topic file).
 
+**For a routine translation session, read [[Quick-Reference]] instead of the topic files
+below** — it condenses the rules used most often into one file. Only open a specific topic
+file when Quick-Reference doesn't cover the case, you need the reasoning/history behind a
+rule, or the term is on the "not yet locked" list.
+
 ## Topic files
 
 - [[Names-Not-Translated]] — proper nouns copied verbatim: character/NPC names, places,
