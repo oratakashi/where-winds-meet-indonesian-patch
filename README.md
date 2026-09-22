@@ -1,433 +1,423 @@
-# Where Winds Meet — Indonesian Patch
+# Where Winds Meet — Localization Toolkit & Translation Pipeline
 
-Toolkit untuk membongkar, menyunting, dan mengemas ulang file lokalisasi
-**Where Winds Meet** (NetEase / Everstone Studio, Messiah Engine).
+[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Engine: Messiah](https://img.shields.io/badge/Engine-NetEase%20Messiah-orange.svg)]()
+[![Codec: Zstandard](https://img.shields.io/badge/Codec-Zstandard%20(zstd)-green.svg)]()
+[![Round-Trip: Byte-Identical](https://img.shields.io/badge/Round--Trip-Byte--Identical-brightgreen.svg)]()
 
-Repo ini berisi **tool dan dokumentasi format**, bukan pack terjemahan jadi.
-Baca [Legal & risiko](#legal--risiko) sebelum memakainya.
+A high-performance reverse-engineering toolkit, binary format specification, and localization pipeline for **Where Winds Meet** (NetEase / Everstone Studio, built on the Messiah Engine).
+
+This repository provides tools and documentation to unpack, inspect, translate, quality-check, and repack the game's binary localization containers (`translate_words_map_*`). It also hosts the tooling and dictionary database for the ongoing **Indonesian Community Translation Project**.
+
+> [!NOTE]
+> This repository distributes **reverse-engineering tools and format specifications only**. It does not distribute copyrighted raw game assets or commercial packs. Review the [Legal & Anti-Tamper Notice](#legal--anti-tamper-notice) before using this toolkit.
 
 ```
-translate_words_map_en  ──dump──>  strings.jsonl  ──edit──>  strings.jsonl
-                                                                   │
-translate_words_map_en  <──patch───────────────────────────────────┘
+translate_words_map_en  ──dump──>  strings.jsonl  ──edit / translate──>  strings.jsonl
+                                                                               │
+translate_words_map_en  <──patch───────────────────────────────────────────────┘
 ```
 
-NetEase kadang mengirim update lewat file tambahan (`_diff` untuk perubahan inkremental,
-`__small`/`__small_diff` untuk tabel subset terpisah) di samping file utama di atas. Semuanya
-memakai container/codec yang sama — lihat [bagian update game](#kalau-game-update-dan-muncul-file-locale-baru-mis-small)
-di bawah untuk cara menanganinya tanpa kehilangan progress terjemahan yang sudah ada.
+NetEase frequently ships incremental updates via companion files (`_diff` for delta changes, and `__small` / `__small_diff` for isolated sub-tables). All variants share the exact same binary container and shard codec. Refer to [Handling Game Updates & File Variants](#handling-game-updates--file-variants) to manage upstream updates without losing translation progress.
 
 ---
 
-## Daftar isi
+## Table of Contents
 
-- [Status](#status)
-- [Instalasi](#instalasi)
-- [Cara pakai](#cara-pakai)
-- [Workflow harian (cheat sheet)](#workflow-harian-cheat-sheet)
-- [Kalau game update dan muncul file locale baru (mis. `__small`)](#kalau-game-update-dan-muncul-file-locale-baru-mis-small)
-- [Cara kerjanya](#cara-kerjanya)
-- [Panduan menerjemahkan](#panduan-menerjemahkan)
-- [Batasan yang diketahui](#batasan-yang-diketahui)
-- [Legal & risiko](#legal--risiko)
-- [Struktur repo](#struktur-repo)
-- [Kontribusi](#kontribusi)
-- [Lisensi](#lisensi)
-
----
-
-## Status
-
-| | |
-|---|---|
-| Format terbongkar | ✅ penuh, lihat [`Format-Spec.md`](Obsidian-Vault/knowladge/Format-Spec.md) |
-| Round-trip terverifikasi | ✅ byte-identik, di file utama & varian `_diff`/`__small`/`__small_diff` |
-| Decode | ✅ |
-| Encode | ✅ |
-| Ubah nilai key yang sudah ada | ✅ |
-| Tambah key baru | ❌ butuh fungsi hash, belum dipecahkan |
-
-Diuji pada `translate_words_map_en` versi global — jumlah entri **berubah tiap update game**
-(key ditambah/dihapus/diubah nilainya, jumlah shard ikut menyesuaikan), jadi jangan kaget
-kalau `entries`-mu beda dari contoh di bawah. Snapshot terbaru yang diverifikasi (2026-09):
-826.388 entri / 3.230 blok di file utama, plus varian `_diff` (212.117 entri hadir) dan
-`__small` (4.009 entri, tabel terpisah — lihat [§4.6 Format-Spec.md](Obsidian-Vault/knowladge/Format-Spec.md#46-the-__small--__small_diff-variant-a-separate-table-not-part-of-_diff)).
+- [Project Status](#project-status)
+- [Prerequisites & Installation](#prerequisites--installation)
+- [Quickstart Guide](#quickstart-guide)
+  - [1. Locate Game Files](#1-locate-game-files)
+  - [2. Inspect Binary Header](#2-inspect-binary-header)
+  - [3. Dump to JSON Lines](#3-dump-to-json-lines)
+  - [4. Translate & Edit](#4-translate--edit)
+  - [5. Automated QA Verification](#5-automated-qa-verification)
+  - [6. Repack into Binary](#6-repack-into-binary)
+- [Daily Translation Workflow (Cheat Sheet)](#daily-translation-workflow-cheat-sheet)
+- [Handling Game Updates & File Variants](#handling-game-updates--file-variants)
+- [Technical Architecture & Binary Format](#technical-architecture--binary-format)
+  - [Why Runtime Requires English Language](#why-runtime-requires-english-language)
+  - [In-Place Mutation Without Hash Reversal](#in-place-mutation-without-hash-reversal)
+  - [Binary Format Summary](#binary-format-summary)
+  - [Critical Gotcha: Relative Pointer Arithmetic](#critical-gotcha-relative-pointer-arithmetic)
+- [Translation Guidelines & Engine Syntax](#translation-guidelines--engine-syntax)
+  - [Messiah Engine Format Tokens](#messiah-engine-format-tokens)
+  - [Proper Nouns & Pinyin Retention](#proper-nouns--pinyin-retention)
+  - [Machine Translation & LLM Quality Control](#machine-translation--llm-quality-control)
+  - [Oversized Lore Entries](#oversized-lore-entries)
+- [Known Limitations & Deployment Gotchas](#known-limitations--deployment-gotchas)
+- [Legal & Anti-Tamper Notice](#legal--anti-tamper-notice)
+- [Repository Structure](#repository-structure)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-## Instalasi
+## Project Status
+
+| Capability | Status | Notes |
+|---|---|---|
+| **Binary Format Specification** | Complete | Fully reverse-engineered; see [`Format-Spec.md`](Obsidian-Vault/knowladge/Format-Spec.md) |
+| **Round-Trip Integrity** | Verified | Byte-identical verification across base, `_diff`, and `__small` variants |
+| **Container Decoding** | Supported | Decompresses zstd payloads and parses SwissTable shards into JSONL |
+| **Container Encoding** | Supported | Rebuilds shards and zstd blocks with configurable compression levels |
+| **In-Place Value Editing** | Supported | Preserves control bytes, slot indices, and hash structures |
+| **Arbitrary Key Insertion** | Unsupported | Requires reversing the proprietary 64-bit hash derivation |
+
+**Snapshot Reference**: Tested against global game builds (NetEase Messiah Engine). Localization entry counts vary per game update as keys and shards fluctuate. For reference, the September 2026 global release snapshot contains **826,388 entries across 3,230 blocks** in the primary map, accompanied by a sparse `_diff` file (212,117 active entries) and an isolated `__small` table (4,009 entries; see [§4.6 of Format-Spec.md](Obsidian-Vault/knowladge/Format-Spec.md#46-the-__small--__small_diff-variant-a-separate-table-not-part-of-_diff)).
+
+---
+
+## Prerequisites & Installation
+
+- **Python 3.8+**
+- **pip**
+
+Clone the repository and install the single runtime dependency:
 
 ```bash
-git clone https://github.com/oratakashi/where-winds-meet-indonesian-patch.git
+git clone git@github.com:oratakashi/where-winds-meet-indonesian-patch.git
 cd where-winds-meet-indonesian-patch
-pip install -r requirements.txt      # hanya butuh: zstandard
+pip install -r requirements.txt
 ```
 
-Python 3.8+.
+*Note: The only third-party dependency is [`zstandard`](https://pypi.org/project/zstandard/).*
 
 ---
 
-## Cara pakai
+## Quickstart Guide
 
-### 1. Cari file-nya
+### 1. Locate Game Files
 
-Steam:
+Locate your game installation path:
 
-```
-<Steam>\steamapps\common\Where Winds Meet\Package\HD\oversea\locale\translate_words_map_en
-```
+- **Steam Installation**:
+  ```
+  <SteamLibrary>\steamapps\common\Where Winds Meet\Package\HD\oversea\locale\translate_words_map_en
+  ```
+- **Official NetEase Launcher**:
+  ```
+  <InstallDir>\Package\HD\oversea\locale\translate_words_map_en
+  ```
 
-Launcher resmi NetEase: struktur `Package\HD\oversea\locale` yang sama, relatif
-terhadap folder instalasi.
+> [!WARNING]
+> **Always create a backup before modifying game files.** Keep an untouched copy of `translate_words_map_en` in a safe location. If you previously used GearUP Booster, their automatic backup files have a `.gubackup` extension in the same directory and preserve pristine original English text.
 
-> **Backup dulu.** Salin file aslinya ke tempat aman sebelum apa pun.
-> Kalau kamu pernah memakai GearUP, backup punya mereka ada di folder yang sama
-> dengan ekstensi `.gubackup` — itu berisi teks Inggris asli dan sangat berharga.
+### 2. Inspect Binary Header
 
-### 2. Cek isi file
+Sanity-check the file and ensure parser compatibility:
 
 ```bash
 python wwm_locmap.py info translate_words_map_en
 ```
 
-```
+Expected output:
+```text
 version        : 1
 blocks         : 3230 (1 index + 3229 shard)
 entries (index): 826388
 entries parsed : 826388
 ```
 
-(Angka di atas contoh dari snapshot 2026-09 — punyamu bisa beda karena game terus di-update.)
-Kalau `entries parsed` sama dengan `entries (index)`, parser cocok dengan file kamu. Kalau
-beda dan file yang kamu buka bernama `*_diff`, itu normal — lihat [§4.5 Format-Spec.md](Obsidian-Vault/knowladge/Format-Spec.md#45-the-_diff-variant-incremental-file-between-game-updates).
+If `entries parsed` matches `entries (index)`, the container is valid. When opening incremental `*_diff` files, entry counts intentionally diverge due to sparse shards (see [§4.5 of Format-Spec.md](Obsidian-Vault/knowladge/Format-Spec.md#45-the-_diff-variant-incremental-file-between-game-updates)).
 
-### 3. Dump ke JSONL
+### 3. Dump to JSON Lines
+
+Export all localization strings into a JSON Lines (`.jsonl`) file (~90 MB for ~826k entries):
 
 ```bash
 python wwm_locmap.py dump translate_words_map_en strings.jsonl
 ```
 
-Menghasilkan satu baris JSON per entri (~90 MB untuk ~826k entri):
+Each line in `strings.jsonl` represents an atomic localization entry:
 
 ```json
 {"b": 1, "s": 3, "h": "c5cadbb857eee8b4", "v": "The leaf?"}
 {"b": 1, "s": 4, "h": "b6b9b1230c20a990", "v": "Velvet Shade Guest"}
 ```
 
-| field | arti |
-|---|---|
-| `b` | indeks blok/shard |
-| `s` | indeks slot di dalam shard |
-| `h` | `keyHash` 64-bit (hex) — hanya untuk referensi, **jangan diubah** |
-| `v` | nilai string yang ditampilkan game |
+| Field | Type | Description |
+|---|---|---|
+| `b` | integer | Shard block index (1-based) |
+| `s` | integer | Slot index inside the shard |
+| `h` | string (hex) | 64-bit `keyHash` (reference only — **do not edit**) |
+| `v` | string | Display string rendered in-game |
 
-### 4. Terjemahkan
+### 4. Translate & Edit
 
-Edit field `v`. Lihat [Panduan menerjemahkan](#panduan-menerjemahkan) di bawah —
-ada beberapa jebakan yang akan merusak UI kalau diabaikan.
+Modify the text inside the `v` field. Review the [Translation Guidelines](#translation-guidelines--engine-syntax) to avoid breaking engine formatting tags.
 
-Pasangan `b` + `s` adalah alamat entri. Baris yang tidak kamu ubah boleh
-dihapus dari file: `patch` hanya menimpa entri yang ada di JSONL, sisanya
-diambil dari file sumber. Jadi patch parsial itu didukung dan jauh lebih ringan.
+> [!TIP]
+> The composite key `(b, s)` uniquely identifies the slot address. **Sparse overlays are fully supported**: you can delete unchanged lines from your JSONL file. When executing `patch`, unmodified entries are retained directly from the source binary, making localized diffs lightweight.
 
-### 5. Validasi (jangan dilewati)
+### 5. Automated QA Verification
+
+Before repacking, run the automated quality assurance suite to catch syntax defects:
 
 ```bash
-python tools/qa_check.py strings_original.jsonl strings_translated.jsonl --report qa.jsonl
+python tools/qa_check.py strings_original.jsonl strings_translated.jsonl --report qa_report.jsonl
 ```
 
-```
-diperiksa : 963050 entri
-PROMPT_LEAK :   1817  (0.189%)
-MARKUP      :    693  (0.072%)
+Example audit output:
+```text
+inspected   : 963050 entries
+PROMPT_LEAK :      0  (0.000%)
+MARKUP      :      0  (0.000%)
 EMPTY       :      0  (0.000%)
 ```
 
-(Angka contoh di atas dari audit pack komersial pada snapshot lama 963.050 entri — lihat
-["Kalau pakai MT/LLM"](#kalau-pakai-mtllm-validasi-output-nya) — bukan hasil dari
-`translate_words_map_en` versi terbaru.)
+The script exits with code `1` if defects are detected, making it ideal for continuous integration (CI) or pre-commit hooks.
 
-Exit code 1 kalau ada temuan, jadi bisa langsung dipasang di CI atau
-pre-commit hook.
+### 6. Repack into Binary
 
-### 6. Repack
+Overlay your modified strings onto the original binary container:
 
 ```bash
 python wwm_locmap.py patch translate_words_map_en strings.jsonl translate_words_map_en.new
 ```
 
-Opsi `--level N` mengatur level kompresi zstd (default 19). Level 10–12 cukup
-untuk iterasi cepat; pakai 19 untuk rilis.
-
-Salin hasilnya ke folder locale dengan nama `translate_words_map_en`, lalu
-jalankan game dengan **Settings → Language → Game Language = English**.
+- Use `--level N` to set the Zstandard compression level (default is `19`). Use `10`–`12` for rapid development iterations; use `19` for distribution builds.
+- Rename or copy the repacked file to `translate_words_map_en` inside your game's `Package\HD\oversea\locale\` folder.
+- Launch the game with **Settings → Language → Game Language = English**.
 
 ---
 
-## Workflow harian (cheat sheet)
+## Daily Translation Workflow (Cheat Sheet)
 
-Setelah `translation_work/unique_strings.jsonl` + `locale/phase*.jsonl` di-update dengan
-terjemahan baru, tiga perintah ini yang dipakai berulang-ulang untuk menghasilkan file
-`translate_words_map_en` yang sudah di-patch:
+When working with translation batches in `translation_work/unique_strings.jsonl` and `locale/phase*.jsonl`, execute these three commands to generate a clean, validated build:
 
 ```bash
-# 1. Bangun strings.translated.jsonl dari dictionary terjemahan (default: strings.jsonl -> strings.translated.jsonl)
+# 1. Expand translation dictionary against the original dump
 python tools/expand_locale.py
 
-# 2. Validasi: cek prompt-leak, token markup hilang/berubah, dan entri kosong
+# 2. Run QA validation (prompt leaks, corrupted markup, empty values)
 python tools/qa_check.py strings.jsonl strings.translated.jsonl --report qa_report.jsonl
 
-# 3. Kalau qa_report.jsonl bersih (exit code 0, tidak ada temuan), repack ke file baru
+# 3. If QA passes (exit code 0), repack into a distribution binary
 python wwm_locmap.py patch translate_words_map_en strings.translated.jsonl translate_words_map_en.id
 ```
 
-Catatan:
-
-- Perintah 1 butuh `strings.jsonl` (hasil `wwm_locmap.py dump` dari `translate_words_map_en`)
-  sudah ada di root repo lebih dulu.
-- Kalau langkah 2 keluar dengan exit code 1, cek `qa_report.jsonl` dan perbaiki entri yang
-  ditandai sebelum lanjut ke langkah 3 — lihat [Kalau pakai MT/LLM](#kalau-pakai-mtllm-validasi-output-nya).
-- `translate_words_map_en.id` adalah file hasil akhir — salin/rename ke `translate_words_map_en`
-  di folder locale game untuk dipakai (lihat [langkah 6: Repack](#6-repack)).
-- Untuk update game dengan beberapa varian file (`_diff`, `__small`, dst.), pakai
-  `rebuild_unique_strings.py` + `patch_all.py` sebagai gantinya — lihat
-  [bagian update game](#kalau-game-update-dan-muncul-file-locale-baru-mis-small).
+Notes:
+- Step 1 expects `strings.jsonl` (generated via `wwm_locmap.py dump`) to be present in the workspace root.
+- If Step 2 fails with exit code `1`, inspect `qa_report.jsonl` and rectify the flagged strings before proceeding.
+- Copy `translate_words_map_en.id` to the game's locale directory as `translate_words_map_en`.
+- To patch all file variants (`base`, `_diff`, `__small`, `__small_diff`) at once, use `tools/patch_all.py`.
 
 ---
 
-## Kalau game update dan muncul file locale baru (mis. `__small`)
+## Handling Game Updates & File Variants
 
-Update NetEase kadang menambah file locale baru di samping `translate_words_map_en`/`_diff` yang
-sudah biasa dipakai (contoh nyata: `translate_words_map_en__small` + `__small_diff`). Selama
-`info` bisa membacanya (`python wwm_locmap.py info <file>`), formatnya tidak berubah — cukup:
+Upstream game patches frequently ship new or modified localization files alongside the primary table:
+- `translate_words_map_en_diff`: Sparse delta table between major releases.
+- `translate_words_map_en__small`: Separate isolated table for UI / system modules.
+- `translate_words_map_en__small_diff`: Delta table for the small variant.
+
+Because the underlying container and shard layout are identical, use the following sequence after a patch:
 
 ```bash
+# Dump the updated variant
 python wwm_locmap.py dump translate_words_map_en__small strings_small.jsonl
-python tools/rebuild_unique_strings.py         # tambah string baru ke unique_strings.jsonl
-python tools/patch_all.py --outdir patched     # terapkan semua terjemahan yang sudah ada
+
+# Append new unique strings without breaking existing translation indices
+python tools/rebuild_unique_strings.py
+
+# Apply translations across all variants simultaneously
+python tools/patch_all.py --outdir patched
 ```
 
-Lihat `Obsidian-Vault/knowladge/Format-Spec.md` §4.6 untuk detail temuan soal `__small` dan `CLAUDE.md` untuk cara kerja
-tiap script.
+See [`Obsidian-Vault/knowladge/Format-Spec.md`](Obsidian-Vault/knowladge/Format-Spec.md) §4.6 for technical findings regarding `__small` tables and `CLAUDE.md` for helper script internals.
 
 ---
 
-## Cara kerjanya
+## Technical Architecture & Binary Format
 
-### Kenapa harus diset ke English
+### Why Runtime Requires English Language
 
-File ini **tidak menyimpan teks sumbernya**. Isinya cuma
-`u64 keyHash → string terjemahan`.
+Localization files in Where Winds Meet **do not store source English strings**. The binary contains only a unidirectional map:
 
-Runtime mengambil string Inggris dari asset resmi, menghitung hash-nya, lalu
-menukar hasil lookup dengan nilai dari file ini. Set bahasa ke Jerman → hash
-berbeda → semua lookup miss → teks kembali ke Jerman.
+$$\text{u64 keyHash} \longrightarrow \text{localized string}$$
 
-Jadi syarat "Game Language = English" yang muncul di semua translation pack itu
-konsekuensi arsitektur file, bukan pilihan desain tool-nya.
+At runtime, the Messiah Engine reads the base English string from game code or data assets, computes its 64-bit hash, and performs a lookup in `translate_words_map_en`. 
+- If Game Language is set to English, the engine looks up hashes computed from English text.
+- If Game Language is changed to German or French, the engine computes hashes from German/French strings, misses every entry in this map, and falls back to raw strings.
 
-### Kenapa kita tidak perlu tahu fungsi hash-nya
+Setting **Game Language = English** is a fundamental architectural requirement dictated by the engine's lookup design.
 
-Karena key tidak disimpan, mengganti bahasa = mengganti **nilai** dari key yang
-sudah ada. Struktur pencarian (`ctrl`, `keyHash`, posisi slot) tidak perlu
-disentuh sama sekali:
+### In-Place Mutation Without Hash Reversal
 
-```
-salin  header + ctrl + sentinel + clone + padding + slot array   ← apa adanya
-tulis  string blob baru
-update relOffset + byteLen di tiap slot
+Because keys are not stored, replacing strings simply requires mutating the **values** linked to existing keys. The search architecture remains untouched:
+
+```text
+Preserve: Header + Control Bytes (ctrl) + Sentinel + Padding + Slot Array (keyHash)
+Rebuild:  New String Blob (UTF-8)
+Update:   relOffset + byteLen in each active slot
 ```
 
-Lookup tetap jalan sempurna. Inilah alasan pembuatan pack bahasa jauh lebih
-sederhana dari yang biasanya diasumsikan orang — dan, berdasarkan verifikasi
-terhadap pack komersial, ini persis pendekatan yang dipakai vendor.
+Hash table probing remains 100% valid. This eliminates the need to reverse-engineer the proprietary 64-bit hash function for translation purposes.
 
-Yang **tidak** bisa dilakukan tanpa memecahkan hash: menambahkan key yang
-benar-benar baru ke dalam map.
+### Binary Format Summary
 
-### Ringkasan format
+```text
+File Container:
+  u32 magic = 0xDEADBEEF
+  u32 version = 1
+  u32 blockCount
+  u32 reserved = 0
+  u32[blockCount] endOffset        <- Offsets relative to end of this table
 
-```
-magic 0xDEADBEEF | version 1 | blockCount | reserved
-u32[blockCount] endOffset          ← relatif ke akhir tabel ini
+Payload Blocks:
+  u8  codec = 4 (zstd)
+  u32 compressedSize
+  u32 uncompressedSize
+  u8[compressedSize] payload
 
-per blok: u8 codec=4 (zstd) | u32 compressedSize | u32 uncompressedSize | payload
+Block Layout:
+  Block 0    = Index Block : u64 totalEntries, u64 dataBlockCount, u32[] ids
+  Block 1..n = Shard Blocks: Abseil SwissTable (absl::flat_hash_map)
+      u64 capacity | u64 size | u64 seed
+      u8[capacity] ctrl (0x80 = empty, <0x80 = occupied H2 hash byte)
+      u8 0xFF sentinel + u8[15] cloned ctrl + 8-byte alignment padding
+      slot[capacity] { u64 keyHash; u32 relOffset; u32 byteLen; }
+      <string blob UTF-8>
 
-blok 0     = index  : u64 totalEntries, u64 dataBlockCount, u32[] ids
-blok 1..n  = shard  : SwissTable (absl::flat_hash_map)
-    u64 capacity | u64 size | u64 seed
-    u8[capacity] ctrl        0x80 = kosong, <0x80 = terisi (H2)
-    u8 0xFF sentinel + u8[15] cloned ctrl + padding align-8
-    slot[capacity] { u64 keyHash; u32 relOffset; u32 byteLen }
-    <string blob UTF-8>
-
-shardIndex = (keyHash % dataBlockCount) + 1
-```
-
-**Jebakan utama — `relOffset` adalah relative pointer,** dihitung dari alamat
-field `relOffset` itu sendiri, bukan dari awal blok atau awal string blob:
-
-```
-field      = slotArrayStart + i * 16 + 8
-valueStart = field + relOffset
-value      = block[valueStart : valueStart + byteLen]
+Shard Routing:
+  shardIndex = (keyHash % dataBlockCount) + 1
 ```
 
-Idiom C++ klasik supaya blok bisa di-`mmap` tanpa relokasi pointer. Kalau
-diasumsikan offset absolut, hasil dekode berupa potongan kalimat yang saling
-tumpang tindih — itu gejala khasnya.
+### Critical Gotcha: Relative Pointer Arithmetic
 
-Spesifikasi lengkap: [`Format-Spec.md`](Obsidian-Vault/knowladge/Format-Spec.md).
+A critical pitfall in Messiah's SwissTable implementation is that `relOffset` is a **self-relative pointer**, calculated from the address of the `relOffset` field itself:
+
+$$\text{valueStart} = \text{address}(\text{slot}[i].\text{relOffset}) + \text{relOffset}$$
+
+$$\text{value} = \text{block}[\text{valueStart} : \text{valueStart} + \text{byteLen}]$$
+
+This C++ idiom enables memory-mapping (`mmap`) without pointer relocation. Assuming `relOffset` is an absolute offset from the block start or string blob start results in corrupted, overlapping string fragments.
+
+For the exhaustive specification, see [`Obsidian-Vault/knowladge/Format-Spec.md`](Obsidian-Vault/knowladge/Format-Spec.md).
 
 ---
 
-## Panduan menerjemahkan
+## Translation Guidelines & Engine Syntax
 
-### Lindungi token format engine
+### Messiah Engine Format Tokens
 
-String di game penuh markup milik Messiah. Kalau token ini diterjemahkan,
-digeser, atau hilang, UI bisa render kacau:
+Strings contain proprietary Messiah Engine formatting and color tags. Modifying, reordering, or dropping these tags can crash the UI or corrupt text rendering:
 
-| token | arti |
-|---|---|
-| `#Y` `#N` `#R` `#J` `#G` `#H` | pembuka kode format/warna |
-| `#aee5ae` | pembuka warna hex 6 digit |
-| `#E` | penutup format — **wajib** berpasangan |
-| `%s` `%d` | printf placeholder, diisi runtime |
-| `{0}` `{1}` | placeholder berindeks |
-| `\n` | ganti baris |
+| Token | Function | Rule |
+|---|---|---|
+| `#Y` `#N` `#R` `#J` `#G` `#H` | Format / color style opening | Keep unaltered |
+| `#aee5ae` | 6-character hexadecimal color tag | Keep unaltered |
+| `#E` | Format closing tag | **Must** pair exactly with opening tags |
+| `%s`, `%d` | Standard printf specifiers | Dynamic runtime values; keep order and count |
+| `{0}`, `{1}` | Indexed positional placeholders | Retain indices |
+| `\n` | Literal newline | Preserve line break flow |
 
-Contoh benar:
+**Valid Example**:
+- **Source**: `Mystic Skill #YMeridian Touch#E`
+- **Target**: `Keterampilan Mistik #YSentuhan Meridian#E`
 
-```
-EN : Mystic Skill #YMeridian Touch#E
-ID : Keterampilan Mistik #YSentuhan Meridian#E
-```
+*The text enclosed inside `#Y...#E` may be freely translated, but the tags `#Y` and `#E` must remain intact.*
 
-Teks di dalam `#Y...#E` **boleh** diterjemahkan. Yang tidak boleh berubah
-adalah `#Y` dan `#E` itu sendiri, beserta jumlah dan urutannya.
+### Proper Nouns & Pinyin Retention
 
-### Jangan terjemahkan nama diri
+Character names, martial arts sects, and historical locations are typically rendered in Pinyin (e.g., `Su Jiangyun`, `Gu Zhouyue`, `Zhang Tiemeng`). Retain original Pinyin names so that players can cross-reference guides, community wikis, and player chat. In the reference dataset, approximately 12.5% of strings intentionally leave proper nouns untranslated.
 
-Nama karakter dan sekte umumnya Pinyin (`Su Jiangyun`, `Gu Zhouyue`,
-`Zhang Tiemeng`). Biarkan apa adanya supaya tetap cocok dengan wiki, panduan,
-dan chat pemain lain. Pada file rujukan, ~12,5% entri memang sengaja tidak
-diterjemahkan dan mayoritas adalah kategori ini.
+### Machine Translation & LLM Quality Control
 
-### Kalau pakai MT/LLM: validasi output-nya
+When utilizing Machine Translation (MT) or Large Language Models (LLMs), strict output validation is mandatory. In an audit of a commercial translation pack, **1,817 entries (0.189%) were discovered where LLM system prompts leaked directly into the game text**:
 
-Ini bukan saran teoretis. Pada pack komersial yang diperiksa, ditemukan
-**1.817 entri (0,19%) di mana system prompt penerjemah bocor ke dalam nilai**
-dan ikut ter-render di dalam game:
-
-```
-Penanda format:
-  (penanda baris baru) dan tanda kurung [], harus tetap tidak berubah
-- Jangan terjemahkan konten dalam {}
-- beberapa karakter khusus tidak perlu diterjemahkan, seperti: %d, %s, #G, #E...
-<terjemahan sebenarnya baru muncul di sini>
+```text
+Formatting instructions:
+  (newline tags) and brackets [] must remain unchanged
+- Do not translate content inside {}
+- Several special characters must not be translated, such as: %d, %s, #G, #E...
+[Actual translated text followed here]
 ```
 
-Paling parah di entri panjang — lore, encyclopedia, deskripsi item — yang
-justru bagian paling penting dari game yang story-driven. Ada 5+ varian wording
-prompt, jadi kemungkinan template-nya berganti antar batch tanpa validasi
-output sama sekali.
+These errors typically affect long lore entries, breaking player immersion. `tools/qa_check.py` automatically prevents this by asserting:
+1. Zero occurrences of registered prompt leak signatures (`LEAK_SIGNATURES`).
+2. Exact matching multisets of engine markup tokens between source and translated entries.
+3. Absence of zero-length or whitespace-only values.
 
-Dua assertion sederhana menangkap seluruh kasus itu sebelum rilis, dan keduanya
-sudah ada di `tools/qa_check.py`:
+### Oversized Lore Entries
 
-1. output tidak boleh mengandung fragmen prompt
-2. multiset token markup di sumber dan terjemahan harus sama
-
-### Entri raksasa
-
-Panjang rata-rata ~56 byte, tapi ada entri sampai **8 KB** (lore panjang).
-Kalau pipeline-mu lewat API, siapkan chunking — jangan sampai output terpotong
-diam-diam.
+While the average string length is ~56 bytes, certain encyclopedia and narrative entries exceed **8 KB**. When integrating with translation APIs, implement robust payload chunking to prevent silent truncation.
 
 ---
 
-## Batasan yang diketahui
+## Known Limitations & Deployment Gotchas
 
-- **`translate_words_map_en` (base) dan `__small` stabil, tapi `_diff` yang ter-install TIDAK
-  bisa dipatch permanen.** Game punya dua salinan terpisah `translate_words_map_en_diff`: satu di
-  `Package\HD\oversea\locale\` (yang di-patch tool ini, aman — tidak pernah diverifikasi ulang),
-  satu lagi di `LocalData\Patch\HD\oversea\locale\` yang benar-benar dipakai game untuk layer
-  `_diff`. Salinan kedua ini **diverifikasi checksum & di-restore otomatis dari CDN NetEase setiap
-  kali game start** (`StagePatchList`/`StageCheck`/`StageDownload`, lihat log di
-  `LocalData\patch_log\`) — dikonfirmasi langsung lewat pengujian: file yang sudah dipatch balik
-  jadi byte-identik dengan versi asli dalam hitungan menit. Memblokir satu hostname CDN saja tidak
-  cukup (manifest checksum fallback ke cache lokal, dan file download-nya sendiri lewat host
-  lain). Implikasinya: fokuskan patch ke `translate_words_map_en` + `__small` saja — keduanya
-  permanen. Isi `_diff` (~213rb entri di update 2026-09, ~26% dari total) tetap English sampai
-  NetEase suatu saat merge `_diff` itu balik ke base package lewat update resmi. Detail teknis
-  lengkap ada di `CLAUDE.md` bagian "Deployment gotcha".
-- **Patch ketinggalan setelah update konten.** String baru/berubah dari update resmi
-  belum ada di pack lama dan akan tampil dalam bahasa Inggris sampai kamu dump ulang lalu
-  menerjemahkan selisihnya. `tools/rebuild_unique_strings.py` + `tools/patch_all.py`
-  mengotomasi bagian "terapkan ulang terjemahan yang sudah ada ke file baru" — lihat
-  [bagian update game](#kalau-game-update-dan-muncul-file-locale-baru-mis-small) — tapi
-  string yang benar-benar baru tetap harus diterjemahkan manual.
-- **Tidak bisa menambah key baru** (lihat [Cara kerjanya](#cara-kerjanya)).
-- **Hanya `codec = 4` (zstd)** yang ditangani. Kalau NetEase menambah codec
-  lain, parser akan menolak dengan pesan jelas, bukan menghasilkan data rusak.
-- **Audio/voice-over tidak tersentuh.** File ini murni teks.
+### 1. The `_diff` CDN Auto-Restore Mechanism
+- **Base `translate_words_map_en` and `__small` are persistent and safe to patch** in `Package\HD\oversea\locale\`.
+- **`translate_words_map_en_diff` installed in `LocalData` CANNOT be patched permanently.** The game maintains two separate copies of `_diff`:
+  - `Package\HD\oversea\locale\` (patched by this tool; safe, never re-verified).
+  - `LocalData\Patch\HD\oversea\locale\` (active runtime overlay).
+- The `LocalData` copy is **checksum-verified against NetEase CDN manifests on every game launch** (`StagePatchList` / `StageCheck` / `StageDownload`). Modified files in `LocalData` are detected and restored to original bytes within minutes. DNS blocking of CDN endpoints fails because the client falls back to cached manifests and secondary hosts.
+- **Strategy**: Focus translation deployment on `translate_words_map_en` and `__small`. The sparse `_diff` table (~213k entries in late 2026 builds) will display in English until NetEase merges delta patches back into the base package during major game updates.
+
+### 2. Upstream Desynchronization
+New strings introduced in game patches default to English until extracted, translated, and patched. Use `tools/rebuild_unique_strings.py` to reconcile deltas.
+
+### 3. Key Insertion Constraint
+Creating brand-new keys requires deriving the proprietary 64-bit hashing function, which is currently unsolved.
+
+### 4. Codec Exclusivity
+Only `codec = 4` (Zstandard) is implemented. If NetEase introduces alternative codecs, the parser rejects the block with an explicit error rather than outputting corrupted data.
+
+### 5. Text-Only Scope
+This toolkit processes text containers. Audio files, voice-over assets, and UI bitmap fonts are governed by separate archive packages.
 
 ---
 
-## Legal & risiko
+## Legal & Anti-Tamper Notice
 
-**Baca bagian ini sebelum memakai tool-nya.**
+Please review the following disclaimers before utilizing this toolkit:
 
-- Proyek ini **tidak berafiliasi** dengan NetEase, Everstone Studio, atau vendor
-  translation pack mana pun. Semua merek dagang milik pemiliknya.
-- **Where Winds Meet adalah game online**, bahkan mode solo tetap terhubung ke
-  server. Memodifikasi file client berpotensi melanggar ToS dan bisa terdeteksi
-  oleh sistem anti-tamper, meskipun yang diubah hanya string dan tidak ada
-  logic gameplay yang disentuh. Sejauh ini belum ada laporan ban massal khusus
-  karena translation pack, tapi **tidak adanya bukti bukan bukti tidak adanya**.
-- Risiko sepenuhnya ada di kamu. Jangan jadikan akun utama yang sudah
-  ter-invest banyak sebagai kelinci percobaan pertama.
-- Tool ini **tidak** memodifikasi logic game, tidak memberi keuntungan
-  kompetitif, dan tidak menyentuh apa pun selain string yang ditampilkan.
+- **Affiliation**: This project is an independent research and translation effort. It is not affiliated with, endorsed by, or connected to NetEase Inc., Everstone Studio, or any related subsidiaries.
+- **Online Game Environment**: *Where Winds Meet* is an online title featuring server-side authority and multiplayer functionality. Modifying client files carries inherent risks under the game's Terms of Service (ToS) and may trigger anti-tamper or integrity-check heuristics.
+- **Usage Disclaimer**: This toolkit is provided for educational and community localization purposes. The authors accept no liability for account penalties, bans, or software instability resulting from file modification. Do not test experimental modifications on critical accounts.
+- **Scope**: This software modifies display text strings exclusively; it contains no gameplay cheats, exploits, or competitive advantages.
 
 ---
 
-## Struktur repo
+## Repository Structure
 
-```
+```text
 .
-├── wwm_locmap.py                    tool utama: info / dump / patch
+├── wwm_locmap.py                    # Primary CLI: info / dump / patch container codec
 ├── tools/
-│   ├── qa_check.py                  validator prompt-leak, markup, string kosong
-│   ├── expand_locale.py             bangun patch JSONL dari dictionary terjemahan untuk 1 file
-│   ├── rebuild_unique_strings.py    tambah string baru setelah update game (idx lama tak disentuh)
-│   └── patch_all.py                 terapkan dictionary ke semua varian translate_words_map_* sekaligus
-├── docs/
-│   └── FORMAT.md                    spesifikasi format lengkap
-├── requirements.txt
-├── .gitignore
-└── LICENSE
+│   ├── qa_check.py                  # QA validation: catches prompt leaks, broken tags, empty values
+│   ├── expand_locale.py             # Expands unique dictionary entries into a full patch JSONL
+│   ├── rebuild_unique_strings.py    # Merges upstream patch deltas without invalidating existing indices
+│   └── patch_all.py                 # In-memory batch patcher for all translate_words_map_* variants
+├── locale/                          # Phase-based translation batches (phase0..phase6, update1)
+├── translation_work/                # Master deduplicated index (unique_strings.jsonl)
+├── Obsidian-Vault/                  # Full project documentation & translation memory
+│   ├── knowladge/
+│   │   ├── Format-Spec.md           # Exhaustive reverse-engineered binary specification
+│   │   ├── Quick-Reference.md       # Condensed terminology and translation style guide
+│   │   └── Glossary.md              # Wuxia terms, titles, and proper noun references
+│   └── progress/                    # Project milestone tracking and session resumption guides
+├── requirements.txt                 # Python dependencies (zstandard)
+├── LICENSE                          # MIT License
+└── CLAUDE.md                        # Developer and AI agent workflow reference
 ```
 
 ---
 
-## Kontribusi
+## Contributing
 
-Yang paling membantu:
+Contributions are welcomed. Primary research and development priorities include:
 
-- **Memecahkan derivasi H1/H2 dari `keyHash` + `seed`.** Ini membuka
-  kemampuan menambah key baru, bukan sekadar mengubah nilai. Catatan
-  eksperimen ada di `Obsidian-Vault/knowladge/Format-Spec.md` §4.4.
-- Varian kebocoran prompt baru untuk `LEAK_SIGNATURES` di `qa_check.py`.
-- Token format engine yang belum terdaftar di tabel markup.
-- Konfirmasi format pada file locale bahasa lain (`_de`, `_fr`, `_ja`, ...).
-
-Sertakan versi game dan jumlah entri saat melaporkan masalah parsing.
+1. **Hash Derivation Research**: Investigating the H1/H2 hash calculation derived from `keyHash` and `seed` (see [`Obsidian-Vault/knowladge/Format-Spec.md`](Obsidian-Vault/knowladge/Format-Spec.md) §4.4) to unlock arbitrary key insertion.
+2. **QA Signatures**: Reporting new LLM system prompt patterns for inclusion in `tools/qa_check.py` (`LEAK_SIGNATURES`).
+3. **Format Verification Across Locales**: Validating parser compatibility against non-English locale packages (`_de`, `_fr`, `_ja`, etc.).
+4. **Glossary & Translation Polish**: Refining Wuxia terminology and martial arts lore definitions in `Obsidian-Vault/knowladge/glossary/`.
 
 ---
 
-## Lisensi
+## License
 
-MIT — lihat [LICENSE](LICENSE). Lisensi ini berlaku untuk kode di repo ini saja,
-bukan untuk konten game apa pun yang diproses olehnya.
+This project is licensed under the [MIT License](LICENSE). The license applies solely to the source code and documentation in this repository; it does not grant rights to any proprietary game content or assets.
