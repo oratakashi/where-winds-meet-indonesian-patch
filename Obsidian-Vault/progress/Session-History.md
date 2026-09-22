@@ -438,6 +438,30 @@ to `locale/phase6.jsonl`. Total now 25,000/50,000 rows done for Phase 6
 
 Token/placeholder validation via standard `TOKEN` regex script: passed with **0 mismatches** after adjusting plain tag `<Beast Tongue>` and stat tag `<Herbal Resonance's|...>` apostrophe precision. Full merged `locale/phase6.jsonl` (25,000 rows) re-validated: idx sequential 50,000–74,999, no duplicates. Next idx Phase 6 = 75,000 (25,000/50,000 rows done, 50.00%). Update-1 untouched this session (still at next idx 445,737).
 
+## 2026-09-22 — Session 6: Update-1 batch 16 (1,000 strings/iteration)
+
+Update-1, batch 16: idx 445,737–446,736 (1,000 rows) translated and
+appended to `locale/update1.jsonl`. Total now 16,850/31,817 rows done for
+Update-1 (~52.96%, past halfway). Mix of content: many gear/skill tooltip
+strings (Bamboocut/Stonesplit Attack scaling formulas, Inebriate/Deepdaze
+state effects, Martial Art Mastery objectives), several long narrative/lore
+entries (Chi Qingqian's backstory among the Mohist "Five Wonders" disciples,
+the Gao Siji wine-gourd legend from Crossblade Manor, Raging Tides' formal
+letter to General Wang Qing about supplies during the Hutuo standoff, the
+Luancheng invasion/Zhao Tie account), event/UI strings, and casual gue/lo
+dialogue. No new terminology decisions — everything matched existing
+[[Glossary]] entries.
+
+Token/placeholder validation via standard `TOKEN` regex script: 2
+mismatches on the first pass, both idx where the entire source string is
+wrapped in a plain `<...>` tag with nothing outside it (§6 case 3 in
+[[Quick-Reference]]) — idx 446278 (`<Stops short, then recognizes you>`)
+and idx 446732 (`<Sharpens wits, they say...>`) had been translated inside
+the tag instead of kept literal. Both fixed and re-validated to **0
+mismatches**. Full batch re-validated: idx sequential 445,737–446,736, no
+duplicates; `locale/update1.jsonl` now 16,850 lines. Next idx Update-1 =
+446,737. Phase 6 untouched this session (still at next idx 75,000).
+
 ## Undated note
 
 At some point before this history was consolidated, `strings.jsonl` and
@@ -445,3 +469,59 @@ At some point before this history was consolidated, `strings.jsonl` and
 ("leave it as is") that staged state wasn't touched. `translation_work/` and
 `strings.jsonl` were added to `.gitignore` going forward so they won't be
 committed again, but the pre-existing staged files were left alone.
+
+## 2026-09-22 — Update-1, batch 17
+
+idx 446,737–447,736 (1,000 rows) translated and appended to
+`locale/update1.jsonl`. Total now 17,850/31,817 rows done for Update-1
+(~56.11%). Mix of content: extensive gear/skill tooltip strings (Stonesplit
+Attack scaling, Cleftpeak/Cognition/Might/Dust/Splendor/Deluge stack
+mechanics, Inebriate-Clash-toast, Zenith Sword), several long narrative
+pieces (Fu Qianli's thousand-li journey to Well of Heaven, Xiuxiu's river
+song leading refugees north, Gao Siji/Crossblade Manor origin, Qiu
+Yuehai/Lie Yan campfire duel, the Lord of Clouds star-chart legend), event/UI
+strings, and casual gue/lo dialogue. One case caught by validation: idx
+447100, `<He considered himself ordinary...>` — a `<...>` wrapping one
+entire sentence with no text outside it (Quick-Reference §6.3 case 3),
+initially translated in error and corrected back to 100% English. Token/
+placeholder validation via the standard `TOKEN` regex script passed with
+**0 mismatches** after that fix. Full batch re-validated: idx sequential
+446,737–447,736, no duplicates; `locale/update1.jsonl` now 17,850 lines.
+
+Phase 6 was not touched this session (still at next idx 75,000).
+
+## 2026-09-22 — Update-1, batch 18
+
+idx 447,737–448,736 (1,000 rows) translated and appended to
+`locale/update1.jsonl`. Total now 18,850/31,817 rows done for Update-1
+(~59.24%). Mix of content: the Lord of Clouds origin myth, Mohist Hill/
+Qiongqi lore (Golden Colossi history, election process, Elder Toad
+backstory), gear/skill tooltips (Inebriate - Tipsy/Deepdaze/Bone Corrosion,
+Boundvessel, Starweave), NPC dialogue and letters (Wan Wuyou, Zhao Tie to
+General Wang, Reflection Temple plague letter), event/UI strings, casual
+gue/lo dialogue. No new terminology decisions.
+
+Process incident: while merging the four 250-row read chunks into one
+scratch file before appending, one entry got duplicated into the wrong
+chunk and two adjacent entries were translated in reversed order relative
+to source, desyncing every subsequent `idx` label in that chunk by one
+(translated text itself was unaffected and stayed in correct source order
+throughout). Caught by the merged-file line count (1001, not the expected
+1000) rather than by token validation, since token validation looks up by
+`idx` and the mismatched idx labels initially still resolved to plausible
+(wrong) source entries without tripping the regex check. Fixed by removing
+the spurious duplicate row, restoring source order for the reversed pair,
+then reassigning `idx` by strict sequential position across the full
+1000-row batch (valid here because translation proceeded linearly through
+`unique_strings.jsonl` with no skips). Re-validated by `idx` lookup against
+source afterward: 0 token mismatches. Full-file check after appending:
+`locale/update1.jsonl` now 18,850 lines, idx all unique, 0 duplicates, 0
+token mismatches file-wide.
+
+**Process note added to [[Resume-Procedure]] workflow going forward**: when
+assembling a batch from multiple read chunks, verify the merged line count
+equals the expected batch size before running token validation — that catch
+is cheaper than relying on token validation alone to surface an idx/order
+desync.
+
+Phase 6 was not touched this session (still at next idx 75,000).

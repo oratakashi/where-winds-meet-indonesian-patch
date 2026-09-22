@@ -83,6 +83,16 @@ over. Keep it to a handful of calls per session:
 - Translate the full batch in one pass, into one scratch file.
 - One append to `locale/phase{N}.jsonl` for the batch, not one per
   sub-chunk.
+- **If the batch had to be read in multiple chunks** (e.g. a 1,000-row batch
+  split into 250-row `Read` calls because of tool output limits) and each
+  chunk was translated into its own scratch file: after `cat`-merging the
+  chunks, check the merged line count equals the expected batch size
+  *before* running token validation. A chunk-boundary slip (a duplicated or
+  dropped row) desyncs every `idx` label after it, but token validation
+  alone won't reliably catch this since it looks up by `idx` — a mismatched
+  label can still resolve to a plausible source row without tripping the
+  regex check. See [[Session-History]] §2026-09-22 batch 18 for a case
+  where this happened.
 - Run the token/placeholder validation script **once** at the end and
   trust its "0 mismatches" output — don't re-open the full phase file or
   `unique_strings.jsonl` afterward just to double-check by eye.
