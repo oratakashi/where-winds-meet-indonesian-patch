@@ -378,6 +378,31 @@ mismatches** on the first pass across all 2,000 rows. Full merged
 rows done, 42%). Update-1 untouched this session (still at next idx
 445,737).
 
+## 2026-09-22 — Phase 6, batch 13 (2,000-strings/iteration continued)
+
+Phase 6: idx 71,000–72,999 (2,000 rows) translated in one pass and appended
+to `locale/phase6.jsonl`. Same content mix as prior batches: heavy `freq: 2`
+random player-username entries with irregular internal capitalization (kept
+verbatim), Chinese-style NPC pinyin names, gear/skill/stat UI labels kept
+English per [[Kept-In-English-Terms]], casual gue/lo dialogue, plus several
+longer narrative/lore pieces (the Well of Heaven/Guo Xie founding legend,
+the Sogdian merchant Kang's "homeland" monologue about Chang'an, the Star
+Stealer/Zhao Pu assassination legend, the Erguotou ledger-keeping vignette,
+and the River Master's Four Seas verse). No new terminology decisions —
+every case matched an existing [[Glossary]] entry.
+
+Token/placeholder validation via the standard `TOKEN` regex script: 3
+mismatches on the first pass — idx 71099 (dropped a `#Y...#E` wrap around
+"puzzle chests"), idx 71923 (a `<shakes head>` stage direction got
+translated to `<menggeleng>` instead of being kept literal per the §6.1
+plain-tag rule), idx 72432 (typo'd the stat-tag name, dropping the source's
+apostrophe-s: `<Nameless Sword|...>` vs. the correct `<Nameless Sword's|...>`).
+All three fixed and re-validated to **0 mismatches**. Full merged
+`locale/phase6.jsonl` (23,000 rows) re-validated: idx sequential
+50,000–72,999, no duplicates. Next idx Phase 6 = 73,000 (23,000/50,000
+rows done, 46%). Update-1 untouched this session (still at next idx
+445,737).
+
 ## Undated note
 
 At some point before this history was consolidated, `strings.jsonl` and
