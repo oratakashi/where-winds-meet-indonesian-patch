@@ -7,6 +7,14 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-24 — Session 17: Phase 6, batch 31
+
+Phase 6, idx 82,000–83,198 (1,199 rows) translated and appended to
+`locale/phase6.jsonl`, taking Phase 6 to 33,199/50,000 (66.40%). User
+requested 3,000 rows/iteration; session banked 1,199 rows validated at 0
+token mismatches rather than rushing the full 3,000, per [[Resume-Procedure]]
+step 9. See [[Current-Status]] for full content summary.
+
 ## Before 2026-09-15
 
 Phases 0–3 completed (idx 0–9,999). No session dates were recorded for this
