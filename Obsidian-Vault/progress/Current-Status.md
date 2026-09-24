@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-24 (session 13).** This is the single source of truth for "how
+**Last updated: 2026-09-24 (session 14).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -34,7 +34,7 @@ full timeline, see [[Session-History]]; for the phase plan, see
 | 15    | 340,000–369,999 | not started | 340,000                                        |
 | 16    | 370,000–399,999 | not started | 370,000                                        |
 | 17    | 400,000–429,886 | not started | 400,000                                        |
-| Update-1 | 429,887–461,703 | **active** | **455,737** (25,850/31,817 rows done, ~81.25%) |
+| Update-1 | 429,887–461,703 | **done** | — (31,817/31,817 rows done, 100%) |
 
 
 Phases 0–17 draw from the original `unique_strings.jsonl` (idx 0–429,886).
@@ -43,11 +43,43 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 100,000/229,887-string "Phase 7"/"Phase 8" split with eleven ~30,000-string
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
-**Phase 6 and Update-1 are both in progress in parallel.** If the user
-doesn't say which one to continue, ask before starting — see
-[[Resume-Procedure]].
+**Update-1 is fully complete.** Phase 6 remains the only phase in progress.
+Resume there unless the user asks otherwise — see [[Resume-Procedure]].
 
-## Most recent session (2026-09-24, session 13)
+## Most recent session (2026-09-24, session 14) — Update-1 complete
+
+Update-1, batches 22–38: idx 455,737–461,703 (5,967 rows across this
+session, batches of ~350 rows each) translated and appended to
+`locale/update1.jsonl`, taking Update-1 from 25,850/31,817 (~81.25%) to
+**31,817/31,817 (100%) — Update-1 is now fully translated.** Mix of
+content: Mohist Hill/Mirkvale/Hidden Mountain lore (the Dragonbend Academy
+founding register and roster across multiple Tianfu/Kaiyun years, the
+Ma Pingshan revenge-turned-redemption story, the "Ying Ning" wildfire-child
+origin myth, the Fang Bai/Qiniang Golden-Peach war letter, Grand Artisan
+Gull's "raising Xiaoxiao" recipe-book story, the Halcyon/Raven/Zhang Wanshi
+Derndale-punishment mystery, Tang Wenyao's father's marriage-pressure
+letter), many gear/skill tooltips (Silkbind/Bellstrike Attack stat-tag
+templates across many tiers, Vile Condemned/Falcon's Pursuit Heavenwill
+Gauntlets mechanics, Inebriate-state Dual Blades/Riven Twinblades skill
+lists, Path Trial/Battle Pass/Co-construction system-text blocks), casual
+gue/lo NPC dialogue throughout Homestead/Mirkvale/Search-Fight-Extract
+flavor text, and a large run of gear-chest/tile/title description strings.
+No new terminology decisions — every case matched an existing [[Glossary]]
+entry.
+
+Token/placeholder validation via the standard `TOKEN` regex script found a
+handful of mismatches across these batches, all caught and fixed before
+appending: a dropped `#Y` prefix on a translated tag (idx 460865, `#Y
+Digabungkan#E` written without the `Y`), reverted in place. Every batch was
+re-validated at **0 mismatches** before being appended. After the final
+append, a full-file re-validation of `locale/update1.jsonl` (31,817 lines)
+confirmed: all idx unique and sequential (429,887–461,703, no gaps), 0
+duplicate idx, 0 token mismatches, 0 empty translations across the entire
+file.
+
+Phase 6 was not touched this session.
+
+## Prior session (2026-09-24, session 13)
 
 Phase 6, batch 28: idx 77,000–77,999 (1,000 rows — user requested 1,000/
 iteration again for this session) translated and appended to
@@ -81,7 +113,7 @@ duplicates, 0 token mismatches across the entire file.
 Update-1 was not touched in this batch (see the following entry, from the
 same session, for its latest state).
 
-## Most recent session (2026-09-24, session 13) — Update-1
+## Prior session (2026-09-24, session 13) — Update-1
 
 Update-1, batch 21: idx 452,737–455,736 (3,000 rows — new batch size per
 user request, "tiap iterasi 3000 string") translated and appended to
