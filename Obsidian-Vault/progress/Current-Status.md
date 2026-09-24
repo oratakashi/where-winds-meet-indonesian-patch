@@ -22,7 +22,7 @@ full timeline, see [[Session-History]]; for the phase plan, see
 | 3        | 5,000–9,999     | done        | —                                            |
 | 4        | 10,000–19,999   | done        | —                                            |
 | 5        | 20,000–49,999   | done        | —                                            |
-| 6        | 50,000–99,999   | **active**  | **85,900** (35,900/50,000 rows done, 71.80%) |
+| 6        | 50,000–99,999   | **active**  | **88,000** (38,000/50,000 rows done, 76.00%) |
 | 7        | 100,000–129,999 | not started | 100,000                                      |
 | 8        | 130,000–159,999 | not started | 130,000                                      |
 | 9        | 160,000–189,999 | not started | 160,000                                      |
@@ -47,21 +47,26 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 Resume whichever phase the user asks for; otherwise Phase 6 (larger
 remaining share) — see [[Resume-Procedure]].
 
-## Most recent session (2026-09-24, session 18) — Phase 6, batch 32 (partial toward 3,000)
+## Most recent session (2026-09-24, session 18) — Phase 6, batch 32 (full 3,000 rows)
 
-Phase 6, batch 32: idx 85,000–85,899 (900 rows translated and appended to
-`locale/phase6.jsonl` this session; user requested 3,000 rows/iteration,
-banked as a partial batch per [[Resume-Procedure]] step 9 rather than
-rushing quality). Total now 35,900/50,000 rows done for Phase 6 (71.80%).
-Mix of content: many gear/skill tooltip strings (Heavenquaker Spear
-Soul-Shaken stacking, Silkbind DMG/Healing Bonus stat-tag template,
-Umbrella Heavy Attack/Charged Skill Invisibility mechanic, Phalanxbane
-Blade damage-reduction debuff, Perfect Dodge/Addled Mind cooldown reset),
-several NPC lore/backstory blurbs (Gao Siji "Stormbreaker Spear" origin
-legend, the Dragonbend Academy Guardian's sixteen-year-seclusion vignette,
-the Liu Xiaomei stone-carving academy notice, the Jadestream Valley monkey-
-raft folk tale, Sufferers' Trials weekly ranked-event description), a
-Kaifeng-politics/Aureate Pavilion lore block (Lodestar Swordmaster's
+Phase 6, batch 32: idx 85,000–87,999 (3,000 rows, delivered in four
+1,200/900/900-row sub-passes within the same session, each validated and
+appended progressively — the user first got a 900-row partial per
+[[Resume-Procedure]] step 9, then explicitly asked to continue to the full
+3,000) translated and appended to `locale/phase6.jsonl`. Total now
+38,000/50,000 rows done for Phase 6 (76.00%). Mix of content: many
+gear/skill tooltip strings (Heavenquaker Spear Soul-Shaken stacking,
+Silkbind DMG/Healing Bonus stat-tag template, Umbrella Heavy Attack/
+Charged Skill Invisibility mechanic, Phalanxbane Blade damage-reduction
+debuffs, Nameless Sword/Vagrant Sword charge mechanics, Etherwrath stacking,
+Snowparting Blade Dread/stagger interaction), several NPC lore/backstory
+blurbs (Gao Siji "Stormbreaker Spear" origin legend, the Dragonbend Academy
+Guardian's sixteen-year-seclusion vignette, the Liu Xiaomei stone-carving
+academy notice, the Jadestream Valley monkey-raft folk tale, Sufferers'
+Trials weekly ranked-event description, Guo Huailie/Zhang Huaishen
+war-tent night vigil, Fang Chengshi's Well of Heaven Inner Way naming
+story, a long Jianghu-diary entry about a fortune-teller/portrait-painter
+con), a Kaifeng-politics/Aureate Pavilion lore block (Lodestar Swordmaster's
 Black Gold ultimatum to Swallow), casual gue/lo NPC dialogue throughout
 (tavern/Jianghu banter, Homestead flavor text, children's dialogue), a
 classical-style Tang poem (Ode to the Stepping Stars — Northern Dipper
@@ -70,15 +75,15 @@ NPC name entries (kept verbatim per convention). No new terminology
 decisions — every case matched an existing [[Quick-Reference]] entry.
 
 Token/placeholder validation via the standard `TOKEN` regex script found
-**0 mismatches** across the full 900-row batch before appending. Full-file
-re-validation after append: `locale/phase6.jsonl` now 35,900 lines, all idx
-unique and sequential (50,000–85,899, no gaps), 0 duplicates, 0 token
-mismatches across the entire file.
+**1 mismatch** across the full batch: idx 87265 dropped the `|20201006`
+slot-id suffix from a `<Vagrant Sword|781|#C|10102|20201006>` stat tag when
+copying it — corrected in place to match the source tag byte-for-byte, per
+Quick-Reference §6 rule 2. Re-validated at **0 mismatches** before
+appending. Full-file re-validation after append: `locale/phase6.jsonl` now
+38,000 lines, all idx unique and sequential (50,000–87,999, no gaps), 0
+duplicates, 0 token mismatches across the entire file.
 
-Update-1 and Phase 17 were not touched this session. Session ended the
-batch at 900/3,000 rows to keep translation quality high within the
-session's available capacity — resume at idx 85,900 for the remainder of
-this 3,000-row request.
+Update-1 and Phase 17 were not touched this session.
 
 ## Prior session (2026-09-24, session 17) — Phase 6, full 3,000-row batch
 
