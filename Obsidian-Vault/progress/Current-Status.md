@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-24 (session 13).** This is the single source of truth for "how
+**Last updated: 2026-09-24 (session 15).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -22,7 +22,7 @@ full timeline, see [[Session-History]]; for the phase plan, see
 | 3     | 5,000–9,999     | done        | —                                              |
 | 4     | 10,000–19,999   | done        | —                                              |
 | 5     | 20,000–49,999   | done        | —                                              |
-| 6     | 50,000–99,999   | **active**  | **78,000** (28,000/50,000 rows done, 56.00%)   |
+| 6     | 50,000–99,999   | **active**  | **82,000** (32,000/50,000 rows done, 64.00%)   |
 | 7     | 100,000–129,999 | not started | 100,000                                        |
 | 8     | 130,000–159,999 | not started | 130,000                                        |
 | 9     | 160,000–189,999 | not started | 160,000                                        |
@@ -47,39 +47,62 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 doesn't say which one to continue, ask before starting — see
 [[Resume-Procedure]].
 
-## Most recent session (2026-09-24, session 13)
+## Most recent session (2026-09-24, session 15)
 
-Phase 6, batch 28: idx 77,000–77,999 (1,000 rows — user requested 1,000/
-iteration again for this session) translated and appended to
-`locale/phase6.jsonl`. Total now 28,000/50,000 rows done for Phase 6
-(56.00%). Mix of content: a long Jade Serpent Hall/Bloodscale Hall
-backstory (Zhang Cuo's paid-tournament redemption arc), several
-Weapon-Art-of-X damage-boost tooltip blocks (one long multi-weapon list
-enumerating Sword/Spear/Fan/Umbrella/Heng Blade/Mo Blade/Dual Blades/Rope
-Dart/Gauntlets boosts), the Aynur "final Moonlight Wine" revenge-blood
-vignette, the Liu Qingyi doppelganger backstory (Last Emperor's dead lover
-vs. the living namesake), a General Han Tong/Shouliang undercover-agent
-letter, casual gue/lo NPC dialogue (well-water/cucumber banter, tavern
-scenes, a child's "why do ears grow" palace joke), a large run of
-gear/skill tooltips (Perfect Dodge/Wicked Defiance, Stormbreaker Spear
-Enhanced state, Mo Blade sweep+shield skill, Heavenquaker Spear combo-count
-tooltip), many garbled Hall-of-Fame usernames and gibberish gamer-tags
-(kept verbatim per convention), and Pinyin NPC name entries (kept
-verbatim). No new terminology decisions — every case matched an existing
-[[Glossary]] entry.
+Phase 6, batch 30: idx 80,000–81,999 (2,000 rows — user requested 2,000/iteration for
+this session) translated and appended to `locale/phase6.jsonl`. Total now 32,000/50,000
+rows done for Phase 6 (64.00%). Mix of content: many gear/skill tooltips (Vagrant Sword/
+Nameless Sword's sword-energy mechanics, Scarlet Spin - Perfect Catch/Falling Blossoms
+chain, Heng Blade shield-reflection skill, Bellstrike - Splendor Qi Imbalance proc,
+Panacea Fan water-clone healing), several NPC lore/backstory blurbs (buddha sculptor's
+son, Apricot Village donkey-mill vignette, spirit-tablet dowry lore, oat-cultivation
+farewell letter to Elder Peng, Unbound Cavern/Bei Xiaoyu backstory, Shimmer of the
+South legend), casual gue/lo NPC dialogue throughout (tavern/Jianghu banter, Homestead
+flavor text, children's dialogue), a long war-letter/expenditure ledger (Kang Zhenzhu),
+several classical-style poems, and a large run of garbled Hall-of-Fame usernames and
+Pinyin NPC name entries (kept verbatim per convention). No new terminology decisions —
+every case matched an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via the standard `TOKEN` regex script found **0 mismatches
+on the first pass** — the full 2,000-row batch validated clean before appending.
+Full-file re-validation after append: `locale/phase6.jsonl` now 32,000 lines, all idx
+unique, 0 duplicates, 0 token mismatches across the entire file.
+
+Update-1 was not touched this session.
+
+## Prior session (2026-09-24, session 14)
+
+Phase 6, batch 29: idx 78,000–79,999 (2,000 rows — user requested
+2,000/iteration for this session) translated and appended to
+`locale/phase6.jsonl`. Total now 30,000/50,000 rows done for Phase 6
+(60.00%). Mix of content: a large run of gear/skill tooltips (Skygrasp
+Rope Dart/Heavenwill Gauntlets Heaven's Might synergy, Soulshade Umbrella
+Flowing Flame mechanic, Scarlet Spin Phantom Umbrella resonance, Vernal
+Umbrella projectile scaling), several NPC backstory/lore blurbs (Jade
+Carving Workshop apprentice, Rat Den "Five Rats" member, Twelve Immortals
+dye artisan, Nimbus Tower/Zhou Qiang courtesan lore, TCM five-tone
+meridian treatise, Guo Xin's Anxi Garrison epitaph), casual gue/lo NPC
+dialogue throughout (tavern scenes, fishing-village banter, Homestead
+flavor text, the pig-racing children's-story vignette), a long
+body-swap system explanation block, a long Matchmaking Arena/Grand
+Assembly event description, many garbled Hall-of-Fame usernames and
+gibberish gamer-tags (kept verbatim per convention), and Pinyin NPC name
+entries (kept verbatim). No new terminology decisions — every case
+matched an existing [[Glossary]] entry.
 
 Token/placeholder validation via the standard `TOKEN` regex script found
-**2 mismatches on the first pass**: idx 77161 (a plain `<yawn>` tag —
-§6 case 1 — was mistakenly translated to `<menguap>` instead of being kept
-verbatim) and idx 77774 (a stat tag `<Direct Affinity Rate |780|#C|150>`
-had its internal space before `|780|` dropped, which the tag-content regex
-treats as a distinct token). Both corrected in place and the batch was
-re-validated at **0 mismatches** before appending. Full-file re-validation
-after append: `locale/phase6.jsonl` now 28,000 lines, all idx unique, 0
-duplicates, 0 token mismatches across the entire file.
+**3 mismatches on the first pass**: idx 78577 (a `#Y...#E` tag was
+mistakenly split across two words — "Boss" and "menggunakan Energy" —
+instead of wrapping only the phrase corresponding to the source's single
+tag), idx 78715 (a stray `# ` with a space instead of a proper `#Y...#E`
+tag when translating "combined"), and idx 78740 (the `#Ydeflection#E` tag
+was dropped entirely when restructuring the sentence into Indonesian word
+order). All three corrected in place and the batch was re-validated at
+**0 mismatches** before appending. Full-file re-validation after append:
+`locale/phase6.jsonl` now 30,000 lines, all idx unique, 0 duplicates, 0
+token mismatches across the entire file.
 
-Update-1 was not touched in this batch (see the following entry, from the
-same session, for its latest state).
+Update-1 was not touched this session.
 
 ## Most recent session (2026-09-24, session 13) — Update-1
 
@@ -180,9 +203,10 @@ Phase 6 was not touched this session.
 ## Batch size
 
 Mixed as of 2026-09-24: the session-11 Update-1 run used **3,000
-strings/session**, but sessions 12 and 13 used **1,000 strings/session**
-for Phase 6, per an explicit user request (repeated in session 13) that
-overrides the 3,000 default. Batch size is decided per-session by whatever the user
+strings/session**, sessions 12 and 13 used **1,000 strings/session**
+for Phase 6, and sessions 14–15 used **2,000 strings/session** for Phase 6,
+each per an explicit user request that overrides the prior session's
+number. Batch size is decided per-session by whatever the user
 asks for at the start — don't assume either number carries over. This has
 changed several times over the project — see [[Session-History]] for the
 full change log. Given a larger batch (e.g. 3,000), sessions should budget

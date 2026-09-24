@@ -679,3 +679,40 @@ re-validated the full file: 25,850 lines, idx unique, 0 duplicates, 0 token
 mismatches. No new terminology decisions — every case matched an existing
 [[Glossary]] entry. Next idx Update-1 = 455,737 (25,850/31,817 rows done,
 ~81.25%). Phase 6 untouched this session.
+
+## 2026-09-24 — Phase 6, batch 29 (session 14)
+
+User asked to continue Phase 6 with a **2,000 strings/iteration** batch
+size for this session, and to keep the Obsidian vault updated. Read idx
+78,000–79,999 from `unique_strings.jsonl` in seven sequential ~300-line
+reads, translating each chunk to its own scratch file, then merged all
+seven into one 2,000-line file before validating.
+
+Token/placeholder validation found **3 mismatches on the first pass**:
+idx 78577 (a `#Y...#E` tag incorrectly split across "Boss" and "menggunakan
+Energy" instead of wrapping only the phrase matching the source's single
+tag), idx 78715 (a stray `# ` with a space in place of a proper `#Y...#E`
+wrap around "combined"), and idx 78740 (the `#Ydeflection#E` tag was
+dropped when the sentence was reordered into Indonesian word order). All
+three fixed by restoring correct `#Y...#E` placement. Re-ran validation
+after fixes: 0 mismatches across the full 2,000-row batch. Appended to
+`locale/phase6.jsonl` and re-validated the full file: 30,000 lines, idx
+unique, 0 duplicates, 0 token mismatches. No new terminology decisions —
+every case matched an existing [[Glossary]] entry. Next idx Phase 6 =
+80,000 (30,000/50,000 rows done, 60.00%). Update-1 untouched this session.
+
+## 2026-09-24 — Phase 6, batch 30 (session 15)
+
+User asked to continue Phase 6 with a **2,000 strings/iteration** batch
+size again this session, and to keep the Obsidian vault updated. Read idx
+80,000–81,999 from `unique_strings.jsonl` in seven sequential ~300-line
+reads, translating each chunk to its own scratch file, then merged all
+seven into one 2,000-line file before validating.
+
+Token/placeholder validation found **0 mismatches on the first pass** —
+the entire 2,000-row batch validated clean. Appended to
+`locale/phase6.jsonl` and re-validated the full file: 32,000 lines, idx
+unique, 0 duplicates, 0 token mismatches. No new terminology decisions —
+every case matched an existing [[Quick-Reference]] entry. Next idx Phase 6
+= 82,000 (32,000/50,000 rows done, 64.00%). Update-1 untouched this
+session.
