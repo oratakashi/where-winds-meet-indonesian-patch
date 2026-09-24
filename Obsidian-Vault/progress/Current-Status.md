@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-24 (session 18).** This is the single source of truth for "how
+**Last updated: 2026-09-24 (session 19).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -22,7 +22,7 @@ full timeline, see [[Session-History]]; for the phase plan, see
 | 3        | 5,000–9,999     | done        | —                                            |
 | 4        | 10,000–19,999   | done        | —                                            |
 | 5        | 20,000–49,999   | done        | —                                            |
-| 6        | 50,000–99,999   | **active**  | **88,000** (38,000/50,000 rows done, 76.00%) |
+| 6        | 50,000–99,999   | **active**  | **91,000** (41,000/50,000 rows done, 82.00%) |
 | 7        | 100,000–129,999 | not started | 100,000                                      |
 | 8        | 130,000–159,999 | not started | 130,000                                      |
 | 9        | 160,000–189,999 | not started | 160,000                                      |
@@ -47,7 +47,45 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 Resume whichever phase the user asks for; otherwise Phase 6 (larger
 remaining share) — see [[Resume-Procedure]].
 
-## Most recent session (2026-09-24, session 18) — Phase 6, batch 32 (full 3,000 rows)
+## Most recent session (2026-09-24, session 19) — Phase 6, batch 33 (full 3,000 rows)
+
+Phase 6, batch 33: idx 88,000–90,999 (3,000 rows, delivered in one session per
+the user's explicit "langsung 3000 baris apapun yang terjadi" instruction —
+translated in ten 300-row scratch passes, merged, and validated as one batch
+before appending) translated and appended to `locale/phase6.jsonl`. Total now
+41,000/50,000 rows done for Phase 6 (82.00%). Mix of content: many gear/skill
+tooltips (Snowparting Blade/Phalanxbane Blade Throat-Pierced stacking,
+Skygrasp Rope Dart/Heavenwill Gauntlets Heaven's Might synergy, Vernal
+Umbrella ballistic Critical DMG scaling, Vile Condemned/Falcon's Pursuit
+cooldown-refund interaction, Mo Blade Charged Skill three-stage mechanic,
+Bellstrike/Stonesplit/Silkbind/Bamboocut attribute-damage stat blocks), a long
+run of NPC lore/backstory blurbs (Wang Shisan's family-massacre revenge
+origin story, Lan Shouchi's Half-Palm Against the Tide grandfather legend,
+the Dragonbend Academy seal-carving vignette, the Mercyheart Monastery
+Huiguang/Huimiao ascetic-monk-bandit lore pair, the Qinghe monument
+inscription, Gongshu Hui's Qiongqi Artificier status-report letter, the
+Jinling Envoy jiaowei-guqin/flower-makeup legend), several classical-style
+poems and couplets, casual gue/lo NPC dialogue throughout (tavern/Jianghu
+banter, Homestead flavor text, children's dialogue), and a large run of
+garbled Hall-of-Fame usernames and Pinyin NPC name entries (kept verbatim per
+convention). No new terminology decisions — every case matched an existing
+[[Quick-Reference]] entry.
+
+Token/placeholder validation via the standard `TOKEN` regex script found **2
+mismatches** across the full 3,000-row batch: idx 88610 (a plain `<...>` tag
+without `|id|#C|n>` format, `<Heritage endures, fortune continues>`, was
+translated instead of kept verbatim per Quick-Reference §6 rule 1) and idx
+90077 (a non-standard color tag `#4d734da Resonating Melody#E` — only the
+first 6 hex chars are the token, the trailing `a Resonating Melody` is free
+text — was mistyped as `#4d734a` and lost the leading `a`/word-space during
+translation). Both corrected in place; re-validated at **0 mismatches**
+before appending. Full-file re-validation after append: `locale/phase6.jsonl`
+now 41,000 lines, all idx unique and sequential (50,000–90,999, no gaps), 0
+duplicates, 0 token mismatches across the entire file.
+
+Update-1 and Phase 17 were not touched this session.
+
+## Prior session (2026-09-24, session 18) — Phase 6, batch 32 (full 3,000 rows)
 
 Phase 6, batch 32: idx 85,000–87,999 (3,000 rows, delivered in four
 1,200/900/900-row sub-passes within the same session, each validated and
