@@ -7,6 +7,26 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-24 — Session 22: Phase 6 completed (idx 94,000–99,999, 6,000 rows)
+
+Phase 6, idx 94,000–99,999 (6,000 rows, the entire remaining tail of the
+phase) translated and appended to `locale/phase6.jsonl` across six
+1,000-row sub-batches within one continuous session, taking Phase 6 from
+44,000/50,000 (88.00%) to **50,000/50,000 (100%) — Phase 6 is now fully
+complete.** Each sub-batch was translated, validated, and appended
+progressively rather than in one giant pass. 3 token/placeholder
+mismatches found and fixed across the six sub-batches (idx 95432 — a
+dangling unclosed source `#Y` tag mistakenly closed during translation,
+adding a token not in the source; idx 96006 and idx 96060 — hex-color tag
+values mistyped, `#ffc89c` instead of source's `#ffc89a`, and an extra
+`#E`) — 0 mismatches on final validation. Full-file check:
+`locale/phase6.jsonl` 50,000 lines, idx 50,000–99,999, no gaps/duplicates.
+Cross-file check across all `locale/*.jsonl` (135,817 lines): 0 leaks, 0
+markup mismatches, 0 empty translations. Overall: 135,817/461,704 unique
+strings (29.42%), in-game coverage 66.06%. See [[Current-Status]] for full
+content summary. Phase 17 (13.38%, 4,000/29,887) is now the only active
+phase remaining.
+
 ## 2026-09-24 — Session 21: Phase 6, batch 34 (full 3,000 rows)
 
 Phase 6, idx 91,000–93,999 (3,000 rows) translated and appended to

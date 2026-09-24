@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **129,817** | **461,704** | **28.12%** |
-| ↳ original corpus (Phases 0–17) | 98,000 | 429,887 | 22.80% |
+| **Unique strings translated (all)** | **135,817** | **461,704** | **29.42%** |
+| ↳ original corpus (Phases 0–17) | 104,000 | 429,887 | 24.19% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **537,151** | **826,388** | **65.00%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **545,900** | **826,388** | **66.06%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -33,7 +33,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 3 | 5,000–9,999 | done | — | 5,000 / 5,000 | 100.00% |
 | 4 | 10,000–19,999 | done | — | 10,000 / 10,000 | 100.00% |
 | 5 | 20,000–49,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 6 | 50,000–99,999 | **active** | 94,000 | 44,000 / 50,000 | 88.00% |
+| 6 | 50,000–99,999 | done | — | 50,000 / 50,000 | 100.00% |
 | 7 | 100,000–129,999 | not started | 100,000 | 0 / 30,000 | 0.00% |
 | 8 | 130,000–159,999 | not started | 130,000 | 0 / 30,000 | 0.00% |
 | 9 | 160,000–189,999 | not started | 160,000 | 0 / 30,000 | 0.00% |
@@ -55,12 +55,60 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 100,000/229,887-string "Phase 7"/"Phase 8" split with eleven ~30,000-string
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
-**Update-1 is fully complete.** Phase 6 and Phase 17 are both in progress
-(Phase 17 was started ahead of Phase 6 at the user's explicit request).
-Resume whichever phase the user asks for; otherwise Phase 6 (larger
-remaining share) — see [[Resume-Procedure]].
+**Update-1 and Phase 6 are both fully complete.** Phase 17 is the only
+active phase remaining (started ahead of Phase 6 at the user's explicit
+request, currently at 4,000/29,887 — 13.38%). Resume Phase 17 next
+per [[Resume-Procedure]].
 
-## Most recent session (2026-09-24, session 21) — Phase 6, batch 34 (full 3,000 rows)
+## Most recent session (2026-09-24, session 22) — Phase 6 completed (idx 94,000–99,999, 6,000 rows)
+
+Phase 6, batches 35–37: idx 94,000–99,999 (the final 6,000 rows of Phase 6,
+delivered in one session as six 1,000-row sub-batches, each translated,
+token-validated, and appended progressively) translated and appended to
+`locale/phase6.jsonl`. **Phase 6 is now 50,000/50,000 rows done (100%) —
+fully complete**, taking it from 44,000 rows (88.00%) at the start of the
+session to full completion. Mix of content: a very large run of gear/skill
+tooltip strings across nearly every weapon path (Stormbreaker Spear Storm
+Roar/Endless Battle, Heavenwill Gauntlets Falcon's Pursuit/Vile Condemned,
+Snowparting Blade Varied Combo, Vernal Umbrella ballistic scaling, Thundercry
+Blade Throat-Pierced/Might stacking, Inkwell Fan Piercing Dart/Soul Sweep
+combo, Bamboocut/Silkbind/Stonesplit/Bellstrike Attack stat-tag templates
+across dozens of tiers), extensive NPC lore/backstory blurbs and long-form
+letters (the Zhao Jiu Laid Bare Needles Zhongdu Bridge saga, the Qiu Shizi
+painter's deathbed testament and the "Merriment at Skybrim" scroll story,
+the Xiao Heyi/sword-brotherhood origin tale, the swindler's journal touring
+Silver Needle/Raging Tides/Velvet Shade/Masked Troupe, several
+money-making-technique guides structured as in-universe pamphlets, the
+Nine Mortal Ways money-making techniques series, multiple war-letter/
+ledger entries), many classical-style poems and couplets, a long Lin'an/
+Kaifeng eight-recipe food-critic essay (idx 99996), casual gue/lo NPC
+dialogue throughout (tavern/Jianghu banter, Homestead flavor text,
+children's dialogue), and a large run of garbled Hall-of-Fame usernames
+and Pinyin NPC name entries (kept verbatim per convention). No new
+terminology decisions — every case matched an existing [[Quick-Reference]]
+entry.
+
+Token/placeholder validation via the standard `TOKEN` regex script found
+**3 mismatches across the six sub-batches**, all caught and fixed before
+appending: idx 95432 (source string itself contains a dangling unclosed
+`#Y` tag before "Physical Attack the by" — a source typo; translation had
+mistakenly closed it with an extra `#E`, adding a token not present in the
+source — corrected to leave the `#Y` dangling exactly as in source), and
+idx 96006/96060 (a `#hexcolor` tag's exact 6-digit value was mistyped
+during translation — `#ffc89c`/extra `#E` instead of matching the source's
+`#ffc89a`/`#e9a358` token count exactly). All three corrected in place;
+every sub-batch was re-validated at **0 mismatches** before appending.
+Full-file re-validation after the final append: `locale/phase6.jsonl` now
+50,000 lines, all idx unique and sequential (50,000–99,999, no gaps), 0
+duplicates, 0 token mismatches. Cross-file validation (`qa_check.py --locale
+"locale/*.jsonl"`) across all 135,817 lines in the repo: 0 prompt leaks, 0
+markup mismatches, 0 empty translations.
+
+Overall: 135,817 / 461,704 unique strings (29.42%), in-game coverage 66.06%.
+
+Phase 17 and Update-1 were not touched this session.
+
+## Prior session (2026-09-24, session 21) — Phase 6, batch 34 (full 3,000 rows)
 
 Phase 6, batch 34: idx 91,000–93,999 (3,000 rows, delivered in one session per the
 user's explicit "tiap iterasi 3000 string ... langsung 3000 baris apapun yang terjadi"
