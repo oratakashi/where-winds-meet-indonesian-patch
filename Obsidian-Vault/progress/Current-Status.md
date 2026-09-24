@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-24 (session 21).** This is the single source of truth for "how
+**Last updated: 2026-09-24 (session 23).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **135,817** | **461,704** | **29.42%** |
-| ↳ original corpus (Phases 0–17) | 104,000 | 429,887 | 24.19% |
+| **Unique strings translated (all)** | **138,817** | **461,704** | **30.07%** |
+| ↳ original corpus (Phases 0–17) | 107,000 | 429,887 | 24.89% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **545,900** | **826,388** | **66.06%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **548,178** | **826,388** | **66.33%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -44,7 +44,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 14 | 310,000–339,999 | not started | 310,000 | 0 / 30,000 | 0.00% |
 | 15 | 340,000–369,999 | not started | 340,000 | 0 / 30,000 | 0.00% |
 | 16 | 370,000–399,999 | not started | 370,000 | 0 / 30,000 | 0.00% |
-| 17 | 400,000–429,886 | **active** | 404,000 | 4,000 / 29,887 | 13.38% |
+| 17 | 400,000–429,886 | **active** | 407,000 | 7,000 / 29,887 | 23.42% |
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
 
 <!-- progress:end -->
@@ -57,10 +57,50 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phase 6 are both fully complete.** Phase 17 is the only
 active phase remaining (started ahead of Phase 6 at the user's explicit
-request, currently at 4,000/29,887 — 13.38%). Resume Phase 17 next
-per [[Resume-Procedure]].
+request, currently at 7,000/29,887 — 23.42%). Resume Phase 17 next
+per [[Resume-Procedure]]. **Starting this session (session 23), Phase 17
+iterations are batched at 3,000 rows per session** (up from the prior
+1,000-row default) at the user's explicit request — see [[Resume-Procedure]]
+for the batch-size note.
 
-## Most recent session (2026-09-24, session 22) — Phase 6 completed (idx 94,000–99,999, 6,000 rows)
+## Most recent session (2026-09-24, session 23) — Phase 17 batch (idx 404,000–406,999, 3,000 rows)
+
+Phase 17, one large 3,000-row batch (idx 404,000–406,999), translated in six
+~500-row sub-batches (each translated, token-validated, and appended
+progressively per the session-22 pattern) and appended to
+`locale/phase17.jsonl`. **Phase 17 moved from 7.00% to 23.42% (7,000/29,887)
+after prior sessions plus this one.** Mix of content: a very large run of
+main-story narrative for the Northern Vow/Wang Qing arc (He Ran's devotion
+backstory, the Anxi Army edict, the white-haired-demon Mohist-disciple
+serial cliffhanger, the Jiang Yi/Han Wei/Ling Yuming "Dream of Mountains and
+Seas" music novella, the Liu Zhuang bell-ringer-in-the-sewers short story),
+extensive NPC dialogue and Homestead/crafting/gear-tooltip strings across
+nearly every system (Mist Breaker, Painted Boat, Retainers, Gift of Gab,
+card-game rules text, mystic-skill/martial-art tooltips), a long run of
+Pinyin NPC names and quest/location labels (kept verbatim per convention),
+and several classical-style poems/couplets. No new terminology decisions —
+every case matched an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py --locale` found **7
+mismatches across the seven sub-batches**, all caught and fixed before
+appending: idx 404233 (a `<Strategic Sword's|...>` stat tag — dropped the
+apostrophe-s, must match source text exactly since tags are compared
+verbatim, not just counted), idx 404267 and idx 406669/406903 (plain
+`<...>` tags — `<sobs>`, `<thinking>`, `<On it!>` — mistakenly translated
+instead of left in English per §6 rule 1), idx 404319 (bare `#h`/`#w`
+stray-hash tokens from "#here"/"#wanderer" — translated the words around
+them instead of preserving the exact letter after `#`), idx 404502 (`<in
+unison>` plain tag, same issue as above), and idx 406432 (a
+`<Max Physical Attack|...>` stat tag whose bracketed name must stay
+byte-identical to source, not translated). All seven corrected in place;
+every sub-batch was re-validated at **0 mismatches** before appending, and
+a final `qa_check.py --locale "locale/*.jsonl"` across the whole dictionary
+(138,817 entries) also came back clean.
+
+**Overall: 138,817 / 461,704 unique strings (30.07%), in-game coverage
+66.33%.**
+
+## Previous session (2026-09-24, session 22) — Phase 6 completed (idx 94,000–99,999, 6,000 rows)
 
 Phase 6, batches 35–37: idx 94,000–99,999 (the final 6,000 rows of Phase 6,
 delivered in one session as six 1,000-row sub-batches, each translated,
