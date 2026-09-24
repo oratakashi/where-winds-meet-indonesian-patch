@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-24 (session 19).** This is the single source of truth for "how
+**Last updated: 2026-09-24 (session 20).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -33,7 +33,7 @@ full timeline, see [[Session-History]]; for the phase plan, see
 | 14       | 310,000–339,999 | not started | 310,000                                      |
 | 15       | 340,000–369,999 | not started | 340,000                                      |
 | 16       | 370,000–399,999 | not started | 370,000                                      |
-| 17       | 400,000–429,886 | **active**  | **401,000** (1,000/29,887 rows done, 3.35%)  |
+| 17       | 400,000–429,886 | **active**  | **404,000** (4,000/29,887 rows done, 13.39%) |
 | Update-1 | 429,887–461,703 | **done**    | — (31,817/31,817 rows done, 100%)            |
 
 Phases 0–17 draw from the original `unique_strings.jsonl` (idx 0–429,886).
@@ -47,7 +47,41 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 Resume whichever phase the user asks for; otherwise Phase 6 (larger
 remaining share) — see [[Resume-Procedure]].
 
-## Most recent session (2026-09-24, session 19) — Phase 6, batch 33 (full 3,000 rows)
+## Most recent session (2026-09-24, session 20) — Phase 17, batch 3 (full 3,000 rows)
+
+Phase 17, batch 3: idx 401,000–403,999 (3,000 rows, delivered in one session per the
+user's explicit "tiap iterasi 3000 string ... langsung 3000 baris apapun yang terjadi"
+instruction — translated in six 500-row scratch passes, merged, and validated as one
+batch before appending) translated and appended to `locale/phase17.jsonl`. Total now
+4,000/29,887 rows done for Phase 17 (13.39%). Mix of content: many NPC dialogue/lore
+blurbs across Kaifeng/Mirkvale/Mohist Hill/Qinghe/Liangzhou/Hexi (the Halcyon Chamber
+of Derivation diary entries, the Ying Ning wildfire-child origin myth reprised with a
+long block, the Twin Lions/Da'an Zheng Clan Rebellion backstory, the Immortal
+Rope/Zhuge Ha acrobat-troupe vignette, several war-letter/ledger entries from Xiaoba's
+Mirkvale expense records and the Song-era military-pay memorials), a long run of
+gear/skill tooltip strings (Vagrant/Nameless Sword, Heavenwill Gauntlets Falcon's
+Pursuit/Vile Condemned Cognition-stack mechanic, Thundercry Blade Wind Vortex,
+Stoic Cleaver, dual-weapon proc effects), several classical-style poems and Tang-era
+verses, casual gue/lo NPC dialogue throughout (tavern/Jianghu banter, Homestead flavor
+text, children's dialogue), a red-silk ghost-village horror short story (idx 403846),
+and a large run of Pinyin NPC name entries (kept verbatim per convention). No new
+terminology decisions — every case matched an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via the standard `TOKEN` regex script found **4
+mismatches** across the full 3,000-row batch: idx 401513 (a `{1}` placeholder was
+dropped from the "first fatal damage negated" clause while restructuring the
+sentence), idx 401781 (an `#Y...#E` wrap around the second "Martial Art Triggered
+Effects" mention in the second sentence was dropped), and idx 402521/402706 (two
+plain `<...>` stage-direction tags — `<shakes head>`, `<quiet music> <blood-red
+shafts of light>` — were translated instead of kept verbatim per Quick-Reference §6
+rule 1). All four corrected in place; re-validated at **0 mismatches** before
+appending. Full-file re-validation after append: `locale/phase17.jsonl` now 4,000
+lines, all idx unique and sequential (400,000–403,999, no gaps), 0 duplicates, 0
+token mismatches across the entire file.
+
+Phase 6 and Update-1 were not touched this session.
+
+## Prior session (2026-09-24, session 19) — Phase 6, batch 33 (full 3,000 rows)
 
 Phase 6, batch 33: idx 88,000–90,999 (3,000 rows, delivered in one session per
 the user's explicit "langsung 3000 baris apapun yang terjadi" instruction —
