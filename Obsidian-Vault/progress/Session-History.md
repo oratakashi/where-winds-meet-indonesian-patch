@@ -679,3 +679,41 @@ re-validated the full file: 25,850 lines, idx unique, 0 duplicates, 0 token
 mismatches. No new terminology decisions — every case matched an existing
 [[Glossary]] entry. Next idx Update-1 = 455,737 (25,850/31,817 rows done,
 ~81.25%). Phase 6 untouched this session.
+
+## 2026-09-24 — Update-1 completed (session 14)
+
+User asked to finish Update-1 completely and update the Obsidian vault.
+Continued from idx 455,737 in ~350-row batches (batches 35–38), reading
+each chunk from `unique_strings.jsonl`, translating to a scratch file,
+validating with the standard `TOKEN` regex script, and appending to
+`locale/update1.jsonl` before moving to the next chunk. Covered idx
+455,737–461,703 (5,967 rows) across this session:
+
+- Batch 35 (idx 460,287–460,636, 350 rows, translated in the prior/
+  interrupted part of this session): validated clean, 0 mismatches,
+  appended.
+- Batch 36 (idx 460,637–460,986, 350 rows): 1 mismatch on first pass — idx
+  460,865 had a `#Y` color-tag prefix dropped while translating "can be
+  #Ycombined#E" (written as `# Digabungkan#E` instead of
+  `#YDigabungkan#E`). Fixed with a targeted string replace, re-validated at
+  0 mismatches, appended.
+- Batch 37 (idx 460,987–461,336, 350 rows): validated clean, 0 mismatches,
+  appended. Contains several long lore blocks (Dragonbend Academy founding
+  register/roster, Grand Artisan Gull's "raising Xiaoxiao" story, the
+  "Ying Ning" wildfire-child origin myth).
+- Batch 38 (idx 461,337–461,703, 367 rows — the final batch, sized to
+  reach exactly idx 461,703): validated clean, 0 mismatches, appended.
+  Contains the Ma Pingshan revenge-to-redemption story, the Fang Bai/
+  Qiniang Golden-Peach war letter, and Tang Wenyao's father's
+  marriage-pressure letter.
+
+No new terminology decisions across any of these batches — every case
+matched an existing [[Glossary]] entry.
+
+After the final append, ran a full-file re-validation of
+`locale/update1.jsonl`: **31,817 total rows, all idx unique, range
+429,887–461,703 with zero gaps, 0 duplicate idx, 0 token/placeholder
+mismatches, 0 empty translations.** Update-1 is now **100% complete** (was
+25,850/31,817, ~81.25%, at the start of this session). Updated
+[[Current-Status]] to mark Update-1 "done" and recorded this session's
+work. Phase 6 was not touched this session.
