@@ -525,3 +525,60 @@ is cheaper than relying on token validation alone to surface an idx/order
 desync.
 
 Phase 6 was not touched this session (still at next idx 75,000).
+
+## 2026-09-23 — Phase 6, batch 26
+
+idx 75,000–75,999 (1,000 rows) translated and appended to
+`locale/phase6.jsonl`. Total now 26,000/50,000 rows done for Phase 6
+(52.00%). Mix of content: Mohist Hill/Golden Colossus lore, Sealed Treasury
+heist-event flavor text, Zheng E's tragic backstory, Song-dynasty
+historical exposition (Zhao Kuangyin/Zhao Guangyi's southern-conquest
+strategy, gunpowder-arrow siegecraft), TCM injury/qi descriptions,
+gear/skill tooltips (Bellstrike/Bamboocut/Silkbind scaling, Mystic Skill
+Vitality mechanics, Flower Burial skill text), casual gue/lo NPC dialogue,
+and a large share of gamertag-style random-username strings left
+untranslated. No new terminology decisions; a few judgment calls
+(Swordsman→Pendekar, Brother \<Name\>→Kak \<Name\>, quack doctor→tabib
+gadungan) applied by analogy to already-locked patterns.
+
+Process incident (different from session 8's): idx 75,100 and 75,101 had
+their translated `v` values swapped in the scratch batch file — a plain
+manual transcription slip while typing the batch out, not a chunk-merge
+desync (the merged file's line count matched the expected 1,000 exactly,
+so that check passed). Caught directly by the token/placeholder validation
+script: idx 75,100's translation had none of the `#Y`/`{prop}` tokens
+present in that idx's actual source text (they'd been typed under 75,101
+instead), and vice versa — token validation working exactly as intended
+here, unlike the batch-18 case where it couldn't catch a coherent
+idx-label desync. Fixed by swapping the two `v` values back so each
+matched its correct idx, then re-ran validation for 0 mismatches.
+
+Token/placeholder validation via the standard `TOKEN` regex script passed
+with 0 mismatches after the fix. Full-file check after appending:
+`locale/phase6.jsonl` now 26,000 lines, idx sequential and contiguous
+50,000–75,999, 0 duplicates, 0 token mismatches file-wide.
+
+## 2026-09-23 — Update-1, batch 19
+
+idx 448,737–449,736 (1,000 rows) translated and appended to
+`locale/update1.jsonl`, run in parallel with session 9's Phase 6 work.
+Total now 19,850/31,817 rows done for Update-1 (~62.39%). Read in four
+250-row chunks (tool output limits); merged line count verified at exactly
+1,000 before running token validation, per the lesson recorded in session
+8's entry above. Content mix: Mohist City/Hidden Mountain lore (Yi Xieyu's
+death scene, Master Jian's Night-of-Falling-Sky backstory, the Mozi/Mohist
+Hill founding legend), several long emotional letters (An Ya's torn letter,
+the Qiang prison letter, the wife's "home safe" diary, Chunhe's mother's
+farewell letter), Tang-dynasty museum-piece flavor text, gear/skill
+tooltips (Stonesplit/Spring Sorrow/Infernal Twinblades Sin-Karma
+mechanics), casual gue/lo NPC dialogue, and Jiazhong/Huangzhong
+season-transition patch notes. No new terminology decisions — every case
+matched an existing [[Glossary]] entry, so no [[Update-1]] translation-log
+entry was needed this batch.
+
+Token/placeholder validation via the standard `TOKEN` regex script passed
+with 0 mismatches, checked against `unique_strings.jsonl` by idx. Full-file
+re-validation: `locale/update1.jsonl` now 19,850 lines, all idx unique, 0
+duplicates, 0 token mismatches across the entire file.
+
+Update-1 was not touched this session (still at next idx 448,737).
