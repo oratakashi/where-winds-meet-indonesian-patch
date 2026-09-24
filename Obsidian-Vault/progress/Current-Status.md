@@ -22,7 +22,7 @@ full timeline, see [[Session-History]]; for the phase plan, see
 | 3        | 5,000–9,999     | done        | —                                            |
 | 4        | 10,000–19,999   | done        | —                                            |
 | 5        | 20,000–49,999   | done        | —                                            |
-| 6        | 50,000–99,999   | **active**  | **83,199** (33,199/50,000 rows done, 66.40%) |
+| 6        | 50,000–99,999   | **active**  | **85,000** (35,000/50,000 rows done, 70.00%) |
 | 7        | 100,000–129,999 | not started | 100,000                                      |
 | 8        | 130,000–159,999 | not started | 130,000                                      |
 | 9        | 160,000–189,999 | not started | 160,000                                      |
@@ -47,34 +47,40 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 Resume whichever phase the user asks for; otherwise Phase 6 (larger
 remaining share) — see [[Resume-Procedure]].
 
-## Most recent session (2026-09-24, session 17) — Phase 6, 3,000-row batch
+## Most recent session (2026-09-24, session 17) — Phase 6, full 3,000-row batch
 
-Phase 6, batch 31: idx 82,000–83,198 (1,199 rows — user requested 3,000/
-iteration for this session; a single translation pass covering that many
-rows in one sitting risked quality/validation slippage, so this session
-banked 1,199 rows cleanly instead of rushing the full 3,000, matching the
-precedent set in session 16 for Phase 17) translated and appended to
-`locale/phase6.jsonl`. Total now 33,199/50,000 rows done for Phase 6
-(66.40%). Mix of content: many gear/skill tooltips (Stonesplit Penetration
-stacking, Silkbind - Jade Stage, Bamboocut Attack scaling, Soulshade
-Umbrella/Panacea Fan Common Martial Art interactions, Sober Sorrow combo
-mechanics), several NPC lore/backstory blurbs (Fang Hong's grandmaster
-death story, the Feng Shui/geomancy treatise excerpt, the Northern Dipper
-longevity scripture, the mechanical-invention showcase with mentor/disciple
-banter, Qin Yuan/Luo Chengwu puppet-craft diary entries), a few
-Kaifeng-politics lore blocks (The Ember of East/The Shimmer of South
+Phase 6, batch 31: idx 82,000–84,999 (3,000 rows, delivered in two passes
+within the same session — 1,199 rows banked and committed first, then the
+remaining 1,801 rows completed at the user's explicit request to reach the
+full 3,000) translated and appended to `locale/phase6.jsonl`. Total now
+35,000/50,000 rows done for Phase 6 (70.00%). Mix of content: many
+gear/skill tooltips (Stonesplit Penetration stacking, Silkbind - Jade
+Stage, Bamboocut Attack scaling, Soulshade Umbrella/Panacea Fan Common
+Martial Art interactions, Sober Sorrow/Strategic Sword combo mechanics,
+Heavenwill Gauntlets Vile Condemned evolution), several NPC lore/backstory
+blurbs (Fang Hong's grandmaster death story, the Feng Shui/geomancy
+treatise excerpt, the Northern Dipper longevity scripture, the
+mechanical-invention showcase with mentor/disciple banter, Qin
+Yuan/Luo Chengwu puppet-craft diary entries, Zhu Yu's farewell-to-Silver-
+Needle vignette, the Astral Rain/Cloudrest Passage event description), a
+few Kaifeng-politics lore blocks (The Ember of East/The Shimmer of South
 scheme, the Revelry Hall Heroes Assembly gossip column), casual gue/lo NPC
 dialogue throughout (tavern/Jianghu banter, Homestead flavor text), several
-classical-style poems, and a large run of garbled Hall-of-Fame usernames
-and Pinyin NPC name entries (kept verbatim per convention). No new
-terminology decisions — every case matched an existing [[Quick-Reference]]
-entry.
+classical-style poems, a long letter (Zhan Yuelu's message-delivery
+request), and a large run of garbled Hall-of-Fame usernames and Pinyin NPC
+name entries (kept verbatim per convention). No new terminology
+decisions — every case matched an existing [[Quick-Reference]] entry.
 
 Token/placeholder validation via the standard `TOKEN` regex script found
-**0 mismatches** on the full batch before appending. Full-file
-re-validation after append: `locale/phase6.jsonl` now 33,199 lines, all idx
-unique and sequential (50,000–83,198, no gaps), 0 duplicates, 0 token
-mismatches across the entire file.
+**3 mismatches** in the second 1,801-row sub-batch: idx 84242 and idx 84963
+(a `<...>` tag's possessive `'s` was dropped when copying `<Strategic
+Sword's|781|#C|10101>` and `<Inkwell Fan's|1600021|#C|103024>` — §6 rule 2
+requires the tag content copied byte-for-byte) and idx 84581 (`#Y...#E`
+color tags mistyped as `#D...#E` twice while translating "reset"). All
+three corrected in place; re-validated at **0 mismatches** before
+appending. Full-file re-validation after append: `locale/phase6.jsonl` now
+35,000 lines, all idx unique and sequential (50,000–84,999, no gaps), 0
+duplicates, 0 token mismatches across the entire file.
 
 Update-1 and Phase 17 were not touched this session.
 
@@ -293,22 +299,24 @@ Phase 6 was not touched this session.
 Mixed as of 2026-09-24: the session-11 Update-1 run used **3,000
 strings/session**, sessions 12 and 13 used **1,000 strings/session**
 for Phase 6, sessions 14–15 used **2,000 strings/session** for Phase 6,
-and session 17 was asked for **3,000 strings/session** for Phase 6 but
-banked **1,199** — each per an explicit user request that overrides the
-prior session's number. Batch size is decided per-session by whatever the
-user asks for at the start — don't assume either number carries over. This
-has changed several times over the project — see [[Session-History]] for
-the full change log. Given a larger batch (e.g. 3,000), sessions should
-budget more tool-call rounds for reading source chunks (the `Read` tool
-caps out well under 1,000 lines for this file, so a 3,000-row batch needs
-~10 sequential 250–300-line reads) and should re-run the token/placeholder
-validation script directly against the merged scratch file _before_
-appending — the larger the batch, the more likely a stray tag-content edit
-slips in somewhere in the middle. Session 17 found that translating the
-full 3,000-row ask in one uninterrupted pass at careful/consistent quality
-wasn't achievable in a single sitting; per [[Resume-Procedure]] step 9
-("stop cleanly at the end of the batch"), it banked 1,199 rows validated
-at 0 mismatches rather than pushing through the rest at lower quality.
-Future 3,000-row requests should expect this same clean-stopping-point
-behavior unless the user explicitly asks to keep going past a natural
-break.
+and session 17 was asked for **3,000 strings/session** for Phase 6 and
+delivered the full 3,000 — in two passes within the same session (1,199
+banked and committed first, then 1,801 more completed after the user
+asked to continue to the full number) — each per an explicit user request
+that overrides the prior session's number. Batch size is decided
+per-session by whatever the user asks for at the start — don't assume
+either number carries over. This has changed several times over the
+project — see [[Session-History]] for the full change log. Given a larger
+batch (e.g. 3,000), sessions should budget more tool-call rounds for
+reading source chunks (the `Read` tool caps out well under 1,000 lines for
+this file, so a 3,000-row batch needs ~10 sequential 250–300-line reads)
+and should re-run the token/placeholder validation script directly against
+the merged scratch file _before_ appending — the larger the batch, the
+more likely a stray tag-content edit slips in somewhere in the middle
+(session 17's second sub-batch hit exactly this: 3 tag/token mismatches
+across 1,801 rows, all caught and fixed pre-append). Session 17's default
+instinct was to bank a partial batch and stop cleanly per
+[[Resume-Procedure]] step 9 rather than risk quality on a single huge pass —
+but when the user explicitly says they want the full requested count
+("aku ingin 3000 baris"), continue past that stopping point in the same
+session rather than treating the partial batch as the final answer.
