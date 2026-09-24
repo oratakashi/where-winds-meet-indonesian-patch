@@ -630,3 +630,25 @@ file: 27,000 lines, idx unique, 0 duplicates, 0 token mismatches. No new
 terminology decisions — every case matched an existing [[Glossary]] entry.
 Next idx Phase 6 = 77,000 (27,000/50,000 rows done, 54.00%). Update-1
 untouched this session.
+
+## 2026-09-24 — Phase 6, batch 28 (session 13)
+
+User again asked for **1,000 strings/session** for this session. Read idx
+77,000–77,999 from `unique_strings.jsonl` in three sequential ~300-line
+reads, translated the full batch in one pass into a single scratch file,
+then validated before appending.
+
+Token/placeholder validation found **2 mismatches on the first pass**: idx
+77161 had the plain tag `<yawn>` (no `|id|#C|n>` stat format — §6 case 1)
+mistakenly translated to `<menguap>` instead of being left untouched in
+English; idx 77774 had the internal space in the stat tag
+`<Direct Affinity Rate |780|#C|150>` dropped (became `<Direct Affinity
+Rate|780|#C|150>`), which the tag-content regex treats as a different
+token since it captures the tag's exact text. Both fixed in place —
+restored `<yawn>` verbatim and restored the space before `|780|`. Re-ran
+validation after the fixes: 0 mismatches across the full 1,000-row batch.
+Appended to `locale/phase6.jsonl` and re-validated the full file: 28,000
+lines, idx unique, 0 duplicates, 0 token mismatches. No new terminology
+decisions — every case matched an existing [[Glossary]] entry. Next idx
+Phase 6 = 78,000 (28,000/50,000 rows done, 56.00%). Update-1 untouched this
+session.
