@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-24 (session 11).** This is the single source of truth for "how
+**Last updated: 2026-09-24 (session 12).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -22,7 +22,7 @@ full timeline, see [[Session-History]]; for the phase plan, see
 | 3     | 5,000–9,999     | done        | —                                              |
 | 4     | 10,000–19,999   | done        | —                                              |
 | 5     | 20,000–49,999   | done        | —                                              |
-| 6     | 50,000–99,999   | **active**  | **76,000** (26,000/50,000 rows done, 52.00%)   |
+| 6     | 50,000–99,999   | **active**  | **77,000** (27,000/50,000 rows done, 54.00%)   |
 | 7     | 100,000–129,999 | not started | 100,000                                        |
 | 8     | 130,000–159,999 | not started | 130,000                                        |
 | 9     | 160,000–189,999 | not started | 160,000                                        |
@@ -47,7 +47,37 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 doesn't say which one to continue, ask before starting — see
 [[Resume-Procedure]].
 
-## Most recent session (2026-09-24, session 11)
+## Most recent session (2026-09-24, session 12)
+
+Phase 6, batch 27: idx 76,000–76,999 (1,000 rows — user requested 1,000 for
+this session, overriding the 3,000 default set by the prior parallel
+session) translated and appended to `locale/phase6.jsonl`. Total now
+27,000/50,000 rows done for Phase 6 (54.00%). Mix of content: a long Kaifeng
+main-story letter (the Tubo-hostage prince's final "three questions"
+testament), a lengthy Master Dong/Hu Li Hundred-Schools philosophical
+dialogue (Confucianism/Legalism/Daoism/Mohism synthesis), several
+Tian-Ying-assassin/Aureate-Pavilion Qinghe backstory entries, gear/skill
+tooltips (Strategic Sword's Zenith Sword follow-up, Vagrant Sword dash
+mechanics, HP Shield/Hardened Foe interactions, Wind-riding/Blazing Drum
+stacking), casual gue/lo NPC dialogue (wine-shop scenes, fishing-village
+chatter, Homestead/guild flavor text), a large run of garbled Hall-of-Fame
+player usernames (kept verbatim per convention), and Pinyin NPC name
+entries (kept verbatim). No new terminology decisions — every case matched
+an existing [[Glossary]] entry.
+
+Token/placeholder validation via the standard `TOKEN` regex script found
+**1 mismatch on the first pass** (idx 76248 — a `#Y`/`#E` color-tag pair
+around `[Frigid Fall]` was dropped when moving the bracketed skill name next
+to "Sun Sisi's"). Corrected in place and the batch was re-validated at **0
+mismatches** before appending. Full-file re-validation after append:
+`locale/phase6.jsonl` now 27,000 lines, all idx unique, 0 duplicates, 0
+token mismatches across the entire file.
+
+Update-1 was not touched this session (see the prior session's entry below
+for its latest state — 22,850/31,817 rows, ~71.82%, unaffected by this
+session's phase 6 work).
+
+## Prior session (2026-09-24, session 11)
 
 Update-1, batch 20: idx 449,737–452,736 (3,000 rows — new larger batch size,
 see below) translated and appended to `locale/update1.jsonl`. Total now
@@ -84,14 +114,16 @@ Phase 6 was not touched this session.
 
 ## Batch size
 
-Current default: **3,000 strings/session** (as of 2026-09-24, per the
-user's request this session — up from 1,000 the prior session). This has
+Mixed as of 2026-09-24: the session-11 Update-1 run used **3,000
+strings/session**, but session 12 (this one) used **1,000 strings/session**
+for Phase 6, per an explicit user request for that session that overrode
+the 3,000 default. Batch size is decided per-session by whatever the user
+asks for at the start — don't assume either number carries over. This has
 changed several times over the project — see [[Session-History]] for the
-full change log before assuming it's still 3,000 in a future session. Given
-the much larger batch, sessions should budget more tool-call rounds for
-reading source chunks (the `Read` tool caps out well under 1,000 lines for
-this file, so a 3,000-row batch needs ~10 sequential 300-line reads) and
-should re-run the token/placeholder validation script directly against the
-merged scratch file *before* appending, exactly as done this session — the
-larger the batch, the more likely a stray tag-content edit slips in
-somewhere in the middle.
+full change log. Given a larger batch (e.g. 3,000), sessions should budget
+more tool-call rounds for reading source chunks (the `Read` tool caps out
+well under 1,000 lines for this file, so a 3,000-row batch needs ~10
+sequential 250–300-line reads) and should re-run the token/placeholder
+validation script directly against the merged scratch file *before*
+appending — the larger the batch, the more likely a stray tag-content edit
+slips in somewhere in the middle.

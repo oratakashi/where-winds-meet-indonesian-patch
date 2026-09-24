@@ -610,3 +610,23 @@ re-validated the full file: 22,850 lines, idx unique, 0 duplicates, 0 token
 mismatches. No new terminology decisions — every case matched an existing
 [[Glossary]] entry. Next idx Update-1 = 452,737 (22,850/31,817 rows done,
 ~71.82%). Phase 6 untouched this session.
+
+## 2026-09-24 — Phase 6, batch 27 (session 12)
+
+User asked for **1,000 strings/session** for this session specifically,
+overriding the 3,000 default set earlier the same day in session 11 — batch
+size is decided per-session, not carried over automatically. Read idx
+76,000–76,999 from `unique_strings.jsonl` in four sequential 250-line reads,
+translated each chunk to its own scratch file, merged into one 1,000-line
+file and confirmed the line count before validating.
+
+Token/placeholder validation found **1 mismatch on the first pass**: idx
+76248 dropped the `#Y`/`#E` color-tag pair that should wrap `[Frigid Fall]`
+when the bracketed skill name was moved next to "Sun Sisi's" in the
+Indonesian word order — fixed by restoring the `#Y...#E` wrap around the
+moved phrase. Re-ran validation after the fix: 0 mismatches across the full
+1,000-row batch. Appended to `locale/phase6.jsonl` and re-validated the full
+file: 27,000 lines, idx unique, 0 duplicates, 0 token mismatches. No new
+terminology decisions — every case matched an existing [[Glossary]] entry.
+Next idx Phase 6 = 77,000 (27,000/50,000 rows done, 54.00%). Update-1
+untouched this session.
