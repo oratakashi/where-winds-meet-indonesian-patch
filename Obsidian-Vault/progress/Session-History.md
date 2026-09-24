@@ -7,6 +7,20 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-24 — Session 21: Phase 6, batch 34 (full 3,000 rows)
+
+Phase 6, idx 91,000–93,999 (3,000 rows) translated and appended to
+`locale/phase6.jsonl`, taking Phase 6 to 44,000/50,000 (88.00%). User
+requested 3,000 rows/iteration up front ("tiap iterasi 3000 string ...
+langsung 3000 baris apapun yang terjadi"); delivered as one continuous
+session in six 500-row scratch passes, merged into a single batch file,
+merge-integrity-checked (3,000 unique sequential idx, no gaps/duplicates),
+then validated as a whole before appending. 1 token/placeholder mismatch
+found and fixed (idx 91400, a plain `<...>` tag translated instead of kept
+verbatim) — 0 mismatches on final validation. Overall: 129,817/461,704
+unique strings (28.12%), in-game coverage 65.00%. See [[Current-Status]]
+for full content summary.
+
 ## 2026-09-24 — Session 19: Phase 6, batch 33 (full 3,000 rows)
 
 Phase 6, idx 88,000–90,999 (3,000 rows) translated and appended to
