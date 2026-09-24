@@ -754,3 +754,29 @@ mismatches, 0 empty translations.** Update-1 is now **100% complete** (was
 25,850/31,817, ~81.25%, at the start of this session). Updated
 [[Current-Status]] to mark Update-1 "done" and recorded this session's
 work. Phase 6 was not touched this session.
+
+## 2026-09-24 — Phase 17 started
+
+At the user's request, started Phase 17 (idx 400,000–429,886) ahead of
+Phase 6, which remains active/incomplete. Batch 1: idx 400,000–400,400 (401
+rows — user asked for 3,000 rows, but the batch was cut short partway
+through translation because a single-session 3,000-row batch could not be
+translated and validated carefully within the session; the user chose to
+bank the completed portion rather than push through the rest at lower
+quality) translated and written to new file `locale/phase17.jsonl`. Mix of
+content: NPC dialogue and lore blurbs around Kaifeng/Apricot
+Village/Mirkvale (Elder Harrier's letter to the Master of Haven, Xiaoba's
+Vale water-track repairs, Mohist artisan flavor text), several classical-
+style poems, gear/skill tooltips (Etherwrath stacking, Petalwhirl
+Immobilize mechanic), and many Pinyin NPC name entries (kept verbatim per
+convention). No new terminology decisions — every case matched an existing
+[[Quick-Reference]] entry.
+
+Token/placeholder validation via the standard `TOKEN` regex script found
+**1 mismatch on the first pass**: idx 400199 had a non-standard token
+`# evaded sandstorms$hunt#` (space after the leading `#`, not a real tag)
+that was translated as `#menghindari...` without preserving the leading
+space — corrected to keep the source's exact odd spacing character-for-
+character. Re-validated at **0 mismatches** before saving. Phase 6 was not
+touched this session. Phase 17 is now 401/29,887 rows done (~1.34%);
+remaining idx 400,401–429,886 to be continued in a follow-up session.

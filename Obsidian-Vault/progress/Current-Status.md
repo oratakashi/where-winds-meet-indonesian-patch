@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-24 (session 15).** This is the single source of truth for "how
+**Last updated: 2026-09-24 (session 16).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -33,7 +33,7 @@ full timeline, see [[Session-History]]; for the phase plan, see
 | 14       | 310,000–339,999 | not started | 310,000                                      |
 | 15       | 340,000–369,999 | not started | 340,000                                      |
 | 16       | 370,000–399,999 | not started | 370,000                                      |
-| 17       | 400,000–429,886 | not started | 400,000                                      |
+| 17       | 400,000–429,886 | **active**  | **400,401** (401/29,887 rows done, 1.34%)    |
 | Update-1 | 429,887–461,703 | **done**    | — (31,817/31,817 rows done, 100%)            |
 
 Phases 0–17 draw from the original `unique_strings.jsonl` (idx 0–429,886).
@@ -42,10 +42,33 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 100,000/229,887-string "Phase 7"/"Phase 8" split with eleven ~30,000-string
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
-**Update-1 is fully complete.** Phase 6 remains the only phase in progress.
-Resume there unless the user asks otherwise — see [[Resume-Procedure]].
+**Update-1 is fully complete.** Phase 6 and Phase 17 are both in progress
+(Phase 17 was started ahead of Phase 6 at the user's explicit request).
+Resume whichever phase the user asks for; otherwise Phase 6 (larger
+remaining share) — see [[Resume-Procedure]].
 
-## Most recent session (2026-09-24, session 15)
+## Most recent session (2026-09-24, session 16) — Phase 17 started
+
+Phase 17, batch 1: idx 400,000–400,400 (401 rows) translated and written to
+new file `locale/phase17.jsonl`. The user asked for 3,000 rows in this
+session, but a single-session 3,000-row batch could not be translated and
+carefully validated within the session, so the completed portion was
+banked rather than pushing through the rest at lower quality; the
+remaining idx 400,401–429,886 will continue in a follow-up session. Mix of
+content: NPC dialogue and lore blurbs around Kaifeng/Apricot
+Village/Mirkvale (Elder Harrier's letter to the Master of Haven, Xiaoba's
+Vale water-track repairs), several classical-style poems, gear/skill
+tooltips (Etherwrath stacking, Petalwhirl Immobilize mechanic), and many
+Pinyin NPC name entries (kept verbatim per convention). No new terminology
+decisions.
+
+Token/placeholder validation via the standard `TOKEN` regex script found 1
+mismatch on the first pass (idx 400199 — a non-standard `# text$hunt#`
+token lost its leading space when translated), corrected in place.
+Re-validated at 0 mismatches before saving. Phase 6 was not touched this
+session.
+
+## Prior session (2026-09-24, session 15)
 
 Phase 6, batch 30: idx 80,000–81,999 (2,000 rows — user requested 2,000/iteration for
 this session) translated and appended to `locale/phase6.jsonl`. Total now 32,000/50,000
