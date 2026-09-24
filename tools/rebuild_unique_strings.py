@@ -26,6 +26,8 @@ def load_existing():
     seen, max_idx, count = set(), -1, 0
     with open(UNIQUE_PATH, encoding="utf-8") as f:
         for line in f:
+            if not line.strip():
+                continue
             d = json.loads(line)
             seen.add(d["v"])
             max_idx = max(max_idx, d["idx"])
@@ -81,8 +83,22 @@ def main():
         print("--dry-run: tidak ada yang ditulis")
         return
 
+    if not new_texts:
+        return
+
+    # Pastikan baris baru tidak menempel ke baris terakhir kalau file tidak
+    # diakhiri newline (akan merusak JSON baris itu).
+    with open(UNIQUE_PATH, "rb") as f:
+        size = f.seek(0, os.SEEK_END)
+        needs_nl = False
+        if size:
+            f.seek(-1, os.SEEK_END)
+            needs_nl = f.read(1) != b"\n"
+
     next_idx = max_idx + 1
-    with open(UNIQUE_PATH, "a", encoding="utf-8") as f:
+    with open(UNIQUE_PATH, "a", encoding="utf-8", newline="\n") as f:
+        if needs_nl:
+            f.write("\n")
         for v in new_texts:
             f.write(json.dumps({"idx": next_idx, "freq": freq.get(v, 0) or 1, "v": v},
                                 ensure_ascii=False) + "\n")

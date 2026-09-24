@@ -68,7 +68,9 @@ u64  capacity        e.g. 511   (always 2^k - 1)
 u64  size            number of occupied slots, e.g. ~256
 u64  seed            e.g. 0x595896DC — identical across the entire file
 
-u8[capacity]  ctrl   0x80 = empty slot; < 0x80 = occupied (H2, 7 bits)
+u8[capacity]  ctrl   0x80 = empty, 0xFE = deleted (absl kDeleted);
+                     < 0x80 = occupied (H2, 7 bits). Parsers treat every
+                     byte >= 0x80 as "no entry here".
 u8            0xFF   sentinel
 u8[15]        clone  copy of the first 15 bytes of ctrl (for SIMD probing)
 u8[...]       pad    padding up to a multiple of 8
@@ -150,9 +152,15 @@ without solving the hash: **adding a genuinely new key** to the map.
 
 `translate_words_map_en_diff` uses **the exact same container and shard
 format** as the full file — no binary structural difference. The only two
-differences, both verified on a real file (2.4 MB, 3762 shards, 31,471
-entries present out of the index block's claimed `totalEntries` of
-973,284):
+differences, both verified on real files:
+
+| Game version       | File size   | Shards | Entries present | Index `totalEntries` | Tombstones |
+| ------------------ | ----------- | ------ | --------------- | -------------------- | ---------- |
+| pre-2026-09 update | ~2.4 MB     | 3,762  | 31,471          | 973,284              | —          |
+| 2026-09 update     | 9,229,275 B | 3,229  | 212,117         | 984,927              | 2,450      |
+
+(The `_diff` shard count equals the base file's of the same version —
+3,229 for the 2026-09 base, which has 826,388 entries.)
 
 1. **Sparse.** Most shards are nearly empty — this file only carries keys
    that *changed* since the base version, not the whole map. So
@@ -193,11 +201,18 @@ content:
 
 Practical implication: never assume that a shared `keyHash` between files
 means the current text is the same. Always dump and match each file
-independently against its source text (see
-[[Glossary|translation_logs]]/`tools/expand_locale.py` /
-`tools/patch_all.py` — the translation dictionary is keyed to literal
-source text, not to hash/address, so this is automatically correct for any
-file variant).
+independently against its source text (see `tools/expand_locale.py` /
+`tools/patch_all.py` and [[Resume-Procedure]] — the translation
+dictionary is keyed to literal source text, not to hash/address, so this
+is automatically correct for any file variant).
+
+### 4.7 The `_mobile` variant
+
+`translate_words_map_en_mobile` (added to the repo 2026-09-22) is
+**byte-identical** to `translate_words_map_en` of the same version. It
+is in `tools/patch_all.py`'s `FILES` list anyway, so if a future update
+makes the two diverge, it still gets patched independently by source
+text. Re-check with a plain byte compare after each game update.
 
 ---
 
@@ -225,3 +240,30 @@ file variant).
    container.
 
 `keyHash`, `ctrl`, `capacity`, `size`, and `seed` never change.
+
+`wwm_locmap.py patch` addresses entries by `b`/`s`, which is only valid
+for the exact file version that was dumped. It therefore checks each
+record's `h` against the slot's `keyHash` and refuses to write if they
+differ (a JSONL dumped from another game version), and also refuses a
+`b`/`s` that isn't an occupied slot.
+
+## 7. Deployment: which installed copies stay patched
+
+Not a format property, but it decides which patched files are useful:
+
+- `Package\HD\oversea\locale\translate_words_map_en` and
+  `translate_words_map_en__small` — **stable**. Nothing re-verifies them;
+  a patched copy stays until the next game update replaces it.
+- `LocalData\Patch\HD\oversea\locale\translate_words_map_en_diff` — the
+  hot-patch overlay copy the running game actually loads for the `_diff`
+  layer. On every launch the NetEase patcher
+  (`StagePatchList` → `StageCheck` → `StageDownload`, logged in
+  `LocalData\patch_log\patch_log_*.txt`) compares it against a CDN
+  checksum manifest and silently re-downloads it if it differs — a patched
+  copy was observed reverted within minutes. The manifest falls back to a
+  cached copy when the CDN is unreachable, so blocking one host doesn't
+  help.
+
+So only the base and `__small` patches currently stick. The `_diff` layer
+(212,117 entries in the 2026-09 update) becomes permanent only when
+NetEase folds it into the base package in a later update.

@@ -1,0 +1,21 @@
+#!/bin/sh
+# Aktifkan sekali per clone:  git config core.hooksPath .githooks
+#
+# Kalau commit menyentuh data terjemahan, pastikan file locale valid dan blok
+# progress di Current-Status.md sudah diperbarui (tools/progress.py --write).
+staged=$(git diff --cached --name-only -- locale translation_work strings.jsonl \
+         Obsidian-Vault/progress/Current-Status.md tools)
+[ -z "$staged" ] && exit 0
+
+PY=python
+command -v "$PY" >/dev/null 2>&1 || PY=python3
+
+"$PY" tools/qa_check.py --locale "locale/*.jsonl" || {
+    echo "pre-commit: qa_check.py --locale menemukan masalah — perbaiki dulu." >&2
+    exit 1
+}
+"$PY" tools/progress.py --check || {
+    echo "pre-commit: jalankan 'python tools/progress.py --write', lalu git add" >&2
+    echo "            Obsidian-Vault/progress/Current-Status.md dan commit ulang." >&2
+    exit 1
+}

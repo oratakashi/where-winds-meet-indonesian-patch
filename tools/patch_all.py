@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 patch_all.py — terapkan dictionary terjemahan (translation_work/unique_strings.jsonl
-+ locale/phase*.jsonl) ke SEMUA varian translate_words_map_* sekaligus (base, _diff,
-__small, __small_diff), lalu repack masing-masing.
++ locale/phase*.jsonl + locale/update*.jsonl) ke SEMUA varian translate_words_map_*
+sekaligus (base, _diff, __small, __small_diff, _mobile), lalu repack masing-masing.
 
     python tools/patch_all.py [--outdir patched] [--level 12] [--files ...]
 
@@ -27,13 +27,14 @@ FILES = [
     "translate_words_map_en_diff",
     "translate_words_map_en__small",
     "translate_words_map_en__small_diff",
+    "translate_words_map_en_mobile",
 ]
 
 
 def patch_file(src_path, src_to_translated, level):
     ver, blocks = read_container(src_path)
     out_blocks = [blocks[0]]
-    total = matched = 0
+    total = matched = tombstones = 0
     for blk in blocks[1:]:
         _, _, ents = parse_shard(blk)
         vals = {}
@@ -41,6 +42,7 @@ def patch_file(src_path, src_to_translated, level):
             total += 1
             if v == TOMBSTONE:
                 vals[slot] = v
+                tombstones += 1
                 continue
             try:
                 text = v.decode('utf-8')
@@ -54,7 +56,7 @@ def patch_file(src_path, src_to_translated, level):
             else:
                 vals[slot] = v
         out_blocks.append(rebuild_shard(blk, vals))
-    return ver, out_blocks, total, matched
+    return ver, out_blocks, total, matched, tombstones
 
 
 def main():
@@ -74,12 +76,13 @@ def main():
         if not os.path.exists(src_path):
             print("skip (tidak ada):", name)
             continue
-        ver, out_blocks, total, matched = patch_file(src_path, src_to_translated, a.level)
+        ver, out_blocks, total, matched, tombstones = patch_file(src_path, src_to_translated, a.level)
         out_path = os.path.join(a.outdir, name)
         write_container(out_path, ver, out_blocks, level=a.level)
-        pct = 100 * matched / total if total else 0
-        print("%-40s entri=%-8d cocok=%-7d (%5.2f%%) -> %s"
-              % (name, total, matched, pct, out_path))
+        live = total - tombstones
+        pct = 100 * matched / live if live else 0
+        print("%-40s entri=%-8d tombstone=%-6d cocok=%-7d (%5.2f%%) -> %s"
+              % (name, total, tombstones, matched, pct, out_path))
 
 
 if __name__ == "__main__":

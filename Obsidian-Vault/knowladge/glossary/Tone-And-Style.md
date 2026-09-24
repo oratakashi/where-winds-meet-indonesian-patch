@@ -9,7 +9,7 @@ user made early in the project that everything else builds on.
 - **UI/button/system labels** (Loading, Confirm, Cancel, etc.) → neutral-casual, without
   gue/lo.
 - **Format/placeholder tokens** (`{0}`, `{}`, `%s`, `%d`, `#E`, `#aabbcc`, `#X`) must be
-  preserved exactly, same count and order as the source (automatically checked by
+  preserved exactly, same count as the source (automatically checked by
   `tools/qa_check.py`) — see [[Placeholders-And-Formatting]] for the full rule set.
 
 ## Process decisions

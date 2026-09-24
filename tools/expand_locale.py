@@ -19,23 +19,32 @@ def load_translated_map():
     idx_to_src = {}
     with open(os.path.join(ROOT, "translation_work", "unique_strings.jsonl"), encoding="utf-8") as f:
         for line in f:
+            if not line.strip():
+                continue
             d = json.loads(line)
             idx_to_src[d["idx"]] = d["v"]
 
-    src_to_translated = {}
+    src_to_translated, idx_file = {}, {}
     phase_files = sorted(
         glob.glob(os.path.join(ROOT, "locale", "phase*.jsonl"))
         + glob.glob(os.path.join(ROOT, "locale", "update*.jsonl"))
     )
     for path in phase_files:
+        name = os.path.basename(path)
         with open(path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:
                     continue
                 d = json.loads(line)
-                src = idx_to_src[d["idx"]]
-                src_to_translated[src] = d["v"]
+                i = d["idx"]
+                if i not in idx_to_src:
+                    raise ValueError("%s: idx %d tidak ada di unique_strings.jsonl" % (name, i))
+                if i in idx_file:       # jangan biarkan last-wins diam-diam
+                    raise ValueError("idx %d diterjemahkan dua kali: %s dan %s"
+                                     % (i, idx_file[i], name))
+                idx_file[i] = name
+                src_to_translated[idx_to_src[i]] = d["v"]
     return src_to_translated, phase_files
 
 
