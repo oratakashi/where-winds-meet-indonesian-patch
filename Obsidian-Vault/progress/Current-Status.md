@@ -14,28 +14,27 @@ full timeline, see [[Session-History]]; for the phase plan, see
 
 ## Phase status
 
-| Phase | Range           | Status      | Next idx                                       |
-| ----- | --------------- | ----------- | ---------------------------------------------- |
-| 0     | 0–799           | done        | —                                              |
-| 1     | 800–1,999       | done        | —                                              |
-| 2     | 2,000–4,999     | done        | —                                              |
-| 3     | 5,000–9,999     | done        | —                                              |
-| 4     | 10,000–19,999   | done        | —                                              |
-| 5     | 20,000–49,999   | done        | —                                              |
-| 6     | 50,000–99,999   | **active**  | **82,000** (32,000/50,000 rows done, 64.00%)   |
-| 7     | 100,000–129,999 | not started | 100,000                                        |
-| 8     | 130,000–159,999 | not started | 130,000                                        |
-| 9     | 160,000–189,999 | not started | 160,000                                        |
-| 10    | 190,000–219,999 | not started | 190,000                                        |
-| 11    | 220,000–249,999 | not started | 220,000                                        |
-| 12    | 250,000–279,999 | not started | 250,000                                        |
-| 13    | 280,000–309,999 | not started | 280,000                                        |
-| 14    | 310,000–339,999 | not started | 310,000                                        |
-| 15    | 340,000–369,999 | not started | 340,000                                        |
-| 16    | 370,000–399,999 | not started | 370,000                                        |
-| 17    | 400,000–429,886 | not started | 400,000                                        |
-| Update-1 | 429,887–461,703 | **done** | — (31,817/31,817 rows done, 100%) |
-
+| Phase    | Range           | Status      | Next idx                                     |
+| -------- | --------------- | ----------- | -------------------------------------------- |
+| 0        | 0–799           | done        | —                                            |
+| 1        | 800–1,999       | done        | —                                            |
+| 2        | 2,000–4,999     | done        | —                                            |
+| 3        | 5,000–9,999     | done        | —                                            |
+| 4        | 10,000–19,999   | done        | —                                            |
+| 5        | 20,000–49,999   | done        | —                                            |
+| 6        | 50,000–99,999   | **active**  | **82,000** (32,000/50,000 rows done, 64.00%) |
+| 7        | 100,000–129,999 | not started | 100,000                                      |
+| 8        | 130,000–159,999 | not started | 130,000                                      |
+| 9        | 160,000–189,999 | not started | 160,000                                      |
+| 10       | 190,000–219,999 | not started | 190,000                                      |
+| 11       | 220,000–249,999 | not started | 220,000                                      |
+| 12       | 250,000–279,999 | not started | 250,000                                      |
+| 13       | 280,000–309,999 | not started | 280,000                                      |
+| 14       | 310,000–339,999 | not started | 310,000                                      |
+| 15       | 340,000–369,999 | not started | 340,000                                      |
+| 16       | 370,000–399,999 | not started | 370,000                                      |
+| 17       | 400,000–429,886 | not started | 400,000                                      |
+| Update-1 | 429,887–461,703 | **done**    | — (31,817/31,817 rows done, 100%)            |
 
 Phases 0–17 draw from the original `unique_strings.jsonl` (idx 0–429,886).
 Update-1 is the addition from the 2026-09-16 game update (idx
@@ -158,8 +157,7 @@ Token/placeholder validation via the standard `TOKEN` regex script found
 lines (e.g. idx 453656, 453754, 453776, 453884, 455027) that had been
 translated instead of kept verbatim per Quick-Reference §6 rule 1 (a plain
 `<...>` tag without `|id|#C|n>` format must stay in English untouched) —
-reverted to the source text; the other 4 (idx 454095, 454164, 454252,
-455165) were `#Y...#E` color-tag wraps dropped or mistyped
+reverted to the source text; the other 4 (idx 454095, 454164, 454252, 455165) were `#Y...#E` color-tag wraps dropped or mistyped
 (`#Ditumpuk#E` instead of `#Ytumpuk#E`, and a missing wrap around
 "Enhancement"/"Max-tuned") while restructuring sentences — corrected in
 place. Re-validated at **0 mismatches** before appending. Full-file
@@ -222,7 +220,7 @@ around the translated sentence.
 
 Token/placeholder validation via the standard `TOKEN` regex script found
 **3 mismatches on the first pass** (idx 450595, 451246, 452491) — all
-caused by translating text that lived *inside* a `<...>` tag (a
+caused by translating text that lived _inside_ a `<...>` tag (a
 skill-name possessive, an "Inebriate-enhanced skills" label) instead of
 leaving the tag byte-identical, plus one dropped `#Y`/`#E` pair on a
 multi-clause string. All three were corrected in place and the batch was
@@ -245,6 +243,6 @@ full change log. Given a larger batch (e.g. 3,000), sessions should budget
 more tool-call rounds for reading source chunks (the `Read` tool caps out
 well under 1,000 lines for this file, so a 3,000-row batch needs ~10
 sequential 250–300-line reads) and should re-run the token/placeholder
-validation script directly against the merged scratch file *before*
+validation script directly against the merged scratch file _before_
 appending — the larger the batch, the more likely a stray tag-content edit
 slips in somewhere in the middle.
