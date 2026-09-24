@@ -867,3 +867,39 @@ content. Re-validated at 0 mismatches. After merging batch 1 + batch 2,
 400,000–400,999, no gaps, no duplicate idx.** Phase 17 is now 1,000/29,887
 rows done (~3.35%); remaining idx 401,000–429,886 to be continued in a
 follow-up session. Phase 6 was not touched this session.
+
+## 2026-09-24, session 23 — Phase 17 batch (idx 404,000–406,999, 3,000 rows)
+
+At the user's explicit request, this session and all future Phase 17
+sessions batch 3,000 rows per iteration (up from the 1,000-row default used
+earlier). Resumed at the prior session's stopping point, idx 404,000 (4,000/29,887
+rows done), and translated straight through to idx 406,999 in six
+~500-row sub-batches, each translated, token-validated with
+`tools/qa_check.py --locale`, and appended progressively to
+`locale/phase17.jsonl`. Mix of content: the Northern Vow/Wang Qing main
+narrative arc (He Ran's devotion backstory, the 772 Anxi Army edict, the
+white-haired-demon Mohist-disciple cliffhanger, the Jiang Yi/Han Wei/Ling
+Yuming "Dream of Mountains and Seas" music novella, the Liu Zhuang
+bell-ringer short story), a very large volume of Homestead/crafting/gear
+and skill-tooltip strings, Guandan/card-game rules text, and a long run of
+Pinyin NPC names and quest/location labels (kept verbatim per convention).
+No new terminology decisions — every case matched an existing
+[[Quick-Reference]] entry.
+
+Token/placeholder validation found **7 mismatches** across the seven
+sub-batches, all corrected before appending: idx 404233 (a
+`<Strategic Sword's|...>` stat tag — dropped the apostrophe-s; tag content
+must match source byte-for-byte, not just token count), idx 404267,
+404502, 406669, and 406903 (plain `<...>` tags — `<sobs>`, `<in unison>`,
+`<thinking>`, `<On it!>` — mistakenly translated instead of left in English
+per [[Placeholders-And-Formatting]] rule 1), idx 404319 (bare `#h`/`#w`
+stray-hash tokens from "#here"/"#wanderer" translated along with the words
+around them instead of preserving the exact letter after `#`), and idx
+406432 (a `<Max Physical Attack|...>` stat-tag name translated instead of
+kept in English). Every sub-batch was re-validated at 0 mismatches before
+appending, and a final `qa_check.py --locale "locale/*.jsonl"` across the
+whole dictionary (138,817 entries) also came back clean.
+
+Phase 17 is now 7,000/29,887 rows done (23.42%). Overall: 138,817/461,704
+unique strings (30.07%), in-game coverage 66.33%. Phase 6 was not touched
+this session.
