@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-24 (session 12).** This is the single source of truth for "how
+**Last updated: 2026-09-24 (session 13).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -34,7 +34,7 @@ full timeline, see [[Session-History]]; for the phase plan, see
 | 15    | 340,000–369,999 | not started | 340,000                                        |
 | 16    | 370,000–399,999 | not started | 370,000                                        |
 | 17    | 400,000–429,886 | not started | 400,000                                        |
-| Update-1 | 429,887–461,703 | **active** | **452,737** (22,850/31,817 rows done, ~71.82%) |
+| Update-1 | 429,887–461,703 | **active** | **455,737** (25,850/31,817 rows done, ~81.25%) |
 
 
 Phases 0–17 draw from the original `unique_strings.jsonl` (idx 0–429,886).
@@ -47,7 +47,40 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 doesn't say which one to continue, ask before starting — see
 [[Resume-Procedure]].
 
-## Most recent session (2026-09-24, session 12)
+## Most recent session (2026-09-24, session 13)
+
+Update-1, batch 21: idx 452,737–455,736 (3,000 rows — new batch size per
+user request, "tiap iterasi 3000 string") translated and appended to
+`locale/update1.jsonl`. Total now 25,850/31,817 rows done for Update-1
+(~81.25%). Mix of content: Mirkvale/Xiaoba mechanism-repair storyline
+(the Diversion Complex fix, Wooden Eagle assembly, several music-box/kite
+inventions), Mohist Hill lore (the Derivation Array maze, cremation
+tradition origin story of Grandmaster Parrot and Parakeet, Gongshu Hui's
+"wisdom" backstory), many Sheathed Passage/Raging Tides war-letter entries
+(Shi Jiuge's commander correspondence, the northern-foe hostage situation),
+gear/skill tooltips (Bamboocut - Draught Inebriate/Deepdaze mechanics
+across many tiers, Riven Twinblades/Skystrike Gauntlets combo rotations,
+Cleftpeak/Etherwrath/Jadeclasp set-effect stat blocks), casual gue/lo NPC
+dialogue throughout Homestead/Search-Fight-Extract/Cutie-Showdown flavor
+text, and a large run of gear-chest/tile description strings.
+
+Token/placeholder validation via the standard `TOKEN` regex script found
+**9 mismatches on the first pass**: 5 were `<...>`-wrapped inner-thought
+lines (e.g. idx 453656, 453754, 453776, 453884, 455027) that had been
+translated instead of kept verbatim per Quick-Reference §6 rule 1 (a plain
+`<...>` tag without `|id|#C|n>` format must stay in English untouched) —
+reverted to the source text; the other 4 (idx 454095, 454164, 454252,
+455165) were `#Y...#E` color-tag wraps dropped or mistyped
+(`#Ditumpuk#E` instead of `#Ytumpuk#E`, and a missing wrap around
+"Enhancement"/"Max-tuned") while restructuring sentences — corrected in
+place. Re-validated at **0 mismatches** before appending. Full-file
+re-validation after append: `locale/update1.jsonl` now 25,850 lines, all
+idx unique and sequential, 0 duplicates, 0 token mismatches.
+
+No new terminology decisions this session — every case matched an existing
+[[Glossary]] entry.
+
+## Prior session (2026-09-24, session 12)
 
 Phase 6, batch 27: idx 76,000–76,999 (1,000 rows — user requested 1,000 for
 this session, overriding the 3,000 default set by the prior parallel
