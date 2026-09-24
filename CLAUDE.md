@@ -5,9 +5,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A reverse-engineering toolkit for the `translate_words_map_*` localization file format used by
-**Where Winds Meet** (NetEase / Everstone Studio, Messiah Engine). This repo ships only the
-tool and format documentation (Indonesian-language) — not any game text, translation packs, or
-extracted content. See "Never commit game content" below before touching working files.
+**Where Winds Meet** (NetEase / Everstone Studio, Messiah Engine), plus an in-progress
+Indonesian translation built with it. Note the repo **does** track game-derived data: the
+`translate_words_map_en*` binaries, the `strings.jsonl` dump, `translation_work/unique_strings.jsonl`
+(extracted source text) and `locale/*.jsonl` (translations). `.gitignore` lists some of these, but
+they were committed before that and remain tracked — keeping them tracked is the owner's decision.
+Don't add new extracted dumps (`strings_diff.jsonl`, `strings.translated.jsonl`, `patched/`, ...);
+those stay ignored.
 
 ## Commands
 
@@ -17,11 +21,15 @@ pip install -r requirements.txt      # only dependency: zstandard
 python wwm_locmap.py info  <src>                     # print header/entry counts, sanity-check parser
 python wwm_locmap.py dump  <src> <out.jsonl>          # decode container -> one JSON object per line
 python wwm_locmap.py patch <src> <edits.jsonl> <out>  # re-encode: overlay edits.jsonl onto src, write out
-                                                       #   --level Nsets zstd level (default 19; use 10-12 for fast iteration)
+                                                       #   --level N sets zstd level (default 19; use 10-12 for fast iteration)
+                                                       #   refuses records whose `h` doesn't match the slot's keyHash
 
 python tools/qa_check.py <original.jsonl> <translated.jsonl> [--report qa.jsonl]
                                                        # validates a translated JSONL against the source JSONL
                                                        # exit code 1 if findings exist (CI/pre-commit friendly)
+python tools/qa_check.py --locale "locale/*.jsonl"     # same checks on per-idx translation files vs.
+                                                       # unique_strings.jsonl, plus idx gap/duplicate checks —
+                                                       # the per-batch validator for translation sessions
 
 python tools/expand_locale.py [--strings X.jsonl] [--out Y.jsonl]
                                                        # build a patch JSONL for ANY single dump by matching its
@@ -34,11 +42,20 @@ python tools/rebuild_unique_strings.py [--dry-run]    # after a game update: app
                                                        # strings.jsonl + strings_diff.jsonl + strings_small.jsonl +
                                                        # strings_small_diff.jsonl
 
+python tools/progress.py [--write | --check]          # compute overall/per-phase translation progress;
+                                                       # --write regenerates the block in Current-Status.md,
+                                                       # --check exits 1 if that block is stale (CI)
+
 python tools/patch_all.py [--outdir patched] [--level N]
-                                                       # apply the translation dictionary to all four
-                                                       # translate_words_map_* variants at once, writing
+                                                       # apply the translation dictionary to every
+                                                       # translate_words_map_* variant (base, _diff, __small,
+                                                       # __small_diff, _mobile) at once, writing
                                                        # repacked copies under --outdir
 ```
+
+`translation_work/build_unique.py` is the one-time bootstrap that created `unique_strings.jsonl`.
+Never re-run it: it renumbers every idx and silently breaks all `locale/*.jsonl` progress (it now
+refuses to run when the file exists). Use `rebuild_unique_strings.py` instead.
 
 There is no test suite; correctness is verified by round-tripping a real
 `translate_words_map_en` file through `info` → `dump` → `patch` → `info` and diffing entries.
@@ -59,6 +76,21 @@ in this file. Before starting or continuing a translation session, read:
 - `Obsidian-Vault/knowladge/Glossary.md` — the full topic-file index (only needed for a case
   Quick-Reference doesn't cover, or its reasoning/history).
 - `Obsidian-Vault/translation_logs/Phase-N.md` — the historical reasoning behind past decisions, per phase.
+
+**Every translation session must end by running `python tools/progress.py --write`** and quoting
+its overall line (unique strings done/total/% and in-game coverage %) in the session write-ups and
+the final message to the user. The "Overall progress" / "Phase status" tables in
+`Current-Status.md` are generated by that script — never edit them by hand. CI
+(`.github/workflows/translation-qa.yml`) runs `qa_check.py --locale` and `progress.py --check` on
+every PR touching `locale/`. A new `locale/updateN.jsonl` or phase file must be added to `PHASES`
+in `tools/progress.py` (the script refuses to run otherwise).
+
+Local sessions are enforced by two hooks as well:
+- `.claude/settings.json` registers a **Stop hook** (`tools/hooks/claude_stop_check.py`): if
+  `locale/` has uncommitted changes and the progress block is stale, Claude is blocked from ending
+  the turn until it runs `progress.py --write` and reports the overall line.
+- `.githooks/pre-commit` runs `qa_check.py --locale` + `progress.py --check` on any commit that
+  touches translation data. Enable it once per clone: `git config core.hooksPath .githooks`.
 
 ## Do not use subagents
 
@@ -113,6 +145,9 @@ literal source text, not by file/block/slot/hash, applying it to a new variant n
 work: dump the file, match its `v` text against the dictionary (`tools/expand_locale.py` or
 `tools/patch_all.py`), patch it back. Same recipe for `__small_diff`, main `_diff`, and any future
 variant NetEase adds — add its name to `FILES` in `tools/patch_all.py`.
+
+`translate_words_map_en_mobile` (2026-09-22) is byte-identical to `translate_words_map_en`; it is
+in `FILES` anyway so it keeps working if the two ever diverge.
 
 ### Deployment gotcha: the installed `_diff` file gets re-verified by the game's own CDN patcher
 
@@ -183,9 +218,12 @@ Three checks run per entry when comparing original vs. translated JSONL:
 
 1. `PROMPT_LEAK` — translated value contains a known LLM/MT system-prompt fragment
    (`LEAK_SIGNATURES` tuple — extend this when a new prompt-leak variant is found).
-2. `MARKUP` — the multiset of format tokens (`TOKEN` regex: `#E`, `#aabbcc`, `#X` format codes,
-   `%s`/`%d`, `{0}`-style placeholders) differs between source and translation. These tokens must
-   never be translated, reordered-in-count, or dropped, or the game UI renders incorrectly.
+2. `MARKUP` — the multiset of format tokens (`TOKEN` regex: `#aabbcc` colors, `#X` format codes
+   incl. `#E`, `%s`/`%d`, `{...}` placeholders, `<...>` tags) differs between source and
+   translation. Counts are compared, not order. These tokens must never be translated, added, or
+   dropped, or the game UI renders incorrectly. The 6-digit hex alternative must stay before the
+   1-letter one, or `#e9a35f` tokenizes as `#e` and a damaged color passes. `TOKEN` is the single
+   source of truth — the vault docs point to it instead of carrying their own regex.
 3. `EMPTY` — source is non-empty but translation is blank.
 
 Entries missing from the translated file are treated as intentionally left untranslated (not an
@@ -200,7 +238,8 @@ flagged — there is no source text to check.
 ```
 
 `b`/`s` (block/slot) form the entry's address and are required by `patch`. `h` (keyHash) is
-reference-only — never modify it. `v` is the only field to edit. `patch` only overwrites entries
+never modified; when present, `patch` checks it against the target slot and aborts on a mismatch
+(the JSONL was dumped from a different game version). `v` is the only field to edit. `patch` only overwrites entries
 present in the given JSONL; everything else is carried over from the source file, so partial
 patches are supported.
 
