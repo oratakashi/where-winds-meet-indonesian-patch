@@ -778,5 +778,21 @@ Token/placeholder validation via the standard `TOKEN` regex script found
 that was translated as `#menghindari...` without preserving the leading
 space — corrected to keep the source's exact odd spacing character-for-
 character. Re-validated at **0 mismatches** before saving. Phase 6 was not
-touched this session. Phase 17 is now 401/29,887 rows done (~1.34%);
-remaining idx 400,401–429,886 to be continued in a follow-up session.
+touched this session.
+
+Later the same session, the user asked to continue to a round 1,000-row
+milestone. Batch 2: idx 400,401–400,999 (599 rows) translated and appended
+in-session (merged into `locale/phase17.jsonl` directly, no separate
+sub-file kept). Mix of content: more Kaifeng/Mirkvale NPC dialogue and
+lore (Wang Fen's lost-daughter story, the Crow Brew lore entry, Doudou the
+palace cat's vignette), gear/skill tooltips (Thundercry Blade defensive
+riposte mechanic), and many Pinyin NPC name entries. Token/placeholder
+validation found **2 mismatches**: idx 400754 and idx 400861, both §6
+rule violations where a `<...>` tag (one wrapping a full sentence, one
+wrapping a short stage direction `<shakes head>`) had been translated
+instead of kept verbatim — corrected to restore the original English tag
+content. Re-validated at 0 mismatches. After merging batch 1 + batch 2,
+`locale/phase17.jsonl` was re-checked as a whole: **1,000 total rows, idx
+400,000–400,999, no gaps, no duplicate idx.** Phase 17 is now 1,000/29,887
+rows done (~3.35%); remaining idx 401,000–429,886 to be continued in a
+follow-up session. Phase 6 was not touched this session.

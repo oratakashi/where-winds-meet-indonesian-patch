@@ -33,7 +33,7 @@ full timeline, see [[Session-History]]; for the phase plan, see
 | 14       | 310,000–339,999 | not started | 310,000                                      |
 | 15       | 340,000–369,999 | not started | 340,000                                      |
 | 16       | 370,000–399,999 | not started | 370,000                                      |
-| 17       | 400,000–429,886 | **active**  | **400,401** (401/29,887 rows done, 1.34%)    |
+| 17       | 400,000–429,886 | **active**  | **401,000** (1,000/29,887 rows done, 3.35%)  |
 | Update-1 | 429,887–461,703 | **done**    | — (31,817/31,817 rows done, 100%)            |
 
 Phases 0–17 draw from the original `unique_strings.jsonl` (idx 0–429,886).
@@ -49,24 +49,28 @@ remaining share) — see [[Resume-Procedure]].
 
 ## Most recent session (2026-09-24, session 16) — Phase 17 started
 
-Phase 17, batch 1: idx 400,000–400,400 (401 rows) translated and written to
-new file `locale/phase17.jsonl`. The user asked for 3,000 rows in this
-session, but a single-session 3,000-row batch could not be translated and
-carefully validated within the session, so the completed portion was
-banked rather than pushing through the rest at lower quality; the
-remaining idx 400,401–429,886 will continue in a follow-up session. Mix of
-content: NPC dialogue and lore blurbs around Kaifeng/Apricot
+Phase 17, batches 1–2: idx 400,000–400,999 (1,000 rows total) translated
+and written to new file `locale/phase17.jsonl`. The user originally asked
+for 3,000 rows; batch 1 (401 rows) was banked first rather than rushing
+the full 3,000 at lower quality, then batch 2 (599 rows) continued in the
+same session at the user's request to reach a round 1,000-row milestone.
+Mix of content: NPC dialogue and lore blurbs around Kaifeng/Apricot
 Village/Mirkvale (Elder Harrier's letter to the Master of Haven, Xiaoba's
-Vale water-track repairs), several classical-style poems, gear/skill
-tooltips (Etherwrath stacking, Petalwhirl Immobilize mechanic), and many
-Pinyin NPC name entries (kept verbatim per convention). No new terminology
-decisions.
+Vale water-track repairs, Wang Fen's lost-daughter story, Crow Brew lore),
+several classical-style poems, gear/skill tooltips (Etherwrath stacking,
+Petalwhirl Immobilize mechanic, Thundercry Blade defensive riposte), and
+many Pinyin NPC name entries (kept verbatim per convention). No new
+terminology decisions — every case matched an existing [[Quick-Reference]]
+entry.
 
-Token/placeholder validation via the standard `TOKEN` regex script found 1
-mismatch on the first pass (idx 400199 — a non-standard `# text$hunt#`
-token lost its leading space when translated), corrected in place.
-Re-validated at 0 mismatches before saving. Phase 6 was not touched this
-session.
+Token/placeholder validation via the standard `TOKEN` regex script found 3
+mismatches across both batches: idx 400199 (a non-standard `# text$hunt#`
+token lost its leading space), idx 400754 and idx 400861 (§6 rule 1/3
+violations — a `<...>` tag wrapping a full sentence, and one wrapping a
+short stage direction, were translated instead of kept verbatim). All
+corrected in place. Re-validated at 0 mismatches before saving. Full-file
+check after merging both batches: 1,000 lines, idx 400,000–400,999 with no
+gaps or duplicates. Phase 6 was not touched this session.
 
 ## Prior session (2026-09-24, session 15)
 
