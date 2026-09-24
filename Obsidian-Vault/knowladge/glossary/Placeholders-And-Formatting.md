@@ -6,9 +6,16 @@ Read this file before translating anything containing `#`, `%`, `{`, `<`, or `$`
 
 ## The baseline rule
 
-Format/placeholder tokens (`{0}`, `{}`, `%s`, `%d`, `#E`, `#aabbcc`, `#X`) must be preserved
-exactly, same count and order as the source. This is automatically checked by
-`tools/qa_check.py`'s `TOKEN` regex: `#[A-Za-z]|#[0-9a-fA-F]{6}|%s|%d|\{[^}]*\}|<[^>]*>`.
+Format/placeholder tokens (`{0}`, `{}`, `%s`, `%d`, `#E`, `#aabbcc`, `#X`, `<...>`) must be
+preserved exactly, same count as the source (order may change to fit Indonesian word order —
+the check compares token counts, not positions). This is automatically checked by
+`tools/qa_check.py`'s `TOKEN` regex: `#[0-9a-fA-F]{6}|#[A-Za-z]|%[sd]|\{[^}]*\}|<[^>]*>`, both
+by `--locale` mode (per batch, against `unique_strings.jsonl`) and by the dump-vs-dump mode.
+
+The 6-digit hex alternative is tried **before** the 1-letter code on purpose. Until 2026-09-24
+the per-batch script in [[Resume-Procedure]] had them the other way round, so `#e9a35f` was
+tokenized as `#e` and a damaged color code slipped through (idx 54382, see the `#`-tag gotchas
+below).
 
 ## `<...>` tag gotchas
 
@@ -50,6 +57,11 @@ exactly, same count and order as the source. This is automatically checked by
   only matches the first 6 characters after `#` as the color token; the rest (trailing
   digits + word, e.g. "120 Points") is free text safe to translate ("Points" → "Poin"). See
   [[Translated-Common-Terms]]. *(Phase 5 continuation, idx 21000–21999)*
+  - **Corollary: a hex digit glued to the following word belongs to the color.** At idx 54382
+    the source is `#e9a35for better rewards#E`: the token is `#e9a35f`, the text is "or better
+    rewards". The translation must keep the `f` (`#e9a35funtuk hadiah lebih baik#E`); writing
+    `#e9a35untuk…` produces a 5-digit color the game can't parse. Found and fixed during the
+    2026-09-24 tooling review. *(Phase 6)*
 - **The stray tag pattern `#Ttext` that happens to match the `TOKEN` regex as `#T`** (not a
   real highlight tag) — e.g. idx 434808 and idx 444071 `"#Talk to the Dog"` — leave `#Talk`
   intact at the start, translate the rest (`#Talk dengan Anjing`). *([[Update-1]], batch 8)*

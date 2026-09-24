@@ -188,6 +188,9 @@ python wwm_locmap.py patch translate_words_map_en strings.jsonl translate_words_
 When working with translation batches in `translation_work/unique_strings.jsonl` and `locale/phase*.jsonl`, execute these three commands to generate a clean, validated build:
 
 ```bash
+# 0. Validate the per-idx translation files themselves (tokens, empty values, idx gaps/duplicates)
+python tools/qa_check.py --locale "locale/*.jsonl"
+
 # 1. Expand translation dictionary against the original dump
 python tools/expand_locale.py
 
@@ -202,7 +205,8 @@ Notes:
 - Step 1 expects `strings.jsonl` (generated via `wwm_locmap.py dump`) to be present in the workspace root.
 - If Step 2 fails with exit code `1`, inspect `qa_report.jsonl` and rectify the flagged strings before proceeding.
 - Copy `translate_words_map_en.id` to the game's locale directory as `translate_words_map_en`.
-- To patch all file variants (`base`, `_diff`, `__small`, `__small_diff`) at once, use `tools/patch_all.py`.
+- To patch all file variants (`base`, `_diff`, `__small`, `__small_diff`, `_mobile`) at once, use `tools/patch_all.py`.
+- `wwm_locmap.py patch` refuses a JSONL whose `h` values don't match the target file (i.e. one dumped from a different game version) — re-dump after every game update.
 
 ---
 
@@ -212,6 +216,7 @@ Upstream game patches frequently ship new or modified localization files alongsi
 - `translate_words_map_en_diff`: Sparse delta table between major releases.
 - `translate_words_map_en__small`: Separate isolated table for UI / system modules.
 - `translate_words_map_en__small_diff`: Delta table for the small variant.
+- `translate_words_map_en_mobile`: Currently byte-identical to the base table; patched independently anyway.
 
 Because the underlying container and shard layout are identical, use the following sequence after a patch:
 
@@ -392,7 +397,7 @@ Please review the following disclaimers before utilizing this toolkit:
 │   ├── expand_locale.py             # Expands unique dictionary entries into a full patch JSONL
 │   ├── rebuild_unique_strings.py    # Merges upstream patch deltas without invalidating existing indices
 │   └── patch_all.py                 # In-memory batch patcher for all translate_words_map_* variants
-├── locale/                          # Phase-based translation batches (phase0..phase6, update1)
+├── locale/                          # Phase-based translation batches (phase0..phase6, phase17, update1)
 ├── translation_work/                # Master deduplicated index (unique_strings.jsonl)
 ├── Obsidian-Vault/                  # Full project documentation & translation memory
 │   ├── knowladge/

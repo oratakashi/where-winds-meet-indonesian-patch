@@ -1,23 +1,26 @@
 # Resume Procedure
 
 Step-by-step checklist for picking up a translation session, plus the token
-validation script that must pass before any batch is appended. See
+validation that must pass before any batch is appended. See
 [[Current-Status]] for where things stand right now and [[Glossary]] for the
 rules to apply while translating.
 
 ## How these files relate
 
-- `translation_work/unique_strings.jsonl` — 429,887 unique strings, ordered by
-  descending frequency (idx 0..N-1), plus 31,817 more appended after the
-  2026-09 update (idx up to 461,703 — see [[Update-1]]).
+- `translation_work/unique_strings.jsonl` — 461,704 unique strings (idx
+  0–461,703): the original 429,887 ordered by descending frequency (idx
+  0–429,886), plus 31,817 appended after the 2026-09 update (idx
+  429,887–461,703 — see [[Update-1]]). Never regenerate it with
+  `translation_work/build_unique.py` (that would renumber every idx); new
+  strings are only ever appended by `tools/rebuild_unique_strings.py`.
 - `locale/phase*.jsonl` — translation output, append-only,
   `{"idx": N, "v": "..."}` per line, one file per phase (see
   [[Phase-Roadmap]]). The last line in the active phase's file marks the
   most recently completed idx.
 - Progress tracking itself lives in [[Current-Status]] (snapshot),
   [[Session-History]] (chronological log), and this file (how to pick a
-  session back up, below). See "After all phases" further down for how
-  these two files eventually get merged into a deployable patch.
+  session back up, below). See "Building a playable patch" further down
+  for how these files get merged into a deployable patch.
 
 ## How to resume a session
 
@@ -42,20 +45,28 @@ rules to apply while translating.
 5. Translate each `v` per [[Glossary]], writing to a scratch file as
    `{"idx": N, "v": "..."}` per line (idx stays the **absolute** idx from
    `unique_strings.jsonl`), in ascending idx order.
-6. **Validate before appending — no exceptions**: run the token/placeholder
-   check below to make sure `#E`, `#aabbcc`, `#X`, `%s`, `%d`, `{0}`, etc.
-   match the source exactly in count and order. This is the same check
-   `tools/qa_check.py` runs later.
+6. **Validate before appending — no exceptions**: run
+   `python tools/qa_check.py --locale <scratch file>` (see below) to make
+   sure `#E`, `#aabbcc`, `#X`, `%s`, `%d`, `{0}`, `<...>` etc. appear the
+   same number of times as in the source.
 7. Append the batch to `locale/phase{N}.jsonl` (the currently active
    phase's file — **never** write into another phase's file; if the active
    phase's idx range runs out partway through a batch, cut the batch there
    and let the remainder start a new `locale/phase{N+1}.jsonl`). Confirm idx
-   stays strictly sequential with no gaps/duplicates within each file (see
-   the validation script below — just change the filename).
-8. Update [[Current-Status]] (last completed idx, phase, session date, and
-   any new terminology decisions — also add those to [[Glossary]] and the
-   matching `translation_logs/Phase-N` file) and append an entry to
-   [[Session-History]]. If a new decision is a high-value/frequently-
+   stays strictly sequential with no gaps/duplicates within each file
+   (`qa_check.py --locale` on the phase file checks this too).
+8. **Refresh the overall progress — mandatory, every session:** run
+   `python tools/progress.py --write`. It recomputes the "Overall progress"
+   and "Phase status" tables in [[Current-Status]] from `locale/*.jsonl`
+   and `strings.jsonl` — never type those numbers by hand (CI runs
+   `tools/progress.py --check` and fails a PR whose block is stale). Then
+   update the prose in [[Current-Status]] (session date/number, what the
+   batch contained, any new terminology decisions — also add those to
+   [[Glossary]] and the matching `translation_logs/Phase-N` file) and
+   append an entry to [[Session-History]]. Both session write-ups and the
+   end-of-session message to the user must quote the overall line from the
+   script output, e.g. "Overall: 123,817 / 461,704 unique strings (26.82%),
+   in-game coverage 64.20%". If a new decision is a high-value/frequently-
    recurring pattern (not a one-off edge case), also add a one-line entry
    to [[Quick-Reference]] — otherwise the cheat-sheet goes stale and future
    sessions fall back to opening the full topic files anyway. Niche
@@ -93,71 +104,66 @@ over. Keep it to a handful of calls per session:
   label can still resolve to a plausible source row without tripping the
   regex check. See [[Session-History]] §2026-09-22 batch 18 for a case
   where this happened.
-- Run the token/placeholder validation script **once** at the end and
+- Run the token/placeholder validation **once** at the end and
   trust its "0 mismatches" output — don't re-open the full phase file or
   `unique_strings.jsonl` afterward just to double-check by eye.
 - If a batch feels too big to translate carefully in one pass, reduce the
   batch size for next session (see [[Current-Status]]) rather than
   splitting this session's batch into many small read/write/verify loops.
 
-## Token/placeholder validation script
+## Token/placeholder validation
 
-Run from the repo root (swap `phase4.jsonl` for whichever phase file is
-active):
-
-```python
-import json, re
-from collections import Counter
-
-TOKEN = re.compile(r'#[A-Za-z]|#[0-9a-fA-F]{6}|%s|%d|\{[^}]*\}|<[^>]*>')
-
-src = {}
-with open('translation_work/unique_strings.jsonl', encoding='utf-8') as f:
-    for line in f:
-        d = json.loads(line)
-        src[d['idx']] = d['v']
-
-mismatches = []
-with open('locale/phase4.jsonl', encoding='utf-8') as f:  # <- change to the active phase
-    for line in f:
-        d = json.loads(line)
-        s = src[d['idx']]
-        t = d['v']
-        cs = Counter(TOKEN.findall(s))
-        ct = Counter(TOKEN.findall(t))
-        if cs != ct:
-            mismatches.append((d['idx'], s, t))
-
-print('mismatches:', len(mismatches))
-for m in mismatches[:20]:
-    print(m)
-```
-
-For a full cross-phase check (also useful to confirm no idx is duplicated
-across two different phase files), glob `locale/phase*.jsonl`, load every
-line, and run the same comparison over the combined set.
-
-Some placeholders are **not** caught by the `TOKEN` regex above but must
-still be preserved character-for-character: `$VAR$`/`$P`/`$N`-style
-variables, `@T[...]`/`@t[...]` date placeholders, `$link<...>^ID^$` link
-blocks, and literal duration shorthand outside of tags. See [[Glossary]] and
-the relevant `translation_logs/Phase-N` file for the full list — these need
-a manual check on top of the automated script.
-
-## After all phases (or a chosen stopping point) are done
-
-Not yet implemented as a script. The plan: read
-`translation_work/unique_strings.jsonl` plus every `locale/phase*.jsonl`
-(merged) to build a `source text → translated text` dictionary, then stream
-the original `strings.jsonl`, replacing the `v` field per that dictionary
-(skipping/keeping the original where nothing was translated yet — partial
-translation is supported by `patch`, per `CLAUDE.md`), writing the result to
-`strings.translated.jsonl`. Then run:
+Run from the repo root on the merged scratch file, then on the phase file
+after appending:
 
 ```bash
-python tools/qa_check.py strings.jsonl strings.translated.jsonl
-python wwm_locmap.py patch translate_words_map_en strings.translated.jsonl <out>
+python tools/qa_check.py --locale scratch_batch.jsonl
+python tools/qa_check.py --locale locale/phase6.jsonl     # <- the active phase
+python tools/qa_check.py --locale "locale/*.jsonl"        # full cross-file check
 ```
+
+It looks every `idx` up in `translation_work/unique_strings.jsonl` and
+reports `MARKUP` (token counts differ), `EMPTY`, `PROMPT_LEAK`, and `IDX`
+(unknown idx, gap/out-of-order idx within a file, or an idx duplicated
+across files). Exit code 0 = clean. Token order is **not** checked — moving
+a token to fit Indonesian word order is fine as long as none is added,
+dropped, or altered.
+
+This replaces the inline Python snippet older sessions copy-pasted from
+here. That snippet's regex tried `#[A-Za-z]` before `#[0-9a-fA-F]{6}`, so a
+color like `#e9a35f` was read as `#e` and a damaged color code passed
+(idx 54382 — see [[Placeholders-And-Formatting]]). There is now one regex,
+the `TOKEN` constant in `tools/qa_check.py`; don't write a separate one.
+
+Some placeholders are **not** caught by the `TOKEN` regex but must still be
+preserved character-for-character: `$VAR$`/`$P`/`$N`-style variables,
+`@T[...]`/`@t[...]` date placeholders, `$link<...>^ID^$` link blocks, and
+literal duration shorthand outside of tags. See [[Placeholders-And-Formatting]]
+and the relevant `translation_logs/Phase-N` file for the full list — these
+need a manual check on top of the automated one.
+
+## Building a playable patch (any time — partial translation is fine)
+
+The expansion from per-idx translations to per-entry patches is implemented
+and matches by literal source text, so it works on every file variant:
+
+```bash
+# after a game update only: append newly seen strings (existing idx untouched)
+python tools/rebuild_unique_strings.py --dry-run
+python tools/rebuild_unique_strings.py
+
+# validate the whole dictionary, then patch every translate_words_map_* at once
+python tools/qa_check.py --locale "locale/*.jsonl"
+python tools/patch_all.py --outdir patched            # --level 19 for a release build
+```
+
+`patch_all.py` writes repacked copies of `translate_words_map_en`, `_diff`,
+`__small`, `__small_diff`, and `_mobile` under `patched/`. For a single
+file, `tools/expand_locale.py` + `wwm_locmap.py patch` does the same via an
+intermediate JSONL (and `wwm_locmap.py patch` refuses a JSONL whose `h`
+doesn't match the target file, i.e. one dumped from another game version).
+Only the `Package\...` copies of the base and `__small` files stay patched
+in a live install — see [[Format-Spec]] §7.
 
 See [[Phase-Roadmap]] for the reasoning behind picking a stopping point
 before 100% coverage is reached.

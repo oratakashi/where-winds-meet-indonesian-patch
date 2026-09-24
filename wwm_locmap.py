@@ -27,7 +27,8 @@ Block
 Block 0  = index  : u64 totalEntries, u64 dataBlockCount, u32[dataBlockCount] id
 Block 1..n = shard: hash map gaya SwissTable (absl::flat_hash_map)
   u64 capacity, u64 size, u64 seed
-  u8[capacity] ctrl      (0x80 = kosong, <0x80 = terisi / H2)
+  u8[capacity] ctrl      (0x80 kosong / 0xFE deleted -> >=0x80 dilewati,
+                          <0x80 = terisi / H2)
   u8 0xFF sentinel + u8[15] cloned ctrl + padding ke kelipatan 8
   slot[capacity] { u64 keyHash; u32 relOffset; u32 byteLen; }   # 16 byte
   <string blob>
@@ -66,10 +67,13 @@ TOMBSTONE = b'\xff'
 
 # ---------------------------------------------------------------- container
 def read_container(path):
-    d = open(path, 'rb').read()
+    with open(path, 'rb') as f:
+        d = f.read()
     magic, ver, cnt, _ = struct.unpack_from('<IIII', d, 0)
     if magic != MAGIC:
         raise ValueError("magic tidak cocok: %08x" % magic)
+    if cnt == 0:
+        raise ValueError("container tanpa blok (blockCount = 0)")
     offs = struct.unpack_from('<%dI' % cnt, d, 16)
     base = 16 + cnt * 4
     if base + offs[-1] != len(d):
@@ -82,8 +86,10 @@ def read_container(path):
         codec, cs, us = struct.unpack_from('<BII', b, 0)
         if codec != CODEC_ZSTD:
             raise ValueError("codec tak dikenal: %d" % codec)
-        raw = dctx.decompress(b[9:9 + cs])
-        assert len(raw) == us
+        raw = dctx.decompress(b[9:9 + cs], max_output_size=us)
+        if len(raw) != us:
+            raise ValueError("blok %d: ukuran hasil dekompresi %d != %d"
+                             % (i, len(raw), us))
         blocks.append(raw)
     return ver, blocks
 
@@ -100,7 +106,8 @@ def write_container(path, ver, blocks, level=19, threads=-1):
     out += struct.pack('<%dI' % len(table), *table)
     for p in payloads:
         out += p
-    open(path, 'wb').write(bytes(out))
+    with open(path, 'wb') as f:
+        f.write(out)
 
 
 # -------------------------------------------------------------------- shard
@@ -202,18 +209,39 @@ def cmd_patch(a):
     ver, blocks = read_container(a.src)
     edits = {}
     with open(a.jsonl, encoding='utf-8') as f:
-        for line in f:
+        for ln, line in enumerate(f, 1):
             if not line.strip():
                 continue
             r = json.loads(line)
-            v = TOMBSTONE if r.get("deleted") else \
-                r["v"].encode('utf-8', 'surrogateescape')
-            edits.setdefault(r["b"], {})[r["s"]] = v
+            if r.get("deleted"):
+                v = TOMBSTONE
+            elif "v" in r:
+                v = r["v"].encode('utf-8', 'surrogateescape')
+            else:
+                raise ValueError("%s baris %d: tidak ada field 'v' maupun "
+                                 "'deleted'" % (a.jsonl, ln))
+            edits.setdefault(r["b"], {})[r["s"]] = (r.get("h"), v, ln)
+    bad = sorted(b for b in edits if not 1 <= b < len(blocks))
+    if bad:
+        raise ValueError("%s: block di luar jangkauan 1..%d: %s"
+                         % (a.jsonl, len(blocks) - 1, bad[:10]))
     out = [blocks[0]]
     for bi, blk in enumerate(blocks[1:], 1):
         _, _, ents = parse_shard(blk)
         vals = {s: v for s, _, v in ents}
-        vals.update(edits.get(bi, {}))
+        hashes = {s: h for s, h, _ in ents}
+        for s, (h, v, ln) in edits.get(bi, {}).items():
+            # b/s saja tidak cukup: JSONL dari dump versi game lain menunjuk
+            # slot yang sama tapi key berbeda -> teks masuk ke tempat yang salah.
+            if s not in hashes:
+                raise ValueError("%s baris %d: blok %d slot %d bukan slot terisi"
+                                 % (a.jsonl, ln, bi, s))
+            if h is not None and int(h, 16) != hashes[s]:
+                raise ValueError(
+                    "%s baris %d: keyHash %s != %016x di blok %d slot %d "
+                    "(JSONL di-dump dari versi file yang berbeda?)"
+                    % (a.jsonl, ln, h, hashes[s], bi, s))
+            vals[s] = v
         out.append(rebuild_shard(blk, vals))
     write_container(a.out, ver, out, level=a.level)
     print("ditulis:", a.out)

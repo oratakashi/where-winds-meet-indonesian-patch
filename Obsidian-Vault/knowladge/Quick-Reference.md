@@ -106,8 +106,10 @@ parentheses (ordinary notes, not code) are translated structurally.
 
 ## 6. Placeholders & tokens — QA-critical, read before translating any `#`/`%`/`{`/`<`/`$`
 
-Baseline: token count/order must match the source exactly (`tools/qa_check.py`'s `TOKEN`
-regex: `#[A-Za-z]|#[0-9a-fA-F]{6}|%s|%d|\{[^}]*\}|<[^>]*>`).
+Baseline: every token must appear the same number of times as in the source (`tools/qa_check.py`'s
+`TOKEN` regex: `#[0-9a-fA-F]{6}|#[A-Za-z]|%[sd]|\{[^}]*\}|<[^>]*>` — hex is tried before the
+1-letter code). The check counts tokens, not their order, so moving a token to fit Indonesian word
+order is fine. Validate a batch with `python tools/qa_check.py --locale locale/phaseN.jsonl`.
 
 - `<...>` tag rules (four distinct cases):
   1. Plain tag without `|id|#C|n>` format (e.g. `<Player Name 7 characters>`) — keep the
@@ -124,6 +126,9 @@ regex: `#[A-Za-z]|#[0-9a-fA-F]{6}|%s|%d|\{[^}]*\}|<[^>]*>`).
   a real tag (e.g. `#Talk to the Dog`) — leave `#Talk` intact, translate the rest.
 - Non-standard color tag `#<6-char-hex-ish>NNNN Word#E` — only the first 6 chars after `#`
   are the token; trailing digits+word (e.g. "120 Points") is free text, translate it.
+  **Watch for a hex digit glued to the word**: `#e9a35for better rewards#E` = color `#e9a35f` +
+  "or better…" — the `f` belongs to the color and must stay (`#e9a35funtuk…`, not
+  `#e9a35untuk…`; idx 54382 shipped with this bug until 2026-09-24).
 - Duration conversions (literal text, not token-checked but must stay consistent):
   `Nd`(days)→`Nh`, `Ns`→`Nd`, `%sh`→`%sj`, `%dm%ds`→`%dm%dd` (minutes `m` untouched),
   `{}s`→`{}d` — same `s`→`d`(hari)/`h`→`j`(jam) shorthand wherever it appears, including
