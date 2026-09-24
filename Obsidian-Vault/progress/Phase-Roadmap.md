@@ -39,7 +39,7 @@ strings).
 | 15                | 340,000 – 369,999 | 30,000       | ~96.3%                      | 3,000–5,000/session     | ~6–10 sessions        | `locale/phase15.jsonl` |
 | 16                | 370,000 – 399,999 | 30,000       | ~98.7%                      | 3,000–5,000/session     | ~6–10 sessions        | `locale/phase16.jsonl` |
 | 17 (active)       | 400,000 – 429,886 | 29,887       | 100%*                       | 3,000–5,000/session     | ~6–10 sessions        | `locale/phase17.jsonl` |
-| Update-1 (active) | 429,887 – 461,703 | 31,817       | additional (see note below) | 2,000/session (fixed)   | ~16 sessions          | `locale/update1.jsonl` |
+| Update-1 (done)   | 429,887 – 461,703 | 31,817       | additional (see note below) | 2,000/session (fixed)   | done (18 sessions)    | `locale/update1.jsonl` |
 
 \* Percentage of the 963,050 total lines in `strings.jsonl`, based on actual
 frequency distribution. Phase 2–8 figures are rough interpolations, not
