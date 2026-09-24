@@ -630,3 +630,30 @@ file: 27,000 lines, idx unique, 0 duplicates, 0 token mismatches. No new
 terminology decisions — every case matched an existing [[Glossary]] entry.
 Next idx Phase 6 = 77,000 (27,000/50,000 rows done, 54.00%). Update-1
 untouched this session.
+
+## 2026-09-24 — Update-1, batch 21 (session 13)
+
+User asked to continue Update-1 with a **3,000 strings/iteration** batch
+size going forward. Read idx 452,737–455,736 from `unique_strings.jsonl` in
+ten sequential 300-line reads, translating each chunk to its own scratch
+file (batches 21–30), then merged all ten into one 3,000-line file before
+validating.
+
+Token/placeholder validation found **9 mismatches on the first pass**:
+5 were `<...>`-wrapped inner-thought/dialogue lines (idx 453656, 453754,
+453776, 453884, 455027 — e.g. `<I wonder when Dai will ever be free...>`)
+that had been translated into Indonesian instead of kept byte-identical in
+English, per Quick-Reference §6 rule 1 (a plain `<...>` tag without
+`|id|#C|n>` format must stay untouched) — reverted to the source text
+verbatim. The other 4 (idx 454095, 454164, 454252, 455165) were `#Y...#E`
+color-tag wraps dropped or corrupted while restructuring sentences into
+Indonesian word order: a missing wrap around "Enhancement"/"Enhancements"
+in two nearly-identical Inebriate-buff tooltips, a missing wrap around
+"Max-tuned" in a gear-filter tooltip, and a typo (`#Ditumpuk#E` instead of
+`#Ytumpuk#E`) in a Tile-combine tutorial string — all fixed by restoring or
+correcting the `#Y...#E` pairs. Re-ran validation after fixes: 0 mismatches
+across the full 3,000-row batch. Appended to `locale/update1.jsonl` and
+re-validated the full file: 25,850 lines, idx unique, 0 duplicates, 0 token
+mismatches. No new terminology decisions — every case matched an existing
+[[Glossary]] entry. Next idx Update-1 = 455,737 (25,850/31,817 rows done,
+~81.25%). Phase 6 untouched this session.
