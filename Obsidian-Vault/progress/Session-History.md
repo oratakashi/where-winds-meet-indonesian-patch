@@ -582,3 +582,31 @@ re-validation: `locale/update1.jsonl` now 19,850 lines, all idx unique, 0
 duplicates, 0 token mismatches across the entire file.
 
 Update-1 was not touched this session (still at next idx 448,737).
+
+## 2026-09-24 — Update-1 batch 20, batch size raised to 3,000
+
+**Update-1** idx 449,737–452,736 completed (batch 20, 3,000 rows), at the
+user's requested **3,000-strings/iteration** size — raised from 1,000, the
+new default until further notice (see [[Current-Status]] for the
+process-overhead note this raise implies). Read from `unique_strings.jsonl`
+in 10 sequential 300-line chunks (the `Read` tool's ~25k-token cap forces
+smaller reads than usual for this densely-packed idx range) and translated
+directly into 10 scratch files, one per chunk, to keep per-call context
+manageable; merged into one 3,000-line file and verified the merge landed
+on exactly 3,000 lines with idx sequential 449,737–452,736 before running
+validation.
+
+Token/placeholder validation found **3 mismatches on the first pass**:
+idx 451246 and 452491 each had translated text bleed into the interior of
+a `<Name|id|#C|slot>`-style tag (a possessive skill-name label and an
+"Inebriate-enhanced skills" label respectively) — both fixed by restoring
+the tag to byte-identical English and moving the translation entirely
+outside it, per the existing §6 Quick-Reference rule. idx 450595 had one
+`#Y`/`#E` wrap pair dropped while restructuring a multi-clause sentence
+around its four separate tags — fixed by rebuilding the sentence with all
+four pairs preserved. Re-ran validation after fixes: 0 mismatches across
+the full 3,000-row batch. Appended to `locale/update1.jsonl` and
+re-validated the full file: 22,850 lines, idx unique, 0 duplicates, 0 token
+mismatches. No new terminology decisions — every case matched an existing
+[[Glossary]] entry. Next idx Update-1 = 452,737 (22,850/31,817 rows done,
+~71.82%). Phase 6 untouched this session.
