@@ -7,6 +7,18 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-25 — Session 24: Phase 17, batch (idx 407,000–409,999, 3,000 rows)
+
+Phase 17, idx 407,000–409,999 (3,000 rows, delivered in one session as ten
+~300-row sub-batches, merged and validated as one batch before appending)
+translated and appended to `locale/phase17.jsonl`, taking Phase 17 from
+7,000/29,887 (23.42%) to 10,000/29,887 (33.46%). 2 token/placeholder
+mismatches found and fixed in the merged batch (idx 408822 and idx 409239
+— plain `<...>` tags wrapping a full sentence, translated instead of kept
+verbatim per Quick-Reference §6 rule 3). Both corrected; re-validated at 0
+mismatches before appending. Full-file and cross-file validation both came
+back clean (141,817 entries). No new terminology decisions.
+
 ## 2026-09-24 — Session 22: Phase 6 completed (idx 94,000–99,999, 6,000 rows)
 
 Phase 6, idx 94,000–99,999 (6,000 rows, the entire remaining tail of the
