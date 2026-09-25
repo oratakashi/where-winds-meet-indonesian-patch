@@ -7,6 +7,20 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-25 — Session 29: Phase 17 batch (idx 412,000–413,999, 2,000 rows)
+
+Phase 17: idx 412,000–413,999 (2,000 rows, seven ~300-row scratch passes,
+merged and validated as one batch) appended to `locale/phase17.jsonl`,
+taking Phase 17 from 12,000/29,887 (40.15%) to 14,000/29,887 (46.84%) —
+user requested 2,000 rows/session, continuing the
+batch size set in prior sessions. Found and fixed 3 plain `<...>` tag
+mismatches (idx 412355, 412645, 412773 — translated instead of kept
+verbatim per Quick-Reference §6). Kept two non-source-text dev artifacts
+verbatim (idx 412715 Chinese location label, idx 412716 leaked SSE/API log
+line) and one leaked QA/dev string (idx 413051), consistent with the
+idx 411158/411753 precedent from session 28. Overall: 152,817/461,704
+(33.10%), in-game coverage 68.02%.
+
 ## 2026-09-25 — Session 27: Phase 9 started (idx 160,000–161,999, 2,000 rows)
 
 Phase 9, first batch: idx 160,000–161,999 (2,000 rows, delivered in one
