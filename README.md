@@ -26,6 +26,11 @@ NetEase frequently ships incremental updates via companion files (`_diff` for de
 ## Table of Contents
 
 - [Project Status](#project-status)
+- [Player Installation Guide](#player-installation-guide)
+  - [PC — Steam](#pc--steam)
+  - [PC — Official WWM Launcher](#pc--official-wwm-launcher)
+  - [Android](#android)
+  - [Reverting to English / Handling Game Updates](#reverting-to-english--handling-game-updates)
 - [Prerequisites & Installation](#prerequisites--installation)
 - [Quickstart Guide](#quickstart-guide)
   - [1. Locate Game Files](#1-locate-game-files)
@@ -69,7 +74,100 @@ NetEase frequently ships incremental updates via companion files (`_diff` for de
 
 ---
 
+## Player Installation Guide
+
+This section is for players who just want **to install the patch**, without running any Python
+tooling. The translated files are rebuilt automatically by CI on every change to `locale/` and
+published as a single rolling GitHub Release (tag `latest`):
+
+**[⬇ Download the Latest Patch (`wwm-indonesian-patch.zip`)](../../releases/tag/latest)**
+
+> [!WARNING]
+> **Always back up the original files before overwriting anything.** Copy the original
+> `translate_words_map_en`, `translate_words_map_en_diff`, `translate_words_map_en__small`, and
+> `translate_words_map_en__small_diff` to a separate folder first. If a game update breaks the
+> mod or causes crashes, restore these originals.
+
+> [!NOTE]
+> Translation progress is still ongoing (see [`Current-Status.md`](Obsidian-Vault/progress/Current-Status.md)
+> for current completion percentages) — some text may still appear in English or Chinese; this is expected.
+
+### PC — Steam
+
+1. Open Steam → right-click **Where Winds Meet** → **Manage → Browse Local Files**. This opens
+   the game's installation folder (typically
+   `<SteamLibrary>\steamapps\common\Where Winds Meet\`).
+2. Navigate to the `Package\HD\oversea\locale\` subfolder.
+3. Back up the existing files there (see warning above), then extract the contents of
+   `wwm-indonesian-patch.zip` into this folder, overwriting the files with matching names:
+   `translate_words_map_en`, `translate_words_map_en_diff`, `translate_words_map_en__small`,
+   `translate_words_map_en__small_diff`.
+4. Launch the game through Steam as usual.
+5. In-game: **Settings → Language → Game Language = English** (required — see
+   [Why Runtime Requires English Language](#why-runtime-requires-english-language)).
+
+### PC — Official WWM Launcher
+
+1. Open the official launcher's installation folder (typically
+   `<InstallDir>\Package\HD\oversea\locale\`). If you're unsure of the location, right-click the
+   launcher shortcut → **Open file location** to find the install root.
+2. Back up the original files in that `locale\` folder.
+3. Extract the contents of `wwm-indonesian-patch.zip` into this `locale\` folder, overwriting
+   files with matching names, as in the Steam steps above.
+4. Launch the game through the launcher as usual.
+5. Set **Settings → Language → Game Language = English** in-game.
+
+> [!IMPORTANT]
+> See [Known Limitations & Deployment Gotchas](#known-limitations--deployment-gotchas) —
+> specifically, NetEase's own launcher/CDN can **silently restore `translate_words_map_en_diff`
+> to its original version** on every game launch (the `StagePatchList`/`StageCheck` process). This
+> is outside this mod's control. The base `translate_words_map_en` and `__small` files remain
+> permanent and are unaffected by this process.
+
+### Android
+
+The Android build of Where Winds Meet stores its locale files inside the app's internal storage,
+so writing to that location requires **root access** or a file manager with root/Shizuku
+privileges (a standard, non-root file manager cannot write there).
+
+1. Locate the game's install path on the device, typically one of:
+   ```
+   /storage/emulated/0/Android/data/<package.name.wwm>/files/Package/HD/oversea/locale/
+   /storage/emulated/0/Android/obb/<package.name.wwm>/...
+   /data/data/<package.name.wwm>/files/Package/HD/oversea/locale/
+   ```
+   (the exact package name varies by release region — look for the folder containing files named
+   `translate_words_map_en*` using a root-capable file manager, e.g. MT Manager, Root Explorer, or
+   Solid Explorer with a root add-on.)
+2. Back up the existing `translate_words_map_en`, `translate_words_map_en_diff`,
+   `translate_words_map_en__small`, and `translate_words_map_en__small_diff` files found there.
+3. Copy (push) the files extracted from `wwm-indonesian-patch.zip` into that folder, overwriting
+   the files with matching names. Ensure the copied files retain the same permissions/ownership as
+   the originals (most root file managers handle this automatically) so the game can read them.
+4. Force-close and relaunch the game (or restart the device if needed).
+5. Set **Settings → Language → Game Language = English** in-game.
+
+> [!NOTE]
+> Because this requires root access, the process is riskier and more technical than on PC. Some
+> devices/ROMs also verify APK/OBB integrity (e.g. Play Integrity), so the mod may be detected or
+> the files silently restored by the game's update process — similar to the `_diff` behavior on PC
+> (see [Known Limitations](#known-limitations--deployment-gotchas)). If rooting isn't an option,
+> wait for a future game update that may merge `_diff` into the base package, or use the PC version
+> instead.
+
+### Reverting to English / Handling Game Updates
+
+To revert to the original English text, or after a game update (which typically overwrites the
+locale files with new versions from NetEase), simply overwrite the `translate_words_map_en*` files
+with the original backups you saved in step one of the relevant platform section above.
+
+---
+
 ## Prerequisites & Installation
+
+*The section below is for contributors/developers who want to run the toolkit itself
+(dump/patch/QA), not for players who just want to install the patch — see the
+[Player Installation Guide](#player-installation-guide) above for that.*
 
 - **Python 3.8+**
 - **pip**
