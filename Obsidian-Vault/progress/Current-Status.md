@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-25 (session 31).** This is the single source of truth for "how
+**Last updated: 2026-09-25 (session 32).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **156,817** | **461,704** | **33.96%** |
-| ↳ original corpus (Phases 0–17) | 125,000 | 429,887 | 29.08% |
+| **Unique strings translated (all)** | **158,817** | **461,704** | **34.40%** |
+| ↳ original corpus (Phases 0–17) | 127,000 | 429,887 | 29.54% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **565,189** | **826,388** | **68.39%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **566,723** | **826,388** | **68.58%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -38,7 +38,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 8 | 130,000–159,999 | **active** | 132,000 | 2,000 / 30,000 | 6.67% |
 | 9 | 160,000–189,999 | **active** | 162,000 | 2,000 / 30,000 | 6.67% |
 | 10 | 190,000–219,999 | **active** | 192,000 | 2,000 / 30,000 | 6.67% |
-| 11 | 220,000–249,999 | not started | 220,000 | 0 / 30,000 | 0.00% |
+| 11 | 220,000–249,999 | **active** | 222,000 | 2,000 / 30,000 | 6.67% |
 | 12 | 250,000–279,999 | not started | 250,000 | 0 / 30,000 | 0.00% |
 | 13 | 280,000–309,999 | not started | 280,000 | 0 / 30,000 | 0.00% |
 | 14 | 310,000–339,999 | not started | 310,000 | 0 / 30,000 | 0.00% |
@@ -57,13 +57,54 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phase 6 are both fully complete.** Phase 7 is active at
 3,000/30,000 (10.00%), Phase 8 is active at 2,000/30,000 (6.67%), Phase 9
-is active at 2,000/30,000 (6.67%), and **Phase 10 was started this session**
-at 2,000/30,000 (6.67%). Phase 17 remains at 16,000/29,887 (53.53%).
+is active at 2,000/30,000 (6.67%), Phase 10 is active at 2,000/30,000
+(6.67%), and **Phase 11 was started this session** at 2,000/30,000
+(6.67%). Phase 17 remains at 16,000/29,887 (53.53%).
 Resume any active phase next per [[Resume-Procedure]].
 **Iterations are batched at 2,000 rows per session** at the user's explicit
 request — see [[Resume-Procedure]] for the batch-size note.
 
-## Most recent session (2026-09-25, session 31) — Phase 10 started (idx 190,000–191,999, 2,000 rows)
+## Most recent session (2026-09-25, session 32) — Phase 11 started (idx 220,000–221,999, 2,000 rows)
+
+Phase 11, the first batch of the phase: idx 220,000–221,999 (2,000 rows,
+translated in seven ~300-row scratch passes, merged, and validated as one
+batch before writing new file `locale/phase11.jsonl`) at the user's explicit
+request to start Phase 11 at 2,000 rows/session and update the Obsidian
+vault every iteration, no matter what. **Phase 11 moved from 0% to 6.67%
+(2,000/30,000).** Mix of content: a very large run of Pinyin NPC names and
+quest/location labels (kept verbatim per convention), extensive NPC
+dialogue and lore blurbs (the Ironclad "What defines a human?" origin
+novella at idx 221085, the Lan Shouchi/Half-Palm Against the Tide boulder
+flashback at idx 221802, the Han Xiangxun/Blissful Retreat child-rearing
+novella at idx 221689, the Waspwing mist-born vignette at idx 221667, the
+Sky Shuttle/Dragonbend Academy Foolish-Old-Man letter at idx 220679, and
+the Shangguan/Liu Si'an divorce-letter at idx 220443), many gear/skill
+tooltip strings (Heavenwill Gauntlets Falcon's Pursuit/Vile Condemned
+Cognition-stack mechanic, Skyward Bond DMG/HP templates, Bamboocut/
+Silkbind/Bellstrike/Stonesplit stat-tag templates), several classical-style
+poems and couplets, casual gue/lo NPC dialogue throughout (tavern/Jianghu
+banter, Homestead flavor text, children's dialogue), and two non-source-text
+dev artifacts kept verbatim per the idx 411158 precedent: idx 220244
+("佛光顶路牌区域4") and idx 221469 ("郑鄂红色路牌区域2") — neither is player-facing
+narrative text. No new terminology decisions — every translatable case
+matched an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py --locale` found **4
+mismatches** on the first pass, all plain `<...>` tags (stage directions/
+inner-thoughts without `|id|#C|n>` format, e.g. `<So the General has shut
+the world out entirely.>`, `<right, fearful: He'll see through the
+emperor's true intent...>`, `<Beast Tongue>`, `<thinking>`) that had been
+translated instead of kept verbatim per Quick-Reference §6 rule 1/3. All
+four corrected in place; re-validated at **0 mismatches** before writing
+`locale/phase11.jsonl`. Full-file check: 2,000 lines, all idx unique and
+sequential (220,000–221,999, no gaps), 0 duplicates, 0 token mismatches. A
+final `qa_check.py --locale "locale/*.jsonl"` across the whole dictionary
+(158,817 entries) also came back clean.
+
+**Overall: 158,817 / 461,704 unique strings (34.40%), in-game coverage
+68.58%.**
+
+## Prior session (2026-09-25, session 31) — Phase 10 started (idx 190,000–191,999, 2,000 rows)
 
 Phase 10, the first batch of the phase: idx 190,000–191,999 (2,000 rows,
 translated in six ~300-row scratch passes, merged, and validated as one
