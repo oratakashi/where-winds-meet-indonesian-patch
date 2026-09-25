@@ -7,6 +7,23 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-25 — Session 32: Phase 11 started (idx 220,000–221,999, 2,000 rows)
+
+Phase 11, first batch: idx 220,000–221,999 (2,000 rows, seven ~300-row
+scratch passes, merged and validated as one batch) written to new file
+`locale/phase11.jsonl`, taking Phase 11 from 0% to 2,000/30,000 (6.67%) —
+user requested 2,000 rows/session and an Obsidian vault update every
+iteration, no matter what. Found and fixed 4 plain `<...>` tag mismatches
+(idx 220718, 220744, 220840, 221600 — translated instead of kept verbatim
+per Quick-Reference §6 rule 1/3). Kept two non-source-text dev artifacts
+verbatim (idx 220244 "佛光顶路牌区域4", idx 221469 "郑鄂红色路牌区域2"), consistent
+with the idx 411158 precedent. No new terminology decisions — every case
+matched an existing [[Quick-Reference]] entry. Full cross-file
+`qa_check.py --locale "locale/*.jsonl"` (158,817 entries) came back clean.
+
+Overall: 158,817/461,704 unique strings (34.40%), in-game coverage 68.58%.
+Phase 17 was not touched this session.
+
 ## 2026-09-25 — Session 31: Phase 10 started (idx 190,000–191,999, 2,000 rows)
 
 Phase 10, first batch: idx 190,000–191,999 (2,000 rows, six ~300-row
