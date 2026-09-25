@@ -132,9 +132,7 @@ privileges (a standard, non-root file manager cannot write there).
 
 1. Locate the game's install path on the device, typically one of:
    ```
-   /storage/emulated/0/Android/data/<package.name.wwm>/files/Package/HD/oversea/locale/
-   /storage/emulated/0/Android/obb/<package.name.wwm>/...
-   /data/data/<package.name.wwm>/files/Package/HD/oversea/locale/
+   Internal Storage/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
    ```
    (the exact package name varies by release region — look for the folder containing files named
    `translate_words_map_en*` using a root-capable file manager, e.g. MT Manager, Root Explorer, or
