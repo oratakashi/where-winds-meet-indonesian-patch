@@ -1,0 +1,80 @@
+name: release-patch
+
+# Membangun ulang file translate_words_map_* hasil terjemahan setiap push ke main,
+# lalu mempublikasikannya sebagai satu GitHub Release "rolling" (tag tetap: latest)
+# supaya pemain punya SATU link download yang selalu berisi build terbaru.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "locale/**"
+      - "translation_work/**"
+      - "strings.jsonl"
+      - "strings_diff.jsonl"
+      - "strings_small.jsonl"
+      - "strings_small_diff.jsonl"
+      - "translate_words_map_en*"
+      - "tools/**"
+      - "wwm_locmap.py"
+  workflow_dispatch: {}
+
+# Kalau ada beberapa push beruntun dalam waktu singkat (10x/hari), cukup build
+# yang paling terakhir yang perlu selesai — batalkan run lama yang masih antre.
+concurrency:
+  group: release-patch
+  cancel-in-progress: true
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - name: Build patched files
+        run: python tools/patch_all.py --outdir patched --level 19
+
+      - name: Compute progress summary
+        id: progress
+        run: |
+          {
+            echo "line<<EOF"
+            python tools/progress.py
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Zip patched output
+        run: |
+          cd patched
+          zip -r ../wwm-indonesian-patch.zip .
+
+      - name: Publish rolling release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "Patch Terjemahan Indonesia (build terbaru)"
+          prerelease: true
+          target_commitish: ${{ github.sha }}
+          body: |
+            Build otomatis dari commit ${{ github.sha }} (${{ github.event.head_commit.timestamp }}).
+
+            Ini adalah build **terbaru dari `main`**, bukan rilis stabil — progress terjemahan
+            masih berjalan. File di release ini selalu ter-overwrite tiap kali ada perubahan
+            terjemahan yang di-push ke `main`.
+
+            ```
+            ${{ steps.progress.outputs.line }}
+            ```
+
+            Cara pakai: lihat README repo untuk petunjuk instalasi ke folder game.
+          files: |
+            wwm-indonesian-patch.zip
+            patched/translate_words_map_en
+            patched/translate_words_map_en__small
