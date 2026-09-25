@@ -69,12 +69,12 @@ jobs:
             masih berjalan. File di release ini selalu ter-overwrite tiap kali ada perubahan
             terjemahan yang di-push ke `main`.
 
-            ```
             ${{ steps.progress.outputs.line }}
-            ```
 
             Cara pakai: lihat README repo untuk petunjuk instalasi ke folder game.
           files: |
             wwm-indonesian-patch.zip
             patched/translate_words_map_en
+            patched/translate_words_map_en_diff
+            patched/translate_words_map_en__small_diff
             patched/translate_words_map_en__small
