@@ -7,6 +7,23 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-25 — Session 26: Phase 8 started (idx 130,000–131,999, 2,000 rows)
+
+Phase 8, first batch: idx 130,000–131,999 (2,000 rows, delivered in one
+session as four 500-row scratch passes, merged and validated as one batch
+before writing) translated and written to new file `locale/phase8.jsonl`,
+taking Phase 8 from 0/30,000 to 2,000/30,000 (6.67%) — user requested
+2,000-row/session batches going forward starting with this phase. 4 token/
+placeholder mismatches found and fixed in the merged batch: idx 130440 (a
+`#Y...#E` tag mistyped as `#D...#E`), idx 130627 and idx 131540 (two plain
+`<...>` tags — `<yawn>`, `<labored breathing>` — translated instead of kept
+verbatim per Quick-Reference §6 rule 1), and idx 130966 (a non-standard
+`#guild members#E` tag tokenized as bare `#g`, rewritten with a `#Y` prefix
+instead of preserving the source's exact `#g`). All four corrected;
+re-validated at 0 mismatches before writing. Full-file and cross-file
+validation both came back clean (146,817 entries). No new terminology
+decisions.
+
 ## 2026-09-25 — Session 25: Phase 7 started (idx 100,000–102,999, 3,000 rows)
 
 Phase 7, first batch: idx 100,000–102,999 (3,000 rows, delivered in one

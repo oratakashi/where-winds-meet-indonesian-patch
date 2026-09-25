@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-25 (session 24).** This is the single source of truth for "how
+**Last updated: 2026-09-25 (session 26).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **144,817** | **461,704** | **31.37%** |
-| ↳ original corpus (Phases 0–17) | 113,000 | 429,887 | 26.29% |
+| **Unique strings translated (all)** | **146,817** | **461,704** | **31.80%** |
+| ↳ original corpus (Phases 0–17) | 115,000 | 429,887 | 26.75% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **554,816** | **826,388** | **67.14%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **557,674** | **826,388** | **67.48%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -35,7 +35,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 5 | 20,000–49,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 6 | 50,000–99,999 | done | — | 50,000 / 50,000 | 100.00% |
 | 7 | 100,000–129,999 | **active** | 103,000 | 3,000 / 30,000 | 10.00% |
-| 8 | 130,000–159,999 | not started | 130,000 | 0 / 30,000 | 0.00% |
+| 8 | 130,000–159,999 | **active** | 132,000 | 2,000 / 30,000 | 6.67% |
 | 9 | 160,000–189,999 | not started | 160,000 | 0 / 30,000 | 0.00% |
 | 10 | 190,000–219,999 | not started | 190,000 | 0 / 30,000 | 0.00% |
 | 11 | 220,000–249,999 | not started | 220,000 | 0 / 30,000 | 0.00% |
@@ -55,13 +55,54 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 100,000/229,887-string "Phase 7"/"Phase 8" split with eleven ~30,000-string
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
-**Update-1 and Phase 6 are both fully complete.** Phase 7 was started this
-session (3,000/30,000, 10.00%) and Phase 17 remains active at 10,000/29,887
-(33.46%). Resume either phase next per [[Resume-Procedure]]. **Iterations
-are batched at 3,000 rows per session** at the user's explicit request —
-see [[Resume-Procedure]] for the batch-size note.
+**Update-1 and Phase 6 are both fully complete.** Phase 7 is active at
+3,000/30,000 (10.00%), Phase 8 was newly started this session at 2,000/30,000
+(6.67%), and Phase 17 remains active at 10,000/29,887 (33.46%). Resume any
+active phase next per [[Resume-Procedure]]. **Starting this session (Phase
+8), iterations are batched at 2,000 rows per session** at the user's explicit
+request — see [[Resume-Procedure]] for the batch-size note.
 
-## Most recent session (2026-09-25, session 25) — Phase 7 started (idx 100,000–102,999, 3,000 rows)
+## Most recent session (2026-09-25, session 26) — Phase 8 started (idx 130,000–131,999, 2,000 rows)
+
+Phase 8, the first batch of the phase: idx 130,000–131,999 (2,000 rows,
+translated in four 500-row scratch passes, merged, and validated as one
+batch before writing new file `locale/phase8.jsonl`) at the user's explicit
+request to start Phase 8 at 2,000 rows/session going forward. **Phase 8
+moved from 0% to 6.67% (2,000/30,000).** Mix of content: a long run of
+gear/skill tooltip strings across many weapon paths (Thundercry Blade
+Charged Skill/Varied Combo Critical Rate scaling, Nameless Sword Sword
+Energy Affinity DMG, Jadewind Shield Enhanced Trajectory, Bellstrike/
+Silkbind stat-tag templates), several NPC lore/backstory blurbs (the Tian
+Ying/Southern Tang assassination account, the Zhang Yichao succession-era
+stone-inscription epitaph, the Dragon Maiden of Dongting Lake folk tale,
+the Velvet Shade origin story tied to Xu Zhihao's coup, the Peng
+Hydraulic-Systems critique essay), a long Layue/Xiande-era diary sequence
+(idx 130121, the Hall Master's mother letters), casual gue/lo NPC dialogue
+throughout (tavern/Jianghu banter, Homestead flavor text, children's
+dialogue), several classical-style poems and couplets, and a large run of
+Pinyin NPC names and garbled Hall-of-Fame usernames (kept verbatim per
+convention). No new terminology decisions — every case matched an existing
+[[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py --locale` found **4
+mismatches** on the first pass: idx 130440 (a `#Y...#E` tag around
+"reforged" was mistyped as `#D...#E`), idx 130627 (the plain `<yawn>` tag
+was translated to `<menguap>` instead of kept verbatim per Quick-Reference
+§6 rule 1), idx 130966 (the source's non-standard `#guild members#E` tag —
+tokenized as a bare `#g` code, not `#Y` — was rewritten as `#Yanggota
+guild#E` instead of preserving the exact `#g` prefix), and idx 131540 (the
+plain `<labored breathing>` tag was translated to `<napas tersengal>`
+instead of kept verbatim). All four corrected in place; re-validated at
+**0 mismatches** before writing `locale/phase8.jsonl`. Full-file check:
+2,000 lines, all idx unique and sequential (130,000–131,999, no gaps), 0
+duplicates, 0 token mismatches. A final `qa_check.py --locale
+"locale/*.jsonl"` across the whole dictionary (146,817 entries) also came
+back clean.
+
+**Overall: 146,817 / 461,704 unique strings (31.80%), in-game coverage
+67.48%.**
+
+## Prior session (2026-09-25, session 25) — Phase 7 started (idx 100,000–102,999, 3,000 rows)
 
 Phase 7, the first batch of the phase: idx 100,000–102,999 (3,000 rows,
 translated in ten ~300-row passes and appended in one merged file to newly
