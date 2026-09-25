@@ -7,6 +7,19 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-25 — Session 35: Phase 14 started (idx 310,000–311,999, 2,000 rows)
+
+Phase 14, first batch: idx 310,000–311,999 (2,000 rows, nine ~250-row
+scratch passes, merged and validated as one batch) written to new file
+`locale/phase14.jsonl`, taking Phase 14 from 0% to 2,000/30,000 (6.67%) —
+user requested 2,000 rows/session and an Obsidian vault update every
+iteration, no matter what. 5 token/placeholder mismatches on the first
+pass (three plain `<...>` tags and one long war-letter `<...>` tag
+translated instead of kept verbatim per Quick-Reference §6 rule 3, and one
+stray unclosed `#Y` tag dropped in a skill description) — all corrected,
+re-validated at 0 mismatches. Overall: 164,817/461,704 (35.70%), in-game
+coverage 69.12%.
+
 ## 2026-09-25 — Session 33: Phase 12 started (idx 250,000–251,999, 2,000 rows)
 
 Phase 12, first batch: idx 250,000–251,999 (2,000 rows, nineteen
