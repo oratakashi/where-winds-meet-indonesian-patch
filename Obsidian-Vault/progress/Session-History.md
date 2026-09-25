@@ -7,6 +7,20 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-25 — Session 27: Phase 9 started (idx 160,000–161,999, 2,000 rows)
+
+Phase 9, first batch: idx 160,000–161,999 (2,000 rows, delivered in one
+session as four 500-row scratch passes, merged and validated as one batch
+before writing) translated and written to new file `locale/phase9.jsonl`,
+taking Phase 9 from 0/30,000 to 2,000/30,000 (6.67%) — user requested
+2,000-row/session batches going forward, continuing the pace set in session
+26, plus updating the Obsidian vault every iteration. 2 token/placeholder
+mismatches found and fixed in the merged batch: idx 160369 and idx 161975,
+both plain `<...>` tags wrapping a full sentence, translated instead of
+kept verbatim per Quick-Reference §6 rule 3. Both corrected; re-validated
+at 0 mismatches before writing. Full-file and cross-file validation both
+came back clean (148,817 entries). No new terminology decisions.
+
 ## 2026-09-25 — Session 26: Phase 8 started (idx 130,000–131,999, 2,000 rows)
 
 Phase 8, first batch: idx 130,000–131,999 (2,000 rows, delivered in one

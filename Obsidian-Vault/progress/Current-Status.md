@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-25 (session 26).** This is the single source of truth for "how
+**Last updated: 2026-09-25 (session 27).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **146,817** | **461,704** | **31.80%** |
-| ↳ original corpus (Phases 0–17) | 115,000 | 429,887 | 26.75% |
+| **Unique strings translated (all)** | **148,817** | **461,704** | **32.23%** |
+| ↳ original corpus (Phases 0–17) | 117,000 | 429,887 | 27.22% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **557,674** | **826,388** | **67.48%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **559,189** | **826,388** | **67.67%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -36,7 +36,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 6 | 50,000–99,999 | done | — | 50,000 / 50,000 | 100.00% |
 | 7 | 100,000–129,999 | **active** | 103,000 | 3,000 / 30,000 | 10.00% |
 | 8 | 130,000–159,999 | **active** | 132,000 | 2,000 / 30,000 | 6.67% |
-| 9 | 160,000–189,999 | not started | 160,000 | 0 / 30,000 | 0.00% |
+| 9 | 160,000–189,999 | **active** | 162,000 | 2,000 / 30,000 | 6.67% |
 | 10 | 190,000–219,999 | not started | 190,000 | 0 / 30,000 | 0.00% |
 | 11 | 220,000–249,999 | not started | 220,000 | 0 / 30,000 | 0.00% |
 | 12 | 250,000–279,999 | not started | 250,000 | 0 / 30,000 | 0.00% |
@@ -56,13 +56,51 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phase 6 are both fully complete.** Phase 7 is active at
-3,000/30,000 (10.00%), Phase 8 was newly started this session at 2,000/30,000
-(6.67%), and Phase 17 remains active at 10,000/29,887 (33.46%). Resume any
-active phase next per [[Resume-Procedure]]. **Starting this session (Phase
-8), iterations are batched at 2,000 rows per session** at the user's explicit
-request — see [[Resume-Procedure]] for the batch-size note.
+3,000/30,000 (10.00%), Phase 8 is active at 2,000/30,000 (6.67%), and Phase 9
+was newly started this session at 2,000/30,000 (6.67%). Phase 17 remains
+active at 10,000/29,887 (33.46%). Resume any active phase next per
+[[Resume-Procedure]]. **Iterations are batched at 2,000 rows per session**
+at the user's explicit request — see [[Resume-Procedure]] for the batch-size
+note.
 
-## Most recent session (2026-09-25, session 26) — Phase 8 started (idx 130,000–131,999, 2,000 rows)
+## Most recent session (2026-09-25, session 27) — Phase 9 started (idx 160,000–161,999, 2,000 rows)
+
+Phase 9, the first batch of the phase: idx 160,000–161,999 (2,000 rows,
+translated in four 500-row scratch passes, merged, and validated as one
+batch before writing new file `locale/phase9.jsonl`) at the user's explicit
+request to start Phase 9 at 2,000 rows/session, continuing the batch size
+set in session 26, and to update the Obsidian vault every iteration. **Phase
+9 moved from 0% to 6.67% (2,000/30,000).** Mix of content: a long run of
+gear/skill tooltip strings across many weapon paths (Heavenwill Gauntlets
+Vile Condemned: End evolution, Heavenquaker Spear Soul-Shaken stacking,
+Vernal Umbrella Ballistic Skill DMG debuff, Bamboocut/Silkbind/Bellstrike/
+Stonesplit stat-tag templates), several NPC lore/backstory blurbs (the
+River Master/Zhu Yu Dragon Hall origin tale, the Zhao Tie/Luan City war-
+refugee family record, the chess-manual "Soldier and Horse" allegory about
+Wang Dayan and Ye Buxiu, the Hui Jingyi/Zhang Jinqing hot-pot-at-the-temple-
+wall vignette, the Xiaoba music-box "Flying Singer" invention story), casual
+gue/lo NPC dialogue throughout (tavern/Jianghu banter, Homestead flavor
+text, children's dialogue), several classical-style poems and couplets, and
+a large run of Pinyin NPC names and garbled Hall-of-Fame usernames (kept
+verbatim per convention). No new terminology decisions — every case matched
+an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py --locale` found **2
+mismatches** on the first pass: idx 160369 and idx 161975, both plain
+`<...>` tags wrapping a full sentence (`<looping: By imperial command, we
+shall kill him!>`, `<Huh? Now that I look closer, there's panic in his
+eyes...>`) that had been translated instead of kept 100% verbatim per
+Quick-Reference §6 rule 3. Both corrected in place; re-validated at **0
+mismatches** before writing `locale/phase9.jsonl`. Full-file check: 2,000
+lines, all idx unique and sequential (160,000–161,999, no gaps), 0
+duplicates, 0 token mismatches. A final `qa_check.py --locale
+"locale/*.jsonl"` across the whole dictionary (148,817 entries) also came
+back clean.
+
+**Overall: 148,817 / 461,704 unique strings (32.23%), in-game coverage
+67.67%.**
+
+## Prior session (2026-09-25, session 26) — Phase 8 started (idx 130,000–131,999, 2,000 rows)
 
 Phase 8, the first batch of the phase: idx 130,000–131,999 (2,000 rows,
 translated in four 500-row scratch passes, merged, and validated as one
