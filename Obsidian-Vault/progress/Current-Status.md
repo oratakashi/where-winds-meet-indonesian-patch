@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-25 (session 29).** This is the single source of truth for "how
+**Last updated: 2026-09-25 (session 30).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **152,817** | **461,704** | **33.10%** |
-| ↳ original corpus (Phases 0–17) | 121,000 | 429,887 | 28.15% |
+| **Unique strings translated (all)** | **154,817** | **461,704** | **33.53%** |
+| ↳ original corpus (Phases 0–17) | 123,000 | 429,887 | 28.61% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **562,142** | **826,388** | **68.02%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **563,671** | **826,388** | **68.21%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -44,7 +44,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 14 | 310,000–339,999 | not started | 310,000 | 0 / 30,000 | 0.00% |
 | 15 | 340,000–369,999 | not started | 340,000 | 0 / 30,000 | 0.00% |
 | 16 | 370,000–399,999 | not started | 370,000 | 0 / 30,000 | 0.00% |
-| 17 | 400,000–429,886 | **active** | 414,000 | 14,000 / 29,887 | 46.84% |
+| 17 | 400,000–429,886 | **active** | 416,000 | 16,000 / 29,887 | 53.53% |
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
 
 <!-- progress:end -->
@@ -57,12 +57,52 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phase 6 are both fully complete.** Phase 7 is active at
 3,000/30,000 (10.00%), Phase 8 is active at 2,000/30,000 (6.67%), and Phase 9
-is active at 2,000/30,000 (6.67%). Phase 17 moved to 14,000/29,887 (46.84%)
+is active at 2,000/30,000 (6.67%). Phase 17 moved to 16,000/29,887 (53.53%)
 this session. Resume any active phase next per [[Resume-Procedure]].
 **Iterations are batched at 2,000 rows per session** at the user's explicit
 request — see [[Resume-Procedure]] for the batch-size note.
 
-## Most recent session (2026-09-25, session 29) — Phase 17 batch (idx 412,000–413,999, 2,000 rows)
+## Most recent session (2026-09-25, session 30) — Phase 17 batch (idx 414,000–415,999, 2,000 rows)
+
+Phase 17, one 2,000-row batch (idx 414,000–415,999), translated in seven
+~300-row scratch passes, merged, and validated as one batch before appending
+to `locale/phase17.jsonl`. **Phase 17 moved from 46.84% to 53.53%
+(16,000/29,887).** Mix of content: a very large run of Pinyin NPC names and
+garbled Hall-of-Fame usernames (kept verbatim per convention), extensive NPC
+dialogue and lore blurbs across Kaifeng/Mirkvale/Mohist Hill/Qinghe/Hexi/
+Liangzhou (the Shi Jingtian doppelganger letter at idx 414000, the Halcyon
+"fishing the moon" mechanism-philosophy letter at idx 414058, the Zhou Ruby
+sleep-reciting-the-classics story at idx 414130, the Doudou/Unfated Tian
+orphan-and-candy vignette at idx 414418, the Miaoshan fraud-monk diary
+sequence at idx 414432, the Du Chenfei "hundred invaders" meat-stall legacy
+story at idx 414510, the palace-cat perspective piece at idx 414675, the Yang
+lineage genealogy record at idx 415285, the Zhu Wen/Inkbound Order library
+massacre legend at idx 415360, and the Alpha guard-dog vignette at idx
+415817), many gear/skill tooltip strings (Nameless Sword Shadow Step tags,
+Vagrant Sword sword-energy mechanic, Skyward Bond DMG/healing stat templates,
+Bellstrike/Silkbind/Stonesplit tags), several classical-style poems and
+couplets, casual gue/lo NPC dialogue throughout (tavern/Jianghu banter,
+Homestead flavor text, children's dialogue), and three non-source-text dev
+artifacts kept verbatim per the idx 411158/412715 precedent: idx 415086
+(a raw Chinese location label, "煞地神区域6"), idx 415722 ("别馆地下地图检测区域"),
+and idx 415733 ("春秋别馆等级差修复区域") — none are player-facing narrative text.
+No new terminology decisions — every translatable case matched an existing
+[[Quick-Reference]] entry.
+
+Token/placeholder validation via a direct `TOKEN`-regex comparison against
+the source found **1 mismatch** on the first pass: idx 415645, an
+`#YJust Verdict#E` stat tag lost its leading `Y` (rendered as `#Just
+Verdict#E`) while restructuring the sentence. Corrected in place;
+re-validated at **0 mismatches** before appending. Full-file check:
+`locale/phase17.jsonl` now 16,000 lines, all idx unique and sequential
+(400,000–415,999, no gaps), 0 duplicates, 0 token mismatches. A final
+`qa_check.py --locale "locale/*.jsonl"` across the whole dictionary
+(154,817 entries) also came back clean.
+
+**Overall: 154,817 / 461,704 unique strings (33.53%), in-game coverage
+68.21%.**
+
+## Prior session (2026-09-25, session 29) — Phase 17 batch (idx 412,000–413,999, 2,000 rows)
 
 Phase 17, one 2,000-row batch (idx 412,000–413,999), translated in seven
 ~300-row scratch passes, merged, and validated as one batch before appending
