@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-25 (session 32).** This is the single source of truth for "how
+**Last updated: 2026-09-25 (session 33).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **158,817** | **461,704** | **34.40%** |
-| ↳ original corpus (Phases 0–17) | 127,000 | 429,887 | 29.54% |
+| **Unique strings translated (all)** | **160,817** | **461,704** | **34.83%** |
+| ↳ original corpus (Phases 0–17) | 129,000 | 429,887 | 30.01% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **566,723** | **826,388** | **68.58%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **568,236** | **826,388** | **68.76%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -39,7 +39,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 9 | 160,000–189,999 | **active** | 162,000 | 2,000 / 30,000 | 6.67% |
 | 10 | 190,000–219,999 | **active** | 192,000 | 2,000 / 30,000 | 6.67% |
 | 11 | 220,000–249,999 | **active** | 222,000 | 2,000 / 30,000 | 6.67% |
-| 12 | 250,000–279,999 | not started | 250,000 | 0 / 30,000 | 0.00% |
+| 12 | 250,000–279,999 | **active** | 252,000 | 2,000 / 30,000 | 6.67% |
 | 13 | 280,000–309,999 | not started | 280,000 | 0 / 30,000 | 0.00% |
 | 14 | 310,000–339,999 | not started | 310,000 | 0 / 30,000 | 0.00% |
 | 15 | 340,000–369,999 | not started | 340,000 | 0 / 30,000 | 0.00% |
@@ -58,13 +58,49 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 **Update-1 and Phase 6 are both fully complete.** Phase 7 is active at
 3,000/30,000 (10.00%), Phase 8 is active at 2,000/30,000 (6.67%), Phase 9
 is active at 2,000/30,000 (6.67%), Phase 10 is active at 2,000/30,000
-(6.67%), and **Phase 11 was started this session** at 2,000/30,000
-(6.67%). Phase 17 remains at 16,000/29,887 (53.53%).
+(6.67%), Phase 11 is active at 2,000/30,000 (6.67%), and **Phase 12 was
+started this session** at 2,000/30,000 (6.67%). Phase 17 remains at
+16,000/29,887 (53.53%).
 Resume any active phase next per [[Resume-Procedure]].
 **Iterations are batched at 2,000 rows per session** at the user's explicit
 request — see [[Resume-Procedure]] for the batch-size note.
 
-## Most recent session (2026-09-25, session 32) — Phase 11 started (idx 220,000–221,999, 2,000 rows)
+## Most recent session (2026-09-25, session 33) — Phase 12 started (idx 250,000–251,999, 2,000 rows)
+
+Phase 12, the first batch of the phase: idx 250,000–251,999 (2,000 rows,
+translated in nineteen ~100–300-row scratch passes, merged, and validated
+as one batch before writing new file `locale/phase12.jsonl`) at the user's
+explicit request to start Phase 12 at 2,000 rows/session and update the
+Obsidian vault every iteration, no matter what. **Phase 12 moved from 0% to
+6.67% (2,000/30,000).** Mix of content: a very large run of Pinyin NPC
+names and quest/location labels (kept verbatim per convention), extensive
+NPC dialogue and lore blurbs (the Song Yu/Fuling origin story at idx
+250064, the Feifei the cat's magpie-inspired flight dream vignette at idx
+250560, the Mozi/Mohist Hill founding history at idx 250576, the Ghostlight
+Market/Tu Shanyun doctor origin novella at idx 251111, the Tiantian
+cat-and-boy childhood-dream vignette at idx 251437, and the Ice
+Soul/Lunar Goddess bun-gift folk tale at idx 251406), many gear/skill
+tooltip strings (Everspring Umbrella Echo Pulse, Stormbreaker Spear taunt
+DMG Reduction mechanic, Vernal Umbrella projectile-trigger scaling,
+Bamboocut/Silkbind/Bellstrike/Stonesplit stat-tag templates), several
+classical-style poems and couplets, casual gue/lo NPC dialogue throughout
+(tavern/Jianghu banter, Homestead flavor text, children's dialogue), and
+one non-source-text dev/system-label entry kept verbatim per the idx
+411158 precedent: idx 250993 ("西南行营小圈", a raw Chinese location label,
+not player-facing narrative text). No new terminology decisions — every
+translatable case matched an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py --locale` found **0
+mismatches on the first pass** — the full 2,000-row batch validated clean
+before writing. Full-file check: 2,000 lines, all idx unique and sequential
+(250,000–251,999, no gaps), 0 duplicates, 0 token mismatches. A final
+`qa_check.py --locale "locale/*.jsonl"` across the whole dictionary
+(160,817 entries) also came back clean.
+
+**Overall: 160,817 / 461,704 unique strings (34.83%), in-game coverage
+68.76%.**
+
+## Prior session (2026-09-25, session 32) — Phase 11 started (idx 220,000–221,999, 2,000 rows)
 
 Phase 11, the first batch of the phase: idx 220,000–221,999 (2,000 rows,
 translated in seven ~300-row scratch passes, merged, and validated as one

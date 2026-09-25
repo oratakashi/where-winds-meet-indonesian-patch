@@ -7,6 +7,16 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-25 — Session 33: Phase 12 started (idx 250,000–251,999, 2,000 rows)
+
+Phase 12, first batch: idx 250,000–251,999 (2,000 rows, nineteen
+~100–300-row scratch passes, merged and validated as one batch) written to
+new file `locale/phase12.jsonl`, taking Phase 12 from 0% to 2,000/30,000
+(6.67%) — user requested 2,000 rows/session and an Obsidian vault update
+every iteration, no matter what, continuing the batch size from prior
+sessions. 0 token/placeholder mismatches on the first pass. Overall:
+160,817/461,704 (34.83%), in-game coverage 68.76%.
+
 ## 2026-09-25 — Session 32: Phase 11 started (idx 220,000–221,999, 2,000 rows)
 
 Phase 11, first batch: idx 220,000–221,999 (2,000 rows, seven ~300-row
