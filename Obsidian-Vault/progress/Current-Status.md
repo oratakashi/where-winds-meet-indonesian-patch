@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **141,817** | **461,704** | **30.72%** |
-| ↳ original corpus (Phases 0–17) | 110,000 | 429,887 | 25.59% |
+| **Unique strings translated (all)** | **144,817** | **461,704** | **31.37%** |
+| ↳ original corpus (Phases 0–17) | 113,000 | 429,887 | 26.29% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **550,423** | **826,388** | **66.61%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **554,816** | **826,388** | **67.14%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -34,7 +34,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 4 | 10,000–19,999 | done | — | 10,000 / 10,000 | 100.00% |
 | 5 | 20,000–49,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 6 | 50,000–99,999 | done | — | 50,000 / 50,000 | 100.00% |
-| 7 | 100,000–129,999 | not started | 100,000 | 0 / 30,000 | 0.00% |
+| 7 | 100,000–129,999 | **active** | 103,000 | 3,000 / 30,000 | 10.00% |
 | 8 | 130,000–159,999 | not started | 130,000 | 0 / 30,000 | 0.00% |
 | 9 | 160,000–189,999 | not started | 160,000 | 0 / 30,000 | 0.00% |
 | 10 | 190,000–219,999 | not started | 190,000 | 0 / 30,000 | 0.00% |
@@ -55,13 +55,46 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 100,000/229,887-string "Phase 7"/"Phase 8" split with eleven ~30,000-string
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
-**Update-1 and Phase 6 are both fully complete.** Phase 17 is the only
-active phase remaining, now at 10,000/29,887 (33.46%). Resume Phase 17 next
-per [[Resume-Procedure]]. **Phase 17 iterations are batched at 3,000 rows
-per session** at the user's explicit request — see [[Resume-Procedure]]
-for the batch-size note.
+**Update-1 and Phase 6 are both fully complete.** Phase 7 was started this
+session (3,000/30,000, 10.00%) and Phase 17 remains active at 10,000/29,887
+(33.46%). Resume either phase next per [[Resume-Procedure]]. **Iterations
+are batched at 3,000 rows per session** at the user's explicit request —
+see [[Resume-Procedure]] for the batch-size note.
 
-## Most recent session (2026-09-25, session 24) — Phase 17 batch (idx 407,000–409,999, 3,000 rows)
+## Most recent session (2026-09-25, session 25) — Phase 7 started (idx 100,000–102,999, 3,000 rows)
+
+Phase 7, the first batch of the phase: idx 100,000–102,999 (3,000 rows,
+translated in ten ~300-row passes and appended in one merged file to newly
+created `locale/phase7.jsonl`) at the user's explicit request to batch
+Phase 7 at 3,000 rows/session going forward. **Phase 7 moved from 0% to
+10.00% (3,000/30,000).** Mix of content: extensive gear/skill tooltip
+strings across many weapon paths (Strategic Sword Sword's Zenith/Crosswind
+Blade, Nameless Spear Qiankun's Lock, Panacea Fan DMG Boost: Deluge,
+Silkbind/Bellstrike/Bamboocut/Stonesplit stat-tag templates), a long run of
+NPC dialogue and lore blurbs across Kaifeng/Qinghe/Hexi/Mistveil Forest
+(the Guo Xin/Whitecrown Fortress general backstory, the Junyi flood-relief
+cautionary tale, several Velvet Shade/Heroes Assembly political-intrigue
+letters, the Li Jun/Blackcloud Long Sword battle narrative, a Wang
+Xin/Anxi-Army war letter), casual gue/lo NPC dialogue throughout (tavern/
+Jianghu banter, Homestead flavor text, children's dialogue), classical-
+style poems and couplets, and a large run of Pinyin NPC names and garbled
+Hall-of-Fame usernames (kept verbatim per convention). No new terminology
+decisions — every case matched an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py --locale` found **1
+mismatch** on the first pass: idx 102208, an `#N` tag mistyped as `#Y`
+while translating the Velvet Shade Fireworks Festival red-envelope text —
+corrected in place to match the source tag exactly. Re-validated at **0
+mismatches** before writing `locale/phase7.jsonl`. Full-file check:
+3,000 lines, all idx unique and sequential (100,000–102,999, no gaps), 0
+duplicates, 0 token mismatches. A final `qa_check.py --locale
+"locale/*.jsonl"` across the whole dictionary (144,817 entries) also came
+back clean.
+
+**Overall: 144,817 / 461,704 unique strings (31.37%), in-game coverage
+67.14%.**
+
+## Prior session (2026-09-25, session 24) — Phase 17 batch (idx 407,000–409,999, 3,000 rows)
 
 Phase 17, one large 3,000-row batch (idx 407,000–409,999), translated in ten
 ~300-row sub-batches and appended to `locale/phase17.jsonl` in one merged

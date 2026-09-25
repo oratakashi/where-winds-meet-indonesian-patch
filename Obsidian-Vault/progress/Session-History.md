@@ -7,6 +7,18 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-25 — Session 25: Phase 7 started (idx 100,000–102,999, 3,000 rows)
+
+Phase 7, first batch: idx 100,000–102,999 (3,000 rows, delivered in one
+session as ten ~300-row sub-batches, merged and validated as one batch
+before writing) translated and written to new file `locale/phase7.jsonl`,
+taking Phase 7 from 0/30,000 to 3,000/30,000 (10.00%) — user requested
+3,000-row/session batches going forward for this phase too. 1 token/
+placeholder mismatch found and fixed in the merged batch (idx 102208 — a
+`#N` tag mistyped as `#Y`). Corrected; re-validated at 0 mismatches before
+writing. Full-file and cross-file validation both came back clean (144,817
+entries). No new terminology decisions.
+
 ## 2026-09-25 — Session 24: Phase 17, batch (idx 407,000–409,999, 3,000 rows)
 
 Phase 17, idx 407,000–409,999 (3,000 rows, delivered in one session as ten
