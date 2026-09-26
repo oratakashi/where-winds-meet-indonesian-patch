@@ -14,3 +14,13 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
 ## Batches
 
 - [[idx-370000-371999]] — idx 370,000–371,999 (`ba9ba57`, 2026-09-26)
+- idx 372,000–376,999 (2026-09-26, session 44, 5,000 rows) — translated in
+  twenty scratch passes of 250 rows each, validated with `tools/qa_check.py`,
+  merged and appended to `locale/phase16.jsonl`, per the user's standing
+  5,000-row-per-iteration request. Fixed 11 `<...>`-tag mismatches on the
+  first QA pass (plain non-`|id|#C|n>` tags like `<Beast Tongue>`,
+  `<thinking>`, `<barking>` had their bracketed content translated instead
+  of kept 100% in English per Quick-Reference §6 rule 1) before appending.
+  No new terminology decisions — all cases matched existing Quick-Reference
+  entries. See [[Current-Status]] session 44 write-up for full content
+  notes.

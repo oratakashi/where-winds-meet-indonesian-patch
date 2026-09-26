@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-26 (session 41).** This is the single source of truth for "how
+**Last updated: 2026-09-26 (session 44).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **189,704** | **461,704** | **41.09%** |
-| ↳ original corpus (Phases 0–17) | 157,887 | 429,887 | 36.73% |
+| **Unique strings translated (all)** | **194,704** | **461,704** | **42.17%** |
+| ↳ original corpus (Phases 0–17) | 162,887 | 429,887 | 37.89% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **594,659** | **826,388** | **71.96%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **598,486** | **826,388** | **72.42%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -43,7 +43,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 13 | 280,000–309,999 | **active** | 282,000 | 2,000 / 30,000 | 6.67% |
 | 14 | 310,000–339,999 | **active** | 312,000 | 2,000 / 30,000 | 6.67% |
 | 15 | 340,000–369,999 | **active** | 342,000 | 2,000 / 30,000 | 6.67% |
-| 16 | 370,000–399,999 | **active** | 372,000 | 2,000 / 30,000 | 6.67% |
+| 16 | 370,000–399,999 | **active** | 377,000 | 7,000 / 30,000 | 23.33% |
 | 17 | 400,000–429,886 | done | — | 29,887 / 29,887 | 100.00% |
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
 
@@ -61,18 +61,59 @@ Phase 9 is active at 2,000/30,000 (6.67%), Phase 10 is active at
 2,000/30,000 (6.67%), Phase 11 is active at 2,000/30,000 (6.67%), Phase 12
 is active at 2,000/30,000 (6.67%), Phase 13 is active at 2,000/30,000
 (6.67%), Phase 14 is active at 2,000/30,000 (6.67%), Phase 15 is active at
-2,000/30,000 (6.67%), and Phase 16 is active at 2,000/30,000 (6.67%).
-**Phase 7 advanced again this session** — 5,000 rows (idx 105,000–109,999)
-were translated in seventeen scratch passes, merged, and appended to
-`locale/phase7.jsonl`, taking Phase 7 from 5,000/30,000 (16.67%) to
-10,000/30,000 (33.33%), a full 5,000-row iteration per the user's
+2,000/30,000 (6.67%), and Phase 16 is active at 7,000/30,000 (23.33%).
+**Phase 16 advanced this session** — 5,000 rows (idx 372,000–376,999)
+were translated in twenty scratch passes, merged, and appended to
+`locale/phase16.jsonl`, taking Phase 16 from 2,000/30,000 (6.67%) to
+7,000/30,000 (23.33%), a full 5,000-row iteration per the user's
 established batch size.
 Resume any active phase next per [[Resume-Procedure]].
 **Iterations are batched at 5,000 rows per session** per the user's
 standing request ("aku ingin tiap iterasi 5000 string") — see
 [[Resume-Procedure]] for the batch-size note.
 
-## Most recent session (2026-09-26, session 43) — Phase 7 continuation (idx 105,000–109,999, 5,000 rows)
+## Most recent session (2026-09-26, session 44) — Phase 16 continuation (idx 372,000–376,999, 5,000 rows)
+
+Phase 16 advanced this session: 5,000 rows (idx 372,000–376,999) were
+translated in twenty scratch passes of 250 rows each, merged into one
+batch, validated with `tools/qa_check.py`'s `TOKEN` regex, and appended to
+`locale/phase16.jsonl`, continuing the user's established 5,000-row
+iteration size ("Mulai phase 16, aku ingin tiap iterasi 5000 string").
+Phase 16 moved from 2,000/30,000 (6.67%) to **7,000/30,000 (23.33%)**. Mix
+of content: a very large volume of Pinyin NPC/place names and quest
+labels (kept verbatim per convention), extensive NPC dialogue and lore
+blurbs (the "Twelve Immortals" Song-dynasty court-tailor origin story at
+idx 372297, the Ajiu/Tanxiang Velvet Shade romance novella at idx
+373375, the Sanniang Imperial Music Bureau debut story at idx 373265, the
+Jiang Yan war-legacy vignette at idx 372709, the Chi Qingqian/Ou Yanxi
+Mohist-disciple backstory at idx 375987, the Grand Artisan Gull
+fatherhood-and-cooking essay at idx 375115, and the wandering-soul
+formation vignette at idx 376524), many gear/skill tooltip strings
+(Vernal Umbrella, Snowparting Blade, Nameless Spear, Heavenwill
+Gauntlets, Everspring Umbrella, Inkwell Fan Martial Art descriptions,
+retuning/gear-tier system text), several classical-style poems and
+couplets, casual gue/lo NPC dialogue throughout (tavern/Jianghu banter,
+Homestead flavor text, children's dialogue), and a small number of raw
+Chinese dev/system labels kept verbatim per the idx 411158 precedent
+(idx 374531 phonetic-guide table, idx 375334, idx 375669, idx 375947,
+idx 376947). No new terminology decisions — every translatable case
+matched an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py --locale` found **11
+mismatches** on the first pass, all the same class of error: a plain
+`<...>` tag without `|id|#C|n>` format (e.g. `<Beast Tongue>`, `<From a
+distance>`, `<barking>`, `<thinking>`) had its bracketed content
+translated instead of kept 100% in English per Quick-Reference §6 rule 1.
+All eleven corrected in place; re-validated at **0 mismatches** before
+appending. Full-file check: `locale/phase16.jsonl` now 7,000 lines, all
+idx unique and sequential (370,000–376,999, no gaps), 0 duplicates, 0
+token mismatches. A final `qa_check.py --locale "locale/*.jsonl"` across
+the whole dictionary (194,704 entries) also came back clean.
+
+**Overall: 194,704 / 461,704 unique strings (42.17%), in-game coverage
+72.42%.**
+
+## Prior session (2026-09-26, session 43) — Phase 7 continuation (idx 105,000–109,999, 5,000 rows)
 
 Phase 7 advanced this session: 5,000 rows (idx 105,000–109,999) were
 translated in seventeen scratch passes of ~300 rows each, merged into one
