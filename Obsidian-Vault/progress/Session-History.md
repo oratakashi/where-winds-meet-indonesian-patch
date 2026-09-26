@@ -7,6 +7,17 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-26 — Session 36: Phase 15 started (idx 340,000–341,999, 2,000 rows)
+
+Phase 15, first batch: idx 340,000–341,999 (2,000 rows, four ~500-row
+scratch passes, merged and validated as one batch) written to new file
+`locale/phase15.jsonl`, taking Phase 15 from 0% to 2,000/30,000 (6.67%) —
+user requested 2,000 rows/session and an Obsidian vault update every
+iteration, no matter what. One token mismatch found and fixed (idx 341885,
+a `<...>` full-sentence tag translated instead of kept verbatim). Overall:
+166,817/461,704 unique strings (36.13%), in-game coverage 69.30%. See
+[[Current-Status]] for full details.
+
 ## 2026-09-25 — Session 35: Phase 14 started (idx 310,000–311,999, 2,000 rows)
 
 Phase 14, first batch: idx 310,000–311,999 (2,000 rows, nine ~250-row

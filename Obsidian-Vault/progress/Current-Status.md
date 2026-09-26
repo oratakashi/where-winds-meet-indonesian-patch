@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-25 (session 35).** This is the single source of truth for "how
+**Last updated: 2026-09-26 (session 36).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **164,817** | **461,704** | **35.70%** |
-| ↳ original corpus (Phases 0–17) | 133,000 | 429,887 | 30.94% |
+| **Unique strings translated (all)** | **166,817** | **461,704** | **36.13%** |
+| ↳ original corpus (Phases 0–17) | 135,000 | 429,887 | 31.40% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **571,232** | **826,388** | **69.12%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **572,686** | **826,388** | **69.30%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -42,7 +42,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 12 | 250,000–279,999 | **active** | 252,000 | 2,000 / 30,000 | 6.67% |
 | 13 | 280,000–309,999 | **active** | 282,000 | 2,000 / 30,000 | 6.67% |
 | 14 | 310,000–339,999 | **active** | 312,000 | 2,000 / 30,000 | 6.67% |
-| 15 | 340,000–369,999 | not started | 340,000 | 0 / 30,000 | 0.00% |
+| 15 | 340,000–369,999 | **active** | 342,000 | 2,000 / 30,000 | 6.67% |
 | 16 | 370,000–399,999 | not started | 370,000 | 0 / 30,000 | 0.00% |
 | 17 | 400,000–429,886 | **active** | 416,000 | 16,000 / 29,887 | 53.53% |
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
@@ -59,14 +59,55 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 3,000/30,000 (10.00%), Phase 8 is active at 2,000/30,000 (6.67%), Phase 9
 is active at 2,000/30,000 (6.67%), Phase 10 is active at 2,000/30,000
 (6.67%), Phase 11 is active at 2,000/30,000 (6.67%), Phase 12 is active at
-2,000/30,000 (6.67%), Phase 13 is active at 2,000/30,000 (6.67%), and
-**Phase 14 was started this session** at 2,000/30,000 (6.67%). Phase 17
-remains at 16,000/29,887 (53.53%).
+2,000/30,000 (6.67%), Phase 13 is active at 2,000/30,000 (6.67%), Phase 14
+is active at 2,000/30,000 (6.67%), and **Phase 15 was started this
+session** at 2,000/30,000 (6.67%). Phase 17 remains at 16,000/29,887
+(53.53%).
 Resume any active phase next per [[Resume-Procedure]].
 **Iterations are batched at 2,000 rows per session** at the user's explicit
 request — see [[Resume-Procedure]] for the batch-size note.
 
-## Most recent session (2026-09-25, session 35) — Phase 14 started (idx 310,000–311,999, 2,000 rows)
+## Most recent session (2026-09-26, session 36) — Phase 15 started (idx 340,000–341,999, 2,000 rows)
+
+Phase 15, the first batch of the phase: idx 340,000–341,999 (2,000 rows,
+translated in four ~500-row scratch passes, merged, and validated as one
+batch before writing new file `locale/phase15.jsonl`) at the user's explicit
+request to start Phase 15 at 2,000 rows/session and update the Obsidian
+vault every iteration, no matter what. **Phase 15 moved from 0% to 6.67%
+(2,000/30,000).** Mix of content: a very large run of Pinyin NPC names and
+quest/location labels (kept verbatim per convention), extensive NPC
+dialogue and lore blurbs (the Inkbound Order origin/history blurb at idx
+340001, the Song-dynasty five-kiln porcelain essay at idx 340100, the Qing
+diary sequence about the Sky Citadel/Golden Crow Nest at idx 340171, the
+Lone Cloud disciple's Anxi Army siege diary at idx 340404, the Gongshu Hui
+"Ingenuity vs. Simplicity" Dragonbane-tree novella at idx 341616, the
+Yunniang letter to her husband Qian Duo at idx 341141, the aviation-diary
+sequence at idx 341792, and the white-haired Khitan shaman-child prayer
+vignette at idx 341869), many gear/skill tooltip strings (Thundercry Blade
+Stonebreaker combo, Bellstrike Umbra/Splendor stat-tag templates,
+Snow-Severing Blade Treading Snow/Dread mechanic, Skyward Bond DMG/healing
+templates), a long Poplar Bazaar/Land of Gold historical vignette (idx
+341648), several classical-style poems and couplets, casual gue/lo NPC
+dialogue throughout (tavern/Jianghu banter, Homestead flavor text,
+children's dialogue), and one raw untranslated Chinese string kept verbatim
+per the idx 411158 precedent: idx 340596 ("假少东家乞讨", a raw Chinese quest/NPC
+label, not player-facing narrative text). No new terminology decisions —
+every translatable case matched an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py --locale` found **1
+mismatch** on the first pass: idx 341885, a `<...>` tag wrapping a full
+sentence (`<He releases the mechanism. The gate slams down.>`) had been
+translated instead of kept 100% verbatim per Quick-Reference §6 rule 3.
+Corrected in place; re-validated at **0 mismatches** before writing
+`locale/phase15.jsonl`. Full-file check: 2,000 lines, all idx unique and
+sequential (340,000–341,999, no gaps), 0 duplicates, 0 token mismatches. A
+final `qa_check.py --locale "locale/*.jsonl"` across the whole dictionary
+(166,817 entries) also came back clean.
+
+**Overall: 166,817 / 461,704 unique strings (36.13%), in-game coverage
+69.30%.**
+
+## Prior session (2026-09-25, session 35) — Phase 14 started (idx 310,000–311,999, 2,000 rows)
 
 Phase 14, the first batch of the phase: idx 310,000–311,999 (2,000 rows,
 translated in nine ~250-row scratch passes, merged, and validated as one
