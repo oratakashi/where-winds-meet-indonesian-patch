@@ -14,4 +14,4 @@ conventions before continuing it.
 
 ## Batches
 
-- Batch 1 — idx 220,000–221,999 (`2a503a5`, 2026-09-25)
+- [[idx-220000-221999]] — idx 220,000–221,999 (`2a503a5`, 2026-09-25)

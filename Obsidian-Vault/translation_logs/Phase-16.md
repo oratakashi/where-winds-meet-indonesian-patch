@@ -13,4 +13,4 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
 
 ## Batches
 
-- Batch 1 — idx 370,000–371,999 (`ba9ba57`, 2026-09-26)
+- [[idx-370000-371999]] — idx 370,000–371,999 (`ba9ba57`, 2026-09-26)
