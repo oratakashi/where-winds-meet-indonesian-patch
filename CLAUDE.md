@@ -85,6 +85,14 @@ the final message to the user. The "Overall progress" / "Phase status" tables in
 every PR touching `locale/`. A new `locale/updateN.jsonl` or phase file must be added to `PHASES`
 in `tools/progress.py` (the script refuses to run otherwise).
 
+**Every translation session must also update `Obsidian-Vault/translation_logs/Phase-N.md`** (or
+`Update-N.md`) for whichever phase it touched, before ending the turn — not just
+`Current-Status.md`. Append a `## Batches` entry (idx range, commit if known, date) and any
+terminology/context decisions made during the session, following the existing style in that
+phase's file (see e.g. `Phase-6.md`). If the phase has no log file yet, create one. This has been
+skipped before (Phase 7–17 logs were missing and had to be reconstructed retroactively from git
+history on 2026-09-26) — don't let it happen again.
+
 Local sessions are enforced by two hooks as well:
 - `.claude/settings.json` registers a **Stop hook** (`tools/hooks/claude_stop_check.py`): if
   `locale/` has uncommitted changes and the progress block is stale, Claude is blocked from ending
