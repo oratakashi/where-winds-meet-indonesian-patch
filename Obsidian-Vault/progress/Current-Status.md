@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-26 (session 36).** This is the single source of truth for "how
+**Last updated: 2026-09-26 (session 37).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **166,817** | **461,704** | **36.13%** |
-| ↳ original corpus (Phases 0–17) | 135,000 | 429,887 | 31.40% |
+| **Unique strings translated (all)** | **168,817** | **461,704** | **36.56%** |
+| ↳ original corpus (Phases 0–17) | 137,000 | 429,887 | 31.87% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **572,686** | **826,388** | **69.30%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **574,210** | **826,388** | **69.48%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -43,7 +43,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 13 | 280,000–309,999 | **active** | 282,000 | 2,000 / 30,000 | 6.67% |
 | 14 | 310,000–339,999 | **active** | 312,000 | 2,000 / 30,000 | 6.67% |
 | 15 | 340,000–369,999 | **active** | 342,000 | 2,000 / 30,000 | 6.67% |
-| 16 | 370,000–399,999 | not started | 370,000 | 0 / 30,000 | 0.00% |
+| 16 | 370,000–399,999 | **active** | 372,000 | 2,000 / 30,000 | 6.67% |
 | 17 | 400,000–429,886 | **active** | 416,000 | 16,000 / 29,887 | 53.53% |
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
 
@@ -60,14 +60,55 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 is active at 2,000/30,000 (6.67%), Phase 10 is active at 2,000/30,000
 (6.67%), Phase 11 is active at 2,000/30,000 (6.67%), Phase 12 is active at
 2,000/30,000 (6.67%), Phase 13 is active at 2,000/30,000 (6.67%), Phase 14
-is active at 2,000/30,000 (6.67%), and **Phase 15 was started this
-session** at 2,000/30,000 (6.67%). Phase 17 remains at 16,000/29,887
-(53.53%).
+is active at 2,000/30,000 (6.67%), Phase 15 is active at 2,000/30,000
+(6.67%), and **Phase 16 was started this session** at 2,000/30,000
+(6.67%). Phase 17 remains at 16,000/29,887 (53.53%).
 Resume any active phase next per [[Resume-Procedure]].
 **Iterations are batched at 2,000 rows per session** at the user's explicit
 request — see [[Resume-Procedure]] for the batch-size note.
 
-## Most recent session (2026-09-26, session 36) — Phase 15 started (idx 340,000–341,999, 2,000 rows)
+## Most recent session (2026-09-26, session 37) — Phase 16 started (idx 370,000–371,999, 2,000 rows)
+
+Phase 16, the first batch of the phase: idx 370,000–371,999 (2,000 rows,
+translated in four 500-row scratch passes, merged, and validated as one
+batch before writing new file `locale/phase16.jsonl`) at the user's explicit
+request to start Phase 16 at 2,000 rows/session and update the Obsidian
+vault every iteration, no matter what. **Phase 16 moved from 0% to 6.67%
+(2,000/30,000).** Mix of content: a very large run of Pinyin NPC names and
+quest/location labels (kept verbatim per convention), extensive NPC
+dialogue and lore blurbs (the Hui/Skybrim Market lantern-festival vignette
+at idx 370010, the Mohist disciple's letter about chasing the wanderer's
+adventures at idx 370011, the Wang Dasheng libation-oration for the fallen
+Brother Li at idx 370336, the Zhao Chengzong runaway-child Lantern Festival
+novella at idx 371763, and the Chen Quan "Drunk Martial Artist" origin
+legend at idx 371985), many gear/skill tooltip strings (Thundercry Blade
+Defensive Riposte/Cadence system, Scarlet Spin Phantom Umbrella resonance
+templates, Strategic Sword's Zenith Sword mechanic, Bamboocut/Silkbind/
+Bellstrike/Stonesplit stat-tag templates), several classical-style poems
+and couplets, casual gue/lo NPC dialogue throughout (tavern/Jianghu banter,
+Homestead flavor text, children's dialogue), and one raw untranslated
+Chinese string kept verbatim per the idx 411158 precedent: idx 371691
+("开封小剧场-生金瓯卜生金", a raw Chinese quest/label string, not player-facing
+narrative text). No new terminology decisions — every translatable case
+matched an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py --locale` found **2
+mismatches** on the first pass: idx 370745 (a `<...>` tag wrapping a full
+sentence, `<Don't ever learn Mohist Hill techniques, or you'll end up like
+us!>`, had been translated instead of kept 100% verbatim per
+Quick-Reference §6 rule 3) and idx 371368 (an `#Y...#E` wrap around
+"resonance" was dropped while restructuring the Scarlet Spin talent
+description, losing one `#Y`/`#E` pair from the count). Both corrected in
+place; re-validated at **0 mismatches** before writing `locale/phase16.jsonl`.
+Full-file check: 2,000 lines, all idx unique and sequential
+(370,000–371,999, no gaps), 0 duplicates, 0 token mismatches. A final
+`qa_check.py --locale "locale/*.jsonl"` across the whole dictionary
+(168,817 entries) also came back clean.
+
+**Overall: 168,817 / 461,704 unique strings (36.56%), in-game coverage
+69.48%.**
+
+## Prior session (2026-09-26, session 36) — Phase 15 started (idx 340,000–341,999, 2,000 rows)
 
 Phase 15, the first batch of the phase: idx 340,000–341,999 (2,000 rows,
 translated in four ~500-row scratch passes, merged, and validated as one
