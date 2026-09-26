@@ -1064,3 +1064,37 @@ whole dictionary (138,817 entries) also came back clean.
 Phase 17 is now 7,000/29,887 rows done (23.42%). Overall: 138,817/461,704
 unique strings (30.07%), in-game coverage 66.33%. Phase 6 was not touched
 this session.
+
+## 2026-09-26 — Session 42: Phase 7 continuation (idx 103,000–104,999, 2,000 rows), batch size set to 5,000/session
+
+At the user's explicit request ("Mulai phase 7, aku ingin tiap iterasi
+5000 string"), the per-iteration batch size for Phase 7 onward is now
+**5,000 strings/session** (up from no fixed default previously used on
+Phase 7). Resumed at the prior session's Phase 7 stopping point, idx
+103,000 (3,000/30,000 rows already done from an earlier session), and
+translated straight through to idx 104,999 in seven ~300-row scratch
+passes, merged into one batch, and appended to `locale/phase7.jsonl`.
+Combined with the pre-existing 3,000 rows, Phase 7 now stands at
+**5,000/30,000 (16.67%)** — a full 5,000-row iteration as requested. Mix
+of content: many Pinyin NPC/place names, gear/skill tooltip strings
+(Silkbind/Stonesplit/Bellstrike stat templates, Skygrasp Rope Dart and
+Infernal Twinblades Martial Art descriptions, retuning/re-attuning system
+text, Guild War League/Ranked Matches rules), casual gue/lo NPC dialogue
+(tavern banter, Homestead/fishing/cat-related flavor text), and several
+narrative/lore blurbs (Guan Zizai vajra-phurba story at idx 103120, Monk
+Liaowu Buddhist-persecution lore at idx 103594, Fate Incense Burner
+flavor text at idx 103833, Xiaoxiao/Evil Shade diary letters at idx
+104464). No new terminology decisions — every case matched an existing
+[[Quick-Reference]] entry.
+
+Token/placeholder validation found **1 mismatch**: idx 104661, where the
+source string itself has a truncated `#Y{} minute(s)` tag with no closing
+`#E` (a literal source-side typo), but the translation had added a
+closing `#E` not present in the source. Corrected to match the source
+exactly, then re-validated at 0 mismatches before appending. Full-file
+re-validation after append: `locale/phase7.jsonl` now 5,000 lines, 0
+duplicate idx, 0 gaps, 0 QA findings.
+
+Phase 7 is now 5,000/30,000 rows done (16.67%). Overall: 184,704/461,704
+unique strings (40.00%), in-game coverage 71.09%. No other phases were
+touched this session.

@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **182,704** | **461,704** | **39.57%** |
-| ↳ original corpus (Phases 0–17) | 150,887 | 429,887 | 35.10% |
+| **Unique strings translated (all)** | **184,704** | **461,704** | **40.00%** |
+| ↳ original corpus (Phases 0–17) | 152,887 | 429,887 | 35.56% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **584,631** | **826,388** | **70.75%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **587,475** | **826,388** | **71.09%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -34,7 +34,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 4 | 10,000–19,999 | done | — | 10,000 / 10,000 | 100.00% |
 | 5 | 20,000–49,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 6 | 50,000–99,999 | done | — | 50,000 / 50,000 | 100.00% |
-| 7 | 100,000–129,999 | **active** | 103,000 | 3,000 / 30,000 | 10.00% |
+| 7 | 100,000–129,999 | **active** | 105,000 | 5,000 / 30,000 | 16.67% |
 | 8 | 130,000–159,999 | **active** | 132,000 | 2,000 / 30,000 | 6.67% |
 | 9 | 160,000–189,999 | **active** | 162,000 | 2,000 / 30,000 | 6.67% |
 | 10 | 190,000–219,999 | **active** | 192,000 | 2,000 / 30,000 | 6.67% |
@@ -56,21 +56,57 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1, Phase 6, and Phase 17 are all fully complete.** Phase 7 is
-active at 3,000/30,000 (10.00%), Phase 8 is active at 2,000/30,000 (6.67%),
+active at 5,000/30,000 (16.67%), Phase 8 is active at 2,000/30,000 (6.67%),
 Phase 9 is active at 2,000/30,000 (6.67%), Phase 10 is active at
 2,000/30,000 (6.67%), Phase 11 is active at 2,000/30,000 (6.67%), Phase 12
 is active at 2,000/30,000 (6.67%), Phase 13 is active at 2,000/30,000
 (6.67%), Phase 14 is active at 2,000/30,000 (6.67%), Phase 15 is active at
 2,000/30,000 (6.67%), and Phase 16 is active at 2,000/30,000 (6.67%).
-**Phase 17 finished this session** — the remaining 5,887 rows (idx
-424,000–429,886) were translated across three batches (idx 424,000–428,749
-in ten ~250–500-row passes, then idx 428,750–429,886 in three ~250–450-row
-passes), taking it from 80.30% to **100.00% (29,887/29,887)**, at the
-user's explicit request to finish Phase 17 in full this session.
+**Phase 7 advanced this session** — 2,000 rows (idx 103,000–104,999) were
+translated in seven ~300-row scratch passes, merged, and appended to
+`locale/phase7.jsonl`, taking Phase 7 from 3,000/30,000 (10.00%) to
+5,000/30,000 (16.67%), per the user's request to move to Phase 7 with a
+fixed 5,000-row-per-iteration batch size going forward (**this changes the
+batch-size default from the prior 2,000/session — see below**).
 Resume any active phase next per [[Resume-Procedure]].
-**Iterations are batched at 2,000 rows per session** — see [[Resume-Procedure]] for the batch-size note.
+**Starting session 42 (this session), iterations are batched at 5,000
+rows per session** at the user's explicit request ("aku ingin tiap
+iterasi 5000 string") — see [[Resume-Procedure]] for the batch-size note.
 
-## Most recent session (2026-09-26, session 41) — Phase 17 completion (idx 424,000–429,886, 5,887 rows)
+## Most recent session (2026-09-26, session 42) — Phase 7 continuation (idx 103,000–104,999, 2,000 rows)
+
+Phase 7 advanced this session: 2,000 rows (idx 103,000–104,999) were
+translated in seven scratch passes of ~300 rows each, merged into one
+batch, validated with `tools/qa_check.py --locale`, and appended to
+`locale/phase7.jsonl`, per the user's request to start Phase 7 with a
+5,000-row-per-iteration batch size ("Mulai phase 7, aku ingin tiap
+iterasi 5000 string"). Phase 7 already had 3,000/30,000 rows from a prior
+session, so this pass brought it to **5,000/30,000 (16.67%)** — the full
+5,000-string iteration the user asked for, combining the pre-existing
+3,000 with this session's 2,000 new rows. Mix of content: many Pinyin
+NPC/place names, gear/skill tooltip strings (Silkbind/Stonesplit/
+Bellstrike stat templates, Skygrasp Rope Dart and Infernal Twinblades
+Martial Art descriptions, retuning/re-attuning system text, Guild War
+League/Ranked Matches rules), casual gue/lo NPC dialogue (tavern banter,
+Homestead/fishing/cat-related flavor text), several narrative/lore blurbs
+(the Guan Zizai vajra-phurba story at idx 103120, the Monk Liaowu
+Buddhist-persecution lore at idx 103594, the "Faded memories" Fate
+Incense Burner flavor text at idx 103833, the Xiaoxiao/Evil Shade diary
+letters at idx 104464), and UI/system strings throughout. No new
+terminology decisions — every translatable case matched an existing
+[[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py`'s `TOKEN` regex
+found **1 mismatch** on the first pass: idx 104661, where the source
+string has a truncated `#Y{} minute(s)` tag with no closing `#E` (a
+literal source-side typo/truncation), but the translation had added a
+closing `#E` that wasn't in the source. Corrected to drop the added
+`#E` and match the source exactly, then re-validated at **0
+mismatches** before appending. Full-file re-validation after append:
+`locale/phase7.jsonl` now 5,000 lines, 0 duplicate idx, 0 gaps, 0 QA
+findings (`PROMPT_LEAK`/`MARKUP`/`EMPTY` all 0.000%).
+
+## Prior session (2026-09-26, session 41) — Phase 17 completion (idx 424,000–429,886, 5,887 rows)
 
 Phase 17 finished in full this session: the remaining 5,887 rows (idx
 424,000–429,886) were translated in thirteen scratch passes of roughly
