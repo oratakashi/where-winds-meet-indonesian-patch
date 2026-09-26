@@ -7,6 +7,18 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-26 — Session 39: Phase 17 batch (idx 420,000–421,999, 2,000 rows)
+
+Phase 17, one 2,000-row batch (idx 420,000–421,999, four ~500-row scratch
+passes, merged and validated as one batch) appended to `locale/phase17.jsonl`,
+taking Phase 17 from 66.92% to 73.61% (22,000/29,887) — user requested 2,000
+rows/session and an Obsidian vault update regardless of size. Two `MARKUP`
+mismatches on the first pass (idx 420159 and idx 421491, both `<...>` tags
+translated instead of kept verbatim per Quick-Reference §6 rules 1/3),
+corrected and re-validated at 0 mismatches before appending. Full-dictionary
+check (174,817 entries) came back clean. Overall: 174,817/461,704 (37.86%),
+in-game coverage 70.03%.
+
 ## 2026-09-26 — Session 36: Phase 15 started (idx 340,000–341,999, 2,000 rows)
 
 Phase 15, first batch: idx 340,000–341,999 (2,000 rows, four ~500-row

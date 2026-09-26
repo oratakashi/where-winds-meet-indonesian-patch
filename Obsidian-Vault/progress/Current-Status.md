@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-26 (session 38).** This is the single source of truth for "how
+**Last updated: 2026-09-26 (session 39).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **172,817** | **461,704** | **37.43%** |
-| ↳ original corpus (Phases 0–17) | 141,000 | 429,887 | 32.80% |
+| **Unique strings translated (all)** | **174,817** | **461,704** | **37.86%** |
+| ↳ original corpus (Phases 0–17) | 143,000 | 429,887 | 33.26% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **577,214** | **826,388** | **69.85%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **578,715** | **826,388** | **70.03%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -44,7 +44,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 14 | 310,000–339,999 | **active** | 312,000 | 2,000 / 30,000 | 6.67% |
 | 15 | 340,000–369,999 | **active** | 342,000 | 2,000 / 30,000 | 6.67% |
 | 16 | 370,000–399,999 | **active** | 372,000 | 2,000 / 30,000 | 6.67% |
-| 17 | 400,000–429,886 | **active** | 420,000 | 20,000 / 29,887 | 66.92% |
+| 17 | 400,000–429,886 | **active** | 422,000 | 22,000 / 29,887 | 73.61% |
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
 
 <!-- progress:end -->
@@ -62,15 +62,52 @@ is active at 2,000/30,000 (6.67%), Phase 10 is active at 2,000/30,000
 2,000/30,000 (6.67%), Phase 13 is active at 2,000/30,000 (6.67%), Phase 14
 is active at 2,000/30,000 (6.67%), Phase 15 is active at 2,000/30,000
 (6.67%), and Phase 16 is active at 2,000/30,000
-(6.67%). **Phase 17 moved to 20,000/29,887 (66.92%) this session** — a full
-4,000-row batch (idx 416,000–419,999), at the user's explicit request to run
-this iteration at 4,000 rows and update the Obsidian vault regardless of
+(6.67%). **Phase 17 moved to 22,000/29,887 (73.61%) this session** — a full
+2,000-row batch (idx 420,000–421,999), at the user's explicit request to run
+this iteration at 2,000 rows and update the Obsidian vault regardless of
 size.
 Resume any active phase next per [[Resume-Procedure]].
-**Iterations are batched at 2,000 rows per session** by default (4,000 for
-this one-off session) — see [[Resume-Procedure]] for the batch-size note.
+**Iterations are batched at 2,000 rows per session** — see [[Resume-Procedure]] for the batch-size note.
 
-## Most recent session (2026-09-26, session 38) — Phase 17 batch (idx 416,000–419,999, 4,000 rows)
+## Most recent session (2026-09-26, session 39) — Phase 17 batch (idx 420,000–421,999, 2,000 rows)
+
+Phase 17, one 2,000-row batch (idx 420,000–421,999), translated in four
+~500-row scratch passes, merged, and validated as one batch before appending
+to `locale/phase17.jsonl`, at the user's explicit request to run this
+iteration at 2,000 rows and update the Obsidian vault no matter what.
+**Phase 17 moved from 66.92% to 73.61% (22,000/29,887)** this session. Mix of content: a very large
+run of Pinyin NPC names and garbled Hall-of-Fame usernames (kept verbatim
+per convention), extensive NPC dialogue and lore blurbs across Kaifeng/
+Mirkvale/Mohist Hill/Qinghe/Hexi/Liangzhou (the Gui Zhongyan "Gambler King"
+origin novella at idx 420598, the Fang Bai "Golden Peach"/political-ambition
+farewell letter at idx 420662, the Yan Ying/Qi Sheng chess-marriage novella
+at idx 421458, the medicine-demon prank scroll at idx 421556, and the Xian
+Youyu tavern-worker origin story at idx 421226), many gear/skill tooltip
+strings (Thundercry Blade Defensive Riposte/Cadence system, Snowparting
+Blade Inner Passion mechanic, Bamboocut/Bellstrike/Silkbind/Stonesplit
+stat-tag templates), several classical-style poems and couplets, casual
+gue/lo NPC dialogue throughout (tavern/Jianghu banter, Homestead flavor
+text, children's dialogue), and a handful of non-source-text/system labels
+kept verbatim per convention. No new terminology decisions — every
+translatable case matched an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py --locale` found **2
+mismatches** on the first pass: idx 420159 (a `<...>` tag wrapping a full
+sentence — `<So even the chant of the Deepwave Works held a piece of Senior
+Yu's heart.>` — translated instead of kept 100% verbatim per Quick-Reference
+§6 rule 3) and idx 421491 (a plain stage-direction `<...>` tag — `<sitting
+beside the ruins with a wine jar and a moonstone>` — translated instead of
+kept verbatim per rule 1, while the text outside the tag was correctly
+translated). Both corrected in place; re-validated at **0 mismatches**
+before appending. Full-file check: `locale/phase17.jsonl` now 22,000 lines,
+all idx unique and sequential (400,000–421,999, no gaps), 0 duplicates, 0
+token mismatches. A final `qa_check.py --locale "locale/*.jsonl"` across the
+whole dictionary (174,817 entries) also came back clean.
+
+**Overall: 174,817 / 461,704 unique strings (37.86%), in-game coverage
+70.03%.**
+
+## Prior session (2026-09-26, session 38) — Phase 17 batch (idx 416,000–419,999, 4,000 rows)
 
 Phase 17, one large 4,000-row batch (idx 416,000–419,999), translated in sixteen
 ~250-row scratch passes, merged, and validated as one batch before appending to
