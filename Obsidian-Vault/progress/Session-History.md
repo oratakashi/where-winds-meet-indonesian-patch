@@ -1098,3 +1098,35 @@ duplicate idx, 0 gaps, 0 QA findings.
 Phase 7 is now 5,000/30,000 rows done (16.67%). Overall: 184,704/461,704
 unique strings (40.00%), in-game coverage 71.09%. No other phases were
 touched this session.
+
+## 2026-09-26 — Session 43: Phase 7 continuation (idx 105,000–109,999, 5,000 rows)
+
+Continuing the 5,000-strings/session batch size set last session, resumed
+at Phase 7's stopping point, idx 105,000, and translated straight through
+to idx 109,999 in seventeen ~300-row scratch passes, merged into one
+batch, and appended to `locale/phase7.jsonl`. Phase 7 moved from
+5,000/30,000 (16.67%) to **10,000/30,000 (33.33%)**. Mix of content: a
+very large volume of gear/skill tooltip strings (Bellstrike/Nameless
+Spear/Strategic Sword/Infernal Twinblades Martial Art descriptions,
+retuning system text, Guild War Tournament rules), many Pinyin NPC/place
+names, casual gue/lo NPC dialogue, and several narrative/lore blurbs (the
+Bulwark-collapse "Uncle Zhang" short story at idx 106551, the Imperial
+Palace chef vignette at idx 109674, the Xie Qian's Journal Khitan-invasion
+diary at idx 107340, the Anxi Army courier "list of names" story at idx
+109102). No new terminology decisions — every case matched an existing
+[[Quick-Reference]] entry.
+
+Token/placeholder validation found **7 mismatches**, all corrected before
+appending: idx 107643 (stray `# ` instead of `#Y`), idx 107716 and 108899
+(plain `<...>`-wrapped single sentences mistakenly translated instead of
+kept verbatim per rule 3), idx 108171 (extra `#E` inserted mid-string),
+idx 108345 and 109051 (the literal `%ds`→`%dd` duration-suffix conversion
+mistakenly typed as `%sd`, corrupting the `%d` token itself into `%s`),
+and idx 108518 (`Light Attacks` in a stat tag mistakenly singularized,
+breaking the tag-content-must-match-byte-for-byte rule). Re-validated at
+0 mismatches, and a final `qa_check.py --locale` on the whole
+`locale/phase7.jsonl` file (10,000 entries) also came back clean.
+
+Phase 7 is now 10,000/30,000 rows done (33.33%). Overall: 189,704/461,704
+unique strings (41.09%), in-game coverage 71.96%. No other phases were
+touched this session.
