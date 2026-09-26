@@ -7,6 +7,19 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-26 — Session 41: Phase 17 completed (idx 424,000–429,886, 5,887 rows)
+
+Phase 17 finished in full: the remaining 5,887 rows (idx 424,000–429,886,
+thirteen ~250–500-row scratch passes merged into four batches) appended to
+`locale/phase17.jsonl`, taking Phase 17 from 80.30% to **100.00%
+(29,887/29,887)** — user requested finishing the phase in full this
+session, in one sitting. One `MARKUP` mismatch across all thirteen passes
+(idx 429562, a plain `<Crying out in despair>` stage-direction tag
+translated instead of kept verbatim per Quick-Reference §6 rule 1),
+corrected and re-validated at 0 mismatches before appending. Full-dictionary
+check (182,704 entries) came back clean. Overall: 182,704/461,704 (39.57%),
+in-game coverage 70.75%.
+
 ## 2026-09-26 — Session 39: Phase 17 batch (idx 420,000–421,999, 2,000 rows)
 
 Phase 17, one 2,000-row batch (idx 420,000–421,999, four ~500-row scratch

@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-26 (session 40).** This is the single source of truth for "how
+**Last updated: 2026-09-26 (session 41).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **176,817** | **461,704** | **38.30%** |
-| ↳ original corpus (Phases 0–17) | 145,000 | 429,887 | 33.73% |
+| **Unique strings translated (all)** | **182,704** | **461,704** | **39.57%** |
+| ↳ original corpus (Phases 0–17) | 150,887 | 429,887 | 35.10% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **580,239** | **826,388** | **70.21%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **584,631** | **826,388** | **70.75%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -44,7 +44,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 14 | 310,000–339,999 | **active** | 312,000 | 2,000 / 30,000 | 6.67% |
 | 15 | 340,000–369,999 | **active** | 342,000 | 2,000 / 30,000 | 6.67% |
 | 16 | 370,000–399,999 | **active** | 372,000 | 2,000 / 30,000 | 6.67% |
-| 17 | 400,000–429,886 | **active** | 424,000 | 24,000 / 29,887 | 80.30% |
+| 17 | 400,000–429,886 | done | — | 29,887 / 29,887 | 100.00% |
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
 
 <!-- progress:end -->
@@ -55,21 +55,63 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 100,000/229,887-string "Phase 7"/"Phase 8" split with eleven ~30,000-string
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
-**Update-1 and Phase 6 are both fully complete.** Phase 7 is active at
-3,000/30,000 (10.00%), Phase 8 is active at 2,000/30,000 (6.67%), Phase 9
-is active at 2,000/30,000 (6.67%), Phase 10 is active at 2,000/30,000
-(6.67%), Phase 11 is active at 2,000/30,000 (6.67%), Phase 12 is active at
-2,000/30,000 (6.67%), Phase 13 is active at 2,000/30,000 (6.67%), Phase 14
-is active at 2,000/30,000 (6.67%), Phase 15 is active at 2,000/30,000
-(6.67%), and Phase 16 is active at 2,000/30,000
-(6.67%). **Phase 17 moved to 24,000/29,887 (80.30%) this session** — a full
-2,000-row batch (idx 422,000–423,999), at the user's explicit request to run
-this iteration at 2,000 rows and update the Obsidian vault regardless of
-size.
+**Update-1, Phase 6, and Phase 17 are all fully complete.** Phase 7 is
+active at 3,000/30,000 (10.00%), Phase 8 is active at 2,000/30,000 (6.67%),
+Phase 9 is active at 2,000/30,000 (6.67%), Phase 10 is active at
+2,000/30,000 (6.67%), Phase 11 is active at 2,000/30,000 (6.67%), Phase 12
+is active at 2,000/30,000 (6.67%), Phase 13 is active at 2,000/30,000
+(6.67%), Phase 14 is active at 2,000/30,000 (6.67%), Phase 15 is active at
+2,000/30,000 (6.67%), and Phase 16 is active at 2,000/30,000 (6.67%).
+**Phase 17 finished this session** — the remaining 5,887 rows (idx
+424,000–429,886) were translated across three batches (idx 424,000–428,749
+in ten ~250–500-row passes, then idx 428,750–429,886 in three ~250–450-row
+passes), taking it from 80.30% to **100.00% (29,887/29,887)**, at the
+user's explicit request to finish Phase 17 in full this session.
 Resume any active phase next per [[Resume-Procedure]].
 **Iterations are batched at 2,000 rows per session** — see [[Resume-Procedure]] for the batch-size note.
 
-## Most recent session (2026-09-26, session 40) — Phase 17 batch (idx 422,000–423,999, 2,000 rows)
+## Most recent session (2026-09-26, session 41) — Phase 17 completion (idx 424,000–429,886, 5,887 rows)
+
+Phase 17 finished in full this session: the remaining 5,887 rows (idx
+424,000–429,886) were translated in thirteen scratch passes of roughly
+250–500 rows each, validated individually with `tools/qa_check.py
+--locale`, merged into four batches, and appended to `locale/phase17.jsonl`
+in sequence, at the user's explicit request ("Aku ingin menuntaskan
+progress phase 17") to complete the phase and update the Obsidian vault
+in the same session. **Phase 17 moved from 80.30% to 100.00%
+(29,887/29,887)** — the phase is now done. Mix of content in this closing
+stretch: a large run of Pinyin NPC names, extensive NPC dialogue and lore
+blurbs across Kaifeng/Mirkvale/Mohist Hill/Qinghe/Hexi/Liangzhou (the
+Lodestar Swordmaster/Qiongqi Artificer lore at idx 428798, the "Bro" letter
+about Well of Heaven sect reputation and the Sect Shop at idx 428846, the
+Zhang Jinqing/Hui Jingyi temple friendship vignette at idx 429355, the
+"whale" allegory story about the fall of the Jin dynasty at idx 429809,
+the Halcyon/Mohist Hill diary-letter at idx 429721, and the official
+"State of the Game" community letter at idx 429798), many gear/skill
+tooltip strings (Scarlet Spin/Dreamwrought Bubbles resonance mechanics,
+Thundercry Blade Critical Rate scaling, Concentration/Affinity DMG
+templates), several classical-style poems (Li Bai's temple-tower quatrain
+at idx 429748, the whale-poem couplet embedded in idx 429809), casual
+gue/lo NPC dialogue throughout (tavern/Jianghu banter, Homestead flavor
+text, children's dialogue), and the game's own official patch-notes/
+community-letter text (idx 429799) translated like any other narrative
+string per convention. No new terminology decisions — every translatable
+case matched an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py --locale` found **1
+mismatch** across all thirteen passes: idx 429562, a plain `<Crying out in
+despair>` stage-direction tag that had been translated instead of kept
+100% verbatim per Quick-Reference §6 rule 1. Corrected in place;
+re-validated at **0 mismatches** before appending. Full-file check:
+`locale/phase17.jsonl` now **29,887 lines** (idx 400,000–429,886, no gaps,
+0 duplicates, 0 token mismatches) — Phase 17 is complete. A final
+`qa_check.py --locale "locale/*.jsonl"` across the whole dictionary
+(182,704 entries) also came back clean.
+
+**Overall: 182,704 / 461,704 unique strings (39.57%), in-game coverage
+70.75%.**
+
+## Prior session (2026-09-26, session 40) — Phase 17 batch (idx 422,000–423,999, 2,000 rows)
 
 Phase 17, one 2,000-row batch (idx 422,000–423,999), translated in four
 500-row scratch passes, merged, and validated as one batch before appending
