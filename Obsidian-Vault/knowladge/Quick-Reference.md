@@ -15,6 +15,10 @@ crafting materials (`"<Name> Tier N"`), Qiongqi faction ranks, "Farmer" (Homeste
 capitalized), artisan pigment names in quotes, language names in the language-selector UI,
 the player-username Hall of Fame list, leaked developer Lua code.
 
+- **Inner Way names** stay English (name only — effect text is translated): Phantom Rally,
+  Song of Tang, Light Anew, Breaking Point, Vendetta, Adaptive Steel, Insightful Strike,
+  Fivefold Bleed, Shadow Assault, Steadfast Stance, Wind Beneath Wings, Royal Remedy,
+  Thunderous Bloom, Flying Gourds, Art of Resistance, Trapped Beast.
 - **Exception inside an exception**: "Mohist Sect" (proper-noun faction) stays in English —
   different from the generic word "Sect", which IS translated (§5). "Swordsman Sinan" is one
   combined name-unit, not "Swordsman" + a name.

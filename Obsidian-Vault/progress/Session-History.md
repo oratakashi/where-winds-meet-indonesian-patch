@@ -7,6 +7,24 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-27 — Session 50: Phase 16 completed (idx 391,000–399,999, 9,000 rows)
+
+Phase 16 finished in full: the remaining 9,000 rows (idx 391,000–399,999,
+thirty-six 250-row scratch passes, each validated with `tools/qa_check.py
+--locale` before appending) written to `locale/phase16.jsonl`, taking Phase
+16 from 70.00% to **100.00% (30,000/30,000)** — user requested finishing
+the phase in full this session ("Aku ingin menyelesaikan phase 16"), in one
+sitting (spanning a context-compaction boundary and a usage-limit pause,
+both resumed cleanly from the last-appended idx). Five `MARKUP` mismatches
+across the 36 passes, all `<...>`-wrapped stage directions/asides
+translated instead of kept verbatim per Quick-Reference §6 rules 1/3 (idx
+396555, 396635, 396662, 397496, 399972), each corrected and re-validated at
+0 mismatches before appending. One non-QA issue also caught: an unescaped
+`"` inside a JSON string value in the idx 397721 batch file, found by a
+`json.loads` sanity pass before `qa_check.py` ran, fixed by escaping it.
+Full-dictionary check (217,704 entries) came back clean. Overall:
+217,704/461,704 (47.15%), in-game coverage 74.54%.
+
 ## 2026-09-26 — Session 41: Phase 17 completed (idx 424,000–429,886, 5,887 rows)
 
 Phase 17 finished in full: the remaining 5,887 rows (idx 424,000–429,886,

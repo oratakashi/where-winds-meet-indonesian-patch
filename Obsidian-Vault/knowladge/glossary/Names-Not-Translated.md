@@ -50,6 +50,22 @@ For the `"<Skill Name> - EX"` / `: Ultimate` / DMG Boost style **label** convent
 attach to these names, see [[Kept-In-English-Terms]] — those are formatting rules, not the
 name itself.
 
+## Inner Way names
+
+Inner Way (passive-skill) **names** are kept in English, byte-for-byte — only the name
+itself; the surrounding effect/description text and "How to Get" text are translated
+normally. Locked list (2026-09-27, from the user):
+
+Phantom Rally, Song of Tang, Light Anew, Breaking Point, Vendetta, Adaptive Steel,
+Insightful Strike, Fivefold Bleed, Shadow Assault, Steadfast Stance, Wind Beneath Wings,
+Royal Remedy, Thunderous Bloom, Flying Gourds, Art of Resistance, Trapped Beast.
+
+- Also applies when the name appears inside a tome/item label, e.g. `Fivefold Bleed: Tome`
+  → `Fivefold Bleed: <translated "Tome">` — the name part stays English.
+- Some of these names collide with ordinary words (e.g. "Vendetta", "Breaking Point",
+  "Light Anew"): keep them English only when used as the Inner Way name (capitalized /
+  quoted / `#Y...#E`-tagged / next to "Inner Way" or "Tome"); translate ordinary prose uses.
+
 ## Unique boss / entity names
 
 The Void King, Windchaser, Meow Meow, etc. *(Phase 1)*

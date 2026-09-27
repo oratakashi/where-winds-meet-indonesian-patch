@@ -25,7 +25,7 @@
 {"idx": 2024, "v": "Titik tujuan berada di luar area quest"}
 {"idx": 2025, "v": "Lamunan Masa Kecil"}
 {"idx": 2026, "v": "Tempel"}
-{"idx": 2027, "v": "Cahaya yang Baru"}
+{"idx": 2027, "v": "Light Anew"}
 {"idx": 2028, "v": "Special Skill: Fleeting Trace memberikan damage 15% lebih besar saat mengenai unit yang tidak sedang bertahan."}
 {"idx": 2029, "v": "Mendapatkan 1 stack #H[Wind]#E setelah memberikan damage, Deflect, atau Perfect Dodge. Efek ini bisa terpicu sekali tiap 3 detik. Mendapatkan buff #H[Thunder Enlightenment - Wind]#E pada #H12 stack#E:\n#YSpecial Skill \"Rodent Rampage\"#E milik Mortal Rope Dart memanggil tikus yang memberikan damage lebih besar. Si tikus lagi marah!\n#YMartial Art Skill \"Addled Mind\"#E milik Infernal Twinblades cooldown-nya berkurang jadi 6 detik, dan bisa memicu Assist Attack #YRodent Rampage#E."}
 {"idx": 2030, "v": "Gue cuma warga biasa, pahlawan besar, nggak ada masalah yang ada hubungannya sama gue, kan?"}
@@ -173,7 +173,7 @@
 {"idx": 2172, "v": "Twelve Immortals"}
 {"idx": 2173, "v": "Tumpukan Buku"}
 {"idx": 2174, "v": "Emote"}
-{"idx": 2175, "v": "Binatang Terjebak"}
+{"idx": 2175, "v": "Trapped Beast"}
 {"idx": 2176, "v": "Profesi"}
 {"idx": 2177, "v": "Kebangkitan Esoterik"}
 {"idx": 2178, "v": "Demam Ringan"}
@@ -329,7 +329,7 @@
 {"idx": 2328, "v": "Merah"}
 {"idx": 2329, "v": "Main Story"}
 {"idx": 2330, "v": "Kemabukan"}
-{"idx": 2331, "v": "Angin di Bawah Sayap"}
+{"idx": 2331, "v": "Wind Beneath Wings"}
 {"idx": 2332, "v": "Unbound Cavern - Selokan Bawah Tanah (Besar) - Batas Energi, Admisi, Persyaratan, Parameter Lingkungan, Bar"}
 {"idx": 2333, "v": "Artificer"}
 {"idx": 2334, "v": "Oke"}
@@ -346,7 +346,7 @@
 {"idx": 2345, "v": "Siapa di situ?!"}
 {"idx": 2346, "v": "Mainkan Musik"}
 {"idx": 2347, "v": "Celana"}
-{"idx": 2348, "v": "Kuda-kuda yang Teguh"}
+{"idx": 2348, "v": "Steadfast Stance"}
 {"idx": 2349, "v": "Buddha's Light Summit Underground - Adegan Pertarungan Boss di Pasir"}
 {"idx": 2350, "v": "Bibi Wang"}
 {"idx": 2351, "v": "Wei Guli"}
@@ -394,7 +394,7 @@
 {"idx": 2393, "v": "Tepi Musiman"}
 {"idx": 2394, "v": "Buddha Fort"}
 {"idx": 2395, "v": "Archery - Trajektori Panah Ledak"}
-{"idx": 2396, "v": "Obat Kerajaan"}
+{"idx": 2396, "v": "Royal Remedy"}
 {"idx": 2397, "v": "Saat [Special Skill: Peak's Springless Silence] membuat stagger atau control pada target, meningkatkan damage yang diterima sebesar 12% selama 5 detik."}
 {"idx": 2398, "v": "Kejaran Bayangan"}
 {"idx": 2399, "v": "Gadis Kecil"}
@@ -471,7 +471,7 @@
 {"idx": 2470, "v": "Sipir"}
 {"idx": 2471, "v": "Tidak Bisa Bergerak, tidak dapat bergerak atau menggunakan sebagian besar skill."}
 {"idx": 2472, "v": "Busur dan Anak Panah"}
-{"idx": 2473, "v": "Lagu Dinasti Tang"}
+{"idx": 2473, "v": "Song of Tang"}
 {"idx": 2474, "v": "Koridor"}
 {"idx": 2475, "v": "Tenun Penambal"}
 {"idx": 2476, "v": "Art of Umbrella DMG Boost"}
@@ -766,7 +766,7 @@
 {"idx": 2765, "v": "Profil Karakter"}
 {"idx": 2766, "v": "Saat ayam berkokok, tembok berdiri tegak. Ombak tersenyum bak kebanggaan pahlawan, tapi gerbang mulia menunduk rendah di mana anjing berdiam."}
 {"idx": 2767, "v": "Harta atau sampah, gue lebih milih ngelap pantat gue pake itu daripada ngasih ke lo!"}
-{"idx": 2768, "v": "Serbuan Bayangan"}
+{"idx": 2768, "v": "Shadow Assault"}
 {"idx": 2769, "v": "Di Qinghe, kamu bertemu seorang cendekiawan tua yang eksentrik, eksperimennya yang liar demi penelitian telah bikin lingkungan sekitar kacau. Ajak dia bicara buat ngerti apa yang lagi dia lakuin."}
 {"idx": 2770, "v": "Coba lagi, gue percaya sama lo."}
 {"idx": 2771, "v": "Masalah lo apa? Ngomong aja! Kalau lo nggak bilang, gue nggak bakal tau. Nggak tau, nggak bisa benerin. Nggak bisa benerin, nggak bisa bantu. Ngerti?"}
@@ -792,7 +792,7 @@
 {"idx": 2791, "v": "Nyonya Yan"}
 {"idx": 2792, "v": "Cari Guru"}
 {"idx": 2793, "v": "Pencuri"}
-{"idx": 2794, "v": "Dendam"}
+{"idx": 2794, "v": "Vendetta"}
 {"idx": 2795, "v": "Vernal Umbrella Martial Art Skill DMG Boost"}
 {"idx": 2796, "v": "Kamu melihat Yuanbao di tungku lagi. Ikuti Yuanbao untuk mencari tahu di mana Yingying berada."}
 {"idx": 2797, "v": "Mataku! Enyah dari hadapanku!"}
@@ -967,7 +967,7 @@
 {"idx": 2966, "v": "Liat guci di tangan gue ini. Ini bukan minuman biasa, ini Parting Tears yang terkenal dari Heaven's Pier!"}
 {"idx": 2967, "v": "Pikir cepet. Lo nggak bakal nemu tawaran kayak gini lagi!"}
 {"idx": 2968, "v": "Memberikan 150% damage ke musuh."}
-{"idx": 2969, "v": "Mekar Bergemuruh"}
+{"idx": 2969, "v": "Thunderous Bloom"}
 {"idx": 2970, "v": "Kalau itu bener, kenapa nggak lo jual sendiri?"}
 {"idx": 2971, "v": "Di Bawah Bulan Itu"}
 {"idx": 2972, "v": "Meong meong meong meong meong, meong meong meong, meong meong meong meong meong meong meong!"}
@@ -1293,7 +1293,7 @@
 {"idx": 3292, "v": "Wow, pintar banget ngerayu! Kau kedengaran kayak Iblis sendiri lagi cerita dongeng sebelum tidur. Sayang semuanya bohong!"}
 {"idx": 3293, "v": "Aku bimbang. Harus lapor ke pihak berwajib nggak ya? Apa yang bakal terjadi? Orang tuaku masih bakal sayang aku nggak ya? Yah, kau jelas nggak bakal sayang aku, jadi kayaknya aku lapor aja!"}
 {"idx": 3294, "v": "Aturan Gameplay"}
-{"idx": 3295, "v": "Titik Batas"}
+{"idx": 3295, "v": "Breaking Point"}
 {"idx": 3296, "v": "Siapa di sana?"}
 {"idx": 3297, "v": "Li Shoujie"}
 {"idx": 3298, "v": "12"}

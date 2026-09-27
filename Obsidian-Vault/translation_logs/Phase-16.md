@@ -1,15 +1,9 @@
-# Phase 16 Translation Log (idx 370,000–371,999)
+# Phase 16 Translation Log (idx 370,000–399,999)
 
-**Reconstructed retroactively on 2026-09-26** — this file was not written during
-the session that did the work, so it only records what the commit history and
-`locale/phase16.jsonl` show, not session-by-session reasoning.
-
-Phase 16 currently holds a single starter batch, committed 2026-09-26
-(`ba9ba57` — "Start Phase 16 translation (idx 370000-371999, 2000 rows)").
-`locale/phase16.jsonl` has 2,000 rows; the phase is **not complete** — see
-[[Current-Status]] for the full idx range still outstanding. No terminology
-decisions were recorded for this batch; check [[Quick-Reference]] and
-[[Glossary]] for standing conventions before continuing it.
+**Completed 2026-09-27 (session 50).** `locale/phase16.jsonl` holds the full
+30,000 rows (idx 370,000–399,999) with 0 QA mismatches outstanding — see
+[[Current-Status]] for the overall progress line. Check [[Quick-Reference]]
+and [[Glossary]] for the standing conventions applied throughout.
 
 ## Batches
 
@@ -97,3 +91,40 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
   (raw Chinese dev/location labels). No new terminology decisions — all
   cases matched existing Quick-Reference entries. See [[Current-Status]]
   session 49 write-up for full content notes.
+- idx 391,000–399,999 (2026-09-27, session 50, 9,000 rows) — **Phase 16
+  completed.** Translated in thirty-six scratch passes of 250 rows each,
+  each validated with `tools/qa_check.py --locale` before being merged and
+  appended to `locale/phase16.jsonl`, per the user's request ("Aku ingin
+  menyelesaikan phase 16") to finish the phase in full this session. Notable
+  content: the Sixteen Lanes "1.5 billion Youxia-er" anniversary letter (idx
+  395764), the Zhu En Nuo Rite ritualist meditation (idx 396050), the Wen
+  Wuque "Black and White Gods of Wealth" Weiyang City saga (idx 396809), the
+  Su Yuandao Mohist apprenticeship biography (idx 397721), the "Ran"
+  child's-eye-view tragedy vignette (idx 397897), the Jiang Jin Jiu-style
+  "Eternal Whispers" drinking poem (idx 399049), the Kaifeng tourist diary
+  (idx 399170), the Feng Yi/River Master "was it worth it" epilogue (idx
+  399991), and a full Where Winds Meet Mobile Invitational tournament-rules
+  block (idx 399102). Fixed 5 mismatches across the 36 batches, all the same
+  class (Quick-Reference §6 rule 1/3 — a `<...>`-wrapped stage direction or
+  full-sentence aside translated instead of kept 100% verbatim in English):
+  idx 396555 (`<Inner voice>`), idx 396635 (a cat's aside), idx 396662
+  (`<spots a wine jug under the camel>`), idx 397496 (`<whispers>`), and idx
+  399972 (`<You tell him about your encounter with Big Smart>`). One
+  additional non-QA issue was caught and fixed before validation: the idx
+  397721 batch file had an unescaped `"` inside a JSON string value
+  (breaking that line's JSON syntax), caught by a `json.loads` pass over the
+  scratch file before `qa_check.py` ran, fixed by escaping the quote. Two
+  raw non-English strings kept verbatim per convention: idx 396172
+  (raw Chinese dev-label) and idx 398744 (raw Chinese dev-label). No new
+  terminology decisions — all cases matched existing Quick-Reference
+  entries. Final full-file check: `locale/phase16.jsonl` is 30,000 lines,
+  idx unique and sequential 370,000–399,999 with no gaps, 0 duplicates, 0
+  token mismatches. See [[Current-Status]] session 50 write-up for the full
+  overall-progress line.
+
+### 2026-09-27 — Inner Way name revert
+
+- idx 388247 `Insightful Strike: Tome` → `Insightful Strike: Kitab` (was `Serangan
+  Berwawasan: Kitab`). Inner Way names are now locked as not-translated — see
+  [[Names-Not-Translated]] § "Inner Way names" (same fix applied to Phase 2 idx 2027–3295, see
+  [[Phase-2]]).
