@@ -24,3 +24,11 @@ Standalone name rows reverted to the English source:
 
 Deliberately **not** reverted: "Vendetta" in idx 6955 (Vendetta Bounty), 30374, 40202, 77717,
 95179 — those are the bounty/enmity system, not the Inner Way.
+
+### 2026-09-27 (2) — full Inner Way list
+
+Second pass with the full 56-name game8 list; reverted: 2177 Esoteric Revival, 2195
+Throat-Piercing Art, 2243 Echoes of Oblivion, 2249 Evasive Charge, 2361 Vital Leech, 2393
+Seasonal Edge, 2417 Blossom Barrage, 2427 Mountain's Might, 2475 Mending Loom, 2479 Battle
+Anthem, 2513 Wildfire Surge, 2683 Sandswirl Tail, 2735 Wildfire Spark, 2778 Divine Roulette,
+2990 Wolfchaser's Art, 3172 Light and Shadow Alike, 3252 Bitter Seasons, 3340 Restoring Blossom.

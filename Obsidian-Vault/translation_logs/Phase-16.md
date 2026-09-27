@@ -128,3 +128,5 @@ and [[Glossary]] for the standing conventions applied throughout.
   Berwawasan: Kitab`). Inner Way names are now locked as not-translated — see
   [[Names-Not-Translated]] § "Inner Way names" (same fix applied to Phase 2 idx 2027–3295, see
   [[Phase-2]]).
+- Second pass (full game8 list): 379827 `Inner Way: Blossom Barrage`, 387627 `Seasonal Edge:
+  Catatan`, 387691 `Sword Horizon: Catatan`.

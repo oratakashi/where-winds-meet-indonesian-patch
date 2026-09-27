@@ -54,17 +54,25 @@ name itself.
 
 Inner Way (passive-skill) **names** are kept in English, byte-for-byte — only the name
 itself; the surrounding effect/description text and "How to Get" text are translated
-normally. Locked list (2026-09-27, from the user):
+normally. Locked list (2026-09-27; full list of 56 from game8.co "List of All Inner Ways"):
 
-Phantom Rally, Song of Tang, Light Anew, Breaking Point, Vendetta, Adaptive Steel,
-Insightful Strike, Fivefold Bleed, Shadow Assault, Steadfast Stance, Wind Beneath Wings,
-Royal Remedy, Thunderous Bloom, Flying Gourds, Art of Resistance, Trapped Beast.
+Eonpour, Skyspeak, Volutefit, Mistwing, Phantom Rally, Song of Tang, Light Anew, Towline
+Sweep, Soaring High, Celestial Vigor, Empirical Edge, Sky Gripped, Echoes of Oblivion, Riptide
+Reflex, Breaking Point, Vendetta, Sword Morph, Mountain's Might, Battle Anthem, Wildfire
+Spark, Sandswirl Tail, Sword Horizon, Adaptive Steel, Insightful Strike, Wolfchaser's Art,
+Morale Chant, Seasonal Edge, Heart of Fire, Fury Harvest, Divine Roulette, Evasive Charge,
+Vital Leech, Bitter Seasons, Invigorated Warrior, Wind Beneath Wings, Evening Snow, Steadfast
+Stance, Shadow Assault, Fivefold Bleed, Royal Remedy, Mending Loom, Esoteric Revival,
+Restoring Blossom, Blossom Barrage, Flying Gourds, Light and Shadow Alike, Thunderous Bloom,
+Star Reacher, Exquisite Scenery, Art of Resistance, Trapped Beast, Rock Solid, Frost-Clad
+Night, Wildfire Surge, Throat-Piercing Art, Steadfast Devotion.
 
 - Also applies when the name appears inside a tome/item label, e.g. `Fivefold Bleed: Tome`
   → `Fivefold Bleed: <translated "Tome">` — the name part stays English.
-- Some of these names collide with ordinary words (e.g. "Vendetta", "Breaking Point",
-  "Light Anew"): keep them English only when used as the Inner Way name (capitalized /
-  quoted / `#Y...#E`-tagged / next to "Inner Way" or "Tome"); translate ordinary prose uses.
+- Some of these names collide with ordinary words (e.g. "Vendetta", "Heart of Fire",
+  "Rock Solid", "Evening Snow"): keep them English only when used as the Inner Way name (capitalized /
+  quoted / `#Y...#E`-tagged / next to "Inner Way" or "Tome"); translate ordinary prose uses. "Vendetta" in the bounty/enmity system (Vendetta Bounty,
+  Enmity & Vendetta, Vendetta against Players, ...) is NOT the Inner Way and stays "Dendam".
 
 ## Unique boss / entity names
 

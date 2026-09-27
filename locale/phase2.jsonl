@@ -175,7 +175,7 @@
 {"idx": 2174, "v": "Emote"}
 {"idx": 2175, "v": "Trapped Beast"}
 {"idx": 2176, "v": "Profesi"}
-{"idx": 2177, "v": "Kebangkitan Esoterik"}
+{"idx": 2177, "v": "Esoteric Revival"}
 {"idx": 2178, "v": "Demam Ringan"}
 {"idx": 2179, "v": "Terus?"}
 {"idx": 2180, "v": "Didapat dari event Happy Geese Day. Bisa ditukar dengan kartu wajah Landlord edisi terbatas."}
@@ -193,7 +193,7 @@
 {"idx": 2192, "v": "Gleaming Pond Corridor"}
 {"idx": 2193, "v": "Hidupkan Kembali"}
 {"idx": 2194, "v": "Harta Terakhir"}
-{"idx": 2195, "v": "Ilmu Penusuk Tenggorokan"}
+{"idx": 2195, "v": "Throat-Piercing Art"}
 {"idx": 2196, "v": "Deskripsi BOSS dungeon cadangan"}
 {"idx": 2197, "v": "Co-op"}
 {"idx": 2198, "v": "Mengejar dengan Kite"}
@@ -241,13 +241,13 @@
 {"idx": 2240, "v": "Saat [Martial Art Skill: Snaring Lash] membuat stagger atau control pada target, meningkatkan damage yang diterima sebesar 10% selama 10 detik dan memberimu 3 detik Tenacity."}
 {"idx": 2241, "v": "Perception Skill"}
 {"idx": 2242, "v": "Zhao Zongcheng muncul dengan sebuah novel dari Ghostlight Market, bertekad menemukan kisah sebenarnya. Dan begitulah petualangan liarmu di Qinghe dimulai."}
-{"idx": 2243, "v": "Gema Pelupaan"}
+{"idx": 2243, "v": "Echoes of Oblivion"}
 {"idx": 2244, "v": "Kumpulkan Peti"}
 {"idx": 2245, "v": "Lv."}
 {"idx": 2246, "v": "Talisman Bonus"}
 {"idx": 2247, "v": "Membutuhkan material berikut"}
 {"idx": 2248, "v": "*Meong*..."}
-{"idx": 2249, "v": "Terjangan Menghindar"}
+{"idx": 2249, "v": "Evasive Charge"}
 {"idx": 2250, "v": "Meja Makan"}
 {"idx": 2251, "v": "Kamu dengar kabarnya: seorang pemilik kios di Qinghe mengajarkan keahliannya secara gratis. Meski banyak yang berbondong-bondong mendatanginya, cuma sedikit yang berhasil menguasai resep-resepnya yang menantang. Gabung dengan kerumunan dan berusahalah mempelajari resep-resepnya."}
 {"idx": 2252, "v": "Strategi Grup"}
@@ -359,7 +359,7 @@
 {"idx": 2358, "v": "Baiklah."}
 {"idx": 2359, "v": "Level 3"}
 {"idx": 2360, "v": "Barang antik yang berhubungan dengan sejarah #H%s#E."}
-{"idx": 2361, "v": "Penghisap Vitalitas"}
+{"idx": 2361, "v": "Vital Leech"}
 {"idx": 2362, "v": "Kelas A"}
 {"idx": 2363, "v": "Tutorial Lanjutan I"}
 {"idx": 2364, "v": "Penjahat"}
@@ -391,7 +391,7 @@
 {"idx": 2390, "v": "Pulihkan 20 Vitality setelah menggunakan Execution Skill. Selama 8 detik berikutnya, tingkatkan damage Mystic Skill sebesar 20% dan pulihkan tambahan 2 Vitality saat menyembuhkan unit lain. Bisa terpicu hingga 5 kali."}
 {"idx": 2391, "v": "Bersihkan"}
 {"idx": 2392, "v": "\"Nah, ini baru namanya jos!\" Di depan Kaifeng Food Guide, seseorang sedang melahap sepiring besar makanan khas Kaifeng yang baru dibuat, sambil antusias mengacungkan jempol..."}
-{"idx": 2393, "v": "Tepi Musiman"}
+{"idx": 2393, "v": "Seasonal Edge"}
 {"idx": 2394, "v": "Buddha Fort"}
 {"idx": 2395, "v": "Archery - Trajektori Panah Ledak"}
 {"idx": 2396, "v": "Royal Remedy"}
@@ -415,7 +415,7 @@
 {"idx": 2414, "v": "Lihat Lainnya"}
 {"idx": 2415, "v": "Perception Forest 2.0 - Trajektori Roket"}
 {"idx": 2416, "v": "Santai - Gameplay"}
-{"idx": 2417, "v": "Serbuan Kembang"}
+{"idx": 2417, "v": "Blossom Barrage"}
 {"idx": 2418, "v": "Archery - Trajektori Panah Kayu"}
 {"idx": 2419, "v": "Prajurit Palace Guard"}
 {"idx": 2420, "v": "Soaring Spin"}
@@ -425,7 +425,7 @@
 {"idx": 2424, "v": "Petualangan Jianghu Sang Angsa Muda"}
 {"idx": 2425, "v": "Inkwell Fan - Special and Pursuit Skill DMG Boost"}
 {"idx": 2426, "v": "Pengurus Rumah Tangga"}
-{"idx": 2427, "v": "Kekuatan Gunung"}
+{"idx": 2427, "v": "Mountain's Might"}
 {"idx": 2428, "v": "Lepaskan jubah duniawi ini, tanggalkan warna merah yang memudar. Terbang melintasi jembatan bagai bangau, dan mabuk oleh angin pagi yang jernih."}
 {"idx": 2429, "v": "Cabai terbaik berasal dari Tianshui, keharumannya dikenal luas. Saat tahun-tahun telah memutihkan pelipis mereka dan hidup telah meredupkan cahaya di mata mereka, sanggupkah mereka menemukan keberanian untuk bangkit lagi? Bantu para lansia mewujudkan harapan tulus mereka dan hayati jalan seorang pahlawan."}
 {"idx": 2430, "v": "Divinecraft Dungeon"}
@@ -473,11 +473,11 @@
 {"idx": 2472, "v": "Busur dan Anak Panah"}
 {"idx": 2473, "v": "Song of Tang"}
 {"idx": 2474, "v": "Koridor"}
-{"idx": 2475, "v": "Tenun Penambal"}
+{"idx": 2475, "v": "Mending Loom"}
 {"idx": 2476, "v": "Art of Umbrella DMG Boost"}
 {"idx": 2477, "v": "C"}
 {"idx": 2478, "v": "Mengenai unit yang sama dengan [Light Attack Charged Skill: Grave Frost] 3 kali berturut-turut (dengan jeda tidak lebih dari 2 detik) memberikan tambahan 10 Qi damage dan memberimu Inner Passion."}
-{"idx": 2479, "v": "Nyanyian Perang"}
+{"idx": 2479, "v": "Battle Anthem"}
 {"idx": 2480, "v": "Red Gold Boutique"}
 {"idx": 2481, "v": "Total Skor"}
 {"idx": 2482, "v": "Teknik tombak legendaris Shi Jiuge berani bagai petir, gerakannya lugas namun mematikan.\nSetiap tusukan menyalurkan amarah badai yang murni, dan meski dasarnya tampak sederhana, penguasaan sejatinya membuat langit dan bumi bergetar."}
@@ -511,7 +511,7 @@
 {"idx": 2510, "v": "Mengurangi damage yang diberikan"}
 {"idx": 2511, "v": "Elang Kayu"}
 {"idx": 2512, "v": "Breakthrough"}
-{"idx": 2513, "v": "Lonjakan Api Liar"}
+{"idx": 2513, "v": "Wildfire Surge"}
 {"idx": 2514, "v": "Koi"}
 {"idx": 2515, "v": "Lepas"}
 {"idx": 2516, "v": "Penyelidikan di Bawah Bulan"}
@@ -681,7 +681,7 @@
 {"idx": 2680, "v": "Bracket Set"}
 {"idx": 2681, "v": "Kata bijak bilang \"orang hebat ngomong jujur\"... tapi buat lo? Cuma tumpukan omong kosong gede!"}
 {"idx": 2682, "v": "Confucius pernah bilang, \"Tahu yang kau tahu dan mengakui yang tidak kau tahu, itulah kebijaksanaan sejati.\" Kenapa menghindari pertanyaan?"}
-{"idx": 2683, "v": "Ekor Pusaran Pasir"}
+{"idx": 2683, "v": "Sandswirl Tail"}
 {"idx": 2684, "v": "Waktu nggak nunggu siapa-siapa, Master Scholar. Tolong buat keputusan secepatnya!"}
 {"idx": 2685, "v": "Terus kenapa kalau iya?"}
 {"idx": 2686, "v": "Siapa lagi yang berjalan di bumi ini kayak kita? Di antara semuanya, cuma kita yang tanpa tanding."}
@@ -733,7 +733,7 @@
 {"idx": 2732, "v": "Kemampuan silatnya juga luar biasa. Dilatih sejak kecil, dia mahir memanah dan menunggang kuda, cakap dalam golok, pedang, tombak, dan halberd. Gue pernah liat dia di lapangan latihan, beneran satu pasukan sendirian, berani dan brilian."}
 {"idx": 2733, "v": "Challenge Gagal"}
 {"idx": 2734, "v": "Baiklah—potong-potong aja boneka jelek itu!"}
-{"idx": 2735, "v": "Percikan Api Liar"}
+{"idx": 2735, "v": "Wildfire Spark"}
 {"idx": 2736, "v": "Siap, Pak!"}
 {"idx": 2737, "v": "Maksimal tercapai"}
 {"idx": 2738, "v": "Kwek kwek! Kwek?!!! Kwek kwek kwek!"}
@@ -776,7 +776,7 @@
 {"idx": 2775, "v": "D"}
 {"idx": 2776, "v": "Stormbreaker Spear Charged Skill DMG Boost"}
 {"idx": 2777, "v": "Debat harusnya memperjelas benar dari salah. Kalau lo cuma cari menang, bukan kebenaran, lupain aja."}
-{"idx": 2778, "v": "Roulette Ilahi"}
+{"idx": 2778, "v": "Divine Roulette"}
 {"idx": 2779, "v": "Airborne"}
 {"idx": 2780, "v": "Dapatkan 1.5 detik Tenacity untuk setiap musuh yang terkena serangan menyapu terakhir dari [Special Skill: Wind Vortex] (maksimal 6 detik) dan dapatkan Super Armor jika lebih dari 2 musuh terkena."}
 {"idx": 2781, "v": "Berdiri di antara langit dan bumi, mengendalikan kekuatan penciptaan; menempa ikatan hidup dan mati, dan menghadapi bahaya jianghu bersama-sama."}
@@ -988,7 +988,7 @@
 {"idx": 2987, "v": "Pandangan lo yang sempit bikin diskusi lebih lanjut nggak ada gunanya, kayak jelasin lautan ke katak dalam sumur."}
 {"idx": 2988, "v": "Gue cuma ngoceh doang, nggak kayak lo, pahlawan besar—tiap kata lo beratnya kayak sembilan tripod!"}
 {"idx": 2989, "v": "Catat kasusnya"}
-{"idx": 2990, "v": "Ilmu Pengejar Serigala"}
+{"idx": 2990, "v": "Wolfchaser's Art"}
 {"idx": 2991, "v": "Karakternya gimana?"}
 {"idx": 2992, "v": "Musisi"}
 {"idx": 2993, "v": "Luar Biasa"}
@@ -1170,7 +1170,7 @@
 {"idx": 3169, "v": "Empirical Edge"}
 {"idx": 3170, "v": "Emerald Dewtouch"}
 {"idx": 3171, "v": "Khitan"}
-{"idx": 3172, "v": "Terang dan Gelap Sama Saja"}
+{"idx": 3172, "v": "Light and Shadow Alike"}
 {"idx": 3173, "v": "Jue"}
 {"idx": 3174, "v": "Kak He, main Pipa-mu itu berani dan menggelegar, kayak babi besar sama babi kecil nyebur ke kubangan lumpur. Garang banget! Cendekiawan itu sampai muji-muji kau setinggi langit!"}
 {"idx": 3175, "v": "Aunt Han"}
@@ -1250,7 +1250,7 @@
 {"idx": 3249, "v": "Perampok Makam"}
 {"idx": 3250, "v": "Kau kemakan itu? Penipuan itu cuma bisa berhasil ke kau, dan cuma kau, di seluruh dunia ini!"}
 {"idx": 3251, "v": "Meong! Meong-meong!"}
-{"idx": 3252, "v": "Musim-Musim Pahit"}
+{"idx": 3252, "v": "Bitter Seasons"}
 {"idx": 3253, "v": "Peningkatan Tempur Melawan Unit Boss"}
 {"idx": 3254, "v": "Selesaikan Hero's Realm sekali"}
 {"idx": 3255, "v": "Wahai angsa, wahai angsa, wahai angsa!\nKau julurkan leher dan nyanyikan lagu merdumu ke langit.\nBulu putihmu mengapung tenang di air hijau.\nKau berenang di air jernih dengan kaki berselaput merah.\nMampukah kau membalas puisi ini?"}
@@ -1338,7 +1338,7 @@
 {"idx": 3337, "v": "Scholars' Hearth"}
 {"idx": 3338, "v": "\"Mutiara besar dan kecil jatuh di piring giok.\" Itu dari \"Song of the Pipa\" karya Bai Letian! Maksud cendekiawan itu, permainanmu luar biasa, Kak He. Tsk tsk..."}
 {"idx": 3339, "v": "Semoga kita panjang umur, meski terpisah jarak jauh."}
-{"idx": 3340, "v": "Kembang Pemulih"}
+{"idx": 3340, "v": "Restoring Blossom"}
 {"idx": 3341, "v": "Tang Xinci"}
 {"idx": 3342, "v": "Insightful Strike"}
 {"idx": 3343, "v": "Petualangan Epik"}

@@ -15,10 +15,18 @@ crafting materials (`"<Name> Tier N"`), Qiongqi faction ranks, "Farmer" (Homeste
 capitalized), artisan pigment names in quotes, language names in the language-selector UI,
 the player-username Hall of Fame list, leaked developer Lua code.
 
-- **Inner Way names** stay English (name only — effect text is translated): Phantom Rally,
-  Song of Tang, Light Anew, Breaking Point, Vendetta, Adaptive Steel, Insightful Strike,
-  Fivefold Bleed, Shadow Assault, Steadfast Stance, Wind Beneath Wings, Royal Remedy,
-  Thunderous Bloom, Flying Gourds, Art of Resistance, Trapped Beast.
+- **Inner Way names** stay English (name only — effect text/"Tome"/"Note" are translated;
+  bounty-system "Vendetta" is still "Dendam"): Eonpour, Skyspeak, Volutefit, Mistwing, Phantom
+  Rally, Song of Tang, Light Anew, Towline Sweep, Soaring High, Celestial Vigor, Empirical
+  Edge, Sky Gripped, Echoes of Oblivion, Riptide Reflex, Breaking Point, Vendetta, Sword
+  Morph, Mountain's Might, Battle Anthem, Wildfire Spark, Sandswirl Tail, Sword Horizon,
+  Adaptive Steel, Insightful Strike, Wolfchaser's Art, Morale Chant, Seasonal Edge, Heart of
+  Fire, Fury Harvest, Divine Roulette, Evasive Charge, Vital Leech, Bitter Seasons,
+  Invigorated Warrior, Wind Beneath Wings, Evening Snow, Steadfast Stance, Shadow Assault,
+  Fivefold Bleed, Royal Remedy, Mending Loom, Esoteric Revival, Restoring Blossom, Blossom
+  Barrage, Flying Gourds, Light and Shadow Alike, Thunderous Bloom, Star Reacher, Exquisite
+  Scenery, Art of Resistance, Trapped Beast, Rock Solid, Frost-Clad Night, Wildfire Surge,
+  Throat-Piercing Art, Steadfast Devotion.
 - **Exception inside an exception**: "Mohist Sect" (proper-noun faction) stays in English —
   different from the generic word "Sect", which IS translated (§5). "Swordsman Sinan" is one
   combined name-unit, not "Swordsman" + a name.
