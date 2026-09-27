@@ -72,6 +72,8 @@ jobs:
             ${{ steps.progress.outputs.line }}
 
             Cara pakai: lihat README repo untuk petunjuk instalasi ke folder game.
+            > [!NOTE]
+            > Cara pakai: lihat (see [`README.md`](https://github.com/oratakashi/where-winds-meet-indonesian-patch#player-installation-guide) repo untuk petunjuk instalasi ke folder game.
           files: |
             wwm-indonesian-patch.zip
             patched/translate_words_map_en
