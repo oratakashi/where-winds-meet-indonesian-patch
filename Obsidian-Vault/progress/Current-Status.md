@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **217,704** | **461,704** | **47.15%** |
-| ↳ original corpus (Phases 0–17) | 185,887 | 429,887 | 43.24% |
+| **Unique strings translated (all)** | **219,704** | **461,704** | **47.59%** |
+| ↳ original corpus (Phases 0–17) | 187,887 | 429,887 | 43.71% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **615,958** | **826,388** | **74.54%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **618,851** | **826,388** | **74.89%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -34,7 +34,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 4 | 10,000–19,999 | done | — | 10,000 / 10,000 | 100.00% |
 | 5 | 20,000–49,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 6 | 50,000–99,999 | done | — | 50,000 / 50,000 | 100.00% |
-| 7 | 100,000–129,999 | **active** | 110,000 | 10,000 / 30,000 | 33.33% |
+| 7 | 100,000–129,999 | **active** | 112,000 | 12,000 / 30,000 | 40.00% |
 | 8 | 130,000–159,999 | **active** | 132,000 | 2,000 / 30,000 | 6.67% |
 | 9 | 160,000–189,999 | **active** | 162,000 | 2,000 / 30,000 | 6.67% |
 | 10 | 190,000–219,999 | **active** | 192,000 | 2,000 / 30,000 | 6.67% |
@@ -56,20 +56,63 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1, Phase 6, Phase 16, and Phase 17 are all fully complete.**
-Phase 7 is active at 10,000/30,000 (33.33%), Phase 8 is active at
+Phase 7 is active at 12,000/30,000 (40.00%), Phase 8 is active at
 2,000/30,000 (6.67%), Phase 9 is active at 2,000/30,000 (6.67%), Phase 10
 is active at 2,000/30,000 (6.67%), Phase 11 is active at 2,000/30,000
 (6.67%), Phase 12 is active at 2,000/30,000 (6.67%), Phase 13 is active at
 2,000/30,000 (6.67%), Phase 14 is active at 2,000/30,000 (6.67%), and
 Phase 15 is active at 2,000/30,000 (6.67%).
-**Phase 16 was completed this session** — the remaining 9,000 rows (idx
-391,000–399,999) were translated across 36 scratch passes, merged, and
-appended to `locale/phase16.jsonl`, taking Phase 16 from 21,000/30,000
-(70.00%) to **30,000/30,000 (100.00%)**, per the user's request to finish
-Phase 16 in full this session.
 Resume any active phase next per [[Resume-Procedure]].
 
-## Most recent session (2026-09-27, session 50) — Phase 16 completed (idx 391,000–399,999, 9,000 rows)
+## Most recent session (2026-09-27, session 51) — Phase 7 continuation (idx 110,000–111,999, 2,000 rows)
+
+Phase 7 advanced this session: 2,000 rows (idx 110,000–111,999) were
+translated in four 500-row scratch passes, merged into one batch,
+validated with `tools/qa_check.py --locale`, and appended to
+`locale/phase7.jsonl`, per the user's request to run Phase 7 at a
+2,000-row-per-iteration cadence and update the Obsidian vault every time
+("Mulai phase 7, aku ingin tiap iterasi 2000 string, dan update juga
+obsidian vault nya, langsung 2000 baris apapun yang terjadi"). Phase 7
+moved from 10,000/30,000 (33.33%) to **12,000/30,000 (40.00%)**. Mix of
+content: a very large volume of Pinyin NPC/place names and garbled
+Hall-of-Fame usernames (kept verbatim per convention), many gear/skill
+tooltip strings (Mo Blade sweep skill description, Vernal Umbrella/Spring
+Sorrow charge mechanic, Phalanxbane Blade Inner Passion interaction,
+Heavenwill Gauntlets Vile Condemned refill, Silkbind - Deluge and
+Bellstrike - Splendor tooltip text, Guild War League/Ranked Matches
+rules), extensive NPC dialogue and lore blurbs (the Tiger Fort
+three-brothers bandit legend at idx 110317, the moon-carriage/soul-carriage
+legend at idx 110948, the Water Administration Code and 948 CE flood-marker
+inscription at idx 110505/110654, the Ashoka Buddhist-relic history blurb
+at idx 111984, the drowned-Wanderer sword-wound mystery at idx 111665, and
+the Zhang Huaishen assassination failure/poison-death vignette at idx
+111410), a full moonlight/grape-harvest lullaby poem at idx 110454, several
+classical-style poems and couplets, casual gue/lo NPC dialogue throughout
+(tavern/Jianghu banter, Homestead flavor text, children's dialogue), and a
+handful of Wrestling/gambling and Trekking-for-Treasures event UI strings.
+No new terminology decisions — every translatable case matched an existing
+[[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py --locale` found **2
+mismatches** on the first pass, both `<...>`-tag content that had drifted
+from the source's exact text: idx 110288 (a `#H...#E` wager-rules block
+where the tag boundaries were re-split around translated words, changing
+the `#H`/`#E` count) and idx 111619 (a `<Vernal Umbrella's|781|#C|20601>`
+stat tag that lost the source's `'s` inside the bracket, a literal-content
+mismatch of the kind `qa_check.py` treats as a distinct token). Both
+corrected — the wager-rules tag content translated in full inside single
+`#H...#E` spans instead of being re-split, and the stat tag's bracketed
+text restored byte-for-byte to the source — and re-validated at **0
+mismatches** before appending. Full-file check: `locale/phase7.jsonl` now
+12,000 lines, all idx unique and sequential (100,000–111,999, no gaps), 0
+duplicates, 0 token mismatches. A final `qa_check.py --locale
+"locale/*.jsonl"` across the whole dictionary (219,704 entries) also came
+back clean.
+
+**Overall: 219,704 / 461,704 unique strings (47.59%), in-game coverage
+74.89%.**
+
+## Prior session (2026-09-27, session 50) — Phase 16 completed (idx 391,000–399,999, 9,000 rows)
 
 Phase 16 was finished this session: the remaining 9,000 rows (idx
 391,000–399,999) were translated in thirty-six scratch passes of 250 rows

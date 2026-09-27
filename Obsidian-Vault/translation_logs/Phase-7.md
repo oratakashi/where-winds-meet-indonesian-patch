@@ -14,3 +14,9 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
 ## Batches
 
 - [[idx-100000-102999]] — idx 100,000–102,999 (`df960e8`, 2026-09-25)
+- idx 103,000–104,999 (session 42, 2026-09-26, 2,000 rows) — brought the phase to 5,000/30,000.
+- idx 105,000–109,999 (session 43, 2026-09-26, 5,000 rows) — brought the phase to 10,000/30,000.
+- idx 110,000–111,999 (session 51, 2026-09-27, 2,000 rows) — brought the phase to 12,000/30,000.
+  No new terminology decisions; two `<...>`-tag content mismatches (idx 110288, idx 111619) were
+  caught by `qa_check.py --locale` and fixed before appending — see [[Current-Status]]'s session
+  51 write-up for detail.
