@@ -30,6 +30,8 @@ NetEase frequently ships incremental updates via companion files (`_diff` for de
   - [PC — Steam](#pc--steam)
   - [PC — Official WWM Launcher](#pc--official-wwm-launcher)
   - [Android](#android)
+    - [Method A — File manager on the phone](#method-a--file-manager-on-the-phone-no-pc-needed)
+    - [Method B — ADB from a PC](#method-b--adb-from-a-pc-step-by-step-for-beginners)
   - [Reverting to English / Handling Game Updates](#reverting-to-english--handling-game-updates)
 - [Prerequisites & Installation](#prerequisites--installation)
 - [Quickstart Guide](#quickstart-guide)
@@ -126,32 +128,115 @@ published as a single rolling GitHub Release (tag `latest`):
 
 ### Android
 
-The Android build of Where Winds Meet stores its locale files inside the app's internal storage,
-so writing to that location requires **root access** or a file manager with root/Shizuku
-privileges (a standard, non-root file manager cannot write there).
+The Android build of Where Winds Meet stores its locale files under the shared
+`Android/data/<package>/` folder. **Root is not required** — `Android/data` is part of normal
+internal storage, not the app's private `/data/data` sandbox. The only catch is that newer Android
+versions hide this folder from ordinary file managers.
 
-1. Locate the game's install path on the device, typically one of:
+The target folder is typically:
+
+```
+Internal Storage/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
+```
+
+(the exact package name and sub-path can vary by release region — look for the folder containing
+files named `translate_words_map_en*`.)
+
+> [!IMPORTANT]
+> **Why `Android/data` is tricky on Android 10 and newer:** scoped storage (introduced in
+> Android 10, enforced from Android 11) stops regular file-manager apps from seeing or writing inside
+> `Android/data`, and on Android 13+ even the system "allow access to this folder" prompt is blocked
+> for it. This is an OS restriction, not a need for root — pick one of the two methods below.
+> Behavior also differs between OEM skins (MIUI/HyperOS, One UI, ColorOS, etc.), so if one method is
+> blocked on your device, try the other.
+
+> [!TIP]
+> Quick thing to try first: connect the phone to a PC with a USB cable in **File Transfer (MTP)**
+> mode and open it in Windows Explorer. On many devices `Android/data` is still visible and writable
+> this way — if it is, just back up and copy the files there and skip the methods below.
+
+#### Method A — File manager on the phone (no PC needed)
+
+The easiest route is a file manager that can open `Android/data` on its own, including on
+Android 13 and newer. **[Files by Marc apps & software](https://play.google.com/store/apps/details?id=com.marc.files)**
+(`com.marc.files`, free on the Play Store) has been tested to work for this — no root, no PC, and
+no extra helper apps needed.
+
+1. Install **[Files](https://play.google.com/store/apps/details?id=com.marc.files)** from the Play
+   Store and open it. Grant the storage permission it asks for.
+2. Download `wwm-indonesian-patch.zip` on the phone and extract it (the app can open ZIP files, or
+   use any archive app). Note where the extracted `translate_words_map_en*` files are, e.g.
+   `Download/wwm-indonesian-patch/`.
+3. In the app, go to **Internal Storage → Android → data** and open the game's folder, then the
+   locale folder shown above. If the app shows a prompt asking for access to the folder, allow it.
+4. **Back up** the existing `translate_words_map_en*` files by copying them to another folder, e.g.
+   `Download/wwm-backup/`.
+5. Copy the extracted patch files into the locale folder, overwriting the files with matching names.
+6. Force-close the game, relaunch it, and set **Settings → Language → Game Language = English**.
+
+If this doesn't work on your device (some OEM skins are stricter), use Method B below.
+
+#### Method B — ADB from a PC (step by step, for beginners)
+
+ADB (Android Debug Bridge) is Google's official tool for sending files to a phone over USB. It
+sounds technical, but it's just a few copy-paste commands. The steps below are for Windows.
+
+**One-time setup on the PC**
+
+1. Download **SDK Platform-Tools for Windows** from Google's official page:
+   <https://developer.android.com/tools/releases/platform-tools>
+2. Extract the ZIP somewhere easy, e.g. `C:\platform-tools\`. Inside it you'll see `adb.exe`.
+3. Extract `wwm-indonesian-patch.zip` **into that same `C:\platform-tools\` folder**, so the
+   `translate_words_map_en*` files sit next to `adb.exe`. (This keeps the commands short.)
+
+**One-time setup on the phone**
+
+4. Open **Settings → About phone** and tap **Build number** 7 times until it says
+   *"You are now a developer"*. (On Xiaomi it's **MIUI/OS version**; on Samsung it's under
+   **Software information**.)
+5. Go to **Settings → System → Developer options** (location varies by brand) and turn on
+   **USB debugging**.
+
+**Copying the files**
+
+6. Connect the phone to the PC with a USB cable (a data cable, not a charge-only one).
+7. Open the `C:\platform-tools\` folder in Windows Explorer, click the address bar, type `cmd`,
+   and press **Enter**. A black Command Prompt window opens already inside that folder.
+8. Type the following and press **Enter**:
+   ```bat
+   adb devices
    ```
-   Internal Storage/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
+   A prompt **"Allow USB debugging?"** appears on the phone — tick *Always allow* and tap
+   **Allow**. Run `adb devices` again; you should see a line ending in `device`. If it says
+   `unauthorized`, check the phone screen for the prompt. If nothing is listed, try another
+   cable/USB port or set the phone's USB mode to *File Transfer*.
+9. **Back up** the original files to the PC (this creates a `backup` folder next to `adb.exe`):
+   ```bat
+   mkdir backup
+   adb pull /sdcard/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/ backup
    ```
-   (the exact package name varies by release region — look for the folder containing files named
-   `translate_words_map_en*` using a root-capable file manager, e.g. MT Manager, Root Explorer, or
-   Solid Explorer with a root add-on.)
-2. Back up the existing `translate_words_map_en`, `translate_words_map_en_diff`,
-   `translate_words_map_en__small`, and `translate_words_map_en__small_diff` files found there.
-3. Copy (push) the files extracted from `wwm-indonesian-patch.zip` into that folder, overwriting
-   the files with matching names. Ensure the copied files retain the same permissions/ownership as
-   the originals (most root file managers handle this automatically) so the game can read them.
-4. Force-close and relaunch the game (or restart the device if needed).
-5. Set **Settings → Language → Game Language = English** in-game.
+10. Push the patched files to the phone — run one line per file (copy-paste each and press
+    **Enter**):
+    ```bat
+    adb push translate_words_map_en /sdcard/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
+    adb push translate_words_map_en_diff /sdcard/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
+    adb push translate_words_map_en__small /sdcard/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
+    adb push translate_words_map_en__small_diff /sdcard/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
+    ```
+    Each line should report `1 file pushed`. If you get *"No such file or directory"*, the package
+    name or path differs on your device — run
+    `adb shell ls /sdcard/Android/data/ | findstr netease` to find the right package folder and
+    adjust the path.
+11. Force-close the game, relaunch it, and set **Settings → Language → Game Language = English**.
+12. (Optional) Turn **USB debugging** back off when you're done.
+
+To restore the originals later, repeat step 10 using the files from the `backup` folder
+(`adb push backup\locale\translate_words_map_en ...` etc.).
 
 > [!NOTE]
-> Because this requires root access, the process is riskier and more technical than on PC. Some
-> devices/ROMs also verify APK/OBB integrity (e.g. Play Integrity), so the mod may be detected or
-> the files silently restored by the game's update process — similar to the `_diff` behavior on PC
-> (see [Known Limitations](#known-limitations--deployment-gotchas)). If rooting isn't an option,
-> wait for a future game update that may merge `_diff` into the base package, or use the PC version
-> instead.
+> The game's own patcher may re-verify and silently restore modified files on launch, similar to
+> the `_diff` behavior on PC (see [Known Limitations](#known-limitations--deployment-gotchas)). If
+> the Indonesian text reverts to English after a launch or update, re-copy the patched files.
 
 ### Reverting to English / Handling Game Updates
 
