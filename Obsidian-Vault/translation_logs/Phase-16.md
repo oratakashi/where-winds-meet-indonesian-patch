@@ -66,3 +66,18 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
   terminology decisions — all cases matched existing Quick-Reference
   entries. See [[Current-Status]] session 47 write-up for full content
   notes.
+- idx 387,000–388,999 (2026-09-27, session 48, 2,000 rows) — translated in
+  eight scratch passes of 250 rows each, validated with a direct
+  `TOKEN`-regex comparison against the source, merged and appended to
+  `locale/phase16.jsonl`, per the user's updated request to run Phase 16
+  at 2,000 rows/iteration again ("Mulai phase 16, aku ingin tiap iterasi
+  2000 string"), superseding the previous 4,000-row cadence for this
+  phase. Fixed 2 mismatches on the first QA pass: idx 387696 (a plain
+  `<%s - Boat Owner>` tag had its bracketed content translated instead of
+  kept 100% in English per Quick-Reference §6 rule 1) and idx 388329 (a
+  plain `<Stunned>` stage-direction tag was translated instead of kept
+  in English). One raw non-English string kept verbatim per convention:
+  idx 388910 (`新年快樂`, a leaked Chinese New Year greeting string). No new
+  terminology decisions — all cases matched existing Quick-Reference
+  entries. See [[Current-Status]] session 48 write-up for full content
+  notes.
