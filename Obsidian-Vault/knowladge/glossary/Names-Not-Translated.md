@@ -6,7 +6,7 @@ translate, transliterate, or "improve" it, even when it looks like an ordinary w
 ## Personal character / NPC names
 
 Huajian Ke, Jiang Wulang, Lian Daozi, Feng Jisheng, Han Xiangxun, Big Zhao, Little Fu, Ye
-Wanshan, Murong Yuan, Yi Dao, Qinghe, etc. *(Phase 1)*
+Wanshan, Murong Yuan, Yi Dao, Qinghe, Raven, etc. *(Phase 1)*
 
 - **"Swordsman Sinan" is a combined name-unit**, not "Swordsman" (translated) + "Sinan" (a
   name) — used consistently as one title/name since early Update-1. *([[Update-1]])*

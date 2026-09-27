@@ -24,3 +24,30 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
   No new terminology decisions — all cases matched existing Quick-Reference
   entries. See [[Current-Status]] session 44 write-up for full content
   notes.
+- idx 377,000–378,999 (2026-09-27, session 45, 2,000 rows) — translated in
+  eight scratch passes of 250 rows each, validated with a direct `TOKEN`-regex
+  comparison, merged and appended to `locale/phase16.jsonl`, per the user's
+  new standing request to run Phase 16 at 2,000 rows/iteration going forward
+  ("Mulai phase 16, aku ingin tiap iterasi 2000 string"), superseding the
+  earlier 5,000-row cadence for this phase. Fixed 2 mismatches on the first
+  QA pass: idx 377194 (a stat tag's name was translated instead of kept
+  English per Quick-Reference §6 rule 2) and idx 378067 (a plain `<...>` tag
+  wrapping a full stage direction was translated instead of kept 100%
+  verbatim per rule 1). No new terminology decisions — all cases matched
+  existing Quick-Reference entries. See [[Current-Status]] session 45
+  write-up for full content notes.
+- idx 379,000–382,999 (2026-09-27, session 46, 4,000 rows) — translated in
+  sixteen scratch passes of 250 rows each, validated with a direct
+  `TOKEN`-regex comparison against the source, merged and appended to
+  `locale/phase16.jsonl`, per the user's new standing request to run Phase
+  16 at 4,000 rows/iteration going forward ("Mulai phase 16, aku ingin
+  tiap iterasi 4000 string"), superseding the earlier 2,000-row cadence
+  for this phase. Fixed 2 mismatches on the first QA pass: idx 382772 (a
+  plain `<Beast Tongue>` tag was translated instead of kept 100% in
+  English per Quick-Reference §6 rule 1) and idx 382910 (a `{0}`
+  placeholder was duplicated three times instead of the source's two).
+  One raw garbled-encoding non-source-text string (idx 381486,
+  `鍏充簬瀵掑喎`) was kept verbatim per the idx 411158 precedent. No new
+  terminology decisions — all cases matched existing Quick-Reference
+  entries. See [[Current-Status]] session 46 write-up for full content
+  notes.
