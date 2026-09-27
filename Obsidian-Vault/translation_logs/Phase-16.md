@@ -51,3 +51,18 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
   terminology decisions — all cases matched existing Quick-Reference
   entries. See [[Current-Status]] session 46 write-up for full content
   notes.
+- idx 383,000–386,999 (2026-09-27, session 47, 4,000 rows) — translated in
+  sixteen scratch passes of 250 rows each, validated with a direct
+  `TOKEN`-regex comparison against the source, merged and appended to
+  `locale/phase16.jsonl`, continuing the user's 4,000-row/iteration
+  cadence for this phase. Fixed 3 mismatches on the first QA pass: idx
+  383926 and idx 386635 (plain `<...>`-tagged stage directions/
+  inner-thoughts had their bracketed content translated instead of kept
+  100% in English per Quick-Reference §6 rule 1) and idx 385860 (a
+  `#R...#E` warning wrap was rewritten as `#Y...#E`, changing the token).
+  Two non-English/garbled strings kept verbatim per convention: idx
+  383466 (`今年も一緒に騒ごう！`, a leaked Japanese string) and idx 386937
+  (`谷子渘, You Are Good`, a raw Chinese label mixed with English). No new
+  terminology decisions — all cases matched existing Quick-Reference
+  entries. See [[Current-Status]] session 47 write-up for full content
+  notes.
