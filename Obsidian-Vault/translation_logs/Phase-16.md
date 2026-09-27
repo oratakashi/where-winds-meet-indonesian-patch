@@ -81,3 +81,19 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
   terminology decisions — all cases matched existing Quick-Reference
   entries. See [[Current-Status]] session 48 write-up for full content
   notes.
+- idx 389,000–390,999 (2026-09-27, session 49, 2,000 rows) — translated in
+  eight scratch passes of 250 rows each, validated with a direct
+  `TOKEN`-regex comparison against the source, merged and appended to
+  `locale/phase16.jsonl`, per the user's standing 2,000-row/iteration
+  request. Fixed 1 mismatch on the first QA pass: idx 390884, a long
+  "36 tactics for the lovelorn" narrative where all seven `<...>`-wrapped
+  inner-monologue quotes (Quick-Reference §6 rule 3 — a `<...>` wrapping
+  one entire long sentence) had their bracketed content translated into
+  Indonesian instead of kept 100% verbatim in English; corrected so only
+  the surrounding prose (intro paragraphs, "Tactic One/Two/…" lines) was
+  translated and the seven tags restored to their exact source English
+  text. Three raw non-English/placeholder strings kept verbatim per the
+  idx 411158 precedent: idx 390233, idx 390703, and idx 390985/390990
+  (raw Chinese dev/location labels). No new terminology decisions — all
+  cases matched existing Quick-Reference entries. See [[Current-Status]]
+  session 49 write-up for full content notes.

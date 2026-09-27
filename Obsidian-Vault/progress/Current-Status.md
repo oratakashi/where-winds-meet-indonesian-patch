@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-27 (session 48).** This is the single source of truth for "how
+**Last updated: 2026-09-27 (session 49).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **206,704** | **461,704** | **44.77%** |
-| ↳ original corpus (Phases 0–17) | 174,887 | 429,887 | 40.68% |
+| **Unique strings translated (all)** | **208,704** | **461,704** | **45.20%** |
+| ↳ original corpus (Phases 0–17) | 176,887 | 429,887 | 41.15% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **607,623** | **826,388** | **73.53%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **609,130** | **826,388** | **73.71%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -43,7 +43,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 13 | 280,000–309,999 | **active** | 282,000 | 2,000 / 30,000 | 6.67% |
 | 14 | 310,000–339,999 | **active** | 312,000 | 2,000 / 30,000 | 6.67% |
 | 15 | 340,000–369,999 | **active** | 342,000 | 2,000 / 30,000 | 6.67% |
-| 16 | 370,000–399,999 | **active** | 389,000 | 19,000 / 30,000 | 63.33% |
+| 16 | 370,000–399,999 | **active** | 391,000 | 21,000 / 30,000 | 70.00% |
 | 17 | 400,000–429,886 | done | — | 29,887 / 29,887 | 100.00% |
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
 
@@ -61,19 +61,71 @@ Phase 9 is active at 2,000/30,000 (6.67%), Phase 10 is active at
 2,000/30,000 (6.67%), Phase 11 is active at 2,000/30,000 (6.67%), Phase 12
 is active at 2,000/30,000 (6.67%), Phase 13 is active at 2,000/30,000
 (6.67%), Phase 14 is active at 2,000/30,000 (6.67%), Phase 15 is active at
-2,000/30,000 (6.67%), and Phase 16 is active at 19,000/30,000 (63.33%).
-**Phase 16 advanced this session** — 2,000 rows (idx 387,000–388,999)
+2,000/30,000 (6.67%), and Phase 16 is active at 21,000/30,000 (70.00%).
+**Phase 16 advanced this session** — 2,000 rows (idx 389,000–390,999)
 were translated in eight scratch passes, merged, and appended to
-`locale/phase16.jsonl`, taking Phase 16 from 17,000/30,000 (56.67%) to
-19,000/30,000 (63.33%), per the user's updated request to run Phase 16
-at 2,000 rows per iteration again.
+`locale/phase16.jsonl`, taking Phase 16 from 19,000/30,000 (63.33%) to
+21,000/30,000 (70.00%), per the user's standing request to keep Phase 16
+at 2,000 rows per iteration.
 Resume any active phase next per [[Resume-Procedure]].
 **Phase 16 iterations are batched at 2,000 rows per session** per the
 user's latest request ("Mulai phase 16, aku ingin tiap iterasi 2000
 string") — this supersedes the previous 4,000-row-per-session cadence
 for this phase; see [[Resume-Procedure]] for the batch-size note.
 
-## Most recent session (2026-09-27, session 48) — Phase 16 continuation (idx 387,000–388,999, 2,000 rows)
+## Most recent session (2026-09-27, session 49) — Phase 16 continuation (idx 389,000–390,999, 2,000 rows)
+
+Phase 16 advanced this session: 2,000 rows (idx 389,000–390,999) were
+translated in eight scratch passes of 250 rows each, merged into one
+batch, validated with a direct `TOKEN`-regex comparison against the
+source, and appended to `locale/phase16.jsonl`, per the user's standing
+request to run Phase 16 at 2,000 rows/iteration and update the Obsidian
+vault every time. Phase 16 moved from 19,000/30,000 (63.33%) to
+**21,000/30,000 (70.00%)**. Mix of content: a very large volume of
+Pinyin NPC/place names and quest/location labels (kept verbatim per
+convention), extensive NPC dialogue and lore blurbs (the Zhu En Grand
+Nuo priestess-substitute scene continuing at idx 389131, the Silver
+Needle disciple-title founding anecdote at idx 389388, the Wanli/
+Twelve Immortals painting-forgery reveal at idx 389877, the "money
+buys spring" Miss Chun origin story at idx 389735, the Cat-ismatic
+Immortal desert-guardian legend at idx 390045, the Liu Sinong farmer's
+five-part letter series to his lost family at idx 390331, the Granny
+Turtle Song-Coins vignette at idx 390766, and The Art of Light and
+Shadow's "36 tactics for the lovelorn" Ah Lian romance parody at idx
+390884), many gear/skill tooltip strings (Bellstrike/Bamboocut/
+Silkbind/Stonesplit stat-tag templates across many tiers, Skyward Bond
+DMG templates, Charged Skill/Ultimate Energy mechanics), several
+classical-style poems and letters (the reed-marsh Luhua folk tale at
+idx 389015, the Han-era border ledger and Yubu/Yuanji Armillary Keys
+war-letter at idx 389462, the Song-dynasty poor-farmer's five-letter
+lament at idx 390331, the floral-wine/Netherworld Wine history essay
+at idx 390823), casual gue/lo NPC dialogue throughout (tavern/Jianghu
+banter, Homestead flavor text, children's dialogue), and three raw
+non-English/placeholder strings kept verbatim per convention: idx
+390233 (`缩骨功检测区域`), idx 390703 (`皮影人来生岸2`), and idx 390985/390990
+(`万古一人殿地下通道3`, `小偷区域1`) — all raw Chinese dev/location labels, not
+player-facing narrative text. No new terminology decisions — every
+translatable case matched an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via a direct `TOKEN`-regex comparison
+against the source found **1 mismatch** on the first pass: idx 390884,
+a long "36 tactics" narrative where the seven `<...>`-wrapped inner-
+monologue quotes (rule 3: a `<...>` wrapping one entire long sentence)
+had their bracketed content translated into Indonesian instead of kept
+100% verbatim in English, with only the text outside the tags (the
+intro paragraphs and "Tactic One/Two/…" lines) translated. Corrected
+in place — the seven tags restored to their exact source English text,
+only the surrounding prose translated — and re-validated at **0
+mismatches** before appending. Full-file check: `locale/phase16.jsonl`
+now 21,000 lines, all idx unique and sequential (370,000–390,999, no
+gaps), 0 duplicates, 0 token mismatches. A final `qa_check.py --locale
+"locale/*.jsonl"` across the whole dictionary (208,704 entries) also
+came back clean.
+
+**Overall: 208,704 / 461,704 unique strings (45.20%), in-game coverage
+73.71%.**
+
+## Prior session (2026-09-27, session 48) — Phase 16 continuation (idx 387,000–388,999, 2,000 rows)
 
 Phase 16 advanced this session: 2,000 rows (idx 387,000–388,999) were
 translated in eight scratch passes of 250 rows each, merged into one
