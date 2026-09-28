@@ -30,3 +30,8 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
   No new terminology decisions; one mismatch was caught by `qa_check.py --locale` and fixed before
   appending: idx 115949 (a second `#H` tag in a Partnership-formed string was mistakenly typed as
   `#Y`) — see [[Current-Status]]'s session 53 write-up for detail.
+- idx 116,000–117,999 (session 54, 2026-09-28, 2,000 rows) — brought the phase to 18,000/30,000
+  (60.00%). No new terminology decisions; one mismatch was caught by a direct `TOKEN`-regex
+  comparison and fixed before appending: idx 117042 (a `<Infernal Twinblades'|...>` tag's
+  bracketed content had "Burst Skill" mistakenly moved inside the tag instead of kept outside as
+  in the source) — see [[Current-Status]]'s session 54 write-up for detail.
