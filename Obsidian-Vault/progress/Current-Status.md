@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-28 (session 55).** This is the single source of truth for "how
+**Last updated: 2026-09-28 (session 56).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **227,704** | **461,704** | **49.32%** |
-| ↳ original corpus (Phases 0–17) | 195,887 | 429,887 | 45.57% |
+| **Unique strings translated (all)** | **229,704** | **461,704** | **49.75%** |
+| ↳ original corpus (Phases 0–17) | 197,887 | 429,887 | 46.03% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **630,208** | **826,388** | **76.26%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **633,134** | **826,388** | **76.61%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -34,7 +34,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 4 | 10,000–19,999 | done | — | 10,000 / 10,000 | 100.00% |
 | 5 | 20,000–49,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 6 | 50,000–99,999 | done | — | 50,000 / 50,000 | 100.00% |
-| 7 | 100,000–129,999 | **active** | 120,000 | 20,000 / 30,000 | 66.67% |
+| 7 | 100,000–129,999 | **active** | 122,000 | 22,000 / 30,000 | 73.33% |
 | 8 | 130,000–159,999 | **active** | 132,000 | 2,000 / 30,000 | 6.67% |
 | 9 | 160,000–189,999 | **active** | 162,000 | 2,000 / 30,000 | 6.67% |
 | 10 | 190,000–219,999 | **active** | 192,000 | 2,000 / 30,000 | 6.67% |
@@ -56,7 +56,7 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1, Phase 6, Phase 16, and Phase 17 are all fully complete.**
-Phase 7 is active at 20,000/30,000 (66.67%), Phase 8 is active at
+Phase 7 is active at 22,000/30,000 (73.33%), Phase 8 is active at
 2,000/30,000 (6.67%), Phase 9 is active at 2,000/30,000 (6.67%), Phase 10
 is active at 2,000/30,000 (6.67%), Phase 11 is active at 2,000/30,000
 (6.67%), Phase 12 is active at 2,000/30,000 (6.67%), Phase 13 is active at
@@ -64,7 +64,47 @@ is active at 2,000/30,000 (6.67%), Phase 11 is active at 2,000/30,000
 Phase 15 is active at 2,000/30,000 (6.67%).
 Resume any active phase next per [[Resume-Procedure]].
 
-## Most recent session (2026-09-28, session 55) — Phase 7 continuation (idx 118,000–119,999, 2,000 rows)
+## Most recent session (2026-09-28, session 56) — Phase 7 continuation (idx 120,000–121,999, 2,000 rows)
+
+Phase 7 advanced this session: 2,000 rows (idx 120,000–121,999) were
+translated in four 500-row scratch passes, merged into one batch,
+validated with `tools/qa_check.py --locale`, and appended to
+`locale/phase7.jsonl`, per the user's request to run Phase 7 at a
+2,000-row-per-iteration cadence and update the Obsidian vault every time
+("lanjutkan progress phase 7 dengan 2000 baris per iterasi jangan lupa
+update obsidian vault juga"). Phase 7 moved from 20,000/30,000 (66.67%) to
+**22,000/30,000 (73.33%)**. Mix of content: a very large volume of Pinyin
+NPC/place names and garbled Hall-of-Fame usernames (kept verbatim per
+convention), extensive gear/skill tooltip strings (Bellstrike gacha/pity
+probability tables, Skygrasp Rope Dart Special Skill Enhanced-state
+mechanic, Snowparting Blade Fleeting Trace Dread mechanic, Thundercry
+Blade Storm Roar/Vigilance mechanics, Bamboocut/Bellstrike/Silkbind/
+Stonesplit stat-tag templates across many tiers, Fleethoof racing-mode
+rules block), and extensive NPC dialogue and lore blurbs (the Pacing the
+Void Daoist-chant historical passage at idx 120019, the Karez
+well-digging desert-village origin legend at idx 120402, the lantern-fair
+child-and-pinwheel vignette at idx 120412, the Qiu Yuehai "Wine Jar
+Celestial" spear-master legend at idx 121250, the Lie Yan/Wang Qing
+Khitan-war chivalry origin story at idx 120692, and the Zhang Yichao/
+Zhang Huaishen jade-box uncle-nephew reconciliation vignette at idx
+121328). No new terminology decisions — every translatable case matched
+an existing [[Quick-Reference]] entry.
+
+Token/placeholder validation via `tools/qa_check.py --locale` found **2
+mismatches** on the first pass: idx 121211 (a `#Y...#E` treatment-warning
+tag had its opening tag mistyped as `#L`, changing the token) and idx
+121726 (a `#E...#E` "double speed" wrap had its closing pair mistakenly
+typed as `#Y...#E` instead of `#E...#E`, changing the token count). Both
+corrected in place; re-validated at **0 mismatches** before appending.
+Full-file check: `locale/phase7.jsonl` now 22,000 lines, all idx unique
+and sequential (100,000–121,999, no gaps), 0 duplicates, 0 token
+mismatches. A final `qa_check.py --locale "locale/*.jsonl"` across the
+whole dictionary (229,704 entries) also came back clean.
+
+**Overall: 229,704 / 461,704 unique strings (49.75%), in-game coverage
+76.61%.**
+
+## Prior session (2026-09-28, session 55) — Phase 7 continuation (idx 118,000–119,999, 2,000 rows)
 
 Phase 7 advanced this session: 2,000 rows (idx 118,000–119,999) were
 translated in four 500-row scratch passes, merged into one batch,

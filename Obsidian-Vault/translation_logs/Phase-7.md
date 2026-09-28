@@ -42,3 +42,8 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
   verbatim per Quick-Reference §6 rule 3) and idx 119665 (a Long Spear skill description had
   `#Y...#E` mistakenly added around "10%/20%", which is plain untagged text in the source) — see
   [[Current-Status]]'s session 55 write-up for detail.
+- idx 120,000–121,999 (session 56, 2026-09-28, 2,000 rows) — brought the phase to 22,000/30,000
+  (73.33%). No new terminology decisions; two mismatches were caught by `qa_check.py --locale` and
+  fixed before appending: idx 121211 (a `#Y...#E` treatment-warning tag had its opening tag
+  mistyped as `#L`) and idx 121726 (a `#E...#E` "double speed" wrap had its closing pair
+  mistakenly typed as `#Y...#E`) — see [[Current-Status]]'s session 56 write-up for detail.
