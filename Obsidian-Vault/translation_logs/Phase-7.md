@@ -35,3 +35,10 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
   comparison and fixed before appending: idx 117042 (a `<Infernal Twinblades'|...>` tag's
   bracketed content had "Burst Skill" mistakenly moved inside the tag instead of kept outside as
   in the source) — see [[Current-Status]]'s session 54 write-up for detail.
+- idx 118,000–119,999 (session 55, 2026-09-28, 2,000 rows) — brought the phase to 20,000/30,000
+  (66.67%). No new terminology decisions; two mismatches were caught by `qa_check.py --locale` and
+  fixed before appending: idx 118733 (two `<Note: ...>` tags wrapping full sentences in a
+  Homestead flower-cultivation note had their bracketed content translated instead of kept 100%
+  verbatim per Quick-Reference §6 rule 3) and idx 119665 (a Long Spear skill description had
+  `#Y...#E` mistakenly added around "10%/20%", which is plain untagged text in the source) — see
+  [[Current-Status]]'s session 55 write-up for detail.
