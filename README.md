@@ -108,6 +108,14 @@ published as a single rolling GitHub Release (tag `latest`):
 5. In-game: **Settings → Language → Game Language = English** (required — see
    [Why Runtime Requires English Language](#why-runtime-requires-english-language)).
 
+> [!IMPORTANT]
+> **Steam only:** on the Steam client, NetEase's patcher **silently restores
+> `translate_words_map_en_diff` to its original version** on every game launch (the
+> `StagePatchList`/`StageCheck` process), so text that lives in the `_diff` layer stays in English.
+> This is outside this mod's control. The base `translate_words_map_en` and `__small` files remain
+> permanent and are unaffected. The official WWM launcher does **not** do this — see
+> [Known Limitations & Deployment Gotchas](#known-limitations--deployment-gotchas).
+
 ### PC — Official WWM Launcher
 
 1. Open the official launcher's installation folder (typically
@@ -116,15 +124,17 @@ published as a single rolling GitHub Release (tag `latest`):
 2. Back up the original files in that `locale\` folder.
 3. Extract the contents of `wwm-indonesian-patch.zip` into this `locale\` folder, overwriting
    files with matching names, as in the Steam steps above.
-4. Launch the game through the launcher as usual.
-5. Set **Settings → Language → Game Language = English** in-game.
+4. The game actually loads the `_diff` layer from a second copy under
+   `<InstallDir>\LocalData\Patch\HD\oversea\locale\`. Back up the original
+   `translate_words_map_en_diff` there too, then overwrite it with the patched one from the zip.
+5. Launch the game through the launcher as usual.
+6. Set **Settings → Language → Game Language = English** in-game.
 
-> [!IMPORTANT]
-> See [Known Limitations & Deployment Gotchas](#known-limitations--deployment-gotchas) —
-> specifically, NetEase's own launcher/CDN can **silently restore `translate_words_map_en_diff`
-> to its original version** on every game launch (the `StagePatchList`/`StageCheck` process). This
-> is outside this mod's control. The base `translate_words_map_en` and `__small` files remain
-> permanent and are unaffected by this process.
+> [!TIP]
+> Unlike the Steam client, the official launcher does **not** restore the patched `_diff` file on
+> launch (tested 2026-09-27), so all four files — including the `_diff` layer — stay translated.
+> This is the most complete way to play with the patch on PC. See
+> [Known Limitations & Deployment Gotchas](#known-limitations--deployment-gotchas).
 
 ### Android
 
@@ -235,7 +245,7 @@ To restore the originals later, repeat step 10 using the files from the `backup`
 
 > [!NOTE]
 > The game's own patcher may re-verify and silently restore modified files on launch, similar to
-> the `_diff` behavior on PC (see [Known Limitations](#known-limitations--deployment-gotchas)). If
+> the `_diff` behavior on the Steam PC client (see [Known Limitations](#known-limitations--deployment-gotchas)). If
 > the Indonesian text reverts to English after a launch or update, re-copy the patched files.
 
 ### Reverting to English / Handling Game Updates
@@ -535,13 +545,14 @@ While the average string length is ~56 bytes, certain encyclopedia and narrative
 
 ## Known Limitations & Deployment Gotchas
 
-### 1. The `_diff` CDN Auto-Restore Mechanism
-- **Base `translate_words_map_en` and `__small` are persistent and safe to patch** in `Package\HD\oversea\locale\`.
-- **`translate_words_map_en_diff` installed in `LocalData` CANNOT be patched permanently.** The game maintains two separate copies of `_diff`:
+### 1. The `_diff` CDN Auto-Restore Mechanism (Steam client only)
+- **Base `translate_words_map_en` and `__small` are persistent and safe to patch** in `Package\HD\oversea\locale\` on every client.
+- The game maintains two separate copies of `translate_words_map_en_diff`:
   - `Package\HD\oversea\locale\` (patched by this tool; safe, never re-verified).
   - `LocalData\Patch\HD\oversea\locale\` (active runtime overlay).
-- The `LocalData` copy is **checksum-verified against NetEase CDN manifests on every game launch** (`StagePatchList` / `StageCheck` / `StageDownload`). Modified files in `LocalData` are detected and restored to original bytes within minutes. DNS blocking of CDN endpoints fails because the client falls back to cached manifests and secondary hosts.
-- **Strategy**: Focus translation deployment on `translate_words_map_en` and `__small`. The sparse `_diff` table (~213k entries in late 2026 builds) will display in English until NetEase merges delta patches back into the base package during major game updates.
+- **Steam client**: the `LocalData` copy is **checksum-verified against NetEase CDN manifests on every game launch** (`StagePatchList` / `StageCheck` / `StageDownload`). Modified files in `LocalData` are detected and restored to original bytes within minutes. DNS blocking of CDN endpoints fails because the client falls back to cached manifests and secondary hosts. The sparse `_diff` table (~213k entries in late 2026 builds) therefore displays in English on Steam until NetEase merges delta patches back into the base package during major game updates.
+- **Official WWM launcher**: this restore does **not** happen (tested 2026-09-27). A patched `_diff` in `LocalData\Patch\HD\oversea\locale\` stays in place across launches, so the whole patch — including the `_diff` layer — is effective. Why the two clients differ has not been investigated.
+- Earlier versions of this README described the restore as affecting every PC client; that conclusion came from testing on Steam only.
 
 ### 2. Upstream Desynchronization
 New strings introduced in game patches default to English until extracted, translated, and patched. Use `tools/rebuild_unique_strings.py` to reconcile deltas.

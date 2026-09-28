@@ -331,6 +331,9 @@ The user updated the game client and found two new locale files:
   43,000. Processed in 4 sub-batches of 500; 0 mismatches on the first
   validation pass.
 - **Finding: the installed `_diff` file cannot be patched permanently.**
+  *(Corrected 2026-09-27: this only applies to the Steam client — see the
+  2026-09-27 entry below. The official WWM launcher keeps the patched
+  `_diff`.)*
   Investigating the game's install folder and `LocalData\patch_log\`
   revealed that the game keeps **two separate copies** of
   `translate_words_map_en_diff` — the one under `Package\HD\oversea\locale\`
@@ -1148,3 +1151,21 @@ breaking the tag-content-must-match-byte-for-byte rule). Re-validated at
 Phase 7 is now 10,000/30,000 rows done (33.33%). Overall: 189,704/461,704
 unique strings (41.09%), in-game coverage 71.96%. No other phases were
 touched this session.
+
+## 2026-09-27 — Correction: `_diff` CDN restore is Steam-only
+
+The 2026-09-18 finding that the `LocalData\Patch\HD\oversea\locale\`
+copy of `translate_words_map_en_diff` is always restored from NetEase's
+CDN on launch turned out to be client-specific. All earlier testing had
+been done on the **Steam** client only. Retesting with NetEase's own
+standalone launcher (the official WWM launcher) showed the patched `_diff`
+file is **not** reverted — it stays patched across launches, so the whole
+patch (base, `_diff`, `__small`, `__small_diff`) is effective there. Why
+the two clients differ hasn't been investigated.
+
+Updated `CLAUDE.md` ("Deployment gotcha"), `README.md` (Steam /
+official-launcher install steps and Known Limitations §1) and
+[[Format-Spec]] §7 accordingly. Practical implication: translating
+`_diff`-only strings is fully worthwhile for official-launcher players;
+on Steam they still read as English until NetEase folds `_diff` into the
+base package. No translation data touched this session.

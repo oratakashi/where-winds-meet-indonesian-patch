@@ -157,10 +157,14 @@ variant NetEase adds — add its name to `FILES` in `tools/patch_all.py`.
 `translate_words_map_en_mobile` (2026-09-22) is byte-identical to `translate_words_map_en`; it is
 in `FILES` anyway so it keeps working if the two ever diverge.
 
-### Deployment gotcha: the installed `_diff` file gets re-verified by the game's own CDN patcher
+### Deployment gotcha: on the **Steam** client, the installed `_diff` file gets re-verified by the CDN patcher
 
 This is not a tool bug — it's a fact about the live game client that affects anyone trying to
-actually play with a patched file, so it's recorded here.
+actually play with a patched file, so it's recorded here. **It depends on which client runs the
+game**: the revert below was only ever observed on the **Steam** build. On 2026-09-27 the owner
+retested with NetEase's own standalone launcher (the official WWM launcher, not Steam) and a
+patched `_diff` was **not** reverted — it stayed patched across launches. All earlier testing had
+been done on Steam only, which is why this was originally written up as a universal limitation.
 
 The game install has **two separate copies** of `translate_words_map_en_diff`:
 
@@ -170,8 +174,8 @@ The game install has **two separate copies** of `translate_words_map_en_diff`:
   copy that the running game actually loads for the `_diff` layer. `LocalData\Patch\...` only
   contains `_diff` variants (no `en`/`__small`/`__small_diff`), mirroring the `Package` structure.
 
-Every game launch, NetEase's own launcher/patcher (visible in
-`LocalData\patch_log\patch_log_*.txt`) runs a `StagePatchList` → `StageCheck` → `StageDownload`
+On the Steam client, every game launch runs NetEase's patcher (visible in
+`LocalData\patch_log\patch_log_*.txt`) through a `StagePatchList` → `StageCheck` → `StageDownload`
 sequence: it fetches a checksum manifest from its update CDN (host seen in logs:
 `*.update.easebar.com`), compares every file's hash against it, and **silently re-downloads and
 overwrites any file that doesn't match** — including a manually patched
@@ -183,13 +187,20 @@ fetch also falls back to a locally cached copy (`fetch_patchlist res=ok from=cac
 CDN host is unreachable, and the actual file download appears to use a different host than the
 manifest-fetch host, so blocking a single CDN hostname does not stop the repair.
 
-**Practical implication**: only `Package\HD\oversea\locale\translate_words_map_en` (base) and
-`translate_words_map_en__small` hold permanently — patch and deploy those. The `_diff` layer
-(~213k entries in the 2026-09 update, ~26% of total entries, representing text changed/added
-since the base package was last rebuilt) cannot currently be made to stick via a simple file
-replacement in `LocalData\Patch\...`. If a future game update merges `_diff` content back into
-the base package (which NetEase does periodically), whatever fraction of it is already covered
-by the translation dictionary becomes permanent automatically at that point, no extra work needed.
+Why the official launcher behaves differently hasn't been investigated (e.g. whether it skips the
+`StageCheck` pass, or only verifies on its own update step) — only the observed outcome is known.
+
+**Practical implication**:
+
+- **Official NetEase launcher**: all four files hold — base, `__small`, `__small_diff` and the
+  `_diff` overlay in `LocalData\Patch\...`. The `_diff` layer (~213k entries in the 2026-09
+  update, ~26% of total entries, representing text changed/added since the base package was last
+  rebuilt) is therefore fully usable there, so translating `_diff`-only strings is worthwhile.
+- **Steam**: only `Package\HD\oversea\locale\translate_words_map_en` (base) and
+  `translate_words_map_en__small` hold permanently; the `_diff` overlay cannot currently be made to
+  stick via a simple file replacement. If a future game update merges `_diff` content back into
+  the base package (which NetEase does periodically), whatever fraction of it is already covered
+  by the translation dictionary becomes permanent automatically at that point.
 
 ### File format (see `Obsidian-Vault/knowladge/Format-Spec.md` for the full spec)
 

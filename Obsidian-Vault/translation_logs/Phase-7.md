@@ -20,3 +20,9 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
   No new terminology decisions; two `<...>`-tag content mismatches (idx 110288, idx 111619) were
   caught by `qa_check.py --locale` and fixed before appending — see [[Current-Status]]'s session
   51 write-up for detail.
+- idx 112,000–113,999 (session 52, 2026-09-28, 2,000 rows) — brought the phase to 14,000/30,000.
+  No new terminology decisions; two mismatches were caught by `qa_check.py --locale` and fixed
+  before appending: idx 112741 (a `<TEXT id='text1'>...</TEXT>` UI-composition string had a `%s`
+  placeholder duplicated into the wrong tag segment) and idx 113465 (a plain `<Busy>` tag had its
+  content translated instead of kept verbatim per Quick-Reference §6 rule 1) — see
+  [[Current-Status]]'s session 52 write-up for detail.

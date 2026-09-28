@@ -256,14 +256,22 @@ Not a format property, but it decides which patched files are useful:
   a patched copy stays until the next game update replaces it.
 - `LocalData\Patch\HD\oversea\locale\translate_words_map_en_diff` — the
   hot-patch overlay copy the running game actually loads for the `_diff`
-  layer. On every launch the NetEase patcher
-  (`StagePatchList` → `StageCheck` → `StageDownload`, logged in
-  `LocalData\patch_log\patch_log_*.txt`) compares it against a CDN
-  checksum manifest and silently re-downloads it if it differs — a patched
-  copy was observed reverted within minutes. The manifest falls back to a
-  cached copy when the CDN is unreachable, so blocking one host doesn't
-  help.
+  layer. Its behaviour **depends on the client**:
+  - **Official WWM launcher** (NetEase's standalone launcher) — **stable**.
+    Retested 2026-09-27: a patched copy was not reverted across launches.
+  - **Steam client** — reverted. On every launch the NetEase patcher
+    (`StagePatchList` → `StageCheck` → `StageDownload`, logged in
+    `LocalData\patch_log\patch_log_*.txt`) compares it against a CDN
+    checksum manifest and silently re-downloads it if it differs — a
+    patched copy was observed reverted within minutes. The manifest falls
+    back to a cached copy when the CDN is unreachable, so blocking one host
+    doesn't help.
 
-So only the base and `__small` patches currently stick. The `_diff` layer
-(212,117 entries in the 2026-09 update) becomes permanent only when
-NetEase folds it into the base package in a later update.
+All earlier testing (before 2026-09-27) was done on Steam only, which is why
+this was first recorded as a limitation for every client. Why the two
+clients differ hasn't been investigated.
+
+So on the official launcher all patched files stick, `_diff` included
+(212,117 entries in the 2026-09 update). On Steam only the base and
+`__small` patches stick; the `_diff` layer there becomes permanent only
+when NetEase folds it into the base package in a later update.
