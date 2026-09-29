@@ -1,4 +1,4 @@
-# Phase 8 Translation Log (idx 130,000–131,999)
+# Phase 8 Translation Log (idx 130,000–133,999)
 
 **Reconstructed retroactively on 2026-09-26** — this file was not written during
 the session that did the work, so it only records what the commit history and
@@ -14,3 +14,10 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
 ## Batches
 
 - [[idx-130000-131999]] — idx 130,000–131,999 (`f909a1e`, 2026-09-25)
+- idx 132,000–133,999 (session 61, 2026-09-29, 2,000 rows) — brought the phase to 4,000/30,000
+  (13.33%). One decision: a gender-switch string `#handsome#or#beautiful#` (idx 132353) keeps its
+  English words, because the QA `TOKEN` regex reads the letter after each `#` as a token (`#h`, `#o`,
+  `#b`) and translating them changes the token set. Duration shorthand converted per
+  [[Quick-Reference]] §6 (`80s`→`80d`, `%d d %d h`→`%d h %d j`, `{}s`→`{}d`). `qa_check.py --locale`
+  came back clean on the first pass for all four 500-row passes — see [[Current-Status]]'s session 61
+  write-up for detail.

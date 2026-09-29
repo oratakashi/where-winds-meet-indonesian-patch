@@ -1184,3 +1184,12 @@ shifting ~22 labels at idx 128366 and ~12 at idx 129376) were caught by an align
 source and fixed before appending — token validation alone did not flag most of them. No new
 terminology decisions. Overall: 237,704 / 461,704 unique strings (51.48%), in-game coverage 78.02%.
 Details in [[Current-Status]] and [[Phase-7]].
+
+## 2026-09-29 — Session 61: Phase 8 continuation (idx 132,000–133,999, 2,000 rows)
+
+Phase 8 advanced from 2,000/30,000 to **4,000/30,000 (13.33%)**. Four 500-row passes merged into one batch
+(2,000 lines, idx verified sequential); `qa_check.py --locale` 0 mismatches on the first pass for every pass
+and the merged file (one initial MARKUP hit at idx 132353 — a `#handsome#or#beautiful#` gender switch whose
+words had been translated — fixed before the merge was accepted). Untranslated-by-convention rows (names,
+usernames) were auto-filled from the source by the merge script rather than retyped. Overall: 239,704 /
+461,704 unique strings (51.92%), in-game coverage 78.37%. Details in [[Current-Status]] and [[Phase-8]].
