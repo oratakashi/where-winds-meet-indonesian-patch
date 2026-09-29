@@ -51,3 +51,10 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
   (80.00%). No new terminology decisions; a direct `TOKEN`-regex comparison against the source
   found 0 mismatches on the first pass, and a full `qa_check.py --locale` run across the whole
   dictionary also came back clean — see [[Current-Status]]'s session 57 write-up for detail.
+- idx 124,000–125,999 (session 58, 2026-09-29, 2,000 rows) — brought the phase to 26,000/30,000
+  (86.67%). No new terminology decisions; two mismatches were caught by `qa_check.py --locale` and
+  fixed before appending: idx 124918 (a plain `<Controlling>` tag, without the `|id|#C|n>` format,
+  had its content translated instead of kept 100% verbatim per Quick-Reference §6 rule 1 — same
+  class of mistake as the `<Busy>` case in session 52) and idx 125103 (a `#N...#E` Red Envelope
+  announcement had its second tag's opening mistyped as `#Y` instead of matching the first `#N`)
+  — see [[Current-Status]]'s session 58 write-up for detail.
