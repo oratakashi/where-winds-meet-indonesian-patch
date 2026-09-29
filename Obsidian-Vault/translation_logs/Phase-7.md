@@ -47,3 +47,7 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
   fixed before appending: idx 121211 (a `#Y...#E` treatment-warning tag had its opening tag
   mistyped as `#L`) and idx 121726 (a `#E...#E` "double speed" wrap had its closing pair
   mistakenly typed as `#Y...#E`) — see [[Current-Status]]'s session 56 write-up for detail.
+- idx 122,000–123,999 (session 57, 2026-09-29, 2,000 rows) — brought the phase to 24,000/30,000
+  (80.00%). No new terminology decisions; a direct `TOKEN`-regex comparison against the source
+  found 0 mismatches on the first pass, and a full `qa_check.py --locale` run across the whole
+  dictionary also came back clean — see [[Current-Status]]'s session 57 write-up for detail.
