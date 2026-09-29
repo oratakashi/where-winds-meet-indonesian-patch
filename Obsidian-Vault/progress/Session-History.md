@@ -1169,3 +1169,18 @@ official-launcher install steps and Known Limitations §1) and
 `_diff`-only strings is fully worthwhile for official-launcher players;
 on Steam they still read as English until NetEase folds `_diff` into the
 base package. No translation data touched this session.
+
+## 2026-09-29 — Session 59: Phase 7 continuation (idx 126,000–127,999, 2,000 rows)
+
+Phase 7 advanced from 26,000/30,000 to 28,000/30,000 (93.33%); 0 QA mismatches on the first pass.
+No new terminology decisions. Overall: 235,704 / 461,704 unique strings (51.05%), in-game coverage
+77.65%. Details in [[Current-Status]] and [[Phase-7]].
+
+## 2026-09-29 — Session 60: Phase 7 completed (idx 128,000–129,999, 2,000 rows)
+
+Phase 7 finished: 28,000/30,000 to **30,000/30,000 (100.00%)**. Four 500-row passes merged into one
+batch; `qa_check.py --locale` 0 mismatches on the merged file. Two idx-labelling slips (a skipped row
+shifting ~22 labels at idx 128366 and ~12 at idx 129376) were caught by an alignment check against the
+source and fixed before appending — token validation alone did not flag most of them. No new
+terminology decisions. Overall: 237,704 / 461,704 unique strings (51.48%), in-game coverage 78.02%.
+Details in [[Current-Status]] and [[Phase-7]].

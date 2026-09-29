@@ -58,3 +58,16 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
   class of mistake as the `<Busy>` case in session 52) and idx 125103 (a `#N...#E` Red Envelope
   announcement had its second tag's opening mistyped as `#Y` instead of matching the first `#N`)
   — see [[Current-Status]]'s session 58 write-up for detail.
+- idx 126,000–127,999 (session 59, 2026-09-29, 2,000 rows) — brought the phase to 28,000/30,000
+  (93.33%). No new terminology decisions; `qa_check.py --locale` found 0 mismatches on all four
+  500-row passes and on the merged 2,000-row file. One hand-caught detail: idx 126228
+  (`#baf5bamoved`) — the color token is `#baf5ba` and the trailing `a` belongs to it, so the
+  translation keeps it as `#baf5babergerak` — see [[Current-Status]]'s session 59 write-up for detail.
+- idx 128,000–129,999 (session 60, 2026-09-29, 2,000 rows) — **completed the phase** at
+  30,000/30,000 (100.00%). No new terminology decisions; `qa_check.py --locale` found 0 mismatches on
+  the merged batch and on the whole dictionary (237,704 entries). Process note: while transcribing
+  idx labels by hand, one row was skipped twice (idx 128388 "Crafting Bench", idx 129375/129376
+  area), shifting neighbouring labels by one; token checks did not catch it, so a source-vs-translation
+  alignment check (numbers/names shared) was run before appending — do this when labelling by hand.
+  Locale choices kept consistent: decimal comma / thousands dot (`7,5%`, `6.000`), `Ns`→`Nd`,
+  `%dd%dh`→`%dh%dj`, "Master Ou/Peng"→"Guru Ou/Peng", "Madam"→"Nyonya", "Chancellor"→"Kanselir".
