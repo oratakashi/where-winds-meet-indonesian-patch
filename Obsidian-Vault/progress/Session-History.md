@@ -1193,3 +1193,11 @@ and the merged file (one initial MARKUP hit at idx 132353 — a `#handsome#or#be
 words had been translated — fixed before the merge was accepted). Untranslated-by-convention rows (names,
 usernames) were auto-filled from the source by the merge script rather than retyped. Overall: 239,704 /
 461,704 unique strings (51.92%), in-game coverage 78.37%. Details in [[Current-Status]] and [[Phase-8]].
+
+## 2026-09-30 — Session 62: Phase 8 continuation (idx 134,000–135,999, 2,000 rows)
+
+Phase 8 advanced from 4,000/30,000 to **6,000/30,000 (20.00%)**. Four 500-row passes merged into one batch
+(2,000 lines, idx verified sequential); `qa_check.py --locale` 0 mismatches on the first pass for every pass and
+the merged file. Each hand-written row carried its idx plus a source-text prefix, checked by the merge script
+(one wrong idx at 135391→135392 was caught that way). Overall: 241,704 / 461,704 unique strings (52.35%),
+in-game coverage 78.71%. Details in [[Current-Status]] and [[Phase-8]].

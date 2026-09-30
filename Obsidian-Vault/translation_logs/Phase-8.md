@@ -21,3 +21,7 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
   [[Quick-Reference]] §6 (`80s`→`80d`, `%d d %d h`→`%d h %d j`, `{}s`→`{}d`). `qa_check.py --locale`
   came back clean on the first pass for all four 500-row passes — see [[Current-Status]]'s session 61
   write-up for detail.
+- idx 134,000–135,999 (session 62, 2026-09-30, 2,000 rows) — brought the phase to 6,000/30,000 (20.00%).
+  No new terminology decisions. Reaffirmed: `Inner Way: Tome` keeps "Tome" in English (precedent idx 251943),
+  "Red Packet" → "Angpao", duration `Ns`→`Nd` incl. inside `#Y..#E` wraps (`#Y600#Es`→`#Y600#Ed`). `qa_check.py
+  --locale` clean on the first pass — see [[Current-Status]]'s session 62 write-up.

@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-09-29 (session 61).** This is the single source of truth for "how
+**Last updated: 2026-09-30 (session 62).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **239,704** | **461,704** | **51.92%** |
-| ↳ original corpus (Phases 0–17) | 207,887 | 429,887 | 48.36% |
+| **Unique strings translated (all)** | **241,704** | **461,704** | **52.35%** |
+| ↳ original corpus (Phases 0–17) | 209,887 | 429,887 | 48.82% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **647,634** | **826,388** | **78.37%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **650,433** | **826,388** | **78.71%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -35,7 +35,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 5 | 20,000–49,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 6 | 50,000–99,999 | done | — | 50,000 / 50,000 | 100.00% |
 | 7 | 100,000–129,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 8 | 130,000–159,999 | **active** | 134,000 | 4,000 / 30,000 | 13.33% |
+| 8 | 130,000–159,999 | **active** | 136,000 | 6,000 / 30,000 | 20.00% |
 | 9 | 160,000–189,999 | **active** | 162,000 | 2,000 / 30,000 | 6.67% |
 | 10 | 190,000–219,999 | **active** | 192,000 | 2,000 / 30,000 | 6.67% |
 | 11 | 220,000–249,999 | **active** | 222,000 | 2,000 / 30,000 | 6.67% |
@@ -57,14 +57,38 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1, Phases 6, 7, 16, and 17 are all fully complete.**
 Phase 8 is active at
-4,000/30,000 (13.33%), Phase 9 is active at 2,000/30,000 (6.67%), Phase 10
+6,000/30,000 (20.00%), Phase 9 is active at 2,000/30,000 (6.67%), Phase 10
 is active at 2,000/30,000 (6.67%), Phase 11 is active at 2,000/30,000
 (6.67%), Phase 12 is active at 2,000/30,000 (6.67%), Phase 13 is active at
 2,000/30,000 (6.67%), Phase 14 is active at 2,000/30,000 (6.67%), and
 Phase 15 is active at 2,000/30,000 (6.67%).
 Resume any active phase next per [[Resume-Procedure]].
 
-## Most recent session (2026-09-29, session 61) — Phase 8 continuation (idx 132,000–133,999, 2,000 rows)
+## Most recent session (2026-09-30, session 62) — Phase 8 continuation (idx 134,000–135,999, 2,000 rows)
+
+Phase 8 advanced this session: 2,000 rows (idx 134,000–135,999) were translated in four 500-row passes (only
+translatable rows written by hand, each keyed by idx plus a source-prefix guard so a mislabelled row aborts the
+merge; Pinyin names, garbled Hall-of-Fame usernames, dev/debug labels and short poetic item names were carried
+over verbatim by the merge script), merged (2,000 lines, idx strictly sequential 134,000–135,999), validated with
+`tools/qa_check.py --locale` (**0 mismatches on the first pass** for all four passes and the merged file) and
+appended to `locale/phase8.jsonl`, per the user's request to continue Phase 8 at 2,000 rows per iteration and
+update the Obsidian vault ("lanjutkan progress phase 8 dengan 2000 baris per iterasi jangan lupa update obsidian
+vault juga"). Phase 8 moved from 4,000/30,000 (13.33%) to **6,000/30,000 (20.00%)**. Mix of content: Pinyin NPC
+names and usernames (verbatim), UI/system strings, Homestead market price blurbs, gear/skill tooltips (Spring
+Thunder stacking, Blade of Heaven's Wrath Wrathful Form, Silkbind/Stonesplit stat templates, Umbrella Perfect
+Catch), the Tempest Tournament rules block (idx 134923), the Monthly Fund explainer (idx 134873), and long
+lore/story passages (the Han Shouliang last words at idx 135324, the chicken-keeper's guide at idx 135350, the
+Uncle Zhang red-egg comedy at idx 135317, the Ye Wanshan tragedy at idx 135725, the Xiang Ji last words at idx
+134154). No new terminology decisions; per the duration rule `Ns`→`Nd` (e.g. `#Y600#Es`→`#Y600#Ed`,
+`#R{diff_second:d}s`→`#R{diff_second:d}d`). "Tome" suffix on Inner Way names stays English (precedent idx
+251943), "Red Packet" → "Angpao".
+
+Full-file check: `locale/phase8.jsonl` now 6,000 lines (idx 130,000–135,999, no gaps or duplicates); the whole
+dictionary (241,704 entries) validates clean.
+
+**Overall: 241,704 / 461,704 unique strings (52.35%), in-game coverage 78.71%.**
+
+## Prior session (2026-09-29, session 61) — Phase 8 continuation (idx 132,000–133,999, 2,000 rows)
 
 Phase 8 advanced this session: 2,000 rows (idx 132,000–133,999) were translated in four 500-row scratch
 passes (only translatable rows written by hand; Pinyin names, garbled Hall-of-Fame usernames, `{0:.0f}`-style
