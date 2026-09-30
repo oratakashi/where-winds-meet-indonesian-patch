@@ -7,6 +7,14 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-09-30 — Session 63: Phase 8 batch (idx 136,000–139,999, 4,000 rows)
+
+Cadence raised to 4,000 rows per iteration. Eight 500-row passes, merged and validated (0 mismatches; one stray
+`#E` at idx 137224 fixed on the way), appended to `locale/phase8.jsonl` → 10,000/30,000 (33.33%). Pass 1 used
+bare idx labels and drifted; passes 2–8 used source-prefix guards with auto-correct in the merge script. Overall:
+245,704 / 461,704 unique strings (53.22%), in-game coverage 79.41%. (Sessions 51–62 were logged only in
+[[Current-Status]] and the per-phase logs.) Details: [[Phase-8]].
+
 ## 2026-09-27 — Session 50: Phase 16 completed (idx 391,000–399,999, 9,000 rows)
 
 Phase 16 finished in full: the remaining 9,000 rows (idx 391,000–399,999,
