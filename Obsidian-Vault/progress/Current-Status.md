@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-01 (session 66).** This is the single source of truth for "how
+**Last updated: 2026-10-02 (session 67).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **257,704** | **461,704** | **55.82%** |
-| ↳ original corpus (Phases 0–17) | 225,887 | 429,887 | 52.55% |
+| **Unique strings translated (all)** | **261,704** | **461,704** | **56.68%** |
+| ↳ original corpus (Phases 0–17) | 229,887 | 429,887 | 53.48% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **672,276** | **826,388** | **81.35%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **675,241** | **826,388** | **81.71%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -35,7 +35,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 5 | 20,000–49,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 6 | 50,000–99,999 | done | — | 50,000 / 50,000 | 100.00% |
 | 7 | 100,000–129,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 8 | 130,000–159,999 | **active** | 152,000 | 22,000 / 30,000 | 73.33% |
+| 8 | 130,000–159,999 | **active** | 156,000 | 26,000 / 30,000 | 86.67% |
 | 9 | 160,000–189,999 | **active** | 162,000 | 2,000 / 30,000 | 6.67% |
 | 10 | 190,000–219,999 | **active** | 192,000 | 2,000 / 30,000 | 6.67% |
 | 11 | 220,000–249,999 | **active** | 222,000 | 2,000 / 30,000 | 6.67% |
@@ -57,14 +57,46 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1, Phases 6, 7, 16, and 17 are all fully complete.**
 Phase 8 is active at
-22,000/30,000 (73.33%), Phase 9 is active at 2,000/30,000 (6.67%), Phase 10
+26,000/30,000 (86.67%), Phase 9 is active at 2,000/30,000 (6.67%), Phase 10
 is active at 2,000/30,000 (6.67%), Phase 11 is active at 2,000/30,000
 (6.67%), Phase 12 is active at 2,000/30,000 (6.67%), Phase 13 is active at
 2,000/30,000 (6.67%), Phase 14 is active at 2,000/30,000 (6.67%), and
 Phase 15 is active at 2,000/30,000 (6.67%).
 Resume any active phase next per [[Resume-Procedure]].
 
-## Most recent session (2026-10-01, session 66) — Phase 8 continuation (idx 148,000–151,999, 4,000 rows)
+## Most recent session (2026-10-02, session 67) — Phase 8 continuation (idx 152,000–155,999, 4,000 rows)
+
+Phase 8 advanced again at the 4,000-rows-per-iteration cadence ("lanjutkan progress phase 8 dengan 4000 baris per
+iterasi jangan lupa update obsidian vault juga"): 4,000 rows (idx 152,000–155,999) were translated in eight 500-row
+passes (3,033 translatable rows written by hand as `idx¦source-prefix¦text`; 967 rows — Pinyin names, garbled
+usernames, dev/debug labels, `Common/Supreme: Tier N X Piece` / `Skill - Type` / location-style labels, whole-sentence
+`<...>` rows — were carried over verbatim by the merge script), merged (4,000 lines, idx strictly sequential
+152,000–155,999), validated with `tools/qa_check.py --locale` (**0 mismatches on the first pass** for all eight
+passes, the merged batch, and the whole 261,704-entry dictionary) and appended to `locale/phase8.jsonl`. Phase 8 moved
+from 22,000/30,000 (73.33%) to **26,000/30,000 (86.67%)** — 4,000 rows (idx 156,000–159,999) remain. Content mix:
+Pinyin NPC names and usernames (verbatim), UI/system strings, Homestead/market blurbs, gear/skill tooltips (Blade of
+Heaven's Wrath, Infernal Twinblades Sin/Karma, Swallowcall set effect, Ninefold Umbrella's Spring Sorrow), patch-note
+style balance texts, and long lore/story pieces (the Su Homestead matrilocal-groom saga at idx 153280, the woodcutter
+and the Raven/Swallow parable at idx 153881, the Wolf Maiden at idx 155500, Xie Yun's lost game at idx 155566, Wang
+Qing's challenge letter at idx 155933, the Jumper/Crust/Blue Flower dog stories at idx 152502/152654/152771). No new
+terminology decisions; reaffirmed: duration shorthand (`Nd` days→`Nh`, `(90d)`→`(90h)`, `(3d)`→`(3h)`, `%ss`→`%sd`,
+`{0}d`→`{0}h`), "Old X" and `Master`-as-title stay English only without teacher meaning (`Master Jin/Wei/Wan/Jiang`
+as teacher → `Guru`), `Elder X` → `Tetua X`, `Big Zhao`/`Big Feng` → `Kak Zhao`/`Kak Feng`, "Wanderer" → `Pengembara`,
+formal notices/letters use Anda/aku-kau while NPC speech stays gue/lo.
+
+Process notes: (1) the scratch merge/dump scripts were written with the Write tool instead of bash heredocs (heredocs
+silently drop backslashes in this environment — the same bug as session 66) and the merge script now only *warns*
+(not aborts) when a source prefix cannot be found within ±4 idx, which surfaced only the benign `Ascet `/`(coug `
+prefix typos; (2) the `<IMAGE ...>`/`<LINK ...>` composite strings (idx 153737, 154875) were kept byte-for-byte
+with only the surrounding prose translated; (3) one skipped row (idx 154321) was caught by the post-merge "still equal
+to source" sweep and patched in place after appending; (4) the appended file stayed LF (0 CRLF).
+
+Full-file check: `locale/phase8.jsonl` now 26,000 lines (idx 130,000–155,999, no gaps or duplicates); the whole
+dictionary (261,704 entries) validates clean.
+
+**Overall: 261,704 / 461,704 unique strings (56.68%), in-game coverage 81.71%.**
+
+## Prior session (2026-10-01, session 66) — Phase 8 continuation (idx 148,000–151,999, 4,000 rows)
 
 Phase 8 advanced again at the 4,000-rows-per-iteration cadence ("lanjutkan progress phase 8 dengan 4000 baris per
 iterasi jangan lupa update obsidian vault juga"): 4,000 rows (idx 148,000–151,999) were translated in eight 500-row
