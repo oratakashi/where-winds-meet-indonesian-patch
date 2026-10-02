@@ -7,6 +7,10 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-10-02 — Session 68: Phase 8 completed (idx 156,000–159,999, 4,000 rows)
+
+Sixth and final 4,000-row iteration of Phase 8. Eight 500-row passes, merged and validated with `qa_check.py --locale` (one MARKUP mismatch in pass 1 — a `#Y…#E` tag mistyped as `#M` at idx 156332 — fixed before appending), appended to `locale/phase8.jsonl` → **30,000/30,000 (100.00%)**; Phase 8 is done. Process notes: dump script prints one escaped line per row so each pass fits one `Read`; warn-only prefix guard tolerated a Cyrillic homoglyph in one prefix; post-merge sweep caught one skipped dev note (idx 156440). Overall: 265,704 / 461,704 unique strings (57.55%), in-game coverage 82.08%. Details: [[Phase-8]]. Next: Phase 9 from idx 162,000.
+
 ## 2026-10-02 — Session 67: Phase 8 batch (idx 152,000–155,999, 4,000 rows)
 
 Fifth 4,000-row iteration of Phase 8. Eight 500-row passes (967 of the 4,000 rows left verbatim: names, usernames, dev/gear/location labels, whole-sentence `<...>` rows), merged and validated with `qa_check.py --locale` (0 mismatches on the first pass), appended to `locale/phase8.jsonl` → 26,000/30,000 (86.67%). Process notes: scripts written via the Write tool (bash heredocs drop backslashes); merge script warns instead of aborting on unresolved prefixes; one skipped row (idx 154321) caught by the post-merge sweep and patched. Overall: 261,704 / 461,704 unique strings (56.68%), in-game coverage 81.71%. Details: [[Phase-8]].
@@ -22,7 +26,8 @@ Third 4,000-row iteration of Phase 8. Eight 500-row passes (941 of the 4,000 row
 
 ## 2026-09-30 — Session 64: Phase 8 batch (idx 140,000–143,999, 4,000 rows)
 
-Second 4,000-row iteration. Eight 500-row passes (1,484 of the 4,000 rows left verbatim: names, usernames, dev/gear labels), merged and validated with `qa_check.py --locale` (0 mismatches on the first pass throughout), appended to `locale/phase8.jsonl` → 14,000/30,000 (46.67%). Merge script gained `` decoding; appended file normalised to LF. Overall: 249,704 / 461,704 unique strings (54.08%), in-game coverage 80.09%. Details: [[Phase-8]].
+Second 4,000-row iteration. Eight 500-row passes (1,484 of the 4,000 rows left verbatim: names, usernames, dev/gear labels), merged and validated with `qa_check.py --locale` (0 mismatches on the first pass throughout), appended to `locale/phase8.jsonl` → 14,000/30,000 (46.67%). Merge script gained `
+` decoding; appended file normalised to LF. Overall: 249,704 / 461,704 unique strings (54.08%), in-game coverage 80.09%. Details: [[Phase-8]].
 
 ## 2026-09-30 — Session 63: Phase 8 batch (idx 136,000–139,999, 4,000 rows)
 

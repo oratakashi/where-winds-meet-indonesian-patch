@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-02 (session 67).** This is the single source of truth for "how
+**Last updated: 2026-10-02 (session 68).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **261,704** | **461,704** | **56.68%** |
-| ↳ original corpus (Phases 0–17) | 229,887 | 429,887 | 53.48% |
+| **Unique strings translated (all)** | **265,704** | **461,704** | **57.55%** |
+| ↳ original corpus (Phases 0–17) | 233,887 | 429,887 | 54.41% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **675,241** | **826,388** | **81.71%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **678,259** | **826,388** | **82.08%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -35,7 +35,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 5 | 20,000–49,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 6 | 50,000–99,999 | done | — | 50,000 / 50,000 | 100.00% |
 | 7 | 100,000–129,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 8 | 130,000–159,999 | **active** | 156,000 | 26,000 / 30,000 | 86.67% |
+| 8 | 130,000–159,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 9 | 160,000–189,999 | **active** | 162,000 | 2,000 / 30,000 | 6.67% |
 | 10 | 190,000–219,999 | **active** | 192,000 | 2,000 / 30,000 | 6.67% |
 | 11 | 220,000–249,999 | **active** | 222,000 | 2,000 / 30,000 | 6.67% |
@@ -55,16 +55,45 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 100,000/229,887-string "Phase 7"/"Phase 8" split with eleven ~30,000-string
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
-**Update-1, Phases 6, 7, 16, and 17 are all fully complete.**
-Phase 8 is active at
-26,000/30,000 (86.67%), Phase 9 is active at 2,000/30,000 (6.67%), Phase 10
+**Update-1 and Phases 6, 7, 8, 16, and 17 are all fully complete.**
+Phase 9 is active at 2,000/30,000 (6.67%), Phase 10
 is active at 2,000/30,000 (6.67%), Phase 11 is active at 2,000/30,000
 (6.67%), Phase 12 is active at 2,000/30,000 (6.67%), Phase 13 is active at
 2,000/30,000 (6.67%), Phase 14 is active at 2,000/30,000 (6.67%), and
 Phase 15 is active at 2,000/30,000 (6.67%).
-Resume any active phase next per [[Resume-Procedure]].
+Resume any active phase next per [[Resume-Procedure]] (Phase 9 starts at idx 162,000).
 
-## Most recent session (2026-10-02, session 67) — Phase 8 continuation (idx 152,000–155,999, 4,000 rows)
+## Most recent session (2026-10-02, session 68) — Phase 8 completed (idx 156,000–159,999, 4,000 rows)
+
+Phase 8 was finished at the 4,000-rows-per-iteration cadence ("lanjutkan progress phase 8 dengan 4000 baris per
+iterasi jangan lupa update obsidian vault juga"): the last 4,000 rows (idx 156,000–159,999) were translated in eight
+500-row passes (about 3,440 translatable rows written by hand as `idx¦source-prefix¦text`; the rest — Pinyin names,
+garbled usernames, dev/debug labels, `Skill - Type` / `Tier N X: Piece` / location-style labels — were carried over
+verbatim by the merge script), merged (4,000 lines, idx strictly sequential 156,000–159,999), validated with
+`tools/qa_check.py --locale` (**0 mismatches on the first pass** for seven passes; one mismatch in pass 1 — idx 156332
+`#Yobtain…#E` written with a stray `#M` — fixed before appending) and appended to `locale/phase8.jsonl`. Phase 8 moved
+from 26,000/30,000 (86.67%) to **30,000/30,000 (100.00%)**. Content mix: Pinyin NPC names and usernames (verbatim), UI/system
+strings, Homestead/Painted Boat/Pitch Pot blurbs, gear/skill tooltips, mail/announcement templates (idx 156791,
+158023, 159338 with `<LINK>` and `#Y<Level 10 - Unbound>#E` tags kept intact), and long lore/story pieces (the Xian'a
+moon-catching tale at idx 156014, the Su Qizhe marriage proposal at idx 157533, the Han Tong study at idx 158269,
+Ruby's jianghu story at idx 159493, Shen Yilun and Zheng E at idx 159910). No new terminology decisions; reaffirmed:
+duration shorthand (`240s`→`240d`, `(3d)`→`(3h)`, `{}m{}s`→`{}m{}d`, `#Y3#Es`→`#Y3#Ed`; spelled-out durations like
+"8 seconds" become "8 detik"), "Red Packet" → "Angpao" (`Back-to-Work Red Packet` → `Angpao Kembali Kerja`), `Master X`
+as teacher → `Guru X`, `Elder X` → `Tetua X`, `Big Feng`/`Big Zhao` → `Kak Feng`/`Kak Zhao`, "Wanderer" → `Pengembara`,
+formal letters/notices use Anda/aku while NPC speech stays gue/lo.
+
+Process notes: (1) the dump/merge scripts were again written with the Write tool; the dump now shows every row as
+`idx¦escaped-text` (one line per row, `\n` shown escaped) so a 500-row pass fits in one `Read`; (2) a Cyrillic `е`
+slipped into one source prefix (idx 156471) — harmless thanks to the warn-only prefix guard, and a final sweep found
+0 Cyrillic characters in the batch; (3) a post-merge sweep of rows still equal to source (excluding names/poetic item
+titles) found only one skipped dev note (idx 156440), translated before appending; (4) the appended file stayed LF (0 CRLF).
+
+Full-file check: `locale/phase8.jsonl` is now 30,000 lines (idx 130,000–159,999, no gaps or duplicates); the whole
+dictionary (265,704 entries) validates clean.
+
+**Overall: 265,704 / 461,704 unique strings (57.55%), in-game coverage 82.08%.**
+
+## Prior session (2026-10-02, session 67) — Phase 8 continuation (idx 152,000–155,999, 4,000 rows)
 
 Phase 8 advanced again at the 4,000-rows-per-iteration cadence ("lanjutkan progress phase 8 dengan 4000 baris per
 iterasi jangan lupa update obsidian vault juga"): 4,000 rows (idx 152,000–155,999) were translated in eight 500-row
