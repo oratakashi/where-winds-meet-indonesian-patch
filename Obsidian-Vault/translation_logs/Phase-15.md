@@ -1,16 +1,14 @@
-# Phase 15 Translation Log (idx 340,000–341,999)
+# Phase 15 Translation Log (idx 340,000–345,999)
 
-**Reconstructed retroactively on 2026-09-26** — this file was not written during
-the session that did the work, so it only records what the commit history and
-`locale/phase15.jsonl` show, not session-by-session reasoning.
+The starter batch (idx 340,000–341,999) was **reconstructed retroactively on 2026-09-26** — it was not logged during
+the session that did the work, so for it only the commit history and `locale/phase15.jsonl` are known. Later batches
+are logged as they are done.
 
-Phase 15 currently holds a single starter batch, committed 2026-09-26
-(`384f262` — "Start Phase 15 translation (idx 340000-341999, 2000 rows)").
-`locale/phase15.jsonl` has 2,000 rows; the phase is **not complete** — see
-[[Current-Status]] for the full idx range still outstanding. No terminology
-decisions were recorded for this batch; check [[Quick-Reference]] and
-[[Glossary]] for standing conventions before continuing it.
+`locale/phase15.jsonl` has 6,000 rows (idx 340,000–345,999); the phase is **not complete** — see
+[[Current-Status]] for the idx range still outstanding (next idx 346,000). Check [[Quick-Reference]] and
+[[Glossary]] for standing conventions before continuing.
 
 ## Batches
 
 - [[idx-340000-341999]] — idx 340,000–341,999 (`384f262`, 2026-09-26)
+- [[idx-342000-345999]] — idx 342,000–345,999 (session 69, 2026-10-02, 4,000 rows) — brought the phase to 6,000/30,000 (20.00%). No new terminology decisions. Reaffirmed: durations `#Y5#Es`→`#Y5#Ed` / `{}h`→`{}j` / `{diff_hour:02d}h{diff_minute:02d}m`→`…j…m`; "Red Packet" → "Angpao"; `Big Zhao/Feng` → `Kak Zhao/Feng`; `Master X`/`Elder X` → `Guru X`/`Tetua X`; hex-prefixed colour tokens and `<LINK>`/`<i>` composite tags kept byte-for-byte; formal letters/mail use Anda. QA: 0 mismatches on the first pass — see [[Current-Status]]'s session 69 write-up.

@@ -7,6 +7,10 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-10-02 — Session 69: Phase 15 batch (idx 342,000–345,999, 4,000 rows)
+
+First 4,000-row iteration of Phase 15 (the phase previously held only its 2,000-row starter batch). Eight 500-row passes (575 of the 4,000 rows left verbatim: names, `Tier N X: Piece` gear labels, dev/test-scene labels, whole-sentence `<...>` rows), merged and validated with `qa_check.py --locale` (0 mismatches on the first pass throughout), appended to `locale/phase15.jsonl` → 6,000/30,000 (20.00%). Process notes: dump/merge scratch scripts rewritten with the Write tool (new scratchpad); a mistyped `#a66829` colour tag (idx 345156) fixed before the QA run; post-merge sweep found only intentional carry-overs. Overall: 269,704 / 461,704 unique strings (58.41%), in-game coverage 82.45%. Details: [[Phase-15]]. Next: Phase 15 from idx 346,000.
+
 ## 2026-10-02 — Session 68: Phase 8 completed (idx 156,000–159,999, 4,000 rows)
 
 Sixth and final 4,000-row iteration of Phase 8. Eight 500-row passes, merged and validated with `qa_check.py --locale` (one MARKUP mismatch in pass 1 — a `#Y…#E` tag mistyped as `#M` at idx 156332 — fixed before appending), appended to `locale/phase8.jsonl` → **30,000/30,000 (100.00%)**; Phase 8 is done. Process notes: dump script prints one escaped line per row so each pass fits one `Read`; warn-only prefix guard tolerated a Cyrillic homoglyph in one prefix; post-merge sweep caught one skipped dev note (idx 156440). Overall: 265,704 / 461,704 unique strings (57.55%), in-game coverage 82.08%. Details: [[Phase-8]]. Next: Phase 9 from idx 162,000.
