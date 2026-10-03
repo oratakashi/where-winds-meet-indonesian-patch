@@ -7,6 +7,10 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-10-03 — Session 72: Phase 15 batch (idx 354,000–357,999, 4,000 rows)
+
+Fourth 4,000-row iteration of Phase 15. Eight 500-row passes (992 of the 4,000 rows left verbatim: names, `Tier N X: Piece` gear labels, dev/test-scene/region labels, raw Chinese/Japanese dev labels, poetic item titles, whole-sentence `<...>` rows), merged and validated with `qa_check.py --locale` (0 mismatches on the first pass for every pass, the merged batch and the whole dictionary), appended to `locale/phase15.jsonl` → 18,000/30,000 (60.00%). Process notes: pass 1 drifted +1 from idx 354097 and the ±4-idx prefix guard auto-realigned 313 rows; the post-merge sweep caught three skipped sentences (idx 355760, 356726, 357586) which were translated before appending; a heredoc again turned `\n` into real line breaks (idx 356726) and was fixed via the Edit tool; `merge.py` now prints a realign count instead of one line per row; file stayed LF. Overall: 281,704 / 461,704 unique strings (61.01%), in-game coverage 83.54%. Details: [[Phase-15]]. Next: Phase 15 from idx 358,000.
+
 ## 2026-10-03 — Session 71: Phase 15 batch (idx 350,000–353,999, 4,000 rows)
 
 Third 4,000-row iteration of Phase 15. Eight 500-row passes (576 of the 4,000 rows left verbatim: names, `Tier N X: Piece` gear labels, dev/test-scene labels, raw Chinese dev labels, poetic item titles), merged and validated with `qa_check.py --locale`, appended to `locale/phase15.jsonl` → 14,000/30,000 (46.67%). QA found two markup slips (idx 350795: `#The…`/`#Previously…` are `#T`/`#P` format-code tokens and must keep their letters; idx 352415: plain `<muttering>` tag translated) — fixed before appending. Process notes: scratch scripts rewritten with the Write tool, no realignment needed, heredoc-drops-backslashes bug avoided by using Edit for scratch changes; file stayed LF. Overall: 277,704 / 461,704 unique strings (60.15%), in-game coverage 83.18%. Details: [[Phase-15]]. Next: Phase 15 from idx 354,000.
