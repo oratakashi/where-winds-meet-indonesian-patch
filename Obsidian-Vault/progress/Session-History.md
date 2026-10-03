@@ -1261,3 +1261,9 @@ Phase 8 advanced from 4,000/30,000 to **6,000/30,000 (20.00%)**. Four 500-row pa
 the merged file. Each hand-written row carried its idx plus a source-text prefix, checked by the merge script
 (one wrong idx at 135391→135392 was caught that way). Overall: 241,704 / 461,704 unique strings (52.35%),
 in-game coverage 78.71%. Details in [[Current-Status]] and [[Phase-8]].
+
+## 2026-10-03 — Session 76: Phase 9 continuation (idx 162,000–165,999, 4,000 rows)
+
+Phase 9 advanced from 2,000/30,000 to **6,000/30,000 (20.00%)** at the 4,000-rows-per-iteration cadence. Eight 500-row passes merged into one batch
+(4,000 lines, idx strictly sequential); `qa_check.py --locale` 0 mismatches after four fixes (an `#A` format-code prefix and three translated plain `<...>` tags).
+Overall: 297,704 / 461,704 unique strings (64.48%), in-game coverage 85.00%. Details in [[Current-Status]] and [[Phase-9]].

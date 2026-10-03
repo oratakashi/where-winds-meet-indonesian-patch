@@ -17,3 +17,4 @@ continuing it.
 ## Batches
 
 - [[idx-160000-161999]] — idx 160,000–161,999 (`f297e2b`, 2026-09-25)
+- [[idx-162000-165999]] — idx 162,000–165,999 (session 76, 2026-10-03, 4,000 rows) — brought the phase to 6,000/30,000 (20.00%). No new terminology decisions; reaffirmed duration shorthand, `Elder`/`Master`/`Big X` honorifics, the `#A…` format-code prefix rule, plain `<Tag>` kept verbatim.
