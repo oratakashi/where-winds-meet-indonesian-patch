@@ -1,11 +1,11 @@
-# Phase 15 Translation Log (idx 340,000–349,999)
+# Phase 15 Translation Log (idx 340,000–369,999)
 
 The starter batch (idx 340,000–341,999) was **reconstructed retroactively on 2026-09-26** — it was not logged during
 the session that did the work, so for it only the commit history and `locale/phase15.jsonl` are known. Later batches
 are logged as they are done.
 
-`locale/phase15.jsonl` has 10,000 rows (idx 340,000–349,999); the phase is **not complete** — see
-[[Current-Status]] for the idx range still outstanding (next idx 350,000). Check [[Quick-Reference]] and
+`locale/phase15.jsonl` has 14,000 rows (idx 340,000–353,999); the phase is **not complete** — see
+[[Current-Status]] for the idx range still outstanding (next idx 354,000). Check [[Quick-Reference]] and
 [[Glossary]] for standing conventions before continuing.
 
 ## Batches
@@ -13,3 +13,4 @@ are logged as they are done.
 - [[idx-340000-341999]] — idx 340,000–341,999 (`384f262`, 2026-09-26)
 - [[idx-342000-345999]] — idx 342,000–345,999 (session 69, 2026-10-02, 4,000 rows) — brought the phase to 6,000/30,000 (20.00%). No new terminology decisions. Reaffirmed: durations `#Y5#Es`→`#Y5#Ed` / `{}h`→`{}j` / `{diff_hour:02d}h{diff_minute:02d}m`→`…j…m`; "Red Packet" → "Angpao"; `Big Zhao/Feng` → `Kak Zhao/Feng`; `Master X`/`Elder X` → `Guru X`/`Tetua X`; hex-prefixed colour tokens and `<LINK>`/`<i>` composite tags kept byte-for-byte; formal letters/mail use Anda. QA: 0 mismatches on the first pass — see [[Current-Status]]'s session 69 write-up.
 - [[idx-346000-349999]] — idx 346,000–349,999 (session 70, 2026-10-02, 4,000 rows) — brought the phase to 10,000/30,000 (33.33%). No new terminology decisions. Reaffirmed: durations `#Y8.4s#E`→`#Y8.4d#E`, `1.5s`/`15s`→`1.5d`/`15d`, `Unlocks in {}d`→`{}h`, `(3d)`→`(3h)`, spelled-out units → detik/menit with decimal comma; "Red Packet" → "Angpao"; `Big Zhao/Feng` → `Kak Zhao/Feng`; `Master X`/`Elder X` → `Guru X`/`Tetua X`; plain `<Tag>`/whole-sentence `<...>` and `<LINK …>` tags kept byte-for-byte; formal mail/legal text uses Anda. QA: 0 mismatches on the first pass — see [[Current-Status]]'s session 70 write-up.
+- [[idx-350000-353999]] — idx 350,000–353,999 (session 71, 2026-10-03, 4,000 rows) — brought the phase to 14,000/30,000 (46.67%). No new terminology decisions. Reaffirmed: durations `80s`→`80d`, `%s/s`→`%s/d`, `5s`/`8s`→`5d`/`8d`, spelled-out units → detik/menit/jam with decimal comma ("1,2 detik", "14,4 jam", "37,7%"), `{}m` untouched; "Red Packet" → "Angpao"; `Big Zhao/Feng` → `Kak Zhao/Feng`; `Master X`/`Elder X` → `Guru X`/`Tetua X`; "Vendetta" bounty → "Dendam"; "Chen Hour" → "Jam Chen"; plain `<Tag>`, stat tags `<Stat|id|#C|n>` and `<LINK …>`/`<IMAGE …>` composite tags kept byte-for-byte. Edge case worth remembering: a line that starts with `#The …` or `#Previously …` (idx 350795) contains the format-code tokens `#T`/`#P`, so the translation must keep a leading `#T…`/`#P…` (`#TAnggota karavan…`, `#PSebelumnya…`) rather than `#Anggota…`/`#Sebelumnya…`. QA: two markup slips (idx 350795, idx 352415 `<muttering>`) fixed before appending — see [[Current-Status]]'s session 71 write-up.
