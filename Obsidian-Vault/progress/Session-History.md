@@ -1303,3 +1303,9 @@ Overall: 317,704 / 461,704 unique strings (68.81%), in-game coverage 86.82%. Det
 Phase 9 advanced from 26,000/30,000 to **30,000/30,000 (100.00%) — complete** at the 4,000-rows-per-iteration cadence. Eight 500-row passes merged into one batch
 (4,000 lines, idx strictly sequential); `qa_check.py --locale` 0 mismatches on the first run of every pass, the merged batch, `locale/phase9.jsonl` and the whole dictionary (one stray `#P` at idx 187956 caught by eye beforehand).
 Overall: 321,704 / 461,704 unique strings (69.68%), in-game coverage 87.19%. Details in [[Current-Status]] and [[Phase-9]].
+
+## 2026-10-04 — Session 83: Phase 10 continuation (idx 192,000–195,999, 4,000 rows)
+
+Requested as "continue phase 9", but Phase 9 was already complete (session 82); the owner chose Phase 10 instead. Phase 10 advanced from 2,000/30,000 to **6,000/30,000 (20.00%)** at the 4,000-rows-per-iteration cadence.
+Eight 500-row passes merged into one batch (4,000 lines, idx strictly sequential); `qa_check.py --locale` 0 mismatches on the first run of every pass, the merged batch, `locale/phase10.jsonl` and the whole dictionary.
+Overall: 325,704 / 461,704 unique strings (70.54%), in-game coverage 87.56%. Details in [[Current-Status]] and [[Phase-10]].
