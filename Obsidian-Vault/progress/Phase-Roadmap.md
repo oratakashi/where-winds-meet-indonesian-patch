@@ -27,17 +27,17 @@ for at the start of each session (see [[Current-Status]] §Batch size).
 | 4 (done)          | 10,000 – 19,999   | 10,000       | ~40.0%                      | —                       | done (7 sessions)     | `locale/phase4.jsonl`  |
 | 5 (done)          | 20,000 – 49,999   | 30,000       | ~50.1%                      | —                       | done (15/15 sessions) | `locale/phase5.jsonl`  |
 | 6 (done)          | 50,000 – 99,999   | 50,000       | ~60.5%                      | —                        | done                   | `locale/phase6.jsonl`  |
-| 7                 | 100,000 – 129,999 | 30,000       | ~64.6%                      | 2,000/session           | ~10–15 sessions       | `locale/phase7.jsonl`  |
-| 8                 | 130,000 – 159,999 | 30,000       | ~68.7%                      | 2,000/session           | ~10–15 sessions       | `locale/phase8.jsonl`  |
-| 9                 | 160,000 – 189,999 | 30,000       | ~72.8%                      | 2,000/session           | ~10–15 sessions       | `locale/phase9.jsonl`  |
-| 10                | 190,000 – 219,999 | 30,000       | ~76.9%                      | 2,000/session           | ~10–15 sessions       | `locale/phase10.jsonl` |
-| 11                | 220,000 – 249,999 | 30,000       | ~81.0%                      | 2,000–3,000/session     | ~10–15 sessions       | `locale/phase11.jsonl` |
-| 12                | 250,000 – 279,999 | 30,000       | ~85.1%                      | 2,000–3,000/session     | ~10–15 sessions       | `locale/phase12.jsonl` |
-| 13                | 280,000 – 309,999 | 30,000       | ~89.2%                      | 2,000–3,000/session     | ~10–15 sessions       | `locale/phase13.jsonl` |
-| 14                | 310,000 – 339,999 | 30,000       | ~93.3%                      | 2,000–3,000/session     | ~10–15 sessions       | `locale/phase14.jsonl` |
-| 15                | 340,000 – 369,999 | 30,000       | ~96.3%                      | 3,000–5,000/session     | ~6–10 sessions        | `locale/phase15.jsonl` |
-| 16                | 370,000 – 399,999 | 30,000       | ~98.7%                      | 3,000–5,000/session     | ~6–10 sessions        | `locale/phase16.jsonl` |
-| 17 (active)       | 400,000 – 429,886 | 29,887       | 100%*                       | 3,000–5,000/session     | ~6–10 sessions        | `locale/phase17.jsonl` |
+| 7 (done)          | 100,000 – 129,999 | 30,000       | ~64.6%                      | —                       | done                  | `locale/phase7.jsonl`  |
+| 8 (done)          | 130,000 – 159,999 | 30,000       | ~68.7%                      | —                       | done                  | `locale/phase8.jsonl`  |
+| 9 (active)        | 160,000 – 189,999 | 30,000       | ~72.8%                      | 4,000/session           | ~7 sessions       | `locale/phase9.jsonl`  |
+| 10 (active)       | 190,000 – 219,999 | 30,000       | ~76.9%                      | 4,000/session           | ~7 sessions       | `locale/phase10.jsonl` |
+| 11 (active)       | 220,000 – 249,999 | 30,000       | ~81.0%                      | 4,000/session           | ~7 sessions       | `locale/phase11.jsonl` |
+| 12 (active)       | 250,000 – 279,999 | 30,000       | ~85.1%                      | 4,000/session           | ~7 sessions       | `locale/phase12.jsonl` |
+| 13 (active)       | 280,000 – 309,999 | 30,000       | ~89.2%                      | 4,000/session           | ~7 sessions       | `locale/phase13.jsonl` |
+| 14 (active)       | 310,000 – 339,999 | 30,000       | ~93.3%                      | 4,000/session           | ~7 sessions       | `locale/phase14.jsonl` |
+| 15 (done)         | 340,000 – 369,999 | 30,000       | ~96.3%                      | —                       | done                  | `locale/phase15.jsonl` |
+| 16 (done)         | 370,000 – 399,999 | 30,000       | ~98.7%                      | —                       | done                  | `locale/phase16.jsonl` |
+| 17 (done)         | 400,000 – 429,886 | 29,887       | 100%*                       | —                       | done                  | `locale/phase17.jsonl` |
 | Update-1 (done)   | 429,887 – 461,703 | 31,817       | additional (see note below) | —                       | done                  | `locale/update1.jsonl` |
 
 \* Percentage of the 963,050 total lines in the pre-update `strings.jsonl`,
@@ -110,7 +110,7 @@ some data to work with.
 - **Tone**: character dialogue is casual (gue/lo); UI/system text is
   neutral-casual without gue/lo — approved by the user. Full tone/term
   rules live in [[Glossary]].
-- Batch size per session has changed many times (1,000, 2,000 and 3,000
+- Batch size per session has changed many times (1,000, 2,000, 3,000 and 4,000
   rows have all been used) — it is set by the user each session. The
   current state is in [[Current-Status]] and the full change history in
   [[Session-History]], not here, since it's a session-to-session
