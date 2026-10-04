@@ -19,3 +19,4 @@ continuing it.
 - [[idx-160000-161999]] — idx 160,000–161,999 (`f297e2b`, 2026-09-25)
 - [[idx-162000-165999]] — idx 162,000–165,999 (session 76, 2026-10-03, 4,000 rows) — brought the phase to 6,000/30,000 (20.00%). No new terminology decisions; reaffirmed duration shorthand, `Elder`/`Master`/`Big X` honorifics, the `#A…` format-code prefix rule, plain `<Tag>` kept verbatim.
 - [[idx-166000-169999]] — idx 166,000–169,999 (session 77, 2026-10-03, 4,000 rows) — brought the phase to 10,000/30,000 (33.33%). No new terminology decisions; reaffirmed duration shorthand, honorifics, composite-tag and plain `<Tag>` rules.
+- [[idx-170000-173999]] — idx 170,000–173,999 (session 78, 2026-10-04, 4,000 rows) — brought the phase to 14,000/30,000 (46.67%). No new terminology decisions; reaffirmed duration shorthand (`%dd`→`%dh`, `{diff_hour:d}h`→`j`), honorifics, decimal comma, and byte-for-byte `<#…#E>`/plain `<Tag>` handling.

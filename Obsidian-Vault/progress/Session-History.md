@@ -1273,3 +1273,9 @@ Overall: 297,704 / 461,704 unique strings (64.48%), in-game coverage 85.00%. Det
 Phase 9 advanced from 6,000/30,000 to **10,000/30,000 (33.33%)** at the 4,000-rows-per-iteration cadence. Eight 500-row passes merged into one batch
 (4,000 lines, idx strictly sequential); `qa_check.py --locale` 0 mismatches after one fix (a composite `<Skill|id|#C|a|b>` tag that lost a segment).
 Overall: 301,704 / 461,704 unique strings (65.35%), in-game coverage 85.36%. Details in [[Current-Status]] and [[Phase-9]].
+
+## 2026-10-04 — Session 78: Phase 9 continuation (idx 170,000–173,999, 4,000 rows)
+
+Phase 9 advanced from 10,000/30,000 to **14,000/30,000 (46.67%)** at the 4,000-rows-per-iteration cadence. Eight 500-row passes merged into one batch
+(4,000 lines, idx strictly sequential); `qa_check.py --locale` 0 mismatches on the first run of every pass (one mistyped `#M…#E` tag at idx 173021 was caught by eye before the run).
+Overall: 305,704 / 461,704 unique strings (66.21%), in-game coverage 85.73%. Details in [[Current-Status]] and [[Phase-9]].
