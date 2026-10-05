@@ -1309,3 +1309,9 @@ Overall: 321,704 / 461,704 unique strings (69.68%), in-game coverage 87.19%. Det
 Requested as "continue phase 9", but Phase 9 was already complete (session 82); the owner chose Phase 10 instead. Phase 10 advanced from 2,000/30,000 to **6,000/30,000 (20.00%)** at the 4,000-rows-per-iteration cadence.
 Eight 500-row passes merged into one batch (4,000 lines, idx strictly sequential); `qa_check.py --locale` 0 mismatches on the first run of every pass, the merged batch, `locale/phase10.jsonl` and the whole dictionary.
 Overall: 325,704 / 461,704 unique strings (70.54%), in-game coverage 87.56%. Details in [[Current-Status]] and [[Phase-10]].
+
+## 2026-10-05 — Session 84: Phase 10 continuation (idx 196,000–197,999, 2,000 rows)
+
+Requested as "Aku ingin melanjutkan phase 10 dengan 2000 per iterasi" — Phase 10 advanced from 6,000/30,000 to **8,000/30,000 (26.67%)** at the 2,000-rows-per-iteration cadence.
+Four 500-row passes merged into one batch (2,000 lines, idx strictly sequential); `qa_check.py --locale` 0 mismatches on the first run of every pass, the merged batch, `locale/phase10.jsonl` and the whole dictionary.
+Overall: 327,704 / 461,704 unique strings (70.98%), in-game coverage 87.75%. Details in [[Current-Status]] and [[Phase-10]].
