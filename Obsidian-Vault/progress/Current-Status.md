@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-05 (session 85).** This is the single source of truth for "how
+**Last updated: 2026-10-05 (session 86).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **329,704** | **461,704** | **71.41%** |
-| ↳ original corpus (Phases 0–17) | 297,887 | 429,887 | 69.29% |
+| **Unique strings translated (all)** | **331,704** | **461,704** | **71.84%** |
+| ↳ original corpus (Phases 0–17) | 299,887 | 429,887 | 69.76% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **726,674** | **826,388** | **87.93%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **728,169** | **826,388** | **88.11%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -37,7 +37,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 7 | 100,000–129,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 8 | 130,000–159,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 9 | 160,000–189,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 10 | 190,000–219,999 | **active** | 200,000 | 10,000 / 30,000 | 33.33% |
+| 10 | 190,000–219,999 | **active** | 202,000 | 12,000 / 30,000 | 40.00% |
 | 11 | 220,000–249,999 | **active** | 222,000 | 2,000 / 30,000 | 6.67% |
 | 12 | 250,000–279,999 | **active** | 252,000 | 2,000 / 30,000 | 6.67% |
 | 13 | 280,000–309,999 | **active** | 282,000 | 2,000 / 30,000 | 6.67% |
@@ -56,12 +56,29 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phases 6, 7, 8, 9, 15, 16, and 17 are all fully complete.**
-Phase 10 is active at 10,000/30,000 (33.33%), Phase 11 is active at 2,000/30,000
+Phase 10 is active at 12,000/30,000 (40.00%), Phase 11 is active at 2,000/30,000
 (6.67%), Phase 12 is active at 2,000/30,000 (6.67%), Phase 13 is active at
 2,000/30,000 (6.67%), and Phase 14 is active at 2,000/30,000 (6.67%).
-Resume any active phase next per [[Resume-Procedure]] (Phase 10 resumes at idx 200,000, Phase 11 at 222,000, and so on).
+Resume any active phase next per [[Resume-Procedure]] (Phase 10 resumes at idx 202,000, Phase 11 at 222,000, and so on).
 
-## Most recent session (2026-10-05, session 85) — Phase 10 continuation (idx 198,000–199,999, 2,000 rows)
+## Most recent session (2026-10-05, session 86) — Phase 10 continuation (idx 200,000–201,999, 2,000 rows)
+
+Phase 10 advanced at the 2,000-rows-per-iteration cadence ("Aku ingin melanjutkan phase 10 dengan 2000 per iterasi. Jangan lupa update obsidian vaultnya"): 2,000 rows (idx 200,000–201,999) were
+translated in four 500-row passes (about 1,650 rows written by hand as `idx¦source-prefix¦text`; the rest — Pinyin names, dev/scene labels, `Tier N X Piece` gear labels, raw Chinese/Japanese labels,
+the dev SSE string at 201586 — carried over verbatim by the merge script), merged (2,000 lines, idx strictly sequential), validated with `tools/qa_check.py --locale` (**0 mismatches on the first run**
+for all four passes, the merged batch and the whole 331,704-entry dictionary) and appended to `locale/phase10.jsonl`. Phase 10 moved from 10,000/30,000 (33.33%) to **12,000/30,000 (40.00%)**.
+Content mix: Pinyin NPC names, UI/system strings, quest labels, gear/skill tooltips (Thundercry Blade Defensive Riposte, Vernal Umbrella, Sentinel Howlion), Sixteen Lanes compensation mail with the `<LINK …>`
+tag byte-for-byte (200572), the `<IMAGE …>` Year-of-the-Horse note (201443), and long lore pieces (Ba Wu's diary 200586, the Luancheng dyer's letter 200642, Zhang A'man's moonlight 201232,
+the four-princes tale 201460, Candy Lady 201045). No new terminology decisions; all standing rules (honorifics, `Ns`→`Nd`, decimal comma, dotted thousands, hex-prefixed colour tokens, plain `<Tag>` verbatim) reaffirmed.
+
+Process notes: (1) scratch `dump.py`/`merge.py` rewritten with the Write tool; (2) one slip caught by the equal-to-source sweep before append — idx 201304 (the Awaken Mountain Bell inscription) had been labelled
+201305; fixed in the pass file and re-merged; (3) the appended file stayed LF (0 CR).
+
+Full-file check: `locale/phase10.jsonl` is now 12,000 lines (idx 190,000–201,999, no gaps or duplicates); the whole dictionary (331,704 entries) validates clean.
+
+**Overall: 331,704 / 461,704 unique strings (71.84%), in-game coverage 88.11%.**
+
+## Prior session (2026-10-05, session 85) — Phase 10 continuation (idx 198,000–199,999, 2,000 rows)
 
 Phase 10 advanced at the 2,000-rows-per-iteration cadence ("Aku ingin melanjutkan phase 10 dengan 2000 per iterasi. Jangan lupa update obsidian vaultnya"): 2,000 rows (idx 198,000–199,999) were
 translated in four 500-row passes (1,702 rows written by hand as `idx¦source-prefix¦text`; the other 298 — Pinyin names, dev/scene/test labels (`Blackiron Pangolin - …`, `Golden Toad - Roaring Sands 10`,

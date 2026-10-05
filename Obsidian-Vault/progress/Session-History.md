@@ -1321,3 +1321,9 @@ Overall: 327,704 / 461,704 unique strings (70.98%), in-game coverage 87.75%. Det
 Requested as "Aku ingin melanjutkan phase 10 dengan 2000 per iterasi" — Phase 10 advanced from 8,000/30,000 to **10,000/30,000 (33.33%)** at the 2,000-rows-per-iteration cadence.
 Four 500-row passes merged into one batch (2,000 lines, idx strictly sequential); `qa_check.py --locale` 0 mismatches on the first run of every pass, the merged batch, `locale/phase10.jsonl` and the whole dictionary.
 Overall: 329,704 / 461,704 unique strings (71.41%), in-game coverage 87.93%. Details in [[Current-Status]] and [[Phase-10]].
+
+## 2026-10-05 — Session 86: Phase 10 continuation (idx 200,000–201,999, 2,000 rows)
+
+Requested as "Aku ingin melanjutkan phase 10 dengan 2000 per iterasi" — Phase 10 advanced from 10,000/30,000 to **12,000/30,000 (40.00%)** at the 2,000-rows-per-iteration cadence.
+Four 500-row passes merged into one batch (2,000 lines, idx strictly sequential); `qa_check.py --locale` 0 mismatches on the first run of every pass, the merged batch, `locale/phase10.jsonl` and the whole dictionary. One slip caught by the post-merge sweep before append: the Awaken Mountain Bell inscription (idx 201304) had been labelled 201305 (a name row); fixed in the pass file and re-merged.
+Overall: 331,704 / 461,704 unique strings (71.84%), in-game coverage 88.11%. Details in [[Current-Status]] and [[Phase-10]].
