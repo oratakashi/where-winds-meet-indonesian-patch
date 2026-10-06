@@ -7,6 +7,10 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-10-06 — Session 88: Phase 10 batch (idx 206,000–209,999, 4,000 rows)
+
+Third 4,000-row iteration of Phase 10 (same cadence as session 87). Eight 500-row passes (1,032 of the 4,000 rows left verbatim: names, dev/scene labels, gear labels, raw Chinese labels, whole-sentence `<...>` row 206023, poetic titles), merged and validated with `qa_check.py --locale` (0 mismatches on the first pass for every pass, the merged batch, `locale/phase10.jsonl` and the whole dictionary), appended to `locale/phase10.jsonl` → 20,000/30,000 (66.67%). Process notes: scripts written via the Write tool; a typed `#F` (207229) and an ambiguous `Ambil tahu` (209006) fixed through override files before merging; post-merge sweep found two skipped sentences (206028, 206128) fixed before appending; file stayed LF. Overall: 339,704 / 461,704 unique strings (73.58%), in-game coverage 88.84%. Details: [[Phase-10]]. Next: Phase 10 from idx 210,000.
+
 ## 2026-10-05 — Session 87: Phase 10 batch (idx 202,000–205,999, 4,000 rows)
 
 Second 4,000-row iteration of Phase 10 after the 2,000-row cadence of sessions 84–86. Eight 500-row passes (586 of the 4,000 rows left verbatim: names, dev/scene labels, gear labels, raw Chinese labels, whole-sentence `<...>` rows), merged and validated with `qa_check.py --locale` (0 mismatches on the first pass for every pass, the merged batch, `locale/phase10.jsonl` and the whole dictionary), appended to `locale/phase10.jsonl` → 16,000/30,000 (53.33%). Process notes: scripts written via the Write tool; one typo (idx 202497) fixed through an override file; post-merge sweep found no skipped sentence; file stayed LF. Overall: 335,704 / 461,704 unique strings (72.71%), in-game coverage 88.48%. Details: [[Phase-10]]. Next: Phase 10 from idx 206,000.
