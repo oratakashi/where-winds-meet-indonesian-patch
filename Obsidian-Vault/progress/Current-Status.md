@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **343,704** | **461,704** | **74.44%** |
-| ↳ original corpus (Phases 0–17) | 311,887 | 429,887 | 72.55% |
+| **Unique strings translated (all)** | **347,704** | **461,704** | **75.31%** |
+| ↳ original corpus (Phases 0–17) | 315,887 | 429,887 | 73.48% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **737,208** | **826,388** | **89.21%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **740,223** | **826,388** | **89.57%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -37,7 +37,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 7 | 100,000–129,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 8 | 130,000–159,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 9 | 160,000–189,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 10 | 190,000–219,999 | **active** | 214,000 | 24,000 / 30,000 | 80.00% |
+| 10 | 190,000–219,999 | **active** | 218,000 | 28,000 / 30,000 | 93.33% |
 | 11 | 220,000–249,999 | **active** | 222,000 | 2,000 / 30,000 | 6.67% |
 | 12 | 250,000–279,999 | **active** | 252,000 | 2,000 / 30,000 | 6.67% |
 | 13 | 280,000–309,999 | **active** | 282,000 | 2,000 / 30,000 | 6.67% |
@@ -56,12 +56,26 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phases 6, 7, 8, 9, 15, 16, and 17 are all fully complete.**
-Phase 10 is active at 24,000/30,000 (80.00%), Phase 11 is active at 2,000/30,000
+Phase 10 is active at 28,000/30,000 (93.33%), Phase 11 is active at 2,000/30,000
 (6.67%), Phase 12 is active at 2,000/30,000 (6.67%), Phase 13 is active at
 2,000/30,000 (6.67%), and Phase 14 is active at 2,000/30,000 (6.67%).
-Resume any active phase next per [[Resume-Procedure]] (Phase 10 resumes at idx 214,000, Phase 11 at 222,000, and so on).
+Resume any active phase next per [[Resume-Procedure]] (Phase 10 resumes at idx 218,000 — the last 2,000 rows, idx 218,000–219,999; Phase 11 at 222,000, and so on).
 
-## Most recent session (2026-10-06, session 89) — Phase 10 continuation (idx 210,000–213,999, 4,000 rows)
+## Most recent session (2026-10-06, session 90) — Phase 10 continuation (idx 214,000–217,999, 4,000 rows)
+
+Phase 10 advanced at the 4,000-rows-per-iteration cadence ("Aku ingin melanjutkan phase 10 dengan 4000 per iterasi. Jangan lupa update obsidian vaultnya"): 4,000 rows (idx 214,000–217,999) were translated in eight 500-row passes (2,879 rows written by hand as `idx¦source-prefix¦text`; the other 1,121 — Pinyin names, dev/scene labels (`Chapter 2 Goal N-N`, `Golden Toad - …`, `Hidden Mountain … - …`, `Terracotta Boar N - …`), `Tier N X Piece`/`Common|Supreme: Tier N X` gear labels, raw Chinese labels (217501 `煞地神脱战倒计时`, 215462 `常平仓下电梯增补区域`), whole-sentence `<...>` rows 214856/216847, the `[Placeholder for sentence 19]` row 217943, poetic titles — carried over verbatim by the merge script), merged (4,000 lines, idx strictly sequential) and validated with `tools/qa_check.py --locale` (**0 mismatches on the first run** for all eight passes, the merged batch, `locale/phase10.jsonl` and the whole 347,704-entry dictionary), then appended to `locale/phase10.jsonl`. Phase 10 moved from 24,000/30,000 (80.00%) to **28,000/30,000 (93.33%)** — only idx 218,000–219,999 (2,000 rows) remain. Content mix: Pinyin NPC names, UI/system strings, quest labels, gear/skill tooltips (Mo Blade Iron Guards 215525, Vernal Umbrella Cyclone Waltz 217810, Stormbreaker Spear tooltips 216034/216108, Inkwell Fan 215194, Snowbreak Spring patch notes 217815), mails (Sixteen Lanes anti-cheat notice 217759, pre-registration thank-you 217838, Echo Shop removal notice 216969 with `<LINK …>` kept byte-for-byte, the `<IMAGE …>` persimmon-grove letter 214918), and long lore pieces (Ye Wanshan's Ironheart tale 215506, Wen Wuque and Granny Turtle 216130, the Maiden's Candle ghost story 215166, Unfated Tian and Han Xiangxun 217154, Ding Xiao's cake 217535, Li Zhenzhen and Tian Ying 217796, Mohway the cat 217488, the Kang Bao merchant 216678, the xiaolongbao essay 216857, the Gleaming Abyss legend 214888). No new core terminology decisions; all standing rules reaffirmed (see [[Phase-10]]).
+
+Small clarifications (topic file only, not Quick-Reference): `Inner Way: Tome` rows keep the whole string verbatim (`Thunderous Bloom: Tome` 215185 — precedent 195753/200294/251943; a first draft had `Kitab` and was corrected before QA); `Granny X` with a foreign-name X keeps X (`Nenek Turtle`); `Big Zhao` → `Kak Zhao`; `Master Ou/Wuhen/Raven/Zhong/Haji Shu` → `Guru X` while `Master of Grain`/`Master Unwaking`-style titles stay English where they are org titles; `Chen hour` → `Jam Chen`; `Lord Si/Shen` → `Tuan Si/Shen`; `Dr. Yuan` → `Tabib Yuan`; `Red Packet` → `Angpao`; `Beast Tongue` in a quoted skill name stays English, parenthetical `(Beast Tongue)` → `(Bahasa Binatang)`; `Senior Brother/Sister` and `Old X` stay English (§7 still unresolved). Duration shorthand: `Cooldown: 80s` → `80d`, `every 30s` → `setiap 30d`, `%ds` → `%dd`, `#Y0.8s#E` → `#Y0.8d#E` (decimal inside a token keeps the dot), `#Y8#Es` → `#Y8#Ed`, `for 3s` → `3d`; prose decimals use a comma (`40,2%`, `9,0%`, `20,2%`, `0,83%`), dotted thousands (`#Y1.050%#E`, `2.000 Discipleship Point`, `5.000`). NPC speech stays gue/lo; letters/mails/system text use aku/kamu or neutral register.
+
+Token edge cases: `[#Smile]` (214726) keeps the `#S` token; plain `<thinking>` (214678) stays verbatim; `\r\n` inside 216409 is preserved; `{0:.0f}` (214405); `$STEADY_MIN_W_ATK:.1f$` (214516); `#Y%s x%d#ffffff` (215179); `<TEXT …>`/`<IMAGE …>` list blocks in 217446 byte-for-byte; the stat line `Physical Attack #3c3c3c Loading...` (216207) left verbatim; `#NMatch Any Player card #Eand…` keeps its token order (214281).
+
+Process notes: (1) scratch `dump.py`/`merge.py` written with the Write tool (empty scratchpad) — `dump.py` output was redirected to `src_NNNNNN.txt` and read with the Read tool (the bash tool truncates 35 KB dumps); `merge.py` carries untranslated rows over verbatim and applies the warn-only source-prefix guard — only two harmless PREFIX typos (217529, 217886); (2) each pass was merged and QA-checked right after writing, then all eight pass files were re-merged in one go into the 4,000-line batch; (3) the post-merge sweep of rows still equal to source (364 rows with ≥4 words) found only names, dev/scene labels, gear labels, titles and tags, and 0 Cyrillic characters; (4) the appended file stayed LF (0 CR); (5) the shell's working directory moved into `Obsidian-Vault/` during the vault edits, so later commands use absolute paths; (6) `python tools/progress.py --write` was used (the plain form crashes on the cp1252 console).
+
+Full-file check: `locale/phase10.jsonl` is now 28,000 lines (idx 190,000–217,999, no gaps or duplicates); the whole dictionary (347,704 entries) validates clean.
+
+**Overall: 347,704 / 461,704 unique strings (75.31%), in-game coverage 89.57%.**
+
+## Prior session (2026-10-06, session 89) — Phase 10 continuation (idx 210,000–213,999, 4,000 rows)
 
 Phase 10 advanced at the 4,000-rows-per-iteration cadence ("Aku ingin melanjutkan phase 10 dengan 4000 per iterasi. Jangan lupa update obsidian vaultnya"): 4,000 rows (idx 210,000–213,999) were translated in eight 500-row passes (3,261 rows written by hand as `idx¦source-prefix¦text`; the other 739 — Pinyin names, dev/scene labels (`Chapter 2 Goal N-N`, `Golden Toad - …`, `Multiplayer … - Lv.86 - …`), `Tier N X Piece`/`Common: Tier N X` gear labels, raw Chinese labels (210310, 210553, 211186, 212725), whole-sentence `<...>` row 211461, poetic titles — carried over verbatim by the merge script), merged (4,000 lines, idx strictly sequential) and validated with `tools/qa_check.py --locale` (5 MARKUP slips caught by the per-pass check and fixed before appending; **0 mismatches** for the merged batch, `locale/phase10.jsonl` and the whole 343,704-entry dictionary), then appended to `locale/phase10.jsonl`. Phase 10 moved from 20,000/30,000 (66.67%) to **24,000/30,000 (80.00%)**. Content mix: Pinyin NPC names, UI/system strings, quest labels, gear/skill tooltips (Heavenquaker Spear Sober Sorrow 213363, Inkwell Fan Peak's Springless Silence 211233, Nameless Sword Vagrant Sword 212710, Heavenwill Gauntlets Falcon Pursuit 211399, Vernal Umbrella 210596), Sixteen Lanes mails (`<LINK …>` kept byte-for-byte at 211443; compensation notice 213620; 3-million-wanderer anniversary letter 213414), the confidentiality agreement (212287), and long lore pieces (Zhang Cuo and Zhu Yu 210130, Feng Ruzhi by the Yellow River 212523, Shi Jingtian's letter 212530, the Zephyr Crest history 210716, the Tuyuhun horse 213029). No new core terminology decisions; all standing rules reaffirmed (see [[Phase-10]]). Token edge cases: `#Eeffect` tokenizes as colour `#Eeffec` (210596) — kept glued; `#8c582310#E` (212017); spans opened by a colour code with no `#E` (`#d0d5d8…`, `#d2cdbb…`, `#dfded2 …`).
 
