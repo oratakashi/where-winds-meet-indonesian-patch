@@ -7,6 +7,12 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-10-07 — Session 92: Phase 14 continuation (idx 312,000–315,999, 4,000 rows)
+
+Request: "Aku ingin melanjutkan phase 14 dengan 4000 per iterasi. Jangan lupa update obsidian vaultnya" — Phase 14 advanced from 2,000/30,000 to **6,000/30,000 (20.00%)**, resuming at idx 312,000 (the first 4,000-row iteration of this phase).
+Eight 500-row passes (3,375 rows by hand; ~625 names/dev labels/raw Chinese-Japanese labels carried over verbatim) merged into one batch (4,000 lines, idx strictly sequential); `qa_check.py --locale` 0 mismatches for the merged batch, `locale/phase14.jsonl` and the whole dictionary. Three whole-sentence `<...>` rows (313188, 313931, 313969) were translated by mistake, flagged by the per-pass QA run and restored verbatim before appending.
+Overall: 353,704 / 461,704 unique strings (76.61%), in-game coverage 90.13%. Details in [[Current-Status]] and [[Phase-14]].
+
 ## 2026-10-06 — Session 91: Phase 10 completed (idx 218,000–219,999, 2,000 rows)
 
 Final iteration of Phase 10 (request: "Aku ingin melanjutkan phase 10 dengan 4000 per iterasi. Jangan lupa update obsidian vaultnya" — only 2,000 rows remained, so the batch was cut at the phase boundary instead of spilling into Phase 11's file). Four 500-row passes (about 1,600 rows by hand; ~400 Pinyin names, dev/scene labels, gear labels, `丶`/`丨` name rows, whole-sentence `<...>` rows carried over verbatim), merged (2,000 lines, idx strictly sequential), `tools/qa_check.py --locale` 0 mismatches on the first run for every pass, the merged batch, `locale/phase10.jsonl` (30,000 lines, idx 190,000–219,999, no gaps/duplicates) and the whole 349,704-entry dictionary; appended LF (0 CR). Four `Anda` slips in NPC speech and two typos were fixed through override files before the merge. Phase 10 moved from 28,000/30,000 to **30,000/30,000 (100.00%) — complete**. Overall: 349,704 / 461,704 unique strings (75.74%), in-game coverage 89.76%. Details: [[idx-218000-219999]].
