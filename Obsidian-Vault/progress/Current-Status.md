@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-07 (session 92).** This is the single source of truth for "how
+**Last updated: 2026-10-07 (session 93).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **353,704** | **461,704** | **76.61%** |
-| ↳ original corpus (Phases 0–17) | 321,887 | 429,887 | 74.88% |
+| **Unique strings translated (all)** | **357,704** | **461,704** | **77.47%** |
+| ↳ original corpus (Phases 0–17) | 325,887 | 429,887 | 75.81% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **744,791** | **826,388** | **90.13%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **747,748** | **826,388** | **90.48%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -41,7 +41,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 11 | 220,000–249,999 | **active** | 222,000 | 2,000 / 30,000 | 6.67% |
 | 12 | 250,000–279,999 | **active** | 252,000 | 2,000 / 30,000 | 6.67% |
 | 13 | 280,000–309,999 | **active** | 282,000 | 2,000 / 30,000 | 6.67% |
-| 14 | 310,000–339,999 | **active** | 316,000 | 6,000 / 30,000 | 20.00% |
+| 14 | 310,000–339,999 | **active** | 320,000 | 10,000 / 30,000 | 33.33% |
 | 15 | 340,000–369,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 16 | 370,000–399,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 17 | 400,000–429,886 | done | — | 29,887 / 29,887 | 100.00% |
@@ -58,10 +58,20 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 **Update-1 and Phases 6, 7, 8, 9, 10, 15, 16, and 17 are all fully complete.**
 Phase 11 is active at 2,000/30,000 (6.67%), Phase 12 is active at 2,000/30,000
 (6.67%), Phase 13 is active at 2,000/30,000 (6.67%), and Phase 14 is active at
-6,000/30,000 (20.00%). Resume any active phase next per [[Resume-Procedure]]
-(Phase 11 resumes at idx 222,000, Phase 12 at 252,000, Phase 13 at 282,000, Phase 14 at 316,000).
+10,000/30,000 (33.33%). Resume any active phase next per [[Resume-Procedure]]
+(Phase 11 resumes at idx 222,000, Phase 12 at 252,000, Phase 13 at 282,000, Phase 14 at 320,000).
 
-## Most recent session (2026-10-07, session 92) — Phase 14 continuation (idx 312,000–315,999, 4,000 rows)
+## Most recent session (2026-10-07, session 93) — Phase 14 continuation (idx 316,000–319,999, 4,000 rows)
+
+Phase 14 advanced at the 4,000-rows-per-iteration cadence ("Aku ingin melanjutkan phase 14 dengan 4000 per iterasi. Jangan lupa update obsidian vaultnya"): 4,000 rows (idx 316,000–319,999) were translated in eight 500-row passes (3,397 rows written by hand as `idx¦source-prefix¦text`; the other 603 — Pinyin names, dev/scene labels (`Tier N X Piece`/`Common: Tier N X`, `Meow Meow - …`, `Feathergrass Chest - Millet's Keep N`, `Blissful Retreat Test Components N`, `Chapter 2 Goal N-N`, `Ascetic Monk N`), raw Chinese labels (316328, 316639, 317012, 317336, 317709, 318274, 319756), `$T(…)` rows 316327/316446, the `Stone: 橹` row 317812, the playing-card name `4 of Clubs` (317982, kept per precedent), whole-sentence `<...>` rows 319144/319873, poetic titles — carried over verbatim by the merge script), merged (4,000 lines, idx strictly sequential) and validated with `tools/qa_check.py --locale` (**0 mismatches on the first run** for all eight passes, the merged batch, `locale/phase14.jsonl` and the whole 357,704-entry dictionary), then appended to `locale/phase14.jsonl`. Phase 14 moved from 6,000/30,000 (20.00%) to **10,000/30,000 (33.33%)**. Content mix: Pinyin NPC names, UI/system strings, quest labels, gear/skill tooltips (Infernal Twinblades Perfect Dodge 316347, Thundercry Blade Sunrush Gale 319886, Halcyon stomp skill 318811, Snowparting Blade 318496/318792), Sixteen Lanes mails with the `<LINK …>` tag byte-for-byte (319591) and the `<IMAGE …>` Skybrim Market letter (317653), the Landlords/Gift of Gab/Feast Frenzy mode rules (317998, 318158), and long lore pieces (Chen Tu's Mohist robe 316969, He Wanchun and the stone pipa 319433, Shen Yilun's vow 319630, the Dragonbend stargazers 319677, the Skyward City ruins 318455, Wan Zhi'an's chess loss 316209). No new core terminology decisions; all standing rules reaffirmed (see [[Phase-14]], [[idx-316000-319999]]).
+
+Process notes: (1) scratch `dump.py`/`merge.py` first created with a bash heredoc (which ate the backslashes — SyntaxError caught immediately), then rewritten with the Write tool; `merge.py` unescapes `\n`/`\r`/`\\`/`\"`, carries untranslated rows over verbatim and applies a warn-only source-prefix guard — only harmless PREFIX warnings (317045, 317804, 318362, 319980) and one MALFORMED line (318746, prefix dropped; re-supplied through `f6.txt`); (2) slips caught before append: a duplicated idx label (316160 for the row that is really 316159) and the card name `4 of Clubs` (317982) translated against precedent (restored verbatim); (3) the post-merge sweep of rows still equal to source (380 rows with ≥4 words) found only names, dev/scene labels, gear labels, stat lines, titles and tags, and 0 Cyrillic characters; formal `Anda` survives only in shopkeeper/servant speech (317343, 319926 and two more); (4) the appended file stayed LF (0 CR); (5) `python tools/progress.py --write` was used (the plain form crashes on the cp1252 console).
+
+Full-file check: `locale/phase14.jsonl` is now 10,000 lines (idx 310,000–319,999, no gaps or duplicates); the whole dictionary (357,704 entries) validates clean.
+
+**Overall: 357,704 / 461,704 unique strings (77.47%), in-game coverage 90.48%.**
+
+## Prior session (2026-10-07, session 92) — Phase 14 continuation (idx 312,000–315,999, 4,000 rows)
 
 Phase 14 advanced at the 4,000-rows-per-iteration cadence ("Aku ingin melanjutkan phase 14 dengan 4000 per iterasi. Jangan lupa update obsidian vaultnya"): 4,000 rows (idx 312,000–315,999) were translated in eight 500-row passes (3,375 rows written by hand as `idx¦source-prefix¦text`; the other 625 — Pinyin names, dev/scene labels (`Tier N X Weapon Chest`, `Terracotta Boar N - …`, `Multiplayer … - Lv.86 - …`, `Hexi - …`), raw Chinese/Japanese/mojibake labels (312125, 312127, 312434, 313574, 313808, 315773, 315892), `$T(…)` rows 313677/313910, the 16× `Loading...` placeholder 314841, poetic titles — carried over verbatim by the merge script), merged (4,000 lines, idx strictly sequential) and validated with `tools/qa_check.py --locale` (**0 mismatches on the first run** for passes 1, 2, 5, 6, 7 and 8; passes 3 and 4 each flagged whole-sentence `<...>` rows that had to stay verbatim — 313188, 313931, 313969 — fixed before appending; **0 mismatches** for the merged batch, `locale/phase14.jsonl` and the whole 353,704-entry dictionary), then appended to `locale/phase14.jsonl`. Phase 14 moved from 2,000/30,000 (6.67%) to **6,000/30,000 (20.00%)**. Content mix: Pinyin NPC names, UI/system strings, quest labels, gear/skill tooltips (Sentinel Howlion 312790/312795, Thundercry Blade Defensive Riposte 315409, Soulshade Umbrella 315106, Infernal Twinblades 314472), Draw/event rules (Clear Nature Sound 312313, Lovesick Leaves 314428, Monstruction Mode 314799), the Sixteen Lanes pre-registration letter (312942) and the `<IMAGE …>` village-school letter kept byte-for-byte (313171), and long lore pieces (Palebreak's smith 312079, Yan Ying's chess 312509, Mo Xiaoyun and Xini 313884, the Drunken Pines 313252, the Dragonbend Academy watch 315561, Bai Xin and A'zhu 315900, the Guiyi torch letter 315567). No new core terminology decisions; all standing rules reaffirmed (see [[Phase-14]], [[idx-312000-315999]]).
 
