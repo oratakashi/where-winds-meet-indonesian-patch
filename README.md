@@ -256,6 +256,16 @@ with the original backups you saved in step one of the relevant platform section
 
 ---
 
+## Donation
+
+If you find this project useful, please consider donating to support its development.
+
+![QR](.donation/saweria.png)
+
+[https://saweria.co/oratakashi](https://saweria.co/oratakashi)
+
+---
+
 ## Prerequisites & Installation
 
 *The section below is for contributors/developers who want to run the toolkit itself
