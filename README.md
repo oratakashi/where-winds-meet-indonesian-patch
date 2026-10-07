@@ -256,13 +256,21 @@ with the original backups you saved in step one of the relevant platform section
 
 ---
 
-## Donation
+## Support & Donation
 
-If you find this project useful, please consider donating to support its development.
+This Indonesian patch is, and will always remain, **free for everyone**. Keeping it accurate and playable, however, comes with real ongoing costs:
+
+- **AI translation costs** — Translating several hundred thousand strings with AI assistance consumes a substantial volume of tokens, and quality AI is not inexpensive.
+- **Mod maintenance** — Every NetEase update changes the locale files. Each release means re-extracting the data, translating new and changed text, running quality checks, and republishing the patch so it continues to work in-game.
+- **Time and dedication** — All of this work is carried out by a single maintainer.
+
+If this project has made Where Winds Meet more enjoyable for you, please consider supporting its development. Every contribution, regardless of size, goes directly toward AI costs and toward keeping the patch current after each game update. Your support is what keeps this project alive, and it is sincerely appreciated.
+
+Unable to donate? You can still make a meaningful difference by starring the repository, sharing it with fellow players, or reporting inaccurate translations through Issues.
 
 ![QR](.donation/saweria.png)
 
-[https://saweria.co/oratakashi](https://saweria.co/oratakashi)
+**Donate via Saweria:** [https://saweria.co/oratakashi](https://saweria.co/oratakashi)
 
 ---
 
