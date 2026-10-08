@@ -6,8 +6,8 @@ the session that did the work, so it only records what the commit history and
 
 Phase 14 started with a single starter batch, committed 2026-09-25
 (`548e8ff` — "Start Phase 14 translation (idx 310000-311999, 2000 rows)"), and
-was continued on 2026-10-07 (sessions 92 and 93) and 2026-10-08 (sessions 94 and 95). `locale/phase14.jsonl` now has
-18,000 rows (idx 310,000–327,999); the phase is **not complete** — see
+was continued on 2026-10-07 (sessions 92 and 93) and 2026-10-08 (sessions 94, 95 and 96). `locale/phase14.jsonl` now has
+22,000 rows (idx 310,000–331,999); the phase is **not complete** — see
 [[Current-Status]] for the full idx range still outstanding. No terminology
 decisions were recorded for the starter batch; check [[Quick-Reference]] and
 [[Glossary]] for standing conventions before continuing it.
@@ -19,3 +19,4 @@ decisions were recorded for the starter batch; check [[Quick-Reference]] and
 - [[idx-316000-319999]] — idx 316,000–319,999 (session 93, 2026-10-07, 4,000 rows) — brought the phase to 10,000/30,000 (33.33%). No new core terminology decisions; reaffirmed honorifics (`Elder X`→`Tetua X`, `Master X`→`Guru X`, `Big Zhao`/`Brother X`→`Kak X`, `Aunt/Granny X`→`Bibi/Nenek X`, `Madam/Miss X`→`Nyonya/Nona X`, `Young Master`→`Tuan Muda`), duration shorthand (`Ns`→`Nd`, `#Y8.4s#E`→`#Y8.4d#E`, `%sh%sm%ss`→`%sj%sm%sd`), card names (`4 of Clubs`) verbatim, whole-sentence `<...>` rows verbatim.
 - [[idx-320000-323999]] — idx 320,000–323,999 (session 94, 2026-10-08, 4,000 rows) — brought the phase to 14,000/30,000 (46.67%). No new core terminology decisions; reaffirmed honorifics (`Elder X`→`Tetua X`, `Master X`→`Guru X`, `Big Zhao`/`Brother X`→`Kak X`, `Aunt/Granny X`→`Bibi/Nenek X`, `Madam/Miss X`→`Nyonya/Nona X`, `Young Master`→`Tuan Muda`), duration shorthand (`Ns`→`Nd`, `#Y12#Es`→`#Y12#Ed`, `{}d {}h`→`{}h {}j`), decimal comma in prose vs dot inside colour spans, dotted thousands, `<LINK>`/`<IMAGE>` tags and whole-sentence `<...>` rows verbatim.
 - [[idx-324000-327999]] — idx 324,000–327,999 (session 95, 2026-10-08, 4,000 rows) — brought the phase to 18,000/30,000 (60.00%). No new core terminology decisions; reaffirmed honorifics (`Elder X`→`Tetua X`, `Master X`→`Guru X`, `Big Zhao`/`Brother X`→`Kak X`, `Aunt/Granny X`→`Bibi/Nenek X`, `Madam/Miss X`→`Nyonya/Nona X`, `Young Master`→`Tuan Muda`), duration shorthand (`Ns`→`Nd`, `#Y10#Es`→`#Y10#Ed`, `Cooldown: 80s`→`80d`, `(3d)`→`(3h)`), decimal comma in prose vs dot inside colour spans, dotted thousands, `<LINK>`/`<IMAGE>` tags and whole-sentence `<...>` rows verbatim.
+- [[idx-328000-331999]] — idx 328,000–331,999 (session 96, 2026-10-08, 4,000 rows) — brought the phase to 22,000/30,000 (73.33%). No new core terminology decisions; reaffirmed honorifics (`Elder X`→`Tetua X`, `Master X`→`Guru X`, `Big Zhao`/`Brother X`→`Kak X`, `Aunt/Granny X`→`Bibi/Nenek X`, `Madam/Miss X`→`Nyonya/Nona X`, `Young Master`→`Tuan Muda`), duration shorthand (`Ns`→`Nd`, `#Y10#Es`→`#Y10#Ed`, `(3d)`→`(3h)`, `{diff_hour}h`→`{diff_hour}j`), decimal comma in prose vs dot inside colour spans, dotted thousands, `<IMAGE>`/`<LINK>` tags and whole-sentence `<...>` rows verbatim.
