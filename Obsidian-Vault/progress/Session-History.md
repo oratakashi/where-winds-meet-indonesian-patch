@@ -7,6 +7,12 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-10-08 — Session 97: Phase 14 continuation (idx 332,000–335,999, 4,000 rows)
+
+Request: "Aku ingin melanjutkan phase 14 dengan 4000 per iterasi. Jangan lupa update obsidian vaultnya" — Phase 14 advanced from 22,000/30,000 to **26,000/30,000 (86.67%)**, resuming at idx 332,000.
+Eight 500-row passes (about 3,000 rows by hand; names/dev labels/whole-sentence `<...>` rows carried over verbatim) merged into one batch (4,000 lines, idx strictly sequential); `qa_check.py --locale` 0 mismatches on the first run of seven passes (one `#Y`→`#E` slip in pass 4, 333583, fixed before appending), the merged batch, `locale/phase14.jsonl` (26,000 lines) and the whole dictionary. Slips fixed before appending: a real line break instead of `\n` (332966) and the `#Y`/`#E` slip (333583).
+Overall: 373,704 / 461,704 unique strings (80.94%), in-game coverage 91.95%. Details in [[Current-Status]] and [[Phase-14]].
+
 ## 2026-10-08 — Session 96: Phase 14 continuation (idx 328,000–331,999, 4,000 rows)
 
 Request: "Aku ingin melanjutkan phase 14 dengan 4000 per iterasi. Jangan lupa update obsidian vaultnya" — Phase 14 advanced from 18,000/30,000 to **22,000/30,000 (73.33%)**, resuming at idx 328,000.
