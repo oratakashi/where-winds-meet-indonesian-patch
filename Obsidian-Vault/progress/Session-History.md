@@ -7,6 +7,16 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-10-09 — Session 107: Phase 11 continuation (idx 238,000–241,999, 4,000 rows)
+
+Phase 11 continued with the complete 4,000-row iteration (idx 238,000–241,999), bringing the phase to **22,000/30,000 (73.33%)**. Next idx: **242,000**. Commit pending.
+
+The batch contains 2,960 manually translated rows and 1,040 rows retaining names, poetic titles, developer labels, stat labels and opaque tags under standing conventions. NPC dialogue uses gue/lo; UI and narrative use neutral Indonesian. Long descriptions, letters and event mail were translated along with quest and system text.
+
+The batch and complete 410,704-entry locale dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK, MARKUP and EMPTY findings and no idx gaps or duplicates. Additional checks confirmed engine placeholders, newline/carriage-return/backslash counts and absence of Cyrillic characters. A source-equality sweep checked long unchanged rows before append. `python -X utf8 tools/progress.py --write` regenerated the progress tables. See [[Phase-11]] and [[idx-238000-241999]].
+
+Overall: 410,704 / 461,704 unique strings (88.95%), in-game coverage 95.32%.
+
 ## 2026-10-09 — Session 106: Phase 13 continuation (idx 286,000–289,999, 4,000 rows)
 
 4,000 rows translated in eight 500-row passes (3,414 by hand; 586 names/dev labels/whole-sentence tag rows carried over verbatim), QA clean (0 mismatches), appended to `locale/phase13.jsonl` (now 10,000/30,000; next idx 290,000). A +1 idx label slip in idx 288595–288664 was found by an anchor-based alignment check and fixed before append. See [[idx-286000-289999]].

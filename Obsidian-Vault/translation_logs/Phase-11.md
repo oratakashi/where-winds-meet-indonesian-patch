@@ -7,9 +7,9 @@ commit history and `locale/phase11.jsonl` show, not session-by-session reasoning
 Phase 11 started with a single starter batch, added in `2a503a5` ("Update
 progress phase 11", 2026-09-25) alongside a Session-History entry ("Add
 Session 32 entry to Session-History for Phase 11 start"), and was continued on
-2026-10-09 (sessions 99, 100, 101 and 102). `locale/phase11.jsonl` now has 18,000 rows
-(idx 220,000–237,999); the phase is **not complete** — see [[Current-Status]]
-for the full idx range still outstanding (next idx 238,000). No terminology
+2026-10-09 (sessions 99, 100, 101, 102 and 107). `locale/phase11.jsonl` now has 22,000 rows
+(idx 220,000–241,999); the phase is **not complete** — see [[Current-Status]]
+for the full idx range still outstanding (next idx 242,000). No terminology
 decisions were recorded for the starter batch; check [[Quick-Reference]] and
 [[Glossary]] for standing conventions before continuing it.
 
@@ -21,3 +21,5 @@ decisions were recorded for the starter batch; check [[Quick-Reference]] and
 - [[idx-230000-233999]] — idx 230,000–233,999 (session 101, 2026-10-09, 4,000 rows) — brought the phase to 14,000/30,000 (46.67%). No new core terminology decisions; reaffirmed honorifics, duration shorthand (`Ns`→`Nd`, `#Y18#Es`→`#Y18#Ed`, `(30d)`→`(30h)`, `{diff_hour:02d}h`→`{diff_hour:02d}j`, `N seconds`→`N detik`), decimal comma in prose vs dot inside colour spans, dotted thousands (`9,000`→`9.000`, `250,000`→`250.000`), `(Beast Tongue)`→`(Bahasa Binatang)`, `#HPassive:#E`→`#HPasif:#E`, `<…>` whole-sentence rows kept verbatim.
 
 - [[idx-234000-237999]] — idx 234,000–237,999 (session 102, 2026-10-09, 4,000 rows; commit pending) — brought the phase to 18,000/30,000 (60.00%). No new core terminology decisions; reaffirmed NPC gue/lo voice, neutral UI/narrative, aku/kamu letters, honorific translations, duration shorthand and English stat/skill names. Format tags and literal escape sequences preserved; source-equality sweep caught four missed dialogue lines before append. Overall: 393,704 / 461,704 unique strings (85.27%), in-game coverage 93.78%.
+
+- [[idx-238000-241999]] — idx 238,000–241,999 (session 107, 2026-10-09, 4,000 rows; commit pending) — brought the phase to 22,000/30,000 (73.33%). No new core terminology decisions; standing voice, honorific, named-skill/stat and duration conventions retained. Locust-leaf noodles refers to foliage, translated as mi daun akasia rather than insect leaves. All markup, engine placeholders and line breaks preserved; full locale QA clean. Overall: 410,704 / 461,704 unique strings (88.95%), in-game coverage 95.32%.
