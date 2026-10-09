@@ -6,12 +6,14 @@ the session that did the work, so it only records what the commit history and
 
 Phase 12 began with a starter batch, committed 2026-09-25
 (`147c8b7` — "Start Phase 12 translation (idx 250000-251999, 2000 rows)").
-`locale/phase12.jsonl` now has 11,000 rows; the phase is **not complete** — see
+`locale/phase12.jsonl` now has 15,000 rows; the phase is **not complete** — see
 [[Current-Status]] for the full idx range still outstanding. No terminology
 decisions were recorded for this batch; check [[Quick-Reference]] and
 [[Glossary]] for standing conventions before continuing it.
 
 ## Batches
+
+- [[idx-261000-264999]] — idx 261,000–264,999 (4,000 rows, 2026-10-09; completes the requested 4,000-row iteration; Phase 12 at 15,000/30,000, 50.00%; commit pending)
 
 - [[idx-258000-260999]] — idx 258,000–260,999 (3,000 rows, 2026-10-09; completes 4,000-row iteration idx 257,000–260,999; commit pending)
 
@@ -78,3 +80,17 @@ Batch and whole-dictionary `qa_check.py --locale` passed with 0 PROMPT_LEAK, MAR
 Overall: 430,704 / 461,704 unique strings (93.29%), in-game coverage 97.15%.
 
 See [[idx-258000-260999]], [[idx-257000-257999]] and [[Phase-12]].
+
+## 2026-10-09 — Session 116: idx 261,000–264,999
+
+This iteration translated and appended **4,000 rows, idx 261,000–264,999**, the requested 4,000-row cadence for Phase 12. Phase 12 now contains **15,000/30,000 rows (50.00%)** — the phase is at its halfway point. Next idx: **265,000**. No commit was created by this session.
+
+The batch contains 3,003 changed translations and 997 retained names, poetic titles, developer/location labels, stat labels and opaque tag cases under standing conventions. Dialogue uses gue/lo; UI and system text remain neutral. Long prose was translated in full, including Yingying's palace-escape storybook, the Mohist City elders' paper critiques, the Sogdian caravan/princess poem story, Niu Mang's Forsaken Quarter story, the Twin Lions' backstory, Ye Wanshan's Pagoda of Karma lore, the Boneling cat tale, and the Wang Qing / Hutuo River cutscene script. No new terminology rule was introduced.
+
+Method: no subagents were used (repo rule; the user did not ask for them this time). The primary agent read eight 500-row chunks, wrote only the changed translations per chunk to scratch files, and a merge script filled the retained rows from `unique_strings.jsonl`, so every idx 261,000–264,999 is present exactly once. Because off-by-one idx labelling is easy in long chunks, each chunk was checked with `qa_check.py --locale` plus a heuristic (length ratio, number set and `?`/`!` ending versus source); this caught and fixed label drift in chunks 1–3, 5 and 6 before appending. Rules re-applied: a `<...>` tag wrapping a whole sentence stays 100% identical (idx 262002, 262820, 264328, 264746 kept as source; idx 262592 keeps the tag content and translates only the outside text); a stray Chinese developer label (idx 264212, 264920) is kept verbatim; `#H`/`#Y` colour tokens are preserved exactly (a `#H`→`#Y` slip at idx 264903 was caught by QA and fixed); `s`→`d` and `d`→`h` duration shorthand applied (e.g. `5#Es`→`5#Ed`, `90d`→`90h`).
+
+Batch and whole-dictionary `qa_check.py --locale` passed with 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings (436,704 entries checked). `python tools/progress.py --write` regenerated the progress tables.
+
+Overall: 436,704 / 461,704 unique strings (94.59%), in-game coverage 97.71%.
+
+See [[idx-261000-264999]] and [[Phase-12]].
