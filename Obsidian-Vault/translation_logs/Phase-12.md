@@ -6,12 +6,14 @@ the session that did the work, so it only records what the commit history and
 
 Phase 12 began with a starter batch, committed 2026-09-25
 (`147c8b7` — "Start Phase 12 translation (idx 250000-251999, 2000 rows)").
-`locale/phase12.jsonl` now has 19,000 rows; the phase is **not complete** — see
+`locale/phase12.jsonl` now has 23,000 rows; the phase is **not complete** — see
 [[Current-Status]] for the full idx range still outstanding. No terminology
 decisions were recorded for this batch; check [[Quick-Reference]] and
 [[Glossary]] for standing conventions before continuing it.
 
 ## Batches
+
+- [[idx-269000-272999]] — idx 269,000–272,999 (4,000 rows, 2026-10-09; Phase 12 at 23,000/30,000, 76.67%; no commit created)
 
 - [[idx-265000-268999]] — idx 265,000–268,999 (4,000 rows, 2026-10-09; completes the requested 4,000-row iteration; Phase 12 at 19,000/30,000, 63.33%; commit pending)
 
@@ -110,3 +112,17 @@ Batch and whole-dictionary `qa_check.py --locale` passed with 0 PROMPT_LEAK, MAR
 Overall: 440,704 / 461,704 unique strings (95.45%), in-game coverage 98.07%.
 
 See [[idx-265000-268999]] and [[Phase-12]].
+
+## 2026-10-09 — Session 121: idx 269,000–272,999
+
+Completed the requested **4,000-row iteration**, bringing Phase 12 to **23,000/30,000 (76.67%)**. Next idx: **273,000**. No commit was created. The batch contains 3,034 changed translations and 966 retained names, poetic titles, stat labels, internal developer labels and opaque cases.
+
+The primary agent worked directly without subagents. Temporary TSV files and validation scripts stayed outside the repository. Long text was translated in full, including the letter to Grandmaster Halcyon, the black-clad heroine's story, Ding Xiao's indebtedness, the Sheng Wen/Sheng Wu campfire story, the village-school letter and drawings, Horsehelm Village well-digging rules, Qiu Yuehai and Gu Le's falling-out, the Peace Bell Tower love-and-duty story, and Lan Ao/Fang Bai's comb story. Dialogue follows gue/lo; UI and narrative use neutral Indonesian. No new terminology rule was introduced.
+
+The 4,000-row batch and full 450,704-row locale dictionary passed `qa_check.py --locale`: 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Additional checks confirmed contiguous idx, dollar/date/link placeholders, newline and literal backslash-n counts, no Cyrillic characters, and no unchanged or suspiciously shortened long prose. Two token issues were fixed before append: the opening #N in idx 271709, and the multiline `<1 ... >` token swallowed by TOKEN in developer text at idx 272183. Plain angle tags and IMAGE/LINK opening tags remain intact. Duration shorthand follows the existing s→d and d→h conventions. Retained-row review caught and translated two missed dialogue lines (269536 and 272575). Locale rows use LF endings.
+
+`python tools/progress.py --write` regenerated the status tables. Overall includes the separate Phase 13 checkpoint saved during this session.
+
+Overall: 450,704 / 461,704 unique strings (97.62%), in-game coverage 98.99%.
+
+See [[idx-269000-272999]] and [[Phase-12]].

@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-09 (session 119).** This is the single source of truth for "how
+**Last updated: 2026-10-09 (session 121).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **445,704** | **461,704** | **96.53%** |
-| ↳ original corpus (Phases 0–17) | 413,887 | 429,887 | 96.28% |
+| **Unique strings translated (all)** | **450,704** | **461,704** | **97.62%** |
+| ↳ original corpus (Phases 0–17) | 418,887 | 429,887 | 97.44% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **814,248** | **826,388** | **98.53%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **818,062** | **826,388** | **98.99%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -39,8 +39,8 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 9 | 160,000–189,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 10 | 190,000–219,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 11 | 220,000–249,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 12 | 250,000–279,999 | **active** | 269,000 | 19,000 / 30,000 | 63.33% |
-| 13 | 280,000–309,999 | **active** | 305,000 | 25,000 / 30,000 | 83.33% |
+| 12 | 250,000–279,999 | **active** | 273,000 | 23,000 / 30,000 | 76.67% |
+| 13 | 280,000–309,999 | **active** | 306,000 | 26,000 / 30,000 | 86.67% |
 | 14 | 310,000–339,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 15 | 340,000–369,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 16 | 370,000–399,999 | done | — | 30,000 / 30,000 | 100.00% |
@@ -56,15 +56,27 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phases 6, 7, 8, 9, 10, 11, 14, 15, 16, and 17 are all fully complete.**
-Phase 12 is active at 19,000/30,000 (63.33%) and Phase 13 at 25,000/30,000 (83.33%). Resume per
-[[Resume-Procedure]]: Phase 12 at idx 269,000, Phase 13 at idx 305,000.
+Phase 12 is active at 23,000/30,000 (76.67%) and Phase 13 at 26,000/30,000 (86.67%). Resume per
+[[Resume-Procedure]]: Phase 12 at idx 273,000, Phase 13 at idx 306,000.
 
-## 2026-10-09 — Session 119: Phase 13 — 1,000-row iteration (idx 304,000–304,999)
+## 2026-10-09 — Session 121: Phase 12 — 4,000-row iteration (idx 269,000–272,999)
 
-Per the user's request the iteration size was reduced to **1,000 rows** (from 3,000 requested earlier in the session, 4,000 before that). Appended **idx 304,000–304,999**; Phase 13 now contains **25,000/30,000 rows (83.33%)**. Next idx: **305,000**. No commit was created.
+Completed the requested **4,000 rows**; Phase 12 now contains **23,000/30,000 (76.67%)**. Next idx: **273,000**. No commit was created. 3,034 translations differ from source; 966 names, poetic titles, stat/developer labels and opaque cases remain verbatim.
 
-Primary agent only, no subagents. Source read in two 500-row chunks, translated into scratch JSONL outside the repo, merged (exactly 1,000 lines, idx sequential) and validated: merged-batch and whole-phase `qa_check.py --locale` 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. The first QA run flagged two rows, fixed: idx 304037 (stray `#After` — the `#A` must stay, so written `(#After pertempuran, ...)`) and idx 304087 (plain `<...>` stage-direction tag kept 100% English). Names, `Name丶` player names, test/dev labels kept verbatim; hour names → "Jam Yin/Mao"; no new terminology rule.
+Primary agent only. Long narrative, letters and scripts translated in full, including Halcyon's letter, the village-school letter, Horsehelm well-digging rules, the campfire twins, Qiu Yuehai/Gu Le and Lan Ao/Fang Bai. Batch and whole-dictionary QA passed with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. Extra checks confirmed contiguous idx, opaque placeholders, newline and literal backslash-n counts, and long-text completeness. No new terminology rule. `python tools/progress.py --write` refreshed the generated tables.
 
-Overall: 445,704 / 461,704 unique strings (96.53%), in-game coverage 98.53%.
+Overall: 450,704 / 461,704 unique strings (97.62%), in-game coverage 98.99%.
 
-See [[idx-304000-304999]] and [[Phase-13]].
+See [[idx-269000-272999]] and [[Phase-12]]. The separate Phase 13 checkpoint below is preserved.
+
+## 2026-10-09 — Session 120: Phase 13 continuation (idx 305,000–305,999)
+
+Added **1,000 rows**, bringing Phase 13 to **26,000/30,000 (86.67%)**. The user requested completion of Phase 13; **4,000 rows remain**, idx **306,000–309,999**. This is a progress checkpoint, not completion of that request. No commit was created.
+
+Primary agent only. Scratch JSONL stayed in the system temporary directory; each batch was validated before append. Full-dictionary `qa_check.py --locale` passed with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. The 1,000 new idx are sequential; additional checks found no dollar/date-placeholder or newline-count differences. 768 translations differ from the source; 232 names, short poetic titles and established opaque labels remain verbatim.
+
+Long narrative was translated in full, including Xiaopan and Lan Ao's boat journey, the remembrance of Blade, Wei Xuan's marriage story, and Northern Vow's quartermaster. Combat guides, stat labels, literal duration conversions and tags follow Quick-Reference. No new terminology rule.
+
+Overall: 446,704 / 461,704 unique strings (96.75%), in-game coverage 98.62%.
+
+See [[idx-305000-305999]] and [[Phase-13]].

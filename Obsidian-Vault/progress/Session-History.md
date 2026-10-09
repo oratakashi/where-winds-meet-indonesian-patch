@@ -1600,3 +1600,22 @@ Merged-batch and whole-dictionary `qa_check.py --locale` passed: 0 PROMPT_LEAK, 
 Overall: 432,704 / 461,704 unique strings (93.72%), in-game coverage 97.34%.
 
 See [[idx-298000-299999]] and [[Phase-13]].
+
+
+## 2026-10-09 — Session 120: Phase 13 continuation (idx 305,000–305,999)
+
+Added 1,000 rows, bringing Phase 13 to **26,000/30,000 (86.67%)**. Next idx: **306,000**. The user's request to finish Phase 13 remains outstanding: **4,000 rows remain**. No commit created; primary agent only.
+
+Long narrative and combat guides translated in full; established names, stat labels and opaque tokens preserved. No new terminology rule. Each scratch batch passed QA before append. Full-dictionary QA passed with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. Additional checks confirmed 1,000 sequential idx, opaque dollar/date placeholders and source newline counts. `python tools/progress.py --write` refreshed the generated block. See [[idx-305000-305999]] and [[Phase-13]].
+
+Overall: 446,704 / 461,704 unique strings (96.75%), in-game coverage 98.62%.
+
+## 2026-10-09 — Session 121: Phase 12 continuation (idx 269,000–272,999, 4,000 rows)
+
+Completed the requested 4,000-row iteration. Phase 12 advanced from 19,000/30,000 to **23,000/30,000 (76.67%)**. Next idx: **273,000**. No commit created; primary agent only. Scratch files stayed outside the repository.
+
+3,034 rows differ from source; 966 retain established names, short poetic titles, stat/developer labels and opaque cases. Dialogue uses gue/lo; narrative and UI use neutral Indonesian. Long letters, diaries and stories were translated in full. Markup, opaque dollar/date/link placeholders, newline counts and literal backslash-n counts were preserved. No new terminology rule was introduced.
+
+Merged-batch and whole-dictionary QA passed with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. Additional review confirmed exactly 4,000 sequential idx, no Cyrillic characters, no unchanged long prose and no suspiciously shortened long text. `python tools/progress.py --write` regenerated the progress block. Phase 12 log, batch note and Current Status were updated. See [[idx-269000-272999]] and [[Phase-12]].
+
+Overall: 450,704 / 461,704 unique strings (97.62%), in-game coverage 98.99%.

@@ -6,7 +6,7 @@ the session that did the work, so it only records what the commit history and
 
 Phase 13 began with a single starter batch, committed 2026-09-25
 (`8c02b00` — "Start Phase 13 translation (idx 280000-281999, 2000 rows)").
-`locale/phase13.jsonl` now has 24,000 rows; the phase is **not complete** — see
+`locale/phase13.jsonl` now has 26,000 rows; the phase is **not complete** — see
 [[Current-Status]] for the full idx range still outstanding. No terminology
 decisions were recorded for this batch; check [[Quick-Reference]] and
 [[Glossary]] for standing conventions before continuing it.
@@ -30,3 +30,5 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
 - [[idx-300000-303999]] — idx 300,000–303,999 (session 118, 2026-10-09, 4,000 rows; no commit created). Phase now 24,000/30,000 (80.00%); next idx 304,000. Primary agent only, no subagents. No new terminology decisions. Overall: 444,704 / 461,704 unique strings (96.32%), in-game coverage 98.44%.
 
 - [[idx-304000-304999]] — idx 304,000–304,999 (session 119, 2026-10-09, 1,000 rows; no commit created). Phase now 25,000/30,000 (83.33%); next idx 305,000. Primary agent only. Batch size reduced to 1,000 at the user's request. No new terminology decisions; stray `#After` token kept intact, plain `<...>` emote tag kept English. Overall: 445,704 / 461,704 unique strings (96.53%), in-game coverage 98.53%.
+
+- [[idx-305000-305999]] — idx 305,000–305,999 (session 120, 2026-10-09, 1,000 rows; no commit created). Phase now 26,000/30,000 (86.67%); next idx 306,000. Primary agent only. Requested phase completion remains outstanding: 4,000 rows remain. No new terminology decisions. Overall: 446,704 / 461,704 unique strings (96.75%), in-game coverage 98.62%.
