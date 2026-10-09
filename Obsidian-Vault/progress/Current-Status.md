@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-09 (session 107).** This is the single source of truth for "how
+**Last updated: 2026-10-09 (session 108).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **410,704** | **461,704** | **88.95%** |
-| ↳ original corpus (Phases 0–17) | 378,887 | 429,887 | 88.14% |
+| **Unique strings translated (all)** | **414,704** | **461,704** | **89.82%** |
+| ↳ original corpus (Phases 0–17) | 382,887 | 429,887 | 89.07% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **787,754** | **826,388** | **95.32%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **790,768** | **826,388** | **95.69%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -40,7 +40,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 10 | 190,000–219,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 11 | 220,000–249,999 | **active** | 242,000 | 22,000 / 30,000 | 73.33% |
 | 12 | 250,000–279,999 | **active** | 257,000 | 7,000 / 30,000 | 23.33% |
-| 13 | 280,000–309,999 | **active** | 290,000 | 10,000 / 30,000 | 33.33% |
+| 13 | 280,000–309,999 | **active** | 294,000 | 14,000 / 30,000 | 46.67% |
 | 14 | 310,000–339,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 15 | 340,000–369,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 16 | 370,000–399,999 | done | — | 30,000 / 30,000 | 100.00% |
@@ -56,10 +56,20 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phases 6, 7, 8, 9, 10, 14, 15, 16, and 17 are all fully complete.**
-Phase 11 is active at 22,000/30,000 (73.33%), Phase 12 at 7,000/30,000 (23.33%), and Phase 13 at 10,000/30,000 (33.33%). Resume per
-[[Resume-Procedure]]: Phase 11 at idx 242,000, Phase 12 at 257,000, Phase 13 at 290,000.
+Phase 11 is active at 22,000/30,000 (73.33%), Phase 12 at 7,000/30,000 (23.33%), and Phase 13 at 14,000/30,000 (46.67%). Resume per
+[[Resume-Procedure]]: Phase 11 at idx 242,000, Phase 12 at 257,000, Phase 13 at 294,000.
 
-## Most recent session (2026-10-09, session 107) — Phase 11 continuation (idx 238,000–241,999, 4,000 rows)
+## Most recent session (2026-10-09, session 108) — Phase 13 continuation (idx 290,000–293,999, 4,000 rows)
+
+Phase 13 continued with the complete 4,000-row iteration (idx 290,000–293,999), bringing the phase from 10,000/30,000 (33.33%) to **14,000/30,000 (46.67%)**. Next idx: **294,000**. Commit pending. See [[idx-290000-293999]] and [[Phase-13]].
+
+The batch has 2,723 rows translated by hand; the other 1,277 are Pinyin names, developer/scene labels, whole-sentence `<...>` rows and opaque tags carried over verbatim under standing conventions. Dialogue uses gue/lo; UI/narrative stay neutral. Long letters, lore and event text were translated in full.
+
+Validated with `qa_check.py --locale`: 0 PROMPT_LEAK / MARKUP / EMPTY for each 250–500-row pass, for the merged 4,000-row batch and for the complete 414,704-entry locale dictionary, with no idx gaps or duplicates. Process fix this session: idx-label slips (found by QA in pass 7, plus heuristic alignment/verbatim/digit checks across all passes) were corrected before append, and passes 7–8 were written with a source-prefix anchor per row so a mislabeled idx fails the merge.
+
+Overall: 414,704 / 461,704 unique strings (89.82%), in-game coverage 95.69%.
+
+## Prior session (2026-10-09, session 107) — Phase 11 continuation (idx 238,000–241,999, 4,000 rows)
 
 Phase 11 continued with the complete 4,000-row iteration (idx 238,000–241,999), bringing the phase to **22,000/30,000 (73.33%)**. Next idx: **242,000**. Commit pending.
 
