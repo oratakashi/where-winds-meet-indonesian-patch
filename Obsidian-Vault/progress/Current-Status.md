@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **414,704** | **461,704** | **89.82%** |
-| ↳ original corpus (Phases 0–17) | 382,887 | 429,887 | 89.07% |
+| **Unique strings translated (all)** | **418,704** | **461,704** | **90.69%** |
+| ↳ original corpus (Phases 0–17) | 386,887 | 429,887 | 90.00% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **790,768** | **826,388** | **95.69%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **793,802** | **826,388** | **96.06%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -38,7 +38,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 8 | 130,000–159,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 9 | 160,000–189,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 10 | 190,000–219,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 11 | 220,000–249,999 | **active** | 242,000 | 22,000 / 30,000 | 73.33% |
+| 11 | 220,000–249,999 | **active** | 246,000 | 26,000 / 30,000 | 86.67% |
 | 12 | 250,000–279,999 | **active** | 257,000 | 7,000 / 30,000 | 23.33% |
 | 13 | 280,000–309,999 | **active** | 294,000 | 14,000 / 30,000 | 46.67% |
 | 14 | 310,000–339,999 | done | — | 30,000 / 30,000 | 100.00% |
@@ -56,10 +56,20 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phases 6, 7, 8, 9, 10, 14, 15, 16, and 17 are all fully complete.**
-Phase 11 is active at 22,000/30,000 (73.33%), Phase 12 at 7,000/30,000 (23.33%), and Phase 13 at 14,000/30,000 (46.67%). Resume per
-[[Resume-Procedure]]: Phase 11 at idx 242,000, Phase 12 at 257,000, Phase 13 at 294,000.
+Phase 11 is active at 26,000/30,000 (86.67%), Phase 12 at 7,000/30,000 (23.33%), and Phase 13 at 14,000/30,000 (46.67%). Resume per
+[[Resume-Procedure]]: Phase 11 at idx 246,000, Phase 12 at 257,000, Phase 13 at 294,000.
 
-## Most recent session (2026-10-09, session 108) — Phase 13 continuation (idx 290,000–293,999, 4,000 rows)
+## Most recent session (2026-10-09, session 109) — Phase 11 continuation (idx 242,000–245,999, 4,000 rows)
+
+Phase 11 continued with the complete 4,000-row iteration (idx 242,000–245,999), bringing the phase from 22,000/30,000 (73.33%) to **26,000/30,000 (86.67%)**. Next idx: **246,000**. Commit pending. See [[idx-242000-245999]] and [[Phase-11]].
+
+The batch has 3,453 rows translated by hand; the other 547 are Pinyin names, developer/scene labels, poetic short titles, whole-sentence `<...>` rows and opaque tags carried over verbatim under standing conventions. Dialogue uses gue/lo; UI/narrative stay neutral. Long letters, lore, event mail, the Exhibition authorization statement and skill/talent descriptions were translated in full.
+
+Validated with `qa_check.py --locale`: 0 PROMPT_LEAK / MARKUP / EMPTY for the merged 4,000-row batch and for the complete 418,704-entry locale dictionary, with no idx gaps or duplicates. QA caught five `<...>` rows where the tag text had been translated (242521, 242696, 243108, 243523, 244428) and one split colour-span row (243765); all were fixed before append.
+
+Overall: 418,704 / 461,704 unique strings (90.69%), in-game coverage 96.06%.
+
+## Prior session (2026-10-09, session 108) — Phase 13 continuation (idx 290,000–293,999, 4,000 rows)
 
 Phase 13 continued with the complete 4,000-row iteration (idx 290,000–293,999), bringing the phase from 10,000/30,000 (33.33%) to **14,000/30,000 (46.67%)**. Next idx: **294,000**. Commit pending. See [[idx-290000-293999]] and [[Phase-13]].
 
