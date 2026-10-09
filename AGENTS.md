@@ -13,6 +13,15 @@ they were committed before that and remain tracked — keeping them tracked is t
 Don't add new extracted dumps (`strings_diff.jsonl`, `strings.translated.jsonl`, `patched/`, ...);
 those stay ignored.
 
+## Scratch and temporary files
+
+Keep the project free of scratch and temporary files. Create all temporary scripts,
+intermediate dumps, QA reports, logs, and other disposable outputs outside the repository,
+using the system temporary directory (for example, `%TEMP%` on Windows or `/tmp`).
+This applies even to ignored files: do not create `scratch/`, `tmp/`, or other temporary
+directories inside the project. Override tool output paths when their defaults would write
+temporary files into the repository. Only intended project deliverables belong here.
+
 ## Commands
 
 ```bash
