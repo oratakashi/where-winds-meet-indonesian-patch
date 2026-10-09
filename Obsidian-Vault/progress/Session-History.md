@@ -9,6 +9,21 @@ see [[Current-Status]].
 
 
 
+## 2026-10-09 — Session 118: Phase 13 — 4,000-row iteration (idx 300,000–303,999)
+
+This iteration translated and appended **4,000 rows, idx 300,000–303,999**, the requested 4,000-row cadence for Phase 13. Phase 13 now contains **24,000/30,000 rows (80.00%)**. Next idx: **304,000**. No commit was created by this session.
+
+The batch contains 3,204 changed translations and 796 retained names, poetic titles, developer/location labels, stat labels and opaque cases under standing conventions. Dialogue uses gue/lo; UI and narrative remain neutral. Long prose was translated in full, including the Cloud-Fan/Ember-of-East candle story, Unfated Tian and Han Xiangxun's clinic scene, Shen Yu's mirror, the Nightfall forest legend, Mo Xiaoyun and Xini's New Year story, Feng Ruzhi and Zheng E's Ever-Normal Granary scene, Zhen Gui's Bureau of Relief story, the Zou Yizhou / Yang Qianyan "Together in One Boat" tale, and the Xiao Ping'an / Zheng E letters. No new terminology rule was introduced.
+
+Method: no subagents were used (repo rule; the user did not ask for them). The primary agent read the source in nine 350–500-row chunks, translated each into a scratch JSONL outside the repository, merged them (exactly 4,000 lines, idx strictly sequential) and validated. Rules re-applied: plain `<...>` stage-direction/emote tags kept in English (idx 300562, 303328, 303630, 303742 — the first QA run flagged these four and they were restored); `<LINK ...>`, `<IMAGE ...>` and `<Name|id|#C|n>` tags kept character-for-character with only the surrounding text translated; stray Chinese developer labels (300109, 301203, 301992, 302561, 302661) and `Name丶`-style player names kept verbatim; the repeated "Loading outfit description…" placeholder (303044) translated structurally; `s`→`d` duration shorthand applied (`60s`→`60d`, `{diff_hour:d}h`→`{diff_hour:d}j`); "Old X" without "Man" and "Senior/Junior Sister/Brother" left as-is (open questions).
+
+Merged-batch and whole-dictionary `qa_check.py --locale` passed with 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings (444,704 entries checked). `python tools/progress.py --write` regenerated the progress tables (the plain form crashes on the cp1252 console; use `PYTHONIOENCODING=utf-8`).
+
+Overall: 444,704 / 461,704 unique strings (96.32%), in-game coverage 98.44%.
+
+See [[idx-300000-303999]] and [[Phase-13]].
+
+
 ## 2026-10-09 — Session 117: Phase 12 — 4,000-row iteration (idx 265,000–268,999)
 
 This iteration translated and appended **4,000 rows, idx 265,000–268,999**, the requested 4,000-row cadence for Phase 12. Phase 12 now contains **19,000/30,000 rows (63.33%)**. Next idx: **269,000**. No commit was created by this session.

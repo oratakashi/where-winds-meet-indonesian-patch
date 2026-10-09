@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-09 (session 116).** This is the single source of truth for "how
+**Last updated: 2026-10-09 (session 118).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **440,704** | **461,704** | **95.45%** |
-| ↳ original corpus (Phases 0–17) | 408,887 | 429,887 | 95.11% |
+| **Unique strings translated (all)** | **444,704** | **461,704** | **96.32%** |
+| ↳ original corpus (Phases 0–17) | 412,887 | 429,887 | 96.05% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **810,425** | **826,388** | **98.07%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **813,482** | **826,388** | **98.44%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -40,7 +40,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 10 | 190,000–219,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 11 | 220,000–249,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 12 | 250,000–279,999 | **active** | 269,000 | 19,000 / 30,000 | 63.33% |
-| 13 | 280,000–309,999 | **active** | 300,000 | 20,000 / 30,000 | 66.67% |
+| 13 | 280,000–309,999 | **active** | 304,000 | 24,000 / 30,000 | 80.00% |
 | 14 | 310,000–339,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 15 | 340,000–369,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 16 | 370,000–399,999 | done | — | 30,000 / 30,000 | 100.00% |
@@ -56,8 +56,22 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phases 6, 7, 8, 9, 10, 11, 14, 15, 16, and 17 are all fully complete.**
-Phase 12 is active at 19,000/30,000 (63.33%) and Phase 13 at 20,000/30,000 (66.67%). Resume per
-[[Resume-Procedure]]: Phase 12 at idx 269,000, Phase 13 at idx 300,000.
+Phase 12 is active at 19,000/30,000 (63.33%) and Phase 13 at 24,000/30,000 (80.00%). Resume per
+[[Resume-Procedure]]: Phase 12 at idx 269,000, Phase 13 at idx 304,000.
+
+## 2026-10-09 — Session 118: Phase 13 — 4,000-row iteration (idx 300,000–303,999)
+
+This iteration translated and appended **4,000 rows, idx 300,000–303,999**, the requested 4,000-row cadence for Phase 13. Phase 13 now contains **24,000/30,000 rows (80.00%)**. Next idx: **304,000**. No commit was created by this session.
+
+The batch contains 3,204 changed translations and 796 retained names, poetic titles, developer/location labels, stat labels and opaque cases under standing conventions. Dialogue uses gue/lo; UI and narrative remain neutral. Long prose was translated in full, including the Cloud-Fan/Ember-of-East candle story, Unfated Tian and Han Xiangxun's clinic scene, Shen Yu's mirror, the Nightfall forest legend, Mo Xiaoyun and Xini's New Year story, Feng Ruzhi and Zheng E's Ever-Normal Granary scene, Zhen Gui's Bureau of Relief story, the Zou Yizhou / Yang Qianyan "Together in One Boat" tale, and the Xiao Ping'an / Zheng E letters. No new terminology rule was introduced.
+
+Method: no subagents were used (repo rule; the user did not ask for them). The primary agent read the source in nine 350–500-row chunks, translated each into a scratch JSONL outside the repository, merged them (exactly 4,000 lines, idx strictly sequential) and validated. Rules re-applied: plain `<...>` stage-direction/emote tags kept in English (idx 300562, 303328, 303630, 303742 — the first QA run flagged these four and they were restored); `<LINK ...>`, `<IMAGE ...>` and `<Name|id|#C|n>` tags kept character-for-character with only the surrounding text translated; stray Chinese developer labels (300109, 301203, 301992, 302561, 302661) and `Name丶`-style player names kept verbatim; the repeated "Loading outfit description…" placeholder (303044) translated structurally; `s`→`d` duration shorthand applied (`60s`→`60d`, `{diff_hour:d}h`→`{diff_hour:d}j`); "Old X" without "Man" and "Senior/Junior Sister/Brother" left as-is (open questions).
+
+Merged-batch and whole-dictionary `qa_check.py --locale` passed with 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings (444,704 entries checked). `python tools/progress.py --write` regenerated the progress tables (the plain form crashes on the cp1252 console; use `PYTHONIOENCODING=utf-8`).
+
+Overall: 444,704 / 461,704 unique strings (96.32%), in-game coverage 98.44%.
+
+See [[idx-300000-303999]] and [[Phase-13]].
 
 ## 2026-10-09 — Session 117: Phase 12 — 4,000-row iteration (idx 265,000–268,999)
 
