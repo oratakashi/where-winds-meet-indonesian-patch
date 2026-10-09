@@ -7,6 +7,12 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-10-09 — Session 101: Phase 11 continuation (idx 230,000–233,999, 4,000 rows)
+
+Request: "Aku ingin melanjutkan phase 11 dengan 4000 per iterasi. Jangan lupa update obsidian vaultnya" — Phase 11 advanced from 10,000/30,000 to **14,000/30,000 (46.67%)**, resuming at idx 230,000.
+Eight 500-row passes (3,381 rows by hand; names/dev labels/titles/tags carried over verbatim) merged into one batch (4,000 lines, idx strictly sequential); `qa_check.py --locale` 0 mismatches on the first run of every pass, the merged batch, `locale/phase11.jsonl` and the whole dictionary. Only prose typos were fixed before append (no token slips); the post-merge sweep found no skipped sentences and 0 Cyrillic characters. No new terminology decisions.
+Overall: 389,704 / 461,704 unique strings (84.41%), in-game coverage 93.42%. Details in [[Current-Status]] and [[Phase-11]].
+
 ## 2026-10-09 — Session 100: Phase 11 continuation (idx 226,000–229,999, 4,000 rows)
 
 Request: "Aku ingin melanjutkan phase 11 dengan 4000 per iterasi. Jangan lupa update obsidian vaultnya" — Phase 11 advanced from 6,000/30,000 to **10,000/30,000 (33.33%)**, resuming at idx 226,000.

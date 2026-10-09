@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-09 (session 100).** This is the single source of truth for "how
+**Last updated: 2026-10-09 (session 101).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **385,704** | **461,704** | **83.54%** |
-| ↳ original corpus (Phases 0–17) | 353,887 | 429,887 | 82.32% |
+| **Unique strings translated (all)** | **389,704** | **461,704** | **84.41%** |
+| ↳ original corpus (Phases 0–17) | 357,887 | 429,887 | 83.25% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **768,957** | **826,388** | **93.05%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **771,979** | **826,388** | **93.42%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -38,7 +38,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 8 | 130,000–159,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 9 | 160,000–189,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 10 | 190,000–219,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 11 | 220,000–249,999 | **active** | 230,000 | 10,000 / 30,000 | 33.33% |
+| 11 | 220,000–249,999 | **active** | 234,000 | 14,000 / 30,000 | 46.67% |
 | 12 | 250,000–279,999 | **active** | 252,000 | 2,000 / 30,000 | 6.67% |
 | 13 | 280,000–309,999 | **active** | 282,000 | 2,000 / 30,000 | 6.67% |
 | 14 | 310,000–339,999 | done | — | 30,000 / 30,000 | 100.00% |
@@ -56,11 +56,21 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phases 6, 7, 8, 9, 10, 14, 15, 16, and 17 are all fully complete.**
-Phase 11 is active at 10,000/30,000 (33.33%), Phase 12 is active at 2,000/30,000
+Phase 11 is active at 14,000/30,000 (46.67%), Phase 12 is active at 2,000/30,000
 (6.67%) and Phase 13 is active at 2,000/30,000 (6.67%). Resume any active phase next per
-[[Resume-Procedure]] (Phase 11 resumes at idx 230,000, Phase 12 at 252,000, Phase 13 at 282,000).
+[[Resume-Procedure]] (Phase 11 resumes at idx 234,000, Phase 12 at 252,000, Phase 13 at 282,000).
 
-## Most recent session (2026-10-09, session 100) — Phase 11 continuation (idx 226,000–229,999, 4,000 rows)
+## Most recent session (2026-10-09, session 101) — Phase 11 continuation (idx 230,000–233,999, 4,000 rows)
+
+Phase 11 advanced at the 4,000-rows-per-iteration cadence ("Aku ingin melanjutkan phase 11 dengan 4000 per iterasi. Jangan lupa update obsidian vaultnya"): 4,000 rows (idx 230,000–233,999) were translated in eight 500-row passes (3,381 rows written by hand as `idx¦¦text` with an empty source-prefix field; the other 619 — Pinyin names, dev/scene labels (`Tier N X Piece`, `Common: Tier N X`, `New Guild Construction Component N`, `Blackiron Pangolin - …`, `Wicker Ray - …`, `Hexi … Area`, `Ascetic Monk N`, `Running Brush - …`), the raw Chinese labels (231075, 231391, 231606, 233010), the `丶`/`灬`/`丨` name rows, the whole-tag row `<Joint Punishment: Implication>` (233526), the `#d5d9e1Winter Wayfarer` hero-title row (233223), the stat-label-only rows (230316, 232178) and poetic titles — carried over verbatim by the merge script), merged (4,000 lines, idx strictly sequential) and validated with `tools/qa_check.py --locale` (**0 mismatches on the first run for all eight passes**, the merged batch, `locale/phase11.jsonl` and the whole 389,704-entry dictionary), then appended to `locale/phase11.jsonl`. Phase 11 moved from 10,000/30,000 (33.33%) to **14,000/30,000 (46.67%)**. Content mix: Pinyin NPC names, UI/system strings, quest labels, gear/skill tooltips (Inkwell Fan Peak's Springless Silence 231511, Nameless Sword Vagrant Sword 233514, Heavenquaker Spear Soul-Shaken 231951, Sentinel Howlion 233852), the Sixteen Lanes compensation mails with the `<LINK …>` tags byte-for-byte (230060, 230541, 232616), the Swallow Music anniversary notice (232549), the Show of Splendor / Literary Four Arts contest rules (231828), the 5v5 Arena rules (231695), and long lore pieces (Ruo Lan and the peony dresses 230489, Liu Sinong's letters 233370, the Five Wonders of the Mohist elder 231502, Stone the dog 233516, Zhao Guangyi and Magistrate Shi 233440, Li Zhenzhen's plea 233353). No new core terminology decisions; all standing rules reaffirmed (see [[Phase-11]], [[idx-230000-233999]]).
+
+Process notes: (1) scratch `dump.py`/`merge.py` written with the Write tool (empty scratchpad; a bash heredoc ate the backslashes of `merge.py` — SyntaxError caught immediately — so it was rewritten with Write); `merge.py` unescapes `\n`/`\r`/`\\`/`\"`, lets later files override earlier ones and carries untranslated rows over verbatim; the pass files used an empty source-prefix field, so alignment was confirmed by the per-pass QA run and the equal-to-source sweep; (2) slips fixed before append: typos `pemuktahiran` (→ `finalisasi`), `Maksud lo lo`, `Setengah ke-4 jam`, a stray `kau` in NPC speech and `Anda` in the NPC line 230963 (→ `lo`); (3) the post-merge sweep of rows still equal to source (250 rows with ≥5 words, then a sentence-word filter) found only names, dev/scene labels, gear labels and titles, and 0 Cyrillic characters; formal `Anda` survives only in the disciple→master letter 233353 and the subject→emperor line 233959; (4) the appended file stayed LF (0 CR); (5) `python tools/progress.py --write` was used with `PYTHONIOENCODING=utf-8`; (6) the shell's working directory moved into `Obsidian-Vault/` during the previous session's vault edits, so all commands used absolute paths.
+
+Full-file check: `locale/phase11.jsonl` is now 14,000 lines (idx 220,000–233,999, no gaps or duplicates); the whole dictionary (389,704 entries) validates clean.
+
+**Overall: 389,704 / 461,704 unique strings (84.41%), in-game coverage 93.42%.**
+
+## Prior session (2026-10-09, session 100) — Phase 11 continuation (idx 226,000–229,999, 4,000 rows)
 
 Phase 11 advanced at the 4,000-rows-per-iteration cadence ("Aku ingin melanjutkan phase 11 dengan 4000 per iterasi. Jangan lupa update obsidian vaultnya"): 4,000 rows (idx 226,000–229,999) were translated in eight 500-row passes (3,309 rows written by hand as `idx¦¦text` with an empty source-prefix field; the other 691 — Pinyin names, dev/scene labels (`Tier N X Piece`, `Meow Meow - …`, `Terracotta Boar N - …`, `Chapter 2 Goal N-N`, `Ascetic Monk N`, `Blackiron Pangolin - …`, `Mohist Hill - Divinecraft Dungeon … - …`), the raw Chinese/Japanese labels (226632, 228254, 228470, 229202), the `丶` name rows, the `Loading...` x30 placeholder (229245), the `Stage 1$D$F0.5$E, …` row (226851), whole-sentence `<…>` rows (226459, 227294, 227320, 228057, 228701, 228796) and poetic titles — carried over verbatim by the merge script), merged (4,000 lines, idx strictly sequential) and validated with `tools/qa_check.py --locale` (**0 mismatches on the first run** for passes 1, 2, 4, 5, 6, 7 and 8; pass 3 flagged two whole-sentence `<…>` rows that had to stay verbatim — 227294, 227320 — fixed before appending; **0 mismatches** for the merged batch, `locale/phase11.jsonl` and the whole 385,704-entry dictionary), then appended to `locale/phase11.jsonl`. Phase 11 moved from 6,000/30,000 (20.00%) to **10,000/30,000 (33.33%)**. Content mix: Pinyin NPC names, UI/system strings, quest labels, gear/skill tooltips (Mo Blade Iron Guards 226463, Inkwell Fan 226917, Infernal Twinblades 228666/229447, Thundercry Blade 228085, Snowparting Blade 228074), the Sixteen Lanes compensation mail with the `<LINK …>` tag byte-for-byte (227059), the six-month anniversary letter (227938), the Kitchen God letter (228347), the `<IMAGE …>` Skybrim Market letter (228400), and long lore pieces (Zou Yizhou and Yang Qianyan 227372, Old Jin's ice stall 226114, Zheng Ran's dream 226813, Zhai Xu's story 228412, the Jin Army wanderer hero 227809, Lie Buxi's Hidden Mountain letter 226914, the Raging Tides master's will 228973, the Mohist City scoundrel notice 229632, Peng and the bracers 229795). No new core terminology decisions; all standing rules reaffirmed (see [[Phase-11]], [[idx-226000-229999]]).
 
