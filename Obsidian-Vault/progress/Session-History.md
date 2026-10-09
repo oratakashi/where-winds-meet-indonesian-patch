@@ -7,6 +7,12 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-10-09 — Session 110: Phase 11 completion (idx 246,000–249,999, 4,000 rows)
+
+4,000 rows translated in eight 500-row passes, QA clean (0 mismatches), appended to `locale/phase11.jsonl` (now 30,000/30,000 — **Phase 11 complete**). QA caught two `<...>` rows with translated tag text (246552, 246626); restored before append. See [[idx-246000-249999]].
+
+Overall: 422,704 / 461,704 unique strings (91.55%), in-game coverage 96.42%.
+
 ## 2026-10-09 — Session 109: Phase 11 continuation (idx 242,000–245,999, 4,000 rows)
 
 4,000 rows translated in eight 500-row passes (3,453 by hand; 547 names/dev labels/poetic titles/whole-sentence tag rows carried over verbatim via a default-to-source merge script), QA clean (0 mismatches), appended to `locale/phase11.jsonl` (now 26,000/30,000; next idx 246,000). QA caught five `<...>` rows with translated tag text and one split colour-span row; fixed before append. See [[idx-242000-245999]].

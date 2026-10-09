@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **418,704** | **461,704** | **90.69%** |
-| ↳ original corpus (Phases 0–17) | 386,887 | 429,887 | 90.00% |
+| **Unique strings translated (all)** | **422,704** | **461,704** | **91.55%** |
+| ↳ original corpus (Phases 0–17) | 390,887 | 429,887 | 90.93% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **793,802** | **826,388** | **96.06%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **796,843** | **826,388** | **96.42%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -38,7 +38,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 8 | 130,000–159,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 9 | 160,000–189,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 10 | 190,000–219,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 11 | 220,000–249,999 | **active** | 246,000 | 26,000 / 30,000 | 86.67% |
+| 11 | 220,000–249,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 12 | 250,000–279,999 | **active** | 257,000 | 7,000 / 30,000 | 23.33% |
 | 13 | 280,000–309,999 | **active** | 294,000 | 14,000 / 30,000 | 46.67% |
 | 14 | 310,000–339,999 | done | — | 30,000 / 30,000 | 100.00% |
@@ -55,11 +55,21 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 100,000/229,887-string "Phase 7"/"Phase 8" split with eleven ~30,000-string
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
-**Update-1 and Phases 6, 7, 8, 9, 10, 14, 15, 16, and 17 are all fully complete.**
-Phase 11 is active at 26,000/30,000 (86.67%), Phase 12 at 7,000/30,000 (23.33%), and Phase 13 at 14,000/30,000 (46.67%). Resume per
-[[Resume-Procedure]]: Phase 11 at idx 246,000, Phase 12 at 257,000, Phase 13 at 294,000.
+**Update-1 and Phases 6, 7, 8, 9, 10, 11, 14, 15, 16, and 17 are all fully complete.**
+Phase 12 is active at 7,000/30,000 (23.33%) and Phase 13 at 14,000/30,000 (46.67%). Resume per
+[[Resume-Procedure]]: Phase 12 at idx 257,000, Phase 13 at idx 294,000.
 
-## Most recent session (2026-10-09, session 109) — Phase 11 continuation (idx 242,000–245,999, 4,000 rows)
+## Most recent session (2026-10-09, session 110) — Phase 11 completion (idx 246,000–249,999, 4,000 rows)
+
+Phase 11 finished with the last 4,000-row iteration (idx 246,000–249,999), bringing the phase from 26,000/30,000 (86.67%) to **30,000/30,000 (100%) — Phase 11 is complete**. Next work: Phase 12 at idx 257,000 or Phase 13 at idx 294,000. Commit pending. See [[idx-246000-249999]] and [[Phase-11]].
+
+The batch was translated by hand in eight 500-row passes; Pinyin names, developer/scene labels, poetic short titles, two leftover Chinese area labels (246651, 248308, 248650, 246832) and whole-sentence `<...>` rows were carried over verbatim under standing conventions. NPC dialogue uses gue/lo; UI/narrative stay neutral; letters, lore, event mail and skill descriptions were translated in full.
+
+Validated with `qa_check.py --locale`: 0 PROMPT_LEAK / MARKUP / EMPTY for each pass, the merged 4,000-row batch and the whole 422,704-entry locale dictionary, with no idx gaps or duplicates. QA caught two whole-sentence/leading `<...>` rows where tag text had been translated (246552, 246626); both were restored before append.
+
+Overall: 422,704 / 461,704 unique strings (91.55%), in-game coverage 96.42%.
+
+## Prior session (2026-10-09, session 109) — Phase 11 continuation (idx 242,000–245,999, 4,000 rows)
 
 Phase 11 continued with the complete 4,000-row iteration (idx 242,000–245,999), bringing the phase from 22,000/30,000 (73.33%) to **26,000/30,000 (86.67%)**. Next idx: **246,000**. Commit pending. See [[idx-242000-245999]] and [[Phase-11]].
 

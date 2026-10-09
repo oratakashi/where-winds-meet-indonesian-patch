@@ -7,9 +7,9 @@ commit history and `locale/phase11.jsonl` show, not session-by-session reasoning
 Phase 11 started with a single starter batch, added in `2a503a5` ("Update
 progress phase 11", 2026-09-25) alongside a Session-History entry ("Add
 Session 32 entry to Session-History for Phase 11 start"), and was continued on
-2026-10-09 (sessions 99, 100, 101, 102, 107 and 109). `locale/phase11.jsonl` now has 26,000 rows
-(idx 220,000–245,999); the phase is **not complete** — see [[Current-Status]]
-for the full idx range still outstanding (next idx 246,000). No terminology
+2026-10-09 (sessions 99, 100, 101, 102, 107, 109 and 110). `locale/phase11.jsonl` now has 30,000 rows
+(idx 220,000–249,999); **Phase 11 is complete** as of session 110 — see [[Current-Status]]
+for the phases still active (Phase 12, Phase 13). No terminology
 decisions were recorded for the starter batch; check [[Quick-Reference]] and
 [[Glossary]] for standing conventions before continuing it.
 
@@ -25,3 +25,5 @@ decisions were recorded for the starter batch; check [[Quick-Reference]] and
 - [[idx-238000-241999]] — idx 238,000–241,999 (session 107, 2026-10-09, 4,000 rows; commit pending) — brought the phase to 22,000/30,000 (73.33%). No new core terminology decisions; standing voice, honorific, named-skill/stat and duration conventions retained. Locust-leaf noodles refers to foliage, translated as mi daun akasia rather than insect leaves. All markup, engine placeholders and line breaks preserved; full locale QA clean. Overall: 410,704 / 461,704 unique strings (88.95%), in-game coverage 95.32%.
 
 - [[idx-242000-245999]] — idx 242,000–245,999 (session 109, 2026-10-09, 4,000 rows; commit pending) — brought the phase to 26,000/30,000 (86.67%). No new core terminology decisions; standing gue/lo voice for NPCs, neutral UI, honorifics (Elder→Tetua, Master→Guru, Aunt/Granny→Bibi/Nenek), duration shorthand (`60s`→`60d`, `#Y3#Es`→`#Y3#Ed`, `(3d)`→`(3h)`, `{diff_second:d}s`→`{diff_second:d}d`), decimal comma in prose, dotted thousands. Whole-sentence `<…>` rows and `<Beast Tongue>`-style tags kept verbatim. Overall: 418,704 / 461,704 unique strings (90.69%), in-game coverage 96.06%.
+
+- [[idx-246000-249999]] — idx 246,000–249,999 (session 110, 2026-10-09, 4,000 rows; commit pending) — completed the phase, 30,000/30,000 (100%). No new core terminology decisions; standing gue/lo NPC voice, neutral UI, honorifics (Elder→Tetua, Master→Guru, Big Zhao/Feng→Kak Zhao/Feng, Aunt/Granny→Bibi/Nenek), duration shorthand (`3d`→`3h`, `30s`→`30d`, `{diff_hour:d}h`→`{diff_hour:d}j`, `{}h{}m`→`{}j{}m`, `%ds`→`%dd`), dotted thousands, whole-sentence `<…>` rows kept verbatim. Overall: 422,704 / 461,704 unique strings (91.55%), in-game coverage 96.42%.
