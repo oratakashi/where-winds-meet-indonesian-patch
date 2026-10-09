@@ -1532,3 +1532,18 @@ Overall: 329,704 / 461,704 unique strings (71.41%), in-game coverage 87.93%. Det
 Requested as "Aku ingin melanjutkan phase 10 dengan 2000 per iterasi" — Phase 10 advanced from 10,000/30,000 to **12,000/30,000 (40.00%)** at the 2,000-rows-per-iteration cadence.
 Four 500-row passes merged into one batch (2,000 lines, idx strictly sequential); `qa_check.py --locale` 0 mismatches on the first run of every pass, the merged batch, `locale/phase10.jsonl` and the whole dictionary. One slip caught by the post-merge sweep before append: the Awaken Mountain Bell inscription (idx 201304) had been labelled 201305 (a name row); fixed in the pass file and re-merged.
 Overall: 331,704 / 461,704 unique strings (71.84%), in-game coverage 88.11%. Details in [[Current-Status]] and [[Phase-10]].
+
+
+## 2026-10-09 — Session 115: Phase 13 continuation (idx 298,000–299,999, 2,000 rows)
+
+Completed the full requested 2,000-row iteration. Phase 13 advanced from 18,000/30,000 to **20,000/30,000 (66.67%)**. Next idx: **300,000**. No commit was created.
+
+The primary agent translated idx 298,000–298,499; three explicitly authorized subagents translated idx 298,500–298,999, 299,000–299,499 and 299,500–299,999. Scratch files stayed outside the repository. The primary agent reviewed the combined batch before appending to `locale/phase13.jsonl`.
+
+1,565 rows differ from source; 435 retain names, short poetic titles, stat/developer labels and opaque cases under standing rules. Dialogue uses gue/lo; UI and narrative use neutral Indonesian. Long prose was translated in full: the mysterious cloth sack, Lady Zhou's Tang Coin tragedy, cat letters and lore, the Mohist travel diary, Crane's letter, and Zhang Yichao's promise to a farmer. Retainer and Physiotherapy stay English; Confucius remains the source proper name. No new terminology rule was introduced.
+
+Merged-batch and whole-dictionary `qa_check.py --locale` passed: 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Additional checks confirmed exactly 2,000 sequential idx, opaque dollar/date placeholders, newline and literal backslash-n counts, and no Cyrillic characters. No unchanged long prose or suspiciously shortened long text was found; sampled letters and lore were reviewed. `python tools/progress.py --write` regenerated the progress block.
+
+Overall: 432,704 / 461,704 unique strings (93.72%), in-game coverage 97.34%.
+
+See [[idx-298000-299999]] and [[Phase-13]].

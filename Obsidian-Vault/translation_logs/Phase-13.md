@@ -1,12 +1,12 @@
-# Phase 13 Translation Log (idx 280,000–281,999)
+# Phase 13 Translation Log (idx 280,000–309,999)
 
 **Reconstructed retroactively on 2026-09-26** — this file was not written during
 the session that did the work, so it only records what the commit history and
 `locale/phase13.jsonl` show, not session-by-session reasoning.
 
-Phase 13 currently holds a single starter batch, committed 2026-09-25
+Phase 13 began with a single starter batch, committed 2026-09-25
 (`8c02b00` — "Start Phase 13 translation (idx 280000-281999, 2000 rows)").
-`locale/phase13.jsonl` has 2,000 rows; the phase is **not complete** — see
+`locale/phase13.jsonl` now has 20,000 rows; the phase is **not complete** — see
 [[Current-Status]] for the full idx range still outstanding. No terminology
 decisions were recorded for this batch; check [[Quick-Reference]] and
 [[Glossary]] for standing conventions before continuing it.
@@ -24,3 +24,5 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
 - [[idx-294000-294999]] — idx 294,000–294,999 (session 111, 2026-10-09, 1,000 rows; partial 4,000-row iteration). Phase now 15,000/30,000; next idx 295,000. No new terminology decisions. Overall: 423,704 / 461,704 unique strings (91.77%), in-game coverage 96.52%.
 
 - [[idx-295000-297999]] — idx 295,000–297,999 (session 113, 2026-10-09, 3,000 rows), completing session 111's requested 4,000-row iteration (idx 294,000–297,999). Phase now 18,000/30,000; next idx 298,000. Translator subagents explicitly authorized by user. No new terminology decisions. Overall: 427,704 / 461,704 unique strings (92.64%), in-game coverage 96.88%.
+
+- [[idx-298000-299999]] — idx 298,000–299,999 (session 115, 2026-10-09, 2,000 rows; no commit created). Phase now 20,000/30,000 (66.67%); next idx 300,000. Translator subagents explicitly authorized by user. No new terminology decisions; Retainer, Physiotherapy and Confucius follow existing English/name conventions. Overall: 432,704 / 461,704 unique strings (93.72%), in-game coverage 97.34%.
