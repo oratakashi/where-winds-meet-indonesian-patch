@@ -9,6 +9,20 @@ see [[Current-Status]].
 
 
 
+## 2026-10-09 — Session 117: Phase 12 — 4,000-row iteration (idx 265,000–268,999)
+
+This iteration translated and appended **4,000 rows, idx 265,000–268,999**, the requested 4,000-row cadence for Phase 12. Phase 12 now contains **19,000/30,000 rows (63.33%)**. Next idx: **269,000**. No commit was created by this session.
+
+The batch contains 3,037 changed translations and 963 retained names, poetic titles, developer/location labels, internal area labels, stat labels and opaque cases under standing conventions. Dialogue uses gue/lo; UI and system text remain neutral. Long prose was translated in full, including the Mohist-city weaving diary, Zhao Dali's letter, the Gu Wenqiu five-colored-cake story, Qianye and Han Xiangxun's Blissful Retreat scene, Xue Chou's backstory, Jiang Wei's ghost-marriage story, Wei Zhixi's Wolf Mountain story, Yu Xiaoyao's love-study story, the Qinghe Northern Alliance inscription and the Wang Qing / Mohist diary. No new terminology rule was introduced.
+
+Method: no subagents were used (repo rule; the user did not ask for them). The primary agent read the source as a compact `idx<TAB>text` view with newlines escaped, translated only the rows that needed translation into nine TSV scratch files (outside the repository), and a merge script filled the retained rows from `unique_strings.jsonl`, so every idx 265,000–268,999 is present exactly once. After every chunk a check script compared the `TOKEN` multiset and newline count against the source for each translated row, so label drift or dropped tokens were caught immediately (0 findings at the end). Rules re-applied: `<...>` tags, `<LINK ...>` blocks, `<TEXT ...>` and `<IMAGE ...>` tags kept character-for-character (only the text outside them translated); `@T[...]`, `$T(...)`, `{...}`, `%s`/`%d` preserved; literal backslash-n sequences kept (idx 268330); `s`→`d` and `d`→`h` duration shorthand applied (e.g. `1s`→`1d`, `3d`→`3h`, `30d`→`30h`, `{total_day:d} d {diff_hour:d} h`→`{total_day:d} h {diff_hour:d} j`); stray Chinese developer labels and `{区域N}` placeholders kept verbatim; "Old X" without "Man" kept English (Old Jin, Old Zhang, Old Yao); "Senior/Junior Brother" and "Brother X" names left as-is.
+
+Batch and whole-dictionary `qa_check.py --locale` passed with 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings (440,704 entries checked). Additional checks confirmed all 4,000 sequential idx, matching literal backslash-n counts and no Cyrillic characters. `python tools/progress.py --write` regenerated the progress tables.
+
+Overall: 440,704 / 461,704 unique strings (95.45%), in-game coverage 98.07%.
+
+See [[idx-265000-268999]] and [[Phase-12]].
+
 ## 2026-10-09 — Session 116: Phase 12 — 4,000-row iteration (idx 261,000–264,999)
 
 This iteration translated and appended **4,000 rows, idx 261,000–264,999**, the requested 4,000-row cadence for Phase 12. Phase 12 now contains **15,000/30,000 rows (50.00%)** — the phase is at its halfway point. Next idx: **265,000**. No commit was created by this session.
