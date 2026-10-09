@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **393,704** | **461,704** | **85.27%** |
-| ↳ original corpus (Phases 0–17) | 361,887 | 429,887 | 84.18% |
+| **Unique strings translated (all)** | **397,704** | **461,704** | **86.14%** |
+| ↳ original corpus (Phases 0–17) | 365,887 | 429,887 | 85.11% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **775,013** | **826,388** | **93.78%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **778,014** | **826,388** | **94.15%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -40,7 +40,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 10 | 190,000–219,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 11 | 220,000–249,999 | **active** | 238,000 | 18,000 / 30,000 | 60.00% |
 | 12 | 250,000–279,999 | **active** | 252,000 | 2,000 / 30,000 | 6.67% |
-| 13 | 280,000–309,999 | **active** | 282,000 | 2,000 / 30,000 | 6.67% |
+| 13 | 280,000–309,999 | **active** | 286,000 | 6,000 / 30,000 | 20.00% |
 | 14 | 310,000–339,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 15 | 340,000–369,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 16 | 370,000–399,999 | done | — | 30,000 / 30,000 | 100.00% |
