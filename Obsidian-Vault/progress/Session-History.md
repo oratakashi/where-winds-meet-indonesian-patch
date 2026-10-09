@@ -9,6 +9,16 @@ see [[Current-Status]].
 
 
 
+## 2026-10-09 — Session 119: Phase 13 — 1,000-row iteration (idx 304,000–304,999)
+
+Per the user's request the iteration size was reduced to **1,000 rows** (from 3,000 requested earlier in the session, 4,000 before that). Appended **idx 304,000–304,999**; Phase 13 now contains **25,000/30,000 rows (83.33%)**. Next idx: **305,000**. No commit was created.
+
+Primary agent only, no subagents. Source read in two 500-row chunks, translated into scratch JSONL outside the repo, merged (exactly 1,000 lines, idx sequential) and validated: merged-batch and whole-phase `qa_check.py --locale` 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. The first QA run flagged two rows, fixed: idx 304037 (stray `#After` — the `#A` must stay, so written `(#After pertempuran, ...)`) and idx 304087 (plain `<...>` stage-direction tag kept 100% English). Names, `Name丶` player names, test/dev labels kept verbatim; hour names → "Jam Yin/Mao"; no new terminology rule.
+
+Overall: 445,704 / 461,704 unique strings (96.53%), in-game coverage 98.53%.
+
+See [[idx-304000-304999]] and [[Phase-13]].
+
 ## 2026-10-09 — Session 118: Phase 13 — 4,000-row iteration (idx 300,000–303,999)
 
 This iteration translated and appended **4,000 rows, idx 300,000–303,999**, the requested 4,000-row cadence for Phase 13. Phase 13 now contains **24,000/30,000 rows (80.00%)**. Next idx: **304,000**. No commit was created by this session.

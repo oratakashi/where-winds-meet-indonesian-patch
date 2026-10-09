@@ -28,3 +28,5 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
 - [[idx-298000-299999]] — idx 298,000–299,999 (session 115, 2026-10-09, 2,000 rows; no commit created). Phase now 20,000/30,000 (66.67%); next idx 300,000. Translator subagents explicitly authorized by user. No new terminology decisions; Retainer, Physiotherapy and Confucius follow existing English/name conventions. Overall: 432,704 / 461,704 unique strings (93.72%), in-game coverage 97.34%.
 
 - [[idx-300000-303999]] — idx 300,000–303,999 (session 118, 2026-10-09, 4,000 rows; no commit created). Phase now 24,000/30,000 (80.00%); next idx 304,000. Primary agent only, no subagents. No new terminology decisions. Overall: 444,704 / 461,704 unique strings (96.32%), in-game coverage 98.44%.
+
+- [[idx-304000-304999]] — idx 304,000–304,999 (session 119, 2026-10-09, 1,000 rows; no commit created). Phase now 25,000/30,000 (83.33%); next idx 305,000. Primary agent only. Batch size reduced to 1,000 at the user's request. No new terminology decisions; stray `#After` token kept intact, plain `<...>` emote tag kept English. Overall: 445,704 / 461,704 unique strings (96.53%), in-game coverage 98.53%.
