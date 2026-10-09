@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-09 (session 108).** This is the single source of truth for "how
+**Last updated: 2026-10-09 (session 112).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **422,704** | **461,704** | **91.55%** |
-| ↳ original corpus (Phases 0–17) | 390,887 | 429,887 | 90.93% |
+| **Unique strings translated (all)** | **427,704** | **461,704** | **92.64%** |
+| ↳ original corpus (Phases 0–17) | 395,887 | 429,887 | 92.09% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **796,843** | **826,388** | **96.42%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **800,613** | **826,388** | **96.88%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -39,8 +39,8 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 9 | 160,000–189,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 10 | 190,000–219,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 11 | 220,000–249,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 12 | 250,000–279,999 | **active** | 257,000 | 7,000 / 30,000 | 23.33% |
-| 13 | 280,000–309,999 | **active** | 294,000 | 14,000 / 30,000 | 46.67% |
+| 12 | 250,000–279,999 | **active** | 258,000 | 8,000 / 30,000 | 26.67% |
+| 13 | 280,000–309,999 | **active** | 298,000 | 18,000 / 30,000 | 60.00% |
 | 14 | 310,000–339,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 15 | 340,000–369,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 16 | 370,000–399,999 | done | — | 30,000 / 30,000 | 100.00% |
@@ -56,12 +56,49 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phases 6, 7, 8, 9, 10, 11, 14, 15, 16, and 17 are all fully complete.**
-Phase 12 is active at 7,000/30,000 (23.33%) and Phase 13 at 14,000/30,000 (46.67%). Resume per
-[[Resume-Procedure]]: Phase 12 at idx 257,000, Phase 13 at idx 294,000.
+Phase 12 is active at 8,000/30,000 (26.67%) and Phase 13 at 18,000/30,000 (60.00%). Resume per
+[[Resume-Procedure]]: Phase 12 at idx 258,000, Phase 13 at idx 298,000.
 
-## Most recent session (2026-10-09, session 110) — Phase 11 completion (idx 246,000–249,999, 4,000 rows)
 
-Phase 11 finished with the last 4,000-row iteration (idx 246,000–249,999), bringing the phase from 26,000/30,000 (86.67%) to **30,000/30,000 (100%) — Phase 11 is complete**. Next work: Phase 12 at idx 257,000 or Phase 13 at idx 294,000. Commit pending. See [[idx-246000-249999]] and [[Phase-11]].
+## 2026-10-09 — Session 112: Phase 12 continuation checkpoint (idx 257,000–257,999, 1,000 rows)
+
+The user requested 4,000 rows per iteration. This session saved 1,000 rows (idx 257,000–257,999); the requested 4,000-row target remains incomplete, with 3,000 rows still required (idx 258,000–260,999). The earlier partial iteration (idx 256,000–259,999) now has 2,000 rows completed and 2,000 remaining. Phase 12 contains 8,000/30,000 rows (26.67%). Next idx: **258,000**. No commit was created.
+
+768 rows differ from source; 232 retain names, short poetic titles, stat labels and other established verbatim cases. Content includes Xiao Yu and Wang Xun'er's long escape story, Halcyon's training incident, Shi Zhen's family shame, the Mohist City study rules, Lucky Seventeen's backstory, and Zong Qi's naming story. Long text is translated in full. Dialogue follows gue/lo; UI is neutral. No new terminology rules.
+
+The batch and full 424,704-entry locale dictionary passed `qa_check.py --locale`: 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Additional validation confirmed contiguous idx, opaque placeholders, paragraph breaks, literal backslash-n sequences and no Cyrillic characters. Nonstandard `#D` and `$O` markers in idx 257429 were preserved. Locale output uses LF endings. `python tools/progress.py --write` regenerated the status tables.
+
+Overall: 424,704 / 461,704 unique strings (91.99%), in-game coverage 96.61%.
+
+See [[idx-257000-257999]] and [[Phase-12]].
+
+## Most recent session (2026-10-09, session 112) — Phase 13 iteration completed (idx 295,000–297,999, 3,000 remaining rows)
+
+Completed the remaining 3,000 rows (idx 295,000–297,999) from the requested 4,000-row iteration. Combined with session 111's 1,000 rows (idx 294,000–294,999), **the full iteration is now complete: idx 294,000–297,999**. Phase 13 is now 18,000/30,000 (60.00%). Next idx: **298,000**. No commit was created.
+
+The user explicitly authorized translator subagents for this continuation, overriding the repository's default prohibition. The primary agent translated 1,500 rows and three subagents translated 500 rows each; only the primary agent merged the results and updated the vault. 2,271 rows differ from source, and 729 retain names, poetic short titles, stat/developer labels and opaque tags under standing rules. Dialogue uses gue/lo; UI/narrative stay neutral. Long letters, lore and tournament rules were translated in full.
+
+The merged 3,000-row batch and full locale dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK, MARKUP and EMPTY findings and no idx gaps or duplicates. Additional checks preserved runtime variables and newline counts. No new terminology was locked. `python -X utf8 tools/progress.py --write` refreshed the generated tables.
+
+Overall: 427,704 / 461,704 unique strings (92.64%), in-game coverage 96.88%.
+
+See [[idx-295000-297999]] and [[Phase-13]].
+
+## Prior session (2026-10-09, session 111) — Phase 13 partial iteration (idx 294,000–294,999, 1,000 of 4,000 rows)
+
+The user requested 4,000 rows per iteration. This session saved only the first 1,000 rows (idx 294,000–294,999); the requested iteration is **incomplete**, with 3,000 rows remaining (idx 295,000–297,999). Phase 13 is now 15,000/30,000 (50.00%). Next idx: **295,000**. No commit was created.
+
+The batch was translated in four 250-row passes: 785 rows differ from source; 215 retain proper names, short poetic titles and other standing verbatim cases. Dialogue uses gue/lo; UI and narrative stay neutral. Long lore and letters were translated without shortening, including Ye Fashan's Lantern Festival journey, the prisoners' farewell letter, and the origin of Oblivion Crossing. Existing terminology rules were applied; no new terminology was locked.
+
+The merged 1,000-row batch and full 423,704-row locale dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK, MARKUP and EMPTY findings, and no idx gaps or duplicates. A source-equality check found no unchanged rows longer than 80 characters. `python -X utf8 tools/progress.py --write` regenerated the progress tables.
+
+Overall: 423,704 / 461,704 unique strings (91.77%), in-game coverage 96.52%.
+
+See [[idx-294000-294999]] and [[Phase-13]].
+
+## Prior session (2026-10-09, session 110) — Phase 11 completion (idx 246,000–249,999, 4,000 rows)
+
+Phase 11 finished with the last 4,000-row iteration (idx 246,000–249,999), bringing the phase from 26,000/30,000 (86.67%) to **30,000/30,000 (100%) — Phase 11 is complete**. Next work: Phase 12 at idx 258,000 or Phase 13 at idx 295,000. Commit pending. See [[idx-246000-249999]] and [[Phase-11]].
 
 The batch was translated by hand in eight 500-row passes; Pinyin names, developer/scene labels, poetic short titles, two leftover Chinese area labels (246651, 248308, 248650, 246832) and whole-sentence `<...>` rows were carried over verbatim under standing conventions. NPC dialogue uses gue/lo; UI/narrative stay neutral; letters, lore, event mail and skill descriptions were translated in full.
 

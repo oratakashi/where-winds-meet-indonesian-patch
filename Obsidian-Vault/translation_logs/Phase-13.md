@@ -20,3 +20,7 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
 - [[idx-286000-289999]] — idx 286,000–289,999 (session 106, 2026-10-09, 4,000 rows) — brought the phase to 10,000/30,000. No new terminology decisions.
 
 - [[idx-290000-293999]] — idx 290,000–293,999 (session 108, 2026-10-09, 4,000 rows) — brought the phase to 14,000/30,000. No new terminology decisions.
+
+- [[idx-294000-294999]] — idx 294,000–294,999 (session 111, 2026-10-09, 1,000 rows; partial 4,000-row iteration). Phase now 15,000/30,000; next idx 295,000. No new terminology decisions. Overall: 423,704 / 461,704 unique strings (91.77%), in-game coverage 96.52%.
+
+- [[idx-295000-297999]] — idx 295,000–297,999 (session 113, 2026-10-09, 3,000 rows), completing session 111's requested 4,000-row iteration (idx 294,000–297,999). Phase now 18,000/30,000; next idx 298,000. Translator subagents explicitly authorized by user. No new terminology decisions. Overall: 427,704 / 461,704 unique strings (92.64%), in-game coverage 96.88%.

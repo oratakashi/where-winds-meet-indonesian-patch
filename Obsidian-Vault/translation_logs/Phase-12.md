@@ -6,12 +6,14 @@ the session that did the work, so it only records what the commit history and
 
 Phase 12 began with a starter batch, committed 2026-09-25
 (`147c8b7` — "Start Phase 12 translation (idx 250000-251999, 2000 rows)").
-`locale/phase12.jsonl` now has 7,000 rows; the phase is **not complete** — see
+`locale/phase12.jsonl` now has 8,000 rows; the phase is **not complete** — see
 [[Current-Status]] for the full idx range still outstanding. No terminology
 decisions were recorded for this batch; check [[Quick-Reference]] and
 [[Glossary]] for standing conventions before continuing it.
 
 ## Batches
+
+- [[idx-257000-257999]] — idx 257,000–257,999 (1,000 rows, 2026-10-09; commit pending; incomplete 4,000-row target)
 
 - [[idx-256000-256999]] — idx 256,000–256,999 (1,000 rows, 2026-10-09; commit pending; partial 4,000-row iteration)
 
@@ -48,3 +50,15 @@ The 1,000-row batch and complete 402,704-entry locale dictionary passed `qa_chec
 See [[Phase-12]] and [[idx-256000-256999]].
 
 Overall: 402,704 / 461,704 unique strings (87.22%), in-game coverage 94.60%.
+
+## 2026-10-09 — Session 112: Phase 12 continuation checkpoint (idx 257,000–257,999, 1,000 rows)
+
+The user requested 4,000 rows per iteration. This session saved 1,000 rows (idx 257,000–257,999); the requested 4,000-row target remains incomplete, with 3,000 rows still required (idx 258,000–260,999). The earlier partial iteration (idx 256,000–259,999) now has 2,000 rows completed and 2,000 remaining. Phase 12 contains 8,000/30,000 rows (26.67%). Next idx: **258,000**. No commit was created.
+
+768 rows differ from source; 232 retain names, short poetic titles, stat labels and other established verbatim cases. Content includes Xiao Yu and Wang Xun'er's long escape story, Halcyon's training incident, Shi Zhen's family shame, the Mohist City study rules, Lucky Seventeen's backstory, and Zong Qi's naming story. Long text is translated in full. Dialogue follows gue/lo; UI is neutral. No new terminology rules.
+
+The batch and full 424,704-entry locale dictionary passed `qa_check.py --locale`: 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Additional validation confirmed contiguous idx, opaque placeholders, paragraph breaks, literal backslash-n sequences and no Cyrillic characters. Nonstandard `#D` and `$O` markers in idx 257429 were preserved. Locale output uses LF endings. `python tools/progress.py --write` regenerated the status tables.
+
+Overall: 424,704 / 461,704 unique strings (91.99%), in-game coverage 96.61%.
+
+See [[idx-257000-257999]] and [[Phase-12]].

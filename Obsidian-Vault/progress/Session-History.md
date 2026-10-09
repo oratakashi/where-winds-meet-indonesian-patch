@@ -7,6 +7,43 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+
+## 2026-10-09 — Session 113: Phase 13 iteration completed (idx 295,000–297,999, 3,000 remaining rows)
+
+Completed the remaining 3,000 rows (idx 295,000–297,999) from the requested 4,000-row iteration. Combined with session 111's 1,000 rows (idx 294,000–294,999), **the full iteration is now complete: idx 294,000–297,999**. Phase 13 is now 18,000/30,000 (60.00%). Next idx: **298,000**. No commit was created.
+
+The user explicitly authorized translator subagents for this continuation, overriding the repository's default prohibition. The primary agent translated 1,500 rows and three subagents translated 500 rows each; only the primary agent merged the results and updated the vault. 2,271 rows differ from source, and 729 retain names, poetic short titles, stat/developer labels and opaque tags under standing rules. Dialogue uses gue/lo; UI/narrative stay neutral. Long letters, lore and tournament rules were translated in full.
+
+The merged 3,000-row batch and full locale dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK, MARKUP and EMPTY findings and no idx gaps or duplicates. Additional checks preserved runtime variables and newline counts. No new terminology was locked. `python -X utf8 tools/progress.py --write` refreshed the generated tables.
+
+Overall: 427,704 / 461,704 unique strings (92.64%), in-game coverage 96.88%.
+
+See [[idx-295000-297999]] and [[Phase-13]].
+
+## 2026-10-09 — Session 112: Phase 12 continuation checkpoint (idx 257,000–257,999, 1,000 rows)
+
+The user requested 4,000 rows per iteration. This session saved 1,000 rows (idx 257,000–257,999); the requested 4,000-row target remains incomplete, with 3,000 rows still required (idx 258,000–260,999). The earlier partial iteration (idx 256,000–259,999) now has 2,000 rows completed and 2,000 remaining. Phase 12 contains 8,000/30,000 rows (26.67%). Next idx: **258,000**. No commit was created.
+
+768 rows differ from source; 232 retain names, short poetic titles, stat labels and other established verbatim cases. Content includes Xiao Yu and Wang Xun'er's long escape story, Halcyon's training incident, Shi Zhen's family shame, the Mohist City study rules, Lucky Seventeen's backstory, and Zong Qi's naming story. Long text is translated in full. Dialogue follows gue/lo; UI is neutral. No new terminology rules.
+
+The batch and full 424,704-entry locale dictionary passed `qa_check.py --locale`: 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Additional validation confirmed contiguous idx, opaque placeholders, paragraph breaks, literal backslash-n sequences and no Cyrillic characters. Nonstandard `#D` and `$O` markers in idx 257429 were preserved. Locale output uses LF endings. `python tools/progress.py --write` regenerated the status tables.
+
+Overall: 424,704 / 461,704 unique strings (91.99%), in-game coverage 96.61%.
+
+See [[idx-257000-257999]] and [[Phase-12]].
+
+## 2026-10-09 — Session 111: Phase 13 partial iteration (idx 294,000–294,999, 1,000 of 4,000 rows)
+
+The user requested 4,000 rows per iteration. This session saved only the first 1,000 rows (idx 294,000–294,999); the requested iteration is **incomplete**, with 3,000 rows remaining (idx 295,000–297,999). Phase 13 is now 15,000/30,000 (50.00%). Next idx: **295,000**. No commit was created.
+
+The batch was translated in four 250-row passes: 785 rows differ from source; 215 retain proper names, short poetic titles and other standing verbatim cases. Dialogue uses gue/lo; UI and narrative stay neutral. Long lore and letters were translated without shortening, including Ye Fashan's Lantern Festival journey, the prisoners' farewell letter, and the origin of Oblivion Crossing. Existing terminology rules were applied; no new terminology was locked.
+
+The merged 1,000-row batch and full 423,704-row locale dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK, MARKUP and EMPTY findings, and no idx gaps or duplicates. A source-equality check found no unchanged rows longer than 80 characters. `python -X utf8 tools/progress.py --write` regenerated the progress tables.
+
+Overall: 423,704 / 461,704 unique strings (91.77%), in-game coverage 96.52%.
+
+See [[idx-294000-294999]] and [[Phase-13]].
+
 ## 2026-10-09 — Session 110: Phase 11 completion (idx 246,000–249,999, 4,000 rows)
 
 4,000 rows translated in eight 500-row passes, QA clean (0 mismatches), appended to `locale/phase11.jsonl` (now 30,000/30,000 — **Phase 11 complete**). QA caught two `<...>` rows with translated tag text (246552, 246626); restored before append. See [[idx-246000-249999]].
