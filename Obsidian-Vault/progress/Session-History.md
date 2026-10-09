@@ -7,6 +7,16 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-10-09 — Session 102: Phase 11 continuation (idx 234,000–237,999, 4,000 rows)
+
+Phase 11 continued with 4,000 rows (idx 234,000–237,999), bringing the phase from 14,000/30,000 (46.67%) to **18,000/30,000 (60.00%)**. Next idx: **238,000**.
+
+Eight 500-row source passes produced 3,046 manually translated rows; the other 954 rows retained names, poetic titles, developer labels, stat labels and whole-tag text verbatim under the standing conventions. The merged 4,000-row batch and the complete 393,704-entry locale dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK, MARKUP or EMPTY findings and no idx gaps or duplicates. Escape counts (newlines, carriage returns and backslashes) matched the source for every batch row. Four missed dialogue lines and three prose slips were corrected before append.
+
+Content includes dialogue and quest instructions, UI/system text, gear and skill descriptions, promotion/compensation mails, contest rules, and long character lore (Wei Zhixi, Di Juan, Kuang Anshi, Gu Le, Xiuxiu and Granny Turtle). No new core terminology decisions; see [[Phase-11]] and [[idx-234000-237999]]. `python -X utf8 tools/progress.py --write` regenerated the progress tables.
+
+Overall: 393,704 / 461,704 unique strings (85.27%), in-game coverage 93.78%.
+
 ## 2026-10-09 — Session 101: Phase 11 continuation (idx 230,000–233,999, 4,000 rows)
 
 Request: "Aku ingin melanjutkan phase 11 dengan 4000 per iterasi. Jangan lupa update obsidian vaultnya" — Phase 11 advanced from 10,000/30,000 to **14,000/30,000 (46.67%)**, resuming at idx 230,000.
