@@ -118,17 +118,27 @@ published as a single rolling GitHub Release (tag `latest`):
 
 ### PC — Official WWM Launcher
 
-1. Open the official launcher's installation folder (typically
-   `<InstallDir>\Package\HD\oversea\locale\`). If you're unsure of the location, right-click the
-   launcher shortcut → **Open file location** to find the install root.
-2. Back up the original files in that `locale\` folder.
-3. Extract the contents of `wwm-indonesian-patch.zip` into this `locale\` folder, overwriting
-   files with matching names, as in the Steam steps above.
-4. The game actually loads the `_diff` layer from a second copy under
-   `<InstallDir>\LocalData\Patch\HD\oversea\locale\`. Back up the original
-   `translate_words_map_en_diff` there too, then overwrite it with the patched one from the zip.
-5. Launch the game through the launcher as usual.
-6. Set **Settings → Language → Game Language = English** in-game.
+1. Find the launcher's installation folder (right-click the launcher shortcut → **Open file
+   location** if you're unsure). Inside it, the game lives in a subfolder named after the
+   **variant you downloaded** — `wwm_lite` for the Lite download, or the matching standard folder
+   for the Standard download. Below, `<InstallDir>\<variant>` stands for that folder, e.g.
+   `<InstallDir>\wwm_lite`.
+2. Open the locale folder inside the variant folder:
+
+   ```
+   <InstallDir>\<variant>\LocalData\Patch\HD\oversea\locale\
+   ```
+
+   For example: `INSTALLATION_FOLDER\wwm_lite\LocalData\Patch\HD\oversea\locale\`.
+3. Back up the original `translate_words_map_*` files in that `locale\` folder.
+4. Extract the contents of `wwm-indonesian-patch.zip` into this `locale\` folder, overwriting
+   files with matching names (`translate_words_map_en_diff` and any other `translate_words_map_en*`
+   files that exist there).
+5. The base files also exist under `<InstallDir>\<variant>\Package\HD\oversea\locale\`. Back up
+   and overwrite `translate_words_map_en`, `translate_words_map_en__small` and
+   `translate_words_map_en__small_diff` there too, as in the Steam steps above.
+6. Launch the game through the launcher as usual.
+7. Set **Settings → Language → Game Language = English** in-game.
 
 > [!TIP]
 > Unlike the Steam client, the official launcher does **not** restore the patched `_diff` file on
@@ -307,8 +317,10 @@ Locate your game installation path:
   ```
 - **Official NetEase Launcher**:
   ```
-  <InstallDir>\Package\HD\oversea\locale\translate_words_map_en
+  <InstallDir>\<variant>\Package\HD\oversea\locale\translate_words_map_en
+  <InstallDir>\<variant>\LocalData\Patch\HD\oversea\locale\
   ```
+  (`<variant>` is the downloaded game variant folder, e.g. `wwm_lite`.)
 
 > [!WARNING]
 > **Always create a backup before modifying game files.** Keep an untouched copy of `translate_words_map_en` in a safe location. If you previously used GearUP Booster, their automatic backup files have a `.gubackup` extension in the same directory and preserve pristine original English text.
@@ -569,7 +581,7 @@ While the average string length is ~56 bytes, certain encyclopedia and narrative
   - `Package\HD\oversea\locale\` (patched by this tool; safe, never re-verified).
   - `LocalData\Patch\HD\oversea\locale\` (active runtime overlay).
 - **Steam client**: the `LocalData` copy is **checksum-verified against NetEase CDN manifests on every game launch** (`StagePatchList` / `StageCheck` / `StageDownload`). Modified files in `LocalData` are detected and restored to original bytes within minutes. DNS blocking of CDN endpoints fails because the client falls back to cached manifests and secondary hosts. The sparse `_diff` table (~213k entries in late 2026 builds) therefore displays in English on Steam until NetEase merges delta patches back into the base package during major game updates.
-- **Official WWM launcher**: this restore does **not** happen (tested 2026-09-27). A patched `_diff` in `LocalData\Patch\HD\oversea\locale\` stays in place across launches, so the whole patch — including the `_diff` layer — is effective. Why the two clients differ has not been investigated.
+- **Official WWM launcher**: this restore does **not** happen (tested 2026-09-27). A patched `_diff` in `LocalData\Patch\HD\oversea\locale\` (on the official launcher the full path is `<InstallDir>\<variant>\LocalData\Patch\HD\oversea\locale\`, where `<variant>` is e.g. `wwm_lite`) stays in place across launches, so the whole patch — including the `_diff` layer — is effective. Why the two clients differ has not been investigated.
 - Earlier versions of this README described the restore as affecting every PC client; that conclusion came from testing on Steam only.
 
 ### 2. Upstream Desynchronization
