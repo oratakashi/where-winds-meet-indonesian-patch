@@ -1619,3 +1619,16 @@ Completed the requested 4,000-row iteration. Phase 12 advanced from 19,000/30,00
 Merged-batch and whole-dictionary QA passed with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. Additional review confirmed exactly 4,000 sequential idx, no Cyrillic characters, no unchanged long prose and no suspiciously shortened long text. `python tools/progress.py --write` regenerated the progress block. Phase 12 log, batch note and Current Status were updated. See [[idx-269000-272999]] and [[Phase-12]].
 
 Overall: 450,704 / 461,704 unique strings (97.62%), in-game coverage 98.99%.
+
+
+## 2026-10-09 — Session 122: Phase 13 completed (idx 306,000–309,999, 4,000 rows)
+
+Finished the user's request to complete Phase 13. Appended all 4,000 remaining rows; **Phase 13 is now 30,000/30,000 (100.00%)**, covering idx 280,000–309,999 without gaps or duplicates. No commit created.
+
+Primary agent translated 306,000–306,999; three user-authorized translator subagents handled the remaining three 1,000-row batches. Primary review and integration followed. All scratch files stayed outside the repository. 3,217 rows differ from source; 783 retain established names, short poetic titles, stat/gear labels, opaque tags, technical or unreadable text. No new terminology rule.
+
+Long lore and full Arena rules were translated without abridgment; both player-name lists in 309676 remain identical. Merged-batch and whole-dictionary QA: 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. Additional checks confirmed complete phase coverage, dollar/date markers, newline and literal backslash-n counts, long-text completeness, and player-name preservation. `python tools/progress.py --write` refreshed the generated tables. Updated Current Status, Phase 13 log, batch note and the Phase 13 roadmap row. The only remaining phase is Phase 12, next idx 273,000 (7,000 rows remain).
+
+Overall: 454,704 / 461,704 unique strings (98.48%), in-game coverage 99.36%.
+
+See [[idx-306000-309999]] and [[Phase-13]].

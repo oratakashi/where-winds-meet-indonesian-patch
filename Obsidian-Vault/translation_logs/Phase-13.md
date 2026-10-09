@@ -6,10 +6,10 @@ the session that did the work, so it only records what the commit history and
 
 Phase 13 began with a single starter batch, committed 2026-09-25
 (`8c02b00` — "Start Phase 13 translation (idx 280000-281999, 2000 rows)").
-`locale/phase13.jsonl` now has 26,000 rows; the phase is **not complete** — see
-[[Current-Status]] for the full idx range still outstanding. No terminology
-decisions were recorded for this batch; check [[Quick-Reference]] and
-[[Glossary]] for standing conventions before continuing it.
+`locale/phase13.jsonl` now has **30,000 rows; Phase 13 is complete** (idx 280,000–309,999),
+finished in session 122 on 2026-10-09. No terminology decisions were recorded for
+the original starter batch; subsequent session decisions are recorded below.
+Standing conventions remain in [[Quick-Reference]] and [[Glossary]].
 
 ## Batches
 
@@ -32,3 +32,15 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
 - [[idx-304000-304999]] — idx 304,000–304,999 (session 119, 2026-10-09, 1,000 rows; no commit created). Phase now 25,000/30,000 (83.33%); next idx 305,000. Primary agent only. Batch size reduced to 1,000 at the user's request. No new terminology decisions; stray `#After` token kept intact, plain `<...>` emote tag kept English. Overall: 445,704 / 461,704 unique strings (96.53%), in-game coverage 98.53%.
 
 - [[idx-305000-305999]] — idx 305,000–305,999 (session 120, 2026-10-09, 1,000 rows; no commit created). Phase now 26,000/30,000 (86.67%); next idx 306,000. Primary agent only. Requested phase completion remains outstanding: 4,000 rows remain. No new terminology decisions. Overall: 446,704 / 461,704 unique strings (96.75%), in-game coverage 98.62%.
+
+- [[idx-306000-309999]] — idx 306,000–309,999 (session 122, 2026-10-09, 4,000 rows; no commit created). **Completed Phase 13: 30,000/30,000 (100.00%)**. Primary agent plus three translator subagents explicitly authorized by the user. 3,217 rows differ from source; 783 retain names, short poetic titles, stat/gear labels, opaque/technical or unreadable source text. No new terminology rule. Overall: 454,704 / 461,704 unique strings (98.48%), in-game coverage 99.36%.
+
+## Session 122 completion notes
+
+Long narrative translated in full: the Tang princess's dragon transformation (307120), the food-stall story (307536), Hui at Skybrim Market (307642), Han Xiangxun's fortune reading (308609), the stonemason's vow (308890), Fengying's baking (309698), and Halcyon's childhood (309956). Arena rules (307863), guild building permissions (306254), and the five Mohist disciples' lore (306686) are complete.
+
+Both long player-name lists at 309676 are preserved character-for-character; surrounding prose is translated. Plain full-sentence tags at 308791 and 309149 remain unchanged. `$S...$E` at 308191 keeps its markers while its contents are translated; `#$...#` at 306860 keeps its wrapper. Technical diagnostic text at 309816 and unrecoverable mojibake at 309041 remain verbatim. Two short poetic titles in the primary batch were restored to English during review; the Common rarity prefix at 309865 was aligned to existing "Umum" usage. No new glossary rule.
+
+Each translator's scratch batch passed QA. The merged 4,000 rows passed QA before append, and the whole dictionary passed after append: 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Additional checks verified all 30,000 phase idx, opaque dollar/date placeholders, actual newline and literal backslash-n counts, long-text completeness, and the player-name lists. `python tools/progress.py --write` refreshed the generated progress tables.
+
+Overall: 454,704 / 461,704 unique strings (98.48%), in-game coverage 99.36%.

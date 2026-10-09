@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-09 (session 121).** This is the single source of truth for "how
+**Last updated: 2026-10-09 (session 122).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **450,704** | **461,704** | **97.62%** |
-| ↳ original corpus (Phases 0–17) | 418,887 | 429,887 | 97.44% |
+| **Unique strings translated (all)** | **454,704** | **461,704** | **98.48%** |
+| ↳ original corpus (Phases 0–17) | 422,887 | 429,887 | 98.37% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **818,062** | **826,388** | **98.99%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **821,120** | **826,388** | **99.36%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -40,7 +40,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 10 | 190,000–219,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 11 | 220,000–249,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 12 | 250,000–279,999 | **active** | 273,000 | 23,000 / 30,000 | 76.67% |
-| 13 | 280,000–309,999 | **active** | 306,000 | 26,000 / 30,000 | 86.67% |
+| 13 | 280,000–309,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 14 | 310,000–339,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 15 | 340,000–369,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 16 | 370,000–399,999 | done | — | 30,000 / 30,000 | 100.00% |
@@ -55,9 +55,24 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 100,000/229,887-string "Phase 7"/"Phase 8" split with eleven ~30,000-string
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
-**Update-1 and Phases 6, 7, 8, 9, 10, 11, 14, 15, 16, and 17 are all fully complete.**
-Phase 12 is active at 23,000/30,000 (76.67%) and Phase 13 at 26,000/30,000 (86.67%). Resume per
-[[Resume-Procedure]]: Phase 12 at idx 273,000, Phase 13 at idx 306,000.
+**Update-1 and Phases 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, and 17 are all fully complete.**
+Phase 13 is complete at **30,000/30,000 (100.00%)**. Phase 12 is the only remaining phase,
+active at 23,000/30,000 (76.67%). Resume per [[Resume-Procedure]] at idx **273,000**;
+its remaining range is 273,000–279,999 (7,000 rows).
+
+## 2026-10-09 — Session 122: Phase 13 complete (idx 306,000–309,999)
+
+Completed the full remaining **4,000 rows** requested by the user. Phase 13 now contains **30,000/30,000 rows (100.00%)**, idx **280,000–309,999**, with no gaps or duplicates. No commit was created.
+
+The primary agent translated idx 306,000–306,999, and three user-authorized translator subagents handled 307,000–307,999, 308,000–308,999, and 309,000–309,999. The primary agent reviewed and merged the results before append. Scratch files remained outside the repository in the system temporary directory.
+
+**3,217 rows differ from source; 783 retain established names, short poetic titles, stat/gear labels, opaque tags, technical text, or unreadable source text.** Long lore, letters and dialogue were translated in full, including the Tang princess's dragon transformation, Han Xiangxun's fortune reading, Halcyon's childhood, Fengying's baking, and the full Arena rules. Two lengthy player-name lists in idx 309676 remain identical. No new terminology rule was introduced.
+
+Merged-batch and full-dictionary QA passed with **0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings**. Additional checks verified exactly 4,000 sequential new idx and 30,000 sequential phase idx, dollar/date placeholders, actual newlines and literal backslash-n counts. Long-text review found no suspiciously shortened prose. `$S...$E` contents are translated while markers remain; the `#$...#` narrative wrapper remains. Plain full-sentence angle tags, the technical artifact at idx 309816, and unrecoverable mojibake at idx 309041 are intentionally retained under standing source-preservation conventions.
+
+Overall: 454,704 / 461,704 unique strings (98.48%), in-game coverage 99.36%.
+
+See [[idx-306000-309999]] and [[Phase-13]].
 
 ## 2026-10-09 — Session 121: Phase 12 — 4,000-row iteration (idx 269,000–272,999)
 
@@ -67,16 +82,4 @@ Primary agent only. Long narrative, letters and scripts translated in full, incl
 
 Overall: 450,704 / 461,704 unique strings (97.62%), in-game coverage 98.99%.
 
-See [[idx-269000-272999]] and [[Phase-12]]. The separate Phase 13 checkpoint below is preserved.
-
-## 2026-10-09 — Session 120: Phase 13 continuation (idx 305,000–305,999)
-
-Added **1,000 rows**, bringing Phase 13 to **26,000/30,000 (86.67%)**. The user requested completion of Phase 13; **4,000 rows remain**, idx **306,000–309,999**. This is a progress checkpoint, not completion of that request. No commit was created.
-
-Primary agent only. Scratch JSONL stayed in the system temporary directory; each batch was validated before append. Full-dictionary `qa_check.py --locale` passed with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. The 1,000 new idx are sequential; additional checks found no dollar/date-placeholder or newline-count differences. 768 translations differ from the source; 232 names, short poetic titles and established opaque labels remain verbatim.
-
-Long narrative was translated in full, including Xiaopan and Lan Ao's boat journey, the remembrance of Blade, Wei Xuan's marriage story, and Northern Vow's quartermaster. Combat guides, stat labels, literal duration conversions and tags follow Quick-Reference. No new terminology rule.
-
-Overall: 446,704 / 461,704 unique strings (96.75%), in-game coverage 98.62%.
-
-See [[idx-305000-305999]] and [[Phase-13]].
+See [[idx-269000-272999]] and [[Phase-12]].

@@ -33,7 +33,7 @@ for at the start of each session (see [[Current-Status]] §Batch size).
 | 10 (active)       | 190,000 – 219,999 | 30,000       | ~76.9%                      | 4,000/session           | ~7 sessions       | `locale/phase10.jsonl` |
 | 11 (active)       | 220,000 – 249,999 | 30,000       | ~81.0%                      | 4,000/session           | ~7 sessions       | `locale/phase11.jsonl` |
 | 12 (active)       | 250,000 – 279,999 | 30,000       | ~85.1%                      | 4,000/session           | ~7 sessions       | `locale/phase12.jsonl` |
-| 13 (active)       | 280,000 – 309,999 | 30,000       | ~89.2%                      | 4,000/session           | ~7 sessions       | `locale/phase13.jsonl` |
+| 13 (done)         | 280,000 – 309,999 | 30,000       | ~89.2%                      | —                       | done              | `locale/phase13.jsonl` |
 | 14 (done)         | 310,000 – 339,999 | 30,000       | ~93.3%                      | —                       | done                  | `locale/phase14.jsonl` |
 | 15 (done)         | 340,000 – 369,999 | 30,000       | ~96.3%                      | —                       | done                  | `locale/phase15.jsonl` |
 | 16 (done)         | 370,000 – 399,999 | 30,000       | ~98.7%                      | —                       | done                  | `locale/phase16.jsonl` |
