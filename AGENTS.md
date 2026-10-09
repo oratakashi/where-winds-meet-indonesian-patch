@@ -22,6 +22,10 @@ This applies even to ignored files: do not create `scratch/`, `tmp/`, or other t
 directories inside the project. Override tool output paths when their defaults would write
 temporary files into the repository. Only intended project deliverables belong here.
 
+## No system assessment or environment validation
+
+Do not run system assessments, environment diagnostic checks, Python/tooling sanity checks, or dependency verifications. All environments and tools for this project were already running perfectly before Antigravity or Gemini was installed. Assume the environment is completely ready and proceed straight to the requested tasks.
+
 ## Commands
 
 ```bash
