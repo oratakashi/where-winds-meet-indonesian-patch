@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-09 (session 102).** This is the single source of truth for "how
+**Last updated: 2026-10-09 (session 103).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **397,704** | **461,704** | **86.14%** |
-| ↳ original corpus (Phases 0–17) | 365,887 | 429,887 | 85.11% |
+| **Unique strings translated (all)** | **401,704** | **461,704** | **87.00%** |
+| ↳ original corpus (Phases 0–17) | 369,887 | 429,887 | 86.04% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **778,014** | **826,388** | **94.15%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **781,005** | **826,388** | **94.51%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -39,7 +39,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 9 | 160,000–189,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 10 | 190,000–219,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 11 | 220,000–249,999 | **active** | 238,000 | 18,000 / 30,000 | 60.00% |
-| 12 | 250,000–279,999 | **active** | 252,000 | 2,000 / 30,000 | 6.67% |
+| 12 | 250,000–279,999 | **active** | 256,000 | 6,000 / 30,000 | 20.00% |
 | 13 | 280,000–309,999 | **active** | 286,000 | 6,000 / 30,000 | 20.00% |
 | 14 | 310,000–339,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 15 | 340,000–369,999 | done | — | 30,000 / 30,000 | 100.00% |
@@ -56,11 +56,22 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phases 6, 7, 8, 9, 10, 14, 15, 16, and 17 are all fully complete.**
-Phase 11 is active at 18,000/30,000 (60.00%), Phase 12 is active at 2,000/30,000
-(6.67%) and Phase 13 is active at 2,000/30,000 (6.67%). Resume any active phase next per
-[[Resume-Procedure]] (Phase 11 resumes at idx 238,000, Phase 12 at 252,000, Phase 13 at 282,000).
+Phase 11 is active at 18,000/30,000 (60.00%), Phase 12 at 6,000/30,000 (20.00%), and Phase 13 at 6,000/30,000 (20.00%). Resume per
+[[Resume-Procedure]]: Phase 11 at idx 238,000, Phase 12 at 256,000, Phase 13 at 286,000.
 
-## Most recent session (2026-10-09, session 102) — Phase 11 continuation (idx 234,000–237,999, 4,000 rows)
+## Most recent session (2026-10-09, session 103) — Phase 12 continuation (idx 252,000–255,999, 4,000 rows)
+
+Phase 12 continued with 4,000 rows (idx 252,000–255,999), bringing the phase from 2,000/30,000 (6.67%) to **6,000/30,000 (20.00%)**. Next idx: **256,000**.
+
+The batch contains 2,971 manually translated rows and 1,029 rows retaining proper names, poetic titles, developer labels, stat labels and opaque tags under the standing conventions. Dialogue uses gue/lo; UI text uses neutral Indonesian. Content includes quest instructions, system notices, skill descriptions, mail and long character lore (Zhang Huaishen, Su Wan and Long Yuntian, Wen Wuque and Yingying, Niu Mang, Oghuz, Woody and Big Smart).
+
+The 4,000-row batch, complete 6,000-row Phase 12 and whole 401,704-entry locale dictionary passed QA with 0 PROMPT_LEAK, MARKUP or EMPTY findings and no idx gaps or duplicates. Additional checks confirmed opaque placeholders and literal backslash-n sequences were preserved, and found no Cyrillic characters. One skipped dialogue line was corrected before append; placeholder order was preserved in idx 254123. The locale file retains LF line endings.
+
+No new core terminology decisions. See [[Phase-12]] and [[idx-252000-255999]]. `python tools/progress.py --write` regenerated the progress tables.
+
+Overall: 401,704 / 461,704 unique strings (87.00%), in-game coverage 94.51%.
+
+## Prior session (2026-10-09, session 102) — Phase 11 continuation (idx 234,000–237,999, 4,000 rows)
 
 Phase 11 continued with 4,000 rows (idx 234,000–237,999), bringing the phase from 14,000/30,000 (46.67%) to **18,000/30,000 (60.00%)**. Next idx: **238,000**.
 

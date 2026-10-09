@@ -7,6 +7,22 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-10-09 — Session 104: Phase 13 continuation (idx 282,000–285,999, 4,000 rows)
+
+4,000 rows translated in eight 500-row passes, QA clean (0 mismatches), appended to `locale/phase13.jsonl` (now 6,000/30,000; next idx 286,000). Commit `ce7fcc9`. See [[idx-282000-285999]]. Progress block regenerated with `tools/progress.py --write`.
+
+## 2026-10-09 — Session 103: Phase 12 continuation (idx 252,000–255,999, 4,000 rows)
+
+Phase 12 continued with 4,000 rows (idx 252,000–255,999), bringing the phase from 2,000/30,000 (6.67%) to **6,000/30,000 (20.00%)**. Next idx: **256,000**.
+
+The batch contains 2,971 manually translated rows and 1,029 rows retaining proper names, poetic titles, developer labels, stat labels and opaque tags under the standing conventions. Dialogue uses gue/lo; UI text uses neutral Indonesian. Content includes quest instructions, system notices, skill descriptions, mail and long character lore (Zhang Huaishen, Su Wan and Long Yuntian, Wen Wuque and Yingying, Niu Mang, Oghuz, Woody and Big Smart).
+
+The 4,000-row batch, complete 6,000-row Phase 12 and whole 401,704-entry locale dictionary passed QA with 0 PROMPT_LEAK, MARKUP or EMPTY findings and no idx gaps or duplicates. Additional checks confirmed opaque placeholders and literal backslash-n sequences were preserved, and found no Cyrillic characters. One skipped dialogue line was corrected before append; placeholder order was preserved in idx 254123. The locale file retains LF line endings.
+
+No new core terminology decisions. See [[Phase-12]] and [[idx-252000-255999]]. `python tools/progress.py --write` regenerated the progress tables.
+
+Overall: 401,704 / 461,704 unique strings (87.00%), in-game coverage 94.51%.
+
 ## 2026-10-09 — Session 102: Phase 11 continuation (idx 234,000–237,999, 4,000 rows)
 
 Phase 11 continued with 4,000 rows (idx 234,000–237,999), bringing the phase from 14,000/30,000 (46.67%) to **18,000/30,000 (60.00%)**. Next idx: **238,000**.
