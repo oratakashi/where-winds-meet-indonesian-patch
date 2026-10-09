@@ -7,6 +7,12 @@ made during these sessions are **not** repeated here — see the matching
 `translation_logs/Phase-N` file for those. For the current resting state,
 see [[Current-Status]].
 
+## 2026-10-09 — Session 106: Phase 13 continuation (idx 286,000–289,999, 4,000 rows)
+
+4,000 rows translated in eight 500-row passes (3,414 by hand; 586 names/dev labels/whole-sentence tag rows carried over verbatim), QA clean (0 mismatches), appended to `locale/phase13.jsonl` (now 10,000/30,000; next idx 290,000). A +1 idx label slip in idx 288595–288664 was found by an anchor-based alignment check and fixed before append. See [[idx-286000-289999]].
+
+Overall: 406,704 / 461,704 unique strings (88.09%), in-game coverage 94.96%.
+
 ## 2026-10-09 — Session 105: Phase 12 partial iteration (idx 256,000–256,999, 1,000 rows)
 
 The requested 4,000-row iteration (idx 256,000–259,999) is **not complete**. Only the first 1,000 rows (idx 256,000–256,999) have been finished, validated, and appended. The remaining 3,000 rows (idx 257,000–259,999) are still outstanding; the requested cadence remains 4,000 per iteration.

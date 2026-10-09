@@ -16,3 +16,5 @@ decisions were recorded for this batch; check [[Quick-Reference]] and
 - [[idx-280000-281999]] — idx 280,000–281,999 (`8c02b00`, 2026-09-25)
 
 - [[idx-282000-285999]] — idx 282,000–285,999 (session 104, 2026-10-09, `ce7fcc9`, 4,000 rows) — brought the phase to 6,000/30,000. No new terminology decisions.
+
+- [[idx-286000-289999]] — idx 286,000–289,999 (session 106, 2026-10-09, 4,000 rows) — brought the phase to 10,000/30,000. No new terminology decisions.
