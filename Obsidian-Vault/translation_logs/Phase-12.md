@@ -6,12 +6,14 @@ the session that did the work, so it only records what the commit history and
 
 Phase 12 began with a starter batch, committed 2026-09-25
 (`147c8b7` — "Start Phase 12 translation (idx 250000-251999, 2000 rows)").
-`locale/phase12.jsonl` now has 8,000 rows; the phase is **not complete** — see
+`locale/phase12.jsonl` now has 11,000 rows; the phase is **not complete** — see
 [[Current-Status]] for the full idx range still outstanding. No terminology
 decisions were recorded for this batch; check [[Quick-Reference]] and
 [[Glossary]] for standing conventions before continuing it.
 
 ## Batches
+
+- [[idx-258000-260999]] — idx 258,000–260,999 (3,000 rows, 2026-10-09; completes 4,000-row iteration idx 257,000–260,999; commit pending)
 
 - [[idx-257000-257999]] — idx 257,000–257,999 (1,000 rows, 2026-10-09; commit pending; incomplete 4,000-row target)
 
@@ -62,3 +64,17 @@ The batch and full 424,704-entry locale dictionary passed `qa_check.py --locale`
 Overall: 424,704 / 461,704 unique strings (91.99%), in-game coverage 96.61%.
 
 See [[idx-257000-257999]] and [[Phase-12]].
+
+## 2026-10-09 — Session 114: Phase 12 — 4,000-row target completed (idx 257,000–260,999)
+
+This continuation translated and appended the remaining **3,000 rows, idx 258,000–260,999**. Together with the previously saved 1,000 rows (idx 257,000–257,999), the user's requested **4,000-row iteration is complete**. Phase 12 now contains **11,000/30,000 rows (36.67%)**. Next idx: **261,000**. No commit was created by this session.
+
+The new 3,000-row batch contains 2,297 changed translations and 703 unchanged names, poetic titles, stat labels and opaque tag cases. The full iteration has 3,065 changed rows and 935 retained rows. All long prose was translated in full. Content includes Xiaobai, Maomao, Xixi, Han Tong and Shouliang, Li Zhenzhen, the Palace of Annals origin, Brant's Mohist research, letters, music-class notices, game-system instructions and combat effects. Dialogue follows gue/lo; UI stays neutral. No new terminology rule was introduced.
+
+The user explicitly authorized multiple agents during this continuation. The primary agent translated idx 258,000–259,499; three agents independently translated disjoint 500-row ranges 259,500–259,999, 260,000–260,499 and 260,500–260,999 into scratch files outside the repository. The primary agent merged and checked the full batch before appending.
+
+Batch and whole-dictionary `qa_check.py --locale` passed with 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Additional checks confirmed all 3,000 sequential idx, opaque dollar/date placeholders, paragraph counts, literal backslash-n counts and no Cyrillic characters. Long-text length checks found no suspicious shortening; sampled lore and LINK markup were reviewed. All locale rows use LF endings. `python tools/progress.py --write` regenerated the status tables.
+
+Overall: 430,704 / 461,704 unique strings (93.29%), in-game coverage 97.15%.
+
+See [[idx-258000-260999]], [[idx-257000-257999]] and [[Phase-12]].
