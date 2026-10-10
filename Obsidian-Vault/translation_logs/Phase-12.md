@@ -6,12 +6,11 @@ the session that did the work, so it only records what the commit history and
 
 Phase 12 began with a starter batch, committed 2026-09-25
 (`147c8b7` — "Start Phase 12 translation (idx 250000-251999, 2000 rows)").
-`locale/phase12.jsonl` now has 27,000 rows; the phase is **not complete** — see
-[[Current-Status]] for the full idx range still outstanding. No terminology
-decisions were recorded for this batch; check [[Quick-Reference]] and
-[[Glossary]] for standing conventions before continuing it.
+`locale/phase12.jsonl` now has **30,000 rows; the phase is complete** (2026-10-10, session 125). See [[Current-Status]] for overall progress. The starter batch recorded no terminology decisions; later sessions follow [[Quick-Reference]] and [[Glossary]].
 
 ## Batches
+
+- [[idx-277000-279999]] — idx 277,000–279,999 (3,000 rows, 2026-10-10; Phase 12 complete at 30,000/30,000, 100.00%; no commit created)
 
 - [[idx-273500-276999]] — idx 273,500–276,999 (3,500 rows, 2026-10-10; completes the 4,000-row iteration idx 273,000–276,999; Phase 12 at 27,000/30,000, 90.00%; no commit created)
 
@@ -158,3 +157,17 @@ The merged **4,000-row iteration**, the **3,500-row remainder**, and the full **
 Overall: 458,704 / 461,704 unique strings (99.35%), in-game coverage 99.73%.
 
 See [[idx-273500-276999]], [[idx-273000-273499]] and [[Phase-12]].
+
+## 2026-10-10 — Session 125: Phase 12 completed (idx 277,000–279,999)
+
+Completed all remaining **3,000 rows, idx 277,000–279,999**. Phase 12 now contains **30,000/30,000 rows (100.00%)**, covering idx 250,000–279,999 without gaps or duplicates. All original phases and Update-1 are complete. No commit was created.
+
+The user explicitly authorized subagents. Three translators each handled a disjoint 1,000-row range in temporary files outside the repository; the primary agent reviewed and merged their output before appending. This batch contains 2,327 changed translations and 673 retained names, short poetic titles, stat labels, internal labels and opaque tags under standing conventions. Dialogue follows gue/lo; UI remains neutral. No new glossary rule was introduced.
+
+Long prose was translated in full, including Hui at Skybrim Market, the village-school letters, Xi Huai's letter accompanying Yuelu, Qi Yitang and Gu Pan's wedding, Huiyao's backstory and Lie Yan's battle. Plain angle tags and opaque placeholders remain intact.
+
+Merged-batch and whole-dictionary `qa_check.py --locale` passed with 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Additional review checked exact sequential idx, dollar/date placeholders, actual newlines, literal backslash-n and backslash-v markers, introduced replacement/Cyrillic characters, retained rows and long-text completeness. `python tools/progress.py --write` regenerated the progress tables.
+
+Overall: 461,704 / 461,704 unique strings (100.00%), in-game coverage 100.00%.
+
+See [[idx-277000-279999]] and [[Phase-12]].

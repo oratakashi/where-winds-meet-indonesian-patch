@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-10 (session 124).** This is the single source of truth for "how
+**Last updated: 2026-10-10 (session 125).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **458,704** | **461,704** | **99.35%** |
-| ↳ original corpus (Phases 0–17) | 426,887 | 429,887 | 99.30% |
+| **Unique strings translated (all)** | **461,704** | **461,704** | **100.00%** |
+| ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **824,155** | **826,388** | **99.73%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **826,388** | **826,388** | **100.00%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -39,7 +39,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 9 | 160,000–189,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 10 | 190,000–219,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 11 | 220,000–249,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 12 | 250,000–279,999 | **active** | 277,000 | 27,000 / 30,000 | 90.00% |
+| 12 | 250,000–279,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 13 | 280,000–309,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 14 | 310,000–339,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 15 | 340,000–369,999 | done | — | 30,000 / 30,000 | 100.00% |
@@ -55,10 +55,21 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 100,000/229,887-string "Phase 7"/"Phase 8" split with eleven ~30,000-string
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
-**Update-1 and Phases 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, and 17 are all fully complete.**
-Phase 13 is complete at **30,000/30,000 (100.00%)**. Phase 12 is the only remaining phase,
-active at 27,000/30,000 (90.00%). Resume per [[Resume-Procedure]] at idx **277,000**;
-its remaining range is 277,000–279,999 (3,000 rows).
+**All Phases 0–17 and Update-1 are fully complete.** Phase 12 is complete at **30,000/30,000 (100.00%)**. No untranslated idx remain in the current unique-string corpus. Future game-update strings should be appended per [[Resume-Procedure]] and [[Phase-Roadmap]].
+
+## 2026-10-10 — Session 125: Phase 12 completed (idx 277,000–279,999)
+
+Completed all remaining **3,000 rows, idx 277,000–279,999**. Phase 12 now contains **30,000/30,000 rows (100.00%)**, covering idx 250,000–279,999 without gaps or duplicates. All original phases and Update-1 are complete. No commit was created.
+
+The user explicitly authorized subagents. Three translators each handled a disjoint 1,000-row range in temporary files outside the repository; the primary agent reviewed and merged their output before appending. This batch contains 2,327 changed translations and 673 retained names, short poetic titles, stat labels, internal labels and opaque tags under standing conventions. Dialogue follows gue/lo; UI remains neutral. No new glossary rule was introduced.
+
+Long prose was translated in full, including Hui at Skybrim Market, the village-school letters, Xi Huai's letter accompanying Yuelu, Qi Yitang and Gu Pan's wedding, Huiyao's backstory and Lie Yan's battle. Plain angle tags and opaque placeholders remain intact.
+
+Merged-batch and whole-dictionary `qa_check.py --locale` passed with 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Additional review checked exact sequential idx, dollar/date placeholders, actual newlines, literal backslash-n and backslash-v markers, introduced replacement/Cyrillic characters, retained rows and long-text completeness. `python tools/progress.py --write` regenerated the progress tables.
+
+Overall: 461,704 / 461,704 unique strings (100.00%), in-game coverage 100.00%.
+
+See [[idx-277000-279999]] and [[Phase-12]].
 
 ## 2026-10-10 — Session 124: Phase 12 — 4,000-row iteration completed (idx 273,000–276,999)
 
