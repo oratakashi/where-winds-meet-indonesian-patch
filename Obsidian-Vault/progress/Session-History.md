@@ -1632,3 +1632,31 @@ Long lore and full Arena rules were translated without abridgment; both player-n
 Overall: 454,704 / 461,704 unique strings (98.48%), in-game coverage 99.36%.
 
 See [[idx-306000-309999]] and [[Phase-13]].
+
+## 2026-10-09 — Session 123: Phase 12 partial checkpoint (idx 273,000–273,499)
+
+The requested 4,000-row iteration (idx 273,000–276,999) is not complete. Saved 500 validated rows, idx 273,000–273,499; 3,500 rows remain in this iteration (idx 273,500–276,999). Phase 12 now contains 23,500/30,000 rows (78.33%). Next idx: 273,500. No commit was created.
+
+Primary agent only. 378 rows translated; 122 retained names, poetic titles, stat labels, internal labels and opaque tags under standing conventions. Dialogue uses gue/lo; UI remains neutral. Long prose includes Ji Zha's promised sword, displaced people's Haven, Xiuyan Jade and the Prosperity Soup recipe. No new terminology rule. Scratch files remained outside the repository.
+
+The scratch batch and full 455,204-entry locale dictionary passed QA with 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. The second chunk was not saved because its write command exceeded the Windows process command-length limit; none of that chunk was appended. The 4,000-row cadence remains the user's target. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 455,204 / 461,704 unique strings (98.59%), in-game coverage **99.41%**.
+
+See [[idx-273000-273499]] and [[Phase-12]].
+
+## 2026-10-10 — Session 124: Phase 12 — 4,000-row iteration completed (idx 273,000–276,999)
+
+Completed the outstanding **3,500 rows, idx 273,500–276,999**. Together with the prior 500-row checkpoint, the requested **4,000-row iteration, idx 273,000–276,999, is complete**. Phase 12 now contains **27,000/30,000 rows (90.00%)**. Next idx: **277,000**; the phase has 3,000 rows remaining. No commit was created.
+
+The 3,500 new rows contain 2,739 changed translations and 761 retained names, short poetic titles, stat labels, internal labels and opaque tags. Review also corrected one missed dialogue in the prior checkpoint (idx 273453, “Feeling any better?”). Across the completed 4,000-row iteration, 3,116 rows differ from source and 884 remain verbatim under existing conventions. Dialogue follows gue/lo; UI uses neutral Indonesian. No new glossary rule was introduced.
+
+The user explicitly authorized subagents. The primary agent translated 273,500–273,999; three subagents handled separate 1,000-row ranges 274,000–274,999, 275,000–275,999 and 276,000–276,999. Their saved files were recovered after the usage-limit interruption, reviewed and merged by the primary agent. Scratch files stayed outside the repository. Twelve rows with encoding-damaged punctuation were repaired, including the proper-name apostrophe in Cheng’en Town (274196).
+
+Long prose was translated in full, including Tianyou's chess training, Shi Zhen and Murong Yuan, Brother Qiang's letter, the golden-bird painter, Zhang Huaishen's childhood, Old Snow, Jiang Wei's reunion, Swallow's flight experiments, the Mohist identification handbook, Arena rules and the complete Lucky Turtle reward probabilities. Plain angle tags remain unchanged, including idx 275391.
+
+The merged **4,000-row iteration**, the **3,500-row remainder**, and the full **458,704-entry locale dictionary** passed `qa_check.py --locale`: 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Additional checks confirmed exact sequential idx, dollar/date placeholders, actual newlines, literal backslash-n and backslash-v markers, no introduced Cyrillic or replacement characters, and no suspiciously shortened or untranslated long prose. Numeric-review differences were harmless formatting (1,000 to 1.000) and spelling out a repeated count of three. `python tools/progress.py --write` refreshed the generated tables.
+
+Overall: 458,704 / 461,704 unique strings (99.35%), in-game coverage 99.73%.
+
+See [[idx-273500-276999]], [[idx-273000-273499]] and [[Phase-12]].

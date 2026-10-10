@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-09 (session 122).** This is the single source of truth for "how
+**Last updated: 2026-10-10 (session 124).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **454,704** | **461,704** | **98.48%** |
-| ↳ original corpus (Phases 0–17) | 422,887 | 429,887 | 98.37% |
+| **Unique strings translated (all)** | **458,704** | **461,704** | **99.35%** |
+| ↳ original corpus (Phases 0–17) | 426,887 | 429,887 | 99.30% |
 | ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **821,120** | **826,388** | **99.36%** |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **824,155** | **826,388** | **99.73%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -39,7 +39,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 9 | 160,000–189,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 10 | 190,000–219,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 11 | 220,000–249,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 12 | 250,000–279,999 | **active** | 273,000 | 23,000 / 30,000 | 76.67% |
+| 12 | 250,000–279,999 | **active** | 277,000 | 27,000 / 30,000 | 90.00% |
 | 13 | 280,000–309,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 14 | 310,000–339,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 15 | 340,000–369,999 | done | — | 30,000 / 30,000 | 100.00% |
@@ -57,8 +57,36 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **Update-1 and Phases 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, and 17 are all fully complete.**
 Phase 13 is complete at **30,000/30,000 (100.00%)**. Phase 12 is the only remaining phase,
-active at 23,000/30,000 (76.67%). Resume per [[Resume-Procedure]] at idx **273,000**;
-its remaining range is 273,000–279,999 (7,000 rows).
+active at 27,000/30,000 (90.00%). Resume per [[Resume-Procedure]] at idx **277,000**;
+its remaining range is 277,000–279,999 (3,000 rows).
+
+## 2026-10-10 — Session 124: Phase 12 — 4,000-row iteration completed (idx 273,000–276,999)
+
+Completed the outstanding **3,500 rows, idx 273,500–276,999**. Together with the prior 500-row checkpoint, the requested **4,000-row iteration, idx 273,000–276,999, is complete**. Phase 12 now contains **27,000/30,000 rows (90.00%)**. Next idx: **277,000**; the phase has 3,000 rows remaining. No commit was created.
+
+The 3,500 new rows contain 2,739 changed translations and 761 retained names, short poetic titles, stat labels, internal labels and opaque tags. Review also corrected one missed dialogue in the prior checkpoint (idx 273453, “Feeling any better?”). Across the completed 4,000-row iteration, 3,116 rows differ from source and 884 remain verbatim under existing conventions. Dialogue follows gue/lo; UI uses neutral Indonesian. No new glossary rule was introduced.
+
+The user explicitly authorized subagents. The primary agent translated 273,500–273,999; three subagents handled separate 1,000-row ranges 274,000–274,999, 275,000–275,999 and 276,000–276,999. Their saved files were recovered after the usage-limit interruption, reviewed and merged by the primary agent. Scratch files stayed outside the repository. Twelve rows with encoding-damaged punctuation were repaired, including the proper-name apostrophe in Cheng’en Town (274196).
+
+Long prose was translated in full, including Tianyou's chess training, Shi Zhen and Murong Yuan, Brother Qiang's letter, the golden-bird painter, Zhang Huaishen's childhood, Old Snow, Jiang Wei's reunion, Swallow's flight experiments, the Mohist identification handbook, Arena rules and the complete Lucky Turtle reward probabilities. Plain angle tags remain unchanged, including idx 275391.
+
+The merged **4,000-row iteration**, the **3,500-row remainder**, and the full **458,704-entry locale dictionary** passed `qa_check.py --locale`: 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Additional checks confirmed exact sequential idx, dollar/date placeholders, actual newlines, literal backslash-n and backslash-v markers, no introduced Cyrillic or replacement characters, and no suspiciously shortened or untranslated long prose. Numeric-review differences were harmless formatting (1,000 to 1.000) and spelling out a repeated count of three. `python tools/progress.py --write` refreshed the generated tables.
+
+Overall: 458,704 / 461,704 unique strings (99.35%), in-game coverage 99.73%.
+
+See [[idx-273500-276999]], [[idx-273000-273499]] and [[Phase-12]].
+
+## 2026-10-09 — Session 123: Phase 12 partial checkpoint (idx 273,000–273,499)
+
+The requested 4,000-row iteration (idx 273,000–276,999) is not complete. Saved 500 validated rows, idx 273,000–273,499; 3,500 rows remain in this iteration (idx 273,500–276,999). Phase 12 now contains 23,500/30,000 rows (78.33%). Next idx: 273,500. No commit was created.
+
+Primary agent only. 378 rows translated; 122 retained names, poetic titles, stat labels, internal labels and opaque tags under standing conventions. Dialogue uses gue/lo; UI remains neutral. Long prose includes Ji Zha's promised sword, displaced people's Haven, Xiuyan Jade and the Prosperity Soup recipe. No new terminology rule. Scratch files remained outside the repository.
+
+The scratch batch and full 455,204-entry locale dictionary passed QA with 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. The second chunk was not saved because its write command exceeded the Windows process command-length limit; none of that chunk was appended. The 4,000-row cadence remains the user's target. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 455,204 / 461,704 unique strings (98.59%), in-game coverage **99.41%**.
+
+See [[idx-273000-273499]] and [[Phase-12]].
 
 ## 2026-10-09 — Session 122: Phase 13 complete (idx 306,000–309,999)
 
