@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-15 (session 126) — target: game v2.3.** This is the single source of truth for "how
+**Last updated: 2026-10-15 (session 131) — target: game v2.3.** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **461,704** | **534,257** | **86.42%** |
+| **Unique strings translated (all)** | **473,704** | **534,257** | **88.67%** |
 | ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
-| ↳ game-update strings (Update-N) | 31,817 | 104,370 | 30.48% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,017,816** | **1,122,784** | **90.65%** |
+| ↳ game-update strings (Update-N) | 43,817 | 104,370 | 41.98% |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,052,838** | **1,122,784** | **93.77%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -46,9 +46,9 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 16 | 370,000–399,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 17 | 400,000–429,886 | done | — | 29,887 / 29,887 | 100.00% |
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
-| Update-2A | 461,704–491,703 | not started | 461,704 | 0 / 30,000 | 0.00% |
-| Update-2B | 491,704–521,703 | not started | 491,704 | 0 / 30,000 | 0.00% |
-| Update-2C | 521,704–534,256 | not started | 521,704 | 0 / 12,553 | 0.00% |
+| Update-2A | 461,704–491,703 | **active** | 465,704 | 4,000 / 30,000 | 13.33% |
+| Update-2B | 491,704–521,703 | **active** | 495,704 | 4,000 / 30,000 | 13.33% |
+| Update-2C | 521,704–534,256 | **active** | 525,704 | 4,000 / 12,553 | 31.86% |
 
 <!-- progress:end -->
 
@@ -61,10 +61,79 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **v2.2 was 100% done; the target is now v2.3.** All Phases 0–17 and Update-1
-remain complete and valid (no idx was renumbered). The active work is
-**Update-2A, next idx 461,704** → `locale/update2a.jsonl`, then Update-2B
-(`update2b.jsonl`) and Update-2C (`update2c.jsonl`). The in-game coverage
+remain complete and valid (no idx was renumbered). Three blocks are active:
+**Update-2A, next idx 465,704** → `locale/update2a.jsonl`,
+**Update-2B, next idx 495,704** → `locale/update2b.jsonl`, and
+**Update-2C, next idx 525,704** → `locale/update2c.jsonl`.
+The first **4,000-row iteration is complete in all three blocks**:
+Update-2A (461,704–465,703), Update-2B (491,704–495,703), and
+Update-2C (521,704–525,703). This chat follows Update-2B; its next
+4,000-row iteration is **495,704–499,703**. The in-game coverage
 row above already reflects the v2.3 `strings.jsonl` dump (1,122,784 entries).
+
+## 2026-10-15 — Session 131: Update-2B — 4,000-row iteration completed (idx 491,704–495,703)
+
+Completed the remaining **3,500 rows, idx 492,204–495,703**. Together with session 128's 500-row checkpoint, the requested **4,000-row iteration (491,704–495,703) is complete**. `locale/update2b.jsonl` now contains **4,000/30,000 rows (13.33%)**, strictly consecutive without gaps or duplicates. Next idx: **495,704**. No commit was created.
+
+The user explicitly authorized subagents. Three translators handled disjoint 1,000-row ranges 492,204–493,203, 493,204–494,203 and 494,204–495,203; the primary agent translated 495,204–495,703, reviewed the results and appended one merged batch. All temporary files stayed outside the repository. The new 3,500 rows contain **3,269 changed translations and 231 retained names, short poetic titles, Skill/stat labels and opaque tags**. Across the full 4,000-row iteration, 3,722 rows differ from source and 278 remain verbatim under standing conventions. Dialogue uses gue/lo; UI is neutral. No new glossary rule was introduced. Terminal Pivot Tower stays English, following existing precedent at idx 36264.
+
+Long prose was translated in full, including the Duke Yin years 3–5 classic (493967), the ritual and poetry excerpts, Qian Duoduo's debt to Wang Qing (495301), Qi Yitang and Gu Pan (495441), Mourning Rites (495488), and Teng Wen Gong, Chapter II (495637). Independent subagent review of ten long entries found no omissions or actionable semantic issues. Complete angle tags at 492372 and 493715 remain verbatim under the formatting convention.
+
+Each translator's output and the merged 3,500-row batch passed QA before append; the full 473,704-entry locale dictionary passed with 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Additional checks confirmed the full iteration's 4,000 sequential idx, dollar/date/link placeholders (including formatted dollar variables), actual and literal newline markers, no introduced replacement/Cyrillic characters, and no suspiciously shortened long texts. Numeric differences were reviewed and only reflect 5:00→05:00 and 4:59→04:59 formatting. `python tools/progress.py --write` refreshed the generated tables, including Update-2A/2C's independently completed iterations.
+
+Overall: 473,704 / 534,257 unique strings (88.67%), in-game coverage 93.77%.
+
+See [[Update-2B]] and [[Update-2]].
+
+## 2026-10-15 — Session 130: Update-2C — 4,000-row iteration completed (idx 521,704–525,703)
+
+Translated the first **4,000 rows of Update-2C, idx 521,704–525,703**, in ten 400-row chunks by the primary agent only (no subagents). Created `locale/update2c.jsonl` (4,000/12,553, 31.86%). Next idx: **525,704**; 8,553 rows remain in the block. No commit was created.
+
+3,535 rows differ from source; 465 names, short poetic titles, Skill/set/stat labels, `$T(...)` variables and opaque tags stay verbatim under standing conventions. Dialogue follows gue/lo; UI/system text neutral. No new terminology rule. Long classical prose was translated in full (Gongyang Duke Cheng/Zhuang/Huan commentaries, Liji Qu Li/Ritual Vessels/Yili, Mencius Lilou, Analects Zi Zhang, Tang tribute lists, Yuzhen's story). Truncated `<` openings (524916-style fragments, 525462) were kept literal while the text was translated; stray CJK characters in the source (聘, 昌本, 丘甲, 郎) were rendered as pinyin/Indonesian.
+
+Scratch chunks and the 4,000-row batch passed `qa_check.py --locale` with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings; the full 470,204-entry dictionary passed as well. Extra checks: exact sequential idx per chunk, actual-newline counts per row, no replacement/Cyrillic/CJK characters introduced. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 470,204 / 534,257 unique strings (88.01%), in-game coverage 93.46%.
+
+See [[Update-2C]] and [[Update-2]].
+
+## 2026-10-15 — Session 129: Update-2A — 4,000-row iteration completed (idx 461,704–465,703)
+
+Completed the remaining **3,000 rows, idx 462,704–465,703**. Together with session 127's 1,000-row checkpoint, the requested **4,000-row iteration (461,704–465,703) is complete**. `locale/update2a.jsonl` now has **4,000/30,000 rows (13.33%)**, strictly consecutive without gaps or duplicates. Next idx: **465,704**. No commit was created.
+
+The user explicitly authorized subagents. Three translators handled disjoint 1,000-row ranges 462,704–463,703, 463,704–464,703, and 464,704–465,703 in stable temporary files outside the repository. The primary agent reviewed retained entries and long prose, corrected four encoding-damaged characters and common animal/plant labels, validated the merged output, and appended it while preserving the original 1,000-row checkpoint byte-for-byte. This session added 2,145 changed translations and 855 retained names, poetic titles, Skill/stat labels and opaque cases. Across the complete 4,000-row iteration, 2,854 rows differ from source and 1,146 remain verbatim under existing conventions. Dialogue uses gue/lo; UI stays neutral. No new glossary rule was introduced.
+
+Long text was translated in full, including the octopus/mudskipper lore, birthday letter with longevity noodles, Inkbound Order horror-stage introduction, Everbloom Bazaar description, Jian Xingzhi's Mount Tai investigation, the Jiaqu Houguan sick-leave artifact and the Analects excerpt on virtue and friendship (465621). The book title Analects remains consistent; ordinary animal/plant labels include Monyet Emas, Kucing Lynx, Ivi, Klivia and Hiasint. Plain angle tags, stat tags, dollar/date variables and both actual and literal newline markers are preserved.
+
+The merged 3,000-row remainder, full 4,000-row iteration and full 466,204-entry locale dictionary passed QA: 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Extra checks confirmed exact sequential idx, dollar/date placeholders, actual/literal newlines, no introduced replacement/Cyrillic characters and no suspiciously shortened long prose. Numeric differences were reviewed and only reflect Indonesian decimal/thousands separators or spelling out a count of four. `python tools/progress.py --write` regenerated the status tables, including Update-2B's independently saved 500-row checkpoint.
+
+Overall: 466,204 / 534,257 unique strings (87.26%), in-game coverage 93.10%.
+
+See [[Update-2]] and [[Current-Status]].
+
+## 2026-10-15 — Session 128: Update-2B partial checkpoint (idx 491,704–492,203)
+
+Saved **500 validated rows**, idx **491,704–492,203**, to `locale/update2b.jsonl`. The requested **4,000-row iteration (491,704–495,703) remains incomplete**: **3,500 rows remain, idx 492,204–495,703**. Continue this remainder before starting another iteration. Update-2B is 500/30,000 (1.67%). No commit was created. Primary agent only.
+
+453 rows differ from source; 47 retain names, short poetic titles, stat/gear labels or opaque tags under existing conventions. Dialogue uses gue/lo; UI remains neutral. This checkpoint includes the full supplied Gongsun Chou, Part I excerpt (idx 491708), Silver Needle's summer-illness treatise (491796), the Mount Tai dialogue, the privy-wall account (491896), Boat of Paper history (492121), and Cheng Huaijin's biography (492133). The supplied excerpt's final ellipsis remains; no missing continuation was invented. No new glossary rule was introduced.
+
+The temporary batch passed QA before saving; full-dictionary QA also passed with 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. Additional checks confirmed 500 consecutive idx, dollar/date placeholders, actual newline counts and no replacement characters. Scratch files stayed outside the repository. `python tools/progress.py --write` refreshed the generated tables, including the independently saved Update-2A checkpoint.
+
+Overall: 463,204 / 534,257 unique strings (86.70%), in-game coverage 92.02%.
+
+See [[Update-2]] and [[Update-2B]].
+
+## 2026-10-15 — Session 127: Update-2A partial checkpoint (idx 461,704–462,703)
+
+Saved **1,000 validated rows**, idx **461,704–462,703**, to `locale/update2a.jsonl`. The requested **4,000-row iteration (461,704–465,703) is not complete**: **3,000 rows remain, idx 462,704–465,703**. Resume this remainder before starting a new 4,000-row iteration. Update-2A is 1,000/30,000 (3.33%). No commit was created. Primary agent only.
+
+709 rows differ from source; 291 retain names, short poetic titles, skill/stat labels and technical labels under existing conventions. This checkpoint includes Qingzhou/Jiangnan introductions, the Chen family journey, Homestead recruitment, Guild Battle assistance, Six Arts trials, seafood lore, and the new fan/drum/blade skill effects. Dialogue uses gue/lo; UI remains neutral. No new glossary rule was introduced. Full prose was translated without shortening; opaque angle tags, dollar variables and newline markers were preserved. Temporary files stayed outside the repository. The first temporary batch was lost when the execution sandbox's TEMP directory changed between calls; both translation chunks were recovered from this chat's own tool-call records and validated before saving.
+
+Scratch-batch and full-dictionary QA passed: 0 PROMPT_LEAK, MARKUP, EMPTY and IDX findings. The saved file contains exactly 1,000 consecutive idx. Actual newline and literal backslash-n counts were checked against source. `python tools/progress.py --write` refreshed the generated tables.
+
+Overall: 462,704 / 534,257 unique strings (86.61%), in-game coverage 91.98%.
+
+See [[Update-2]] and [[Current-Status]].
 
 ## 2026-10-15 — Session 126: game update v2.3 → Update-2 setup
 
