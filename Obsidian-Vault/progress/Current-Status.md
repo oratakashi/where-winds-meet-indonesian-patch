@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-15 (session 135) — target: game v2.3.** This is the single source of truth for "how
+**Last updated: 2026-10-15 (session 136) — target: game v2.3.** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **486,257** | **534,257** | **91.02%** |
+| **Unique strings translated (all)** | **490,257** | **534,257** | **91.76%** |
 | ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
-| ↳ game-update strings (Update-N) | 56,370 | 104,370 | 54.01% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,068,229** | **1,122,784** | **95.14%** |
+| ↳ game-update strings (Update-N) | 60,370 | 104,370 | 57.84% |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,076,229** | **1,122,784** | **95.85%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -46,7 +46,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 16 | 370,000–399,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 17 | 400,000–429,886 | done | — | 29,887 / 29,887 | 100.00% |
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
-| Update-2A | 461,704–491,703 | **active** | 469,704 | 8,000 / 30,000 | 26.67% |
+| Update-2A | 461,704–491,703 | **active** | 473,704 | 12,000 / 30,000 | 40.00% |
 | Update-2B | 491,704–521,703 | **active** | 495,704 | 4,000 / 30,000 | 13.33% |
 | Update-2C | 521,704–534,256 | done | — | 12,553 / 12,553 | 100.00% |
 
@@ -63,9 +63,23 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 **v2.2 was 100% done; the target is now v2.3.** All Phases 0–17 and Update-1
 remain complete and valid (no idx was renumbered). **Update-2C is now complete** (all 12,553 rows,
 `locale/update2c.jsonl`). Two blocks remain active:
-**Update-2A, next idx 469,704** → `locale/update2a.jsonl` (two 4,000-row iterations done: 461,704–465,703 and 465,704–469,703) and
+**Update-2A, next idx 473,704** → `locale/update2a.jsonl` (three 4,000-row iterations done, covering 461,704–473,703) and
 **Update-2B, next idx 495,704** → `locale/update2b.jsonl` (one iteration done: 491,704–495,703).
 The in-game coverage row above already reflects the v2.3 `strings.jsonl` dump (1,122,784 entries).
+
+## 2026-10-15 — Session 136: Update-2A third 4,000-row iteration completed (idx 469,704–473,703)
+
+Completed **4,000 sequential rows, idx 469,704–473,703**, appended to `locale/update2a.jsonl` after scratch QA. Update-2A is **12,000/30,000 (40.00%)**, next idx **473,704**; 18,000 rows remain. The original 8,000 rows were preserved byte-for-byte. No commit created.
+
+Three user-authorized subagents translated disjoint 1,300/1,300/1,400-row ranges; the primary reviewed retained entries, corrected generic UI labels and free text outside TEXT tags, and merged the result. **3,281 changed / 719 retained** under existing name, poetic-title, material, Skill/stat and opaque-tag conventions. Dialogue gue/lo; UI neutral. No new glossary rule. All scratch files stayed outside the repository.
+
+All 18 entries longer than 1,100 source characters were translated fully. Independent review covered the long classics and poetry: Great Oath (469716), Thousand Character Classic III (469901), Canon of Yao (470014), Duke Xi (470617), Analects Yong (470745) and Learning (471545), Gongyang history (470950), Rites of Zhou (471617), Astronomy poems (472039), Great Appendix (472277), Mohist primer (472292), ritual history (472372), seasonal poems (472690), and Lord Xi (473628). Review restored the source unit miles, Confucius and named places/stars in the Canon of Yao.
+
+The merged batch and full locale dictionary passed `qa_check.py --locale`: 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. Extra checks confirmed exact sequential idx, dollar/date/formatted-percent placeholders, actual and literal newline markers, no introduced replacement/Cyrillic characters, and no shortened long prose. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 490,257 / 534,257 unique strings (91.76%), in-game coverage 95.85%.
+
+See [[Update-2A]] and [[Update-2]].
 
 ## 2026-10-15 — Session 135: Update-2C completed (idx 533,704–534,256)
 
