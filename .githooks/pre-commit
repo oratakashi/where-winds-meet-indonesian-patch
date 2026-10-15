@@ -3,7 +3,7 @@
 #
 # Kalau commit menyentuh data terjemahan, pastikan file locale valid dan blok
 # progress di Current-Status.md sudah diperbarui (tools/progress.py --write).
-staged=$(git diff --cached --name-only -- locale translation_work strings.jsonl \
+staged=$(git diff --cached --name-only -- locale translation_work translate_words_map_en \
          Obsidian-Vault/progress/Current-Status.md tools)
 [ -z "$staged" ] && exit 0
 

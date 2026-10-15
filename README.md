@@ -19,7 +19,7 @@ translate_words_map_en  ──dump──>  strings.jsonl  ──edit / translate
 translate_words_map_en  <──patch───────────────────────────────────────────────┘
 ```
 
-NetEase frequently ships incremental updates via companion files (`_diff` for delta changes, and `__small` / `__small_diff` for isolated sub-tables). All variants share the exact same binary container and shard codec. Refer to [Handling Game Updates & File Variants](#handling-game-updates--file-variants) to manage upstream updates without losing translation progress.
+NetEase frequently ships incremental updates via companion files (`_diff` for delta changes; game versions up to 2.2 also shipped `__small` / `__small_diff` isolated sub-tables, which were dropped in v2.3). All variants share the exact same binary container and shard codec. Refer to [Handling Game Updates & File Variants](#handling-game-updates--file-variants) to manage upstream updates without losing translation progress.
 
 ---
 
@@ -72,7 +72,7 @@ NetEase frequently ships incremental updates via companion files (`_diff` for de
 | **In-Place Value Editing** | Supported | Preserves control bytes, slot indices, and hash structures |
 | **Arbitrary Key Insertion** | Unsupported | Requires reversing the proprietary 64-bit hash derivation |
 
-**Snapshot Reference**: Tested against global game builds (NetEase Messiah Engine). Localization entry counts vary per game update as keys and shards fluctuate. For reference, the September 2026 global release snapshot contains **826,388 entries across 3,230 blocks** in the primary map, accompanied by a sparse `_diff` file (212,117 active entries) and an isolated `__small` table (4,009 entries; see [§4.6 of Format-Spec.md](Obsidian-Vault/knowladge/Format-Spec.md#46-the-__small--__small_diff-variant-a-separate-table-not-part-of-_diff)).
+**Snapshot Reference**: Tested against global game builds (NetEase Messiah Engine). Localization entry counts vary per game update as keys and shards fluctuate. The current target, **game v2.3** (October 2026), has **1,122,784 entries across 4,387 blocks** in the primary map plus a sparse `_diff` (8,422 entries, 1,647 tombstones), and no `__small` tables. For reference, the September 2026 (v2.2) global release snapshot contains **826,388 entries across 3,230 blocks** in the primary map, accompanied by a sparse `_diff` file (212,117 active entries) and an isolated `__small` table (4,009 entries; see [§4.6 of Format-Spec.md](Obsidian-Vault/knowladge/Format-Spec.md#46-the-__small--__small_diff-variant-a-separate-table-not-part-of-_diff)).
 
 ---
 
@@ -86,9 +86,13 @@ published as a single rolling GitHub Release (tag `latest`):
 
 > [!WARNING]
 > **Always back up the original files before overwriting anything.** Copy the original
-> `translate_words_map_en`, `translate_words_map_en_diff`, `translate_words_map_en__small`, and
-> `translate_words_map_en__small_diff` to a separate folder first. If a game update breaks the
+> `translate_words_map_en` and `translate_words_map_en_diff` to a separate folder first. If a game update breaks the
 > mod or causes crashes, restore these originals.
+
+> [!NOTE]
+> The current release targets **game v2.3**, which only ships `translate_words_map_en` and
+> `translate_words_map_en_diff` — the `__small` / `__small_diff` files from v2.2 no longer exist,
+> so there is nothing to copy for them.
 
 > [!NOTE]
 > Translation progress is still ongoing (see [`Current-Status.md`](Obsidian-Vault/progress/Current-Status.md)
@@ -102,8 +106,7 @@ published as a single rolling GitHub Release (tag `latest`):
 2. Navigate to the `Package\HD\oversea\locale\` subfolder.
 3. Back up the existing files there (see warning above), then extract the contents of
    `wwm-indonesian-patch.zip` into this folder, overwriting the files with matching names:
-   `translate_words_map_en`, `translate_words_map_en_diff`, `translate_words_map_en__small`,
-   `translate_words_map_en__small_diff`.
+   `translate_words_map_en` and `translate_words_map_en_diff`.
 4. Launch the game through Steam as usual.
 5. In-game: **Settings → Language → Game Language = English** (required — see
    [Why Runtime Requires English Language](#why-runtime-requires-english-language)).
@@ -112,8 +115,8 @@ published as a single rolling GitHub Release (tag `latest`):
 > **Steam only:** on the Steam client, NetEase's patcher **silently restores
 > `translate_words_map_en_diff` to its original version** on every game launch (the
 > `StagePatchList`/`StageCheck` process), so text that lives in the `_diff` layer stays in English.
-> This is outside this mod's control. The base `translate_words_map_en` and `__small` files remain
-> permanent and are unaffected. The official WWM launcher does **not** do this — see
+> This is outside this mod's control. The base `translate_words_map_en` file remains
+> permanent and is unaffected. The official WWM launcher does **not** do this — see
 > [Known Limitations & Deployment Gotchas](#known-limitations--deployment-gotchas).
 
 ### PC — Official WWM Launcher
@@ -135,14 +138,14 @@ published as a single rolling GitHub Release (tag `latest`):
    files with matching names (`translate_words_map_en_diff` and any other `translate_words_map_en*`
    files that exist there).
 5. The base files also exist under `<InstallDir>\<variant>\Package\HD\oversea\locale\`. Back up
-   and overwrite `translate_words_map_en`, `translate_words_map_en__small` and
-   `translate_words_map_en__small_diff` there too, as in the Steam steps above.
+   and overwrite `translate_words_map_en` (and `translate_words_map_en_diff`) there too, as in the
+   Steam steps above.
 6. Launch the game through the launcher as usual.
 7. Set **Settings → Language → Game Language = English** in-game.
 
 > [!TIP]
 > Unlike the Steam client, the official launcher does **not** restore the patched `_diff` file on
-> launch (tested 2026-09-27), so all four files — including the `_diff` layer — stay translated.
+> launch (tested 2026-09-27), so both files — including the `_diff` layer — stay translated.
 > This is the most complete way to play with the patch on PC. See
 > [Known Limitations & Deployment Gotchas](#known-limitations--deployment-gotchas).
 
@@ -240,8 +243,6 @@ sounds technical, but it's just a few copy-paste commands. The steps below are f
     ```bat
     adb push translate_words_map_en /sdcard/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
     adb push translate_words_map_en_diff /sdcard/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
-    adb push translate_words_map_en__small /sdcard/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
-    adb push translate_words_map_en__small_diff /sdcard/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
     ```
     Each line should report `1 file pushed`. If you get *"No such file or directory"*, the package
     name or path differs on your device — run
@@ -426,7 +427,7 @@ Notes:
 - Step 1 expects `strings.jsonl` (generated via `wwm_locmap.py dump`) to be present in the workspace root.
 - If Step 2 fails with exit code `1`, inspect `qa_report.jsonl` and rectify the flagged strings before proceeding.
 - Copy `translate_words_map_en.id` to the game's locale directory as `translate_words_map_en`.
-- To patch all file variants (`base`, `_diff`, `__small`, `__small_diff`, `_mobile`) at once, use `tools/patch_all.py`.
+- To patch all file variants (`base`, `_diff`, `_mobile`) at once, use `tools/patch_all.py`.
 - `wwm_locmap.py patch` refuses a JSONL whose `h` values don't match the target file (i.e. one dumped from a different game version) — re-dump after every game update.
 
 ---
@@ -435,15 +436,15 @@ Notes:
 
 Upstream game patches frequently ship new or modified localization files alongside the primary table:
 - `translate_words_map_en_diff`: Sparse delta table between major releases.
-- `translate_words_map_en__small`: Separate isolated table for UI / system modules.
-- `translate_words_map_en__small_diff`: Delta table for the small variant.
+- `translate_words_map_en__small` / `__small_diff`: Separate isolated table (+ delta) for UI / system modules — shipped up to v2.2, **removed in v2.3**.
 - `translate_words_map_en_mobile`: Currently byte-identical to the base table; patched independently anyway.
 
 Because the underlying container and shard layout are identical, use the following sequence after a patch:
 
 ```bash
-# Dump the updated variant
-python wwm_locmap.py dump translate_words_map_en__small strings_small.jsonl
+# Dump the updated files
+python wwm_locmap.py dump translate_words_map_en strings.jsonl
+python wwm_locmap.py dump translate_words_map_en_diff strings_diff.jsonl
 
 # Append new unique strings without breaking existing translation indices
 python tools/rebuild_unique_strings.py
@@ -576,7 +577,7 @@ While the average string length is ~56 bytes, certain encyclopedia and narrative
 ## Known Limitations & Deployment Gotchas
 
 ### 1. The `_diff` CDN Auto-Restore Mechanism (Steam client only)
-- **Base `translate_words_map_en` and `__small` are persistent and safe to patch** in `Package\HD\oversea\locale\` on every client.
+- **Base `translate_words_map_en` (and, up to v2.2, `__small`) is persistent and safe to patch** in `Package\HD\oversea\locale\` on every client.
 - The game maintains two separate copies of `translate_words_map_en_diff`:
   - `Package\HD\oversea\locale\` (patched by this tool; safe, never re-verified).
   - `LocalData\Patch\HD\oversea\locale\` (active runtime overlay).

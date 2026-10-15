@@ -8,7 +8,8 @@ session-by-session timeline, see [[Session-History]].
 
 ## Why the work is split into phases
 
-The original 429,887 unique strings (461,704 after [[Update-1]]) are too
+The original 429,887 unique strings (461,704 after [[Update-1]], 534,257
+after [[Update-2]] for game v2.3) are too
 much for one session (even several small ones). To keep each session light and the output careful (not just
 haphazard translation), the work is split into **phases** based on `idx`
 ranges in `translation_work/unique_strings.jsonl` (already sorted by
@@ -39,12 +40,16 @@ for at the start of each session (see [[Current-Status]] §Batch size).
 | 16 (done)         | 370,000 – 399,999 | 30,000       | ~98.7%                      | —                       | done                  | `locale/phase16.jsonl` |
 | 17 (done)         | 400,000 – 429,886 | 29,887       | 100%*                       | —                       | done                  | `locale/phase17.jsonl` |
 | Update-1 (done)   | 429,887 – 461,703 | 31,817       | additional (see note below) | —                       | done                  | `locale/update1.jsonl` |
+| Update-2A (v2.3)  | 461,704 – 491,703 | 30,000       | additional (v2.3)           | set by user             | **active**            | `locale/update2a.jsonl` |
+| Update-2B (v2.3)  | 491,704 – 521,703 | 30,000       | additional (v2.3)           | set by user             | not started           | `locale/update2b.jsonl` |
+| Update-2C (v2.3)  | 521,704 – 534,256 | 12,553       | additional (v2.3)           | set by user             | not started           | `locale/update2c.jsonl` |
 
 \* Percentage of the 963,050 total lines in the pre-update `strings.jsonl`,
 based on its frequency distribution. Figures from Phase 2 onward are rough
 interpolations, not precise per-idx counts — don't treat them as exact. For
 the actual current coverage per file, run `tools/patch_all.py` (it prints
-the matched share; 2026-09-24: 64.2% of the base file's 826,388 entries).
+the matched share; 2026-09-24: 64.2% of the base file's 826,388 entries;
+2026-10-15, game v2.3 before any Update-2 work: 90.65% of 1,122,784 entries).
 
 **Update-1** (formerly labeled "Phase 9") was added on 2026-09-16 after a
 game update — it is not part of the original 429,887 unique strings.
@@ -55,6 +60,19 @@ before. idx 0–429,886 (Phases 0–17) were **not touched at all** — old
 progress stays valid with no remapping needed. See [[Session-History]] and
 [[Update-1]] for how `patch_all.py` applies the dictionary across all four
 files at once.
+
+**Update-2** (2026-10-15) is the **game v2.3** update. The v2.3 base
+`translate_words_map_en` grew to 1,122,784 entries (from 826,388) while
+`translate_words_map_en_diff` shrank to 8,422 entries — NetEase folded most
+of the old `_diff` into the base. `translate_words_map_en__small` and
+`__small_diff` are **no longer shipped** in v2.3 (Steam and the official
+launcher), so the tooling and release now cover only the base + `_diff`.
+`rebuild_unique_strings.py` appended **72,553** new strings as idx
+461,704–534,256; at the user's request they are split into ~30,000-string
+blocks **Update-2A / 2B / 2C** (letters, not new `Update-N` numbers, since
+they all come from one game update). 29,022 older strings no longer occur in
+v2.3 and are left in place — they cost nothing because matching is by source
+text. See [[Update-2]].
 
 **Naming convention going forward:** a game-update string batch (appended by
 `rebuild_unique_strings.py`, always a disjoint idx block above the current

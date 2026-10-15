@@ -29,3 +29,6 @@ Thumbs.db
 .idea/
 .vscode/
 .claude/settings.local.json
+
+# Salinan file game versi sebelumnya (pembanding saat update)
+*.before

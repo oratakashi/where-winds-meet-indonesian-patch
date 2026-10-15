@@ -5,14 +5,14 @@ update game, TANPA mengubah idx yang sudah ada (supaya locale/phase*.jsonl yang
 sudah diterjemahkan tetap valid/tidak perlu di-remap).
 
     python tools/rebuild_unique_strings.py [--strings strings.jsonl]
-        [--extra strings_diff.jsonl strings_small.jsonl strings_small_diff.jsonl]
+        [--extra strings_diff.jsonl]
 
 Mengumpulkan semua teks (`v`) yang sedang "hidup" di dump-dump saat ini (melewati
 entri "deleted" dari file *_diff). Teks yang sudah pernah tercatat di
 unique_strings.jsonl dilewati (idx lama dipertahankan apa adanya). Teks baru
 diberi idx baru berurutan mulai dari (idx maksimum lama + 1), diurutkan menurun
 berdasarkan frekuensi kemunculan di --strings (mengikuti metodologi
-translation_work/build_unique.py) — string yang hanya muncul di file _diff/__small
+translation_work/build_unique.py) — string yang hanya muncul di file --extra (mis. _diff)
 diberi freq minimal 1.
 """
 import argparse, json, os
@@ -54,8 +54,6 @@ def main():
     ap.add_argument("--strings", default=os.path.join(ROOT, "strings.jsonl"))
     ap.add_argument("--extra", nargs="*", default=[
         os.path.join(ROOT, "strings_diff.jsonl"),
-        os.path.join(ROOT, "strings_small.jsonl"),
-        os.path.join(ROOT, "strings_small_diff.jsonl"),
     ])
     ap.add_argument("--dry-run", action="store_true",
                      help="hitung & laporkan saja, jangan tulis ke unique_strings.jsonl")

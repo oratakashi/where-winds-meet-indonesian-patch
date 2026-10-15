@@ -2,7 +2,8 @@
 """
 patch_all.py — terapkan dictionary terjemahan (translation_work/unique_strings.jsonl
 + locale/phase*.jsonl + locale/update*.jsonl) ke SEMUA varian translate_words_map_*
-sekaligus (base, _diff, __small, __small_diff, _mobile), lalu repack masing-masing.
+sekaligus (base, _diff, _mobile), lalu repack masing-masing. (__small/__small_diff
+sudah tidak dikirim game sejak v2.3; tambahkan lagi ke FILES kalau muncul kembali.)
 
     python tools/patch_all.py [--outdir patched] [--level 12] [--files ...]
 
@@ -25,8 +26,6 @@ from expand_locale import load_translated_map
 FILES = [
     "translate_words_map_en",
     "translate_words_map_en_diff",
-    "translate_words_map_en__small",
-    "translate_words_map_en__small_diff",
     "translate_words_map_en_mobile",
 ]
 

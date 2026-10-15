@@ -8,10 +8,12 @@ Obsidian-Vault/progress/Current-Status.md (blok di antara penanda
     python tools/progress.py --write    # perbarui blok di Current-Status.md
     python tools/progress.py --check    # exit 1 kalau blok tidak sesuai data (CI)
 
-Angka dihitung dari file yang ter-track di git saja (unique_strings.jsonl,
-locale/*.jsonl, strings.jsonl), jadi hasilnya sama di mesin mana pun dan
---check bisa dipakai di CI. Dump lain yang ada secara lokal (strings_diff.jsonl,
-strings_small*.jsonl) hanya dicetak ke konsol, tidak ditulis ke blok.
+Angka dihitung dari file yang ter-track di git (unique_strings.jsonl,
+locale/*.jsonl) plus strings.jsonl, yang TIDAK ter-track (>100 MB sejak game
+v2.3) tapi deterministik: selalu hasil `wwm_locmap.py dump translate_words_map_en
+strings.jsonl` dari binary yang ter-track. Jadi hasilnya sama di mesin mana pun
+dan --check bisa dipakai di CI (CI men-dump-nya dulu). Dump lain yang ada secara lokal (strings_diff.jsonl)
+hanya dicetak ke konsol, tidak ditulis ke blok.
 
 Fase baru (Update-N setelah update game) harus ditambahkan ke PHASES di bawah.
 """
@@ -38,12 +40,15 @@ PHASES += [(str(n), "phase%d.jsonl" % n, 100000 + (n - 7) * 30000, 129999 + (n -
            for n in range(7, 17)]
 PHASES += [("17", "phase17.jsonl", 400000, 429886),
            ("Update-1", "update1.jsonl", 429887, 461703)]
+# Update-2 = string baru dari game v2.3 (2026-10-15), dipecah per 30.000 string.
+PHASES += [("Update-2A", "update2a.jsonl", 461704, 491703),
+           ("Update-2B", "update2b.jsonl", 491704, 521703),
+           ("Update-2C", "update2c.jsonl", 521704, 534256)]
 
-# Dump yang ter-track -> dipakai untuk blok. Sisanya hanya info konsol.
+# Dump yang wajib ada -> dipakai untuk blok. Sisanya hanya info konsol.
 TRACKED_DUMPS = [("translate_words_map_en", "strings.jsonl")]
-LOCAL_DUMPS = [("translate_words_map_en_diff", "strings_diff.jsonl"),
-               ("translate_words_map_en__small", "strings_small.jsonl"),
-               ("translate_words_map_en__small_diff", "strings_small_diff.jsonl")]
+# (__small / __small_diff tidak dikirim lagi sejak game v2.3.)
+LOCAL_DUMPS = [("translate_words_map_en_diff", "strings_diff.jsonl")]
 
 
 def pct(a, b):
@@ -118,6 +123,9 @@ def build_block():
            "| ↳ game-update strings (Update-N) | %s | %s | %s |"
            % (num(u_done), num(u_total), pct(u_done, u_total))]
     for name, dump in TRACKED_DUMPS:
+        if not os.path.exists(os.path.join(ROOT, dump)):
+            sys.exit("%s tidak ada — jalankan dulu: python wwm_locmap.py dump %s %s"
+                     % (dump, name, dump))
         cov = dump_coverage(dump, src_to_translated)
         if cov:
             out.append("| **In-game text coverage** — `%s` entries (`%s`) | **%s** | **%s** | **%s** |"

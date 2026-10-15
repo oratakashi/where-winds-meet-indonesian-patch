@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-10 (session 125).** This is the single source of truth for "how
+**Last updated: 2026-10-15 (session 126) — target: game v2.3.** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **461,704** | **461,704** | **100.00%** |
+| **Unique strings translated (all)** | **461,704** | **534,257** | **86.42%** |
 | ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
-| ↳ game-update strings (Update-N) | 31,817 | 31,817 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **826,388** | **826,388** | **100.00%** |
+| ↳ game-update strings (Update-N) | 31,817 | 104,370 | 30.48% |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,017,816** | **1,122,784** | **90.65%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -46,16 +46,53 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 16 | 370,000–399,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 17 | 400,000–429,886 | done | — | 29,887 / 29,887 | 100.00% |
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
+| Update-2A | 461,704–491,703 | not started | 461,704 | 0 / 30,000 | 0.00% |
+| Update-2B | 491,704–521,703 | not started | 491,704 | 0 / 30,000 | 0.00% |
+| Update-2C | 521,704–534,256 | not started | 521,704 | 0 / 12,553 | 0.00% |
 
 <!-- progress:end -->
 
 Phases 0–17 draw from the original `unique_strings.jsonl` (idx 0–429,886).
 Update-1 is the addition from the 2026-09-16 game update (idx
-429,887–461,703 — see [[Phase-Roadmap]]). Phases 7–17 replace the old
+429,887–461,703). **Update-2A/2B/2C** are the strings new in **game v2.3**
+(2026-10-15, idx 461,704–534,256), split into ~30,000-string blocks — see
+[[Phase-Roadmap]] and [[Update-2]]. Phases 7–17 replace the old
 100,000/229,887-string "Phase 7"/"Phase 8" split with eleven ~30,000-string
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
-**All Phases 0–17 and Update-1 are fully complete.** Phase 12 is complete at **30,000/30,000 (100.00%)**. No untranslated idx remain in the current unique-string corpus. Future game-update strings should be appended per [[Resume-Procedure]] and [[Phase-Roadmap]].
+**v2.2 was 100% done; the target is now v2.3.** All Phases 0–17 and Update-1
+remain complete and valid (no idx was renumbered). The active work is
+**Update-2A, next idx 461,704** → `locale/update2a.jsonl`, then Update-2B
+(`update2b.jsonl`) and Update-2C (`update2c.jsonl`). The in-game coverage
+row above already reflects the v2.3 `strings.jsonl` dump (1,122,784 entries).
+
+## 2026-10-15 — Session 126: game update v2.3 → Update-2 setup
+
+No translation in this session — migration only. The v2.3 files replace the
+v2.2 ones in the repo root (v2.2 copies kept locally as untracked `*.before`,
+now in `.gitignore`).
+
+- `translate_words_map_en` grew from 826,388 to **1,122,784** entries;
+  `translate_words_map_en_diff` shrank from ~213k to **8,422** entries
+  (1,647 tombstones) — NetEase merged most of the old `_diff` into the base.
+- `translate_words_map_en__small` / `__small_diff` are **no longer shipped**
+  (checked on both Steam and the official launcher). Removed from the repo,
+  `tools/patch_all.py` `FILES`, `tools/rebuild_unique_strings.py` defaults,
+  `tools/progress.py` and the release workflow.
+- Re-dumped `strings.jsonl` (v2.3) and ran `rebuild_unique_strings.py --extra
+  strings_diff.jsonl`: **72,553 new strings** appended as idx 461,704–534,256
+  (old idx untouched). 29,022 old strings no longer appear in v2.3; they stay
+  in the dictionary (harmless — matching is by source text).
+- Added Update-2A (461,704–491,703), Update-2B (491,704–521,703) and
+  Update-2C (521,704–534,256) to `PHASES` in `tools/progress.py`.
+- `release-patch.yml` now ships only the base + `_diff` and names v2.3.
+- The v2.3 `strings.jsonl` is 114 MB (over GitHub's 100 MB limit), so it is
+  no longer tracked: both workflows dump it from `translate_words_map_en`
+  before `progress.py`, which now exits with that hint if it is missing.
+
+Overall: 461,704 / 534,257 unique strings (86.42%), in-game coverage 90.65%.
+
+See [[Update-2]] and [[Phase-Roadmap]].
 
 ## 2026-10-10 — Session 125: Phase 12 completed (idx 277,000–279,999)
 

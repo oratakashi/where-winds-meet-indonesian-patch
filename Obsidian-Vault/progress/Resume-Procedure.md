@@ -7,13 +7,14 @@ rules to apply while translating.
 
 ## How these files relate
 
-- `translation_work/unique_strings.jsonl` — 461,704 unique strings (idx
-  0–461,703): the original 429,887 ordered by descending frequency (idx
+- `translation_work/unique_strings.jsonl` — 534,257 unique strings (idx
+  0–534,256): the original 429,887 ordered by descending frequency (idx
   0–429,886), plus 31,817 appended after the 2026-09 update (idx
-  429,887–461,703 — see [[Update-1]]). Never regenerate it with
+  429,887–461,703 — see [[Update-1]]) and 72,553 appended for game v2.3
+  (idx 461,704–534,256 — see [[Update-2]]). Never regenerate it with
   `translation_work/build_unique.py` (that would renumber every idx); new
   strings are only ever appended by `tools/rebuild_unique_strings.py`.
-- `locale/phase*.jsonl` — translation output, append-only,
+- `locale/phase*.jsonl` / `locale/update*.jsonl` — translation output, append-only,
   `{"idx": N, "v": "..."}` per line, one file per phase (see
   [[Phase-Roadmap]]). The last line in the active phase's file marks the
   most recently completed idx.
@@ -58,7 +59,8 @@ rules to apply while translating.
 8. **Refresh the overall progress — mandatory, every session:** run
    `python tools/progress.py --write`. It recomputes the "Overall progress"
    and "Phase status" tables in [[Current-Status]] from `locale/*.jsonl`
-   and `strings.jsonl` — never type those numbers by hand (CI runs
+   and `strings.jsonl` (untracked since v2.3 — if missing, regenerate with
+   `python wwm_locmap.py dump translate_words_map_en strings.jsonl`) — never type those numbers by hand (CI runs
    `tools/progress.py --check` and fails a PR whose block is stale). Then
    update the prose in [[Current-Status]] (session date/number, what the
    batch contained, any new terminology decisions — also add those to
@@ -150,19 +152,20 @@ and matches by literal source text, so it works on every file variant:
 ```bash
 # after a game update only: append newly seen strings (existing idx untouched)
 python tools/rebuild_unique_strings.py --dry-run
-python tools/rebuild_unique_strings.py
+python tools/rebuild_unique_strings.py   # scans strings.jsonl + strings_diff.jsonl
 
 # validate the whole dictionary, then patch every translate_words_map_* at once
 python tools/qa_check.py --locale "locale/*.jsonl"
 python tools/patch_all.py --outdir patched            # --level 19 for a release build
 ```
 
-`patch_all.py` writes repacked copies of `translate_words_map_en`, `_diff`,
-`__small`, `__small_diff`, and `_mobile` under `patched/`. For a single
+`patch_all.py` writes repacked copies of `translate_words_map_en`, `_diff`
+and `_mobile` (if present) under `patched/` (`__small` / `__small_diff` are
+no longer shipped since game v2.3). For a single
 file, `tools/expand_locale.py` + `wwm_locmap.py patch` does the same via an
 intermediate JSONL (and `wwm_locmap.py patch` refuses a JSONL whose `h`
 doesn't match the target file, i.e. one dumped from another game version).
-Only the `Package\...` copies of the base and `__small` files stay patched
+Only the `Package\...` copy of the base file (and, up to v2.2, `__small`) stays patched
 in a live install — see [[Format-Spec]] §7.
 
 See [[Phase-Roadmap]] for the reasoning behind picking a stopping point

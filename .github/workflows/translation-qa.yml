@@ -7,7 +7,7 @@ on:
     paths:
       - "locale/**"
       - "translation_work/**"
-      - "strings.jsonl"
+      - "translate_words_map_en"
       - "tools/**"
       - "Obsidian-Vault/progress/Current-Status.md"
   push:
@@ -15,7 +15,7 @@ on:
     paths:
       - "locale/**"
       - "translation_work/**"
-      - "strings.jsonl"
+      - "translate_words_map_en"
       - "tools/**"
       - "Obsidian-Vault/progress/Current-Status.md"
 
@@ -30,5 +30,8 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Validate translation files
         run: python tools/qa_check.py --locale "locale/*.jsonl"
+      # strings.jsonl tidak ter-track (>100 MB sejak v2.3) — dump dari binary.
+      - name: Dump strings.jsonl
+        run: python wwm_locmap.py dump translate_words_map_en strings.jsonl
       - name: Progress block is up to date
         run: python tools/progress.py --check

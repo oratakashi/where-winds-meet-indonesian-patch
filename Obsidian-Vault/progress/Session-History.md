@@ -1674,3 +1674,13 @@ Merged-batch and whole-dictionary `qa_check.py --locale` passed with 0 PROMPT_LE
 Overall: 461,704 / 461,704 unique strings (100.00%), in-game coverage 100.00%.
 
 See [[idx-277000-279999]] and [[Phase-12]].
+
+## 2026-10-15 — Session 126: game update v2.3 → Update-2 setup
+
+Migration session, no translation. The repo-root `translate_words_map_en` and `translate_words_map_en_diff` were replaced with the **v2.3** files (v2.2 copies kept locally as untracked `*.before`, now in `.gitignore`). v2.3 base: 1,122,784 entries (was 826,388); v2.3 `_diff`: 8,422 entries incl. 1,647 tombstones (was ~213k — NetEase merged most of it into the base). `__small` / `__small_diff` are no longer shipped (verified by the user on Steam and the official launcher) and were removed from the repo, `tools/patch_all.py`, `tools/rebuild_unique_strings.py`, `tools/progress.py`, the release workflow and player docs.
+
+Re-dumped `strings.jsonl` and ran `rebuild_unique_strings.py --extra strings_diff.jsonl`: **72,553** new strings appended as idx 461,704–534,256, old idx untouched. 29,022 old strings no longer occur in v2.3 and stay in the dictionary. At the user's request the new block is split per ~30,000 strings: **Update-2A** (461,704–491,703), **Update-2B** (491,704–521,703), **Update-2C** (521,704–534,256), added to `PHASES`. `release-patch.yml` now publishes only base + `_diff` and labels the release v2.3. The v2.3 `strings.jsonl` (114 MB) exceeds GitHub's 100 MB limit, so it is no longer tracked; both workflows regenerate it with `wwm_locmap.py dump` before `progress.py`.
+
+Overall: 461,704 / 534,257 unique strings (86.42%), in-game coverage 90.65%.
+
+See [[Update-2]] and [[Current-Status]].
