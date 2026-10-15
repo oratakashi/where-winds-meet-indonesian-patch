@@ -1743,3 +1743,10 @@ Each translator's output and the merged 3,500-row batch passed QA before append;
 Overall: 473,704 / 534,257 unique strings (88.67%), in-game coverage 93.77%.
 
 See [[Update-2B]] and [[Update-2]].
+
+## 2026-10-15 — Session 132: Update-2C — second 4,000-row iteration completed (idx 525,704–529,703)
+
+- Appended 4,000 rows (idx 525,704–529,703) to `locale/update2c.jsonl` in ten 400-row chunks, each QA-checked before append. Update-2C 8,000/12,553 (63.73%); next idx **529,704**. No commit created. Primary agent only.
+- 3,180 changed / 820 retained (names, poetic titles, Skill/stat labels, `$T()` variables, plain angle tags). No new terminology rule. Details: [[Update-2C]].
+- Chunk QA and the full 477,704-entry dictionary: 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. `python tools/progress.py --write` regenerated the tables.
+- Overall: 477,704 / 534,257 unique strings (89.41%), in-game coverage 94.13%.

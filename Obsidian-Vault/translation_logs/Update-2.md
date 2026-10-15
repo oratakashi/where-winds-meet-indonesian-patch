@@ -72,6 +72,11 @@ Split per ~30,000 strings at the user's request. Letters (not `Update-3`,
 - Scratch and full-dictionary QA: 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. Exactly 1,000 consecutive idx. `python tools/progress.py --write` regenerated status tables.
 - Overall: 462,704 / 534,257 unique strings (86.61%), in-game coverage 91.98%.
 
+### 2026-10-15 — Session 132: Update-2C — second 4,000-row iteration completed, idx 525,704–529,703
+
+- Appended 4,000 rows to `locale/update2c.jsonl`; Update-2C is now 8,000/12,553 (63.73%), next idx **529,704**. Details in [[Update-2C]]. No commit created.
+- Overall: 477,704 / 534,257 unique strings (89.41%), in-game coverage 94.13%.
+
 ### 2026-10-15 — Session 130: Update-2C — 4,000-row iteration completed, idx 521,704–525,703
 
 - Created `locale/update2c.jsonl` with 4,000 rows; next idx **525,704** (Update-2C 4,000/12,553). Details in [[Update-2C]]. No commit created.

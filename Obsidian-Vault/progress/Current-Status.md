@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-15 (session 131) — target: game v2.3.** This is the single source of truth for "how
+**Last updated: 2026-10-15 (session 132) — target: game v2.3.** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **473,704** | **534,257** | **88.67%** |
+| **Unique strings translated (all)** | **477,704** | **534,257** | **89.41%** |
 | ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
-| ↳ game-update strings (Update-N) | 43,817 | 104,370 | 41.98% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,052,838** | **1,122,784** | **93.77%** |
+| ↳ game-update strings (Update-N) | 47,817 | 104,370 | 45.81% |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,056,838** | **1,122,784** | **94.13%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -48,7 +48,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
 | Update-2A | 461,704–491,703 | **active** | 465,704 | 4,000 / 30,000 | 13.33% |
 | Update-2B | 491,704–521,703 | **active** | 495,704 | 4,000 / 30,000 | 13.33% |
-| Update-2C | 521,704–534,256 | **active** | 525,704 | 4,000 / 12,553 | 31.86% |
+| Update-2C | 521,704–534,256 | **active** | 529,704 | 8,000 / 12,553 | 63.73% |
 
 <!-- progress:end -->
 
@@ -64,12 +64,25 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 remain complete and valid (no idx was renumbered). Three blocks are active:
 **Update-2A, next idx 465,704** → `locale/update2a.jsonl`,
 **Update-2B, next idx 495,704** → `locale/update2b.jsonl`, and
-**Update-2C, next idx 525,704** → `locale/update2c.jsonl`.
+**Update-2C, next idx 529,704** → `locale/update2c.jsonl`.
 The first **4,000-row iteration is complete in all three blocks**:
-Update-2A (461,704–465,703), Update-2B (491,704–495,703), and
-Update-2C (521,704–525,703). This chat follows Update-2B; its next
-4,000-row iteration is **495,704–499,703**. The in-game coverage
+Update-2A (461,704–465,703) and Update-2B (491,704–495,703); Update-2C has
+completed **two** iterations (521,704–525,703 and 525,704–529,703). This chat
+follows Update-2C; its next 4,000-row iteration is **529,704–533,703**
+(leaving 553 rows, 533,704–534,256, for a final short batch). The in-game coverage
 row above already reflects the v2.3 `strings.jsonl` dump (1,122,784 entries).
+
+## 2026-10-15 — Session 132: Update-2C — second 4,000-row iteration completed (idx 525,704–529,703)
+
+Translated the next **4,000 rows of Update-2C, idx 525,704–529,703**, in ten 400-row chunks by the primary agent only (no subagents). Each chunk was QA-checked and appended to `locale/update2c.jsonl` before the next was started, so the file now holds **8,000/12,553 rows (63.73%)**, strictly consecutive (521,704–529,703). Next idx: **529,704**; 4,553 rows remain in the block. No commit was created.
+
+3,180 rows differ from source; 820 remain verbatim under standing conventions (names, short poetic titles, Skill/set/stat labels, `$T(n)` variables, opaque tags, `<whispers>`/`<Stares blankly>` plain angle tags). Dialogue follows gue/lo; UI/system text neutral. No new terminology rule. Long classical and lore prose was translated in full: Gongyang Duke Min / Duke Zhuang / Duke Yin commentaries (525887, 526149, 527492), the Zhou Li Minister of Justice office list (526988), Mencius Jinxin and Wan Zhang II (527231, 529259), Analects Zilu (528290), Doctrine of the Mean (529651), the Odes of Zhou/Da Ya (527942, 528696), Li Si and Deng Deng (526641), Yang Fan (527253), Seedling Temple (528415), Gu Chuanyang (527020) and the Tang mounted-archery manual (529598). The `<br>` line structure of 528696 and the `$D$G…$E` damage variables, `@t[...]`, `$Link^…^$`, `<LINK …>` and `#…#E` colour tags were preserved. Source defects: a stress-test string of repeated CJK "分" characters (529690) keeps its CJK tail (only "Congratulations" → "Selamat"); truncated sentence fragments in the source stay unterminated.
+
+Every chunk and the full 477,704-entry dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings; additional checks confirmed exact sequential idx per chunk, actual-newline counts per row, dollar/date/link/`<br>` token multisets, and no introduced replacement/Cyrillic characters. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 477,704 / 534,257 unique strings (89.41%), in-game coverage 94.13%.
+
+See [[Update-2C]] and [[Update-2]].
 
 ## 2026-10-15 — Session 131: Update-2B — 4,000-row iteration completed (idx 491,704–495,703)
 
