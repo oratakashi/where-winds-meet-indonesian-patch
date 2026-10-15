@@ -37,6 +37,20 @@ Split per ~30,000 strings at the user's request. Letters (not `Update-3`,
 
 ## Batches
 
+### 2026-10-15 — Session 137: Update-2B second 4,000-row iteration completed (idx 495,704–499,703)
+
+Translated and appended **4,000 consecutive rows, idx 495,704–499,703**, to `locale/update2b.jsonl`. **Update-2B is 8,000/30,000 (26.67%)**; next idx **499,704**. No commit created.
+
+Three user-authorized subagents translated separate ranges; the primary translated the long Duke Yin excerpt at 499547, reviewed, merged and validated. Scratch files remained outside the repository. **3,741 changed / 259 retained** under existing names, poetic titles, Skill/stat and opaque-tag rules. Dialogue gue/lo, UI neutral; no new glossary rule.
+
+Long ritual, classical, poetry and lore prose translated in full, including Sang Da Ji (496288), Zhejiang history (496298), palace poetry (496970), village archery ceremony (497078), Azhi confession (497707), Yuzhen letter (498081), sea goddess notes (498320), classical prose (498374, 498409, 498600, 498682), and Duke Yin year one (499547). Cross-review corrected minor word choices; a replacement character at 495713 was restored to its source em dash.
+
+Individual and merged batch QA, then the complete locale dictionary, passed with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. Extra checks confirmed exactly 4,000 sequential idx, dollar/date/printf placeholders, per-row newline counts and no introduced replacement characters. `python tools/progress.py --write` refreshed generated tables.
+
+Overall: 494,257 / 534,257 unique strings (92.51%), in-game coverage 96.21%.
+
+See [[Update-2B]] and [[Update-2]].
+
 ### 2026-10-15 — Session 136: Update-2A third 4,000-row iteration completed (idx 469,704–473,703)
 
 Completed **4,000 sequential rows, idx 469,704–473,703**, appended to `locale/update2a.jsonl` after scratch QA. Update-2A is **12,000/30,000 (40.00%)**, next idx **473,704**; 18,000 rows remain. The original 8,000 rows were preserved byte-for-byte. No commit created.
