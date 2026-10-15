@@ -37,6 +37,18 @@ Split per ~30,000 strings at the user's request. Letters (not `Update-3`,
 
 ## Batches
 
+### 2026-10-15 — Session 135: Update-2C completed, idx 533,704–534,256
+
+- Appended the final 553 rows to `locale/update2c.jsonl`. **Update-2C is 100% (12,553/12,553).** No commit created. Primary agent only. Details: [[Update-2C]].
+- 462 changed / 91 retained. No new terminology rule. Long lore, essays, stories, tournament rules and Tang poems translated fully. Batch and full-dictionary QA: 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings.
+- Overall: 486,257 / 534,257 unique strings (91.02%), in-game coverage 95.14%.
+
+### 2026-10-15 — Session 134: Update-2A second iteration completed, idx 465,704–469,703
+
+- Appended 4,000 rows to `locale/update2a.jsonl` (ten 400-row chunks). Update-2A **8,000/30,000 (26.67%)**; next idx **469,704**. No commit created. Details: [[Update-2A]].
+- 2,758 changed / 1,242 retained. Long classics, poetry and notices translated fully. Batch and full-dictionary QA: 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings.
+- Overall: 485,704 / 534,257 unique strings (90.91%), in-game coverage 95.14%.
+
 ### 2026-10-15 — Session 131: Update-2B iteration completed, idx 491,704–495,703
 
 - Added the remaining 3,500 rows (492,204–495,703); session 128's checkpoint plus this batch completes the requested **4,000-row iteration**. Update-2B **4,000/30,000 (13.33%)**; next idx **495,704**. No commit created. Details: [[Update-2B]].

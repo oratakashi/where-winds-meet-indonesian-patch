@@ -1757,3 +1757,17 @@ See [[Update-2B]] and [[Update-2]].
 - 3,739 changed / 261 retained (names, poetic titles, Skill/stat labels, `$T()` variables, debug labels, plain angle tags). No new terminology rule. Details: [[Update-2C]].
 - Chunk QA, the 12,000-row file and the full 484,504-entry dictionary: 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. `python tools/progress.py --write` regenerated the tables.
 - Overall: 484,504 / 534,257 unique strings (90.69%), in-game coverage 94.93%. (Total includes Update-2A rows added by a separate session in parallel.)
+
+## 2026-10-15 — Session 134: Update-2A — second 4,000-row iteration completed (idx 465,704–469,703)
+
+- Appended 4,000 rows (idx 465,704–469,703) to `locale/update2a.jsonl` in ten 400-row chunks, each QA-checked before append. Update-2A 8,000/30,000 (26.67%); next idx **469,704**. No commit created. Primary agent only.
+- 2,758 changed / 1,242 retained (names, poetic titles, Skill/stat labels, developer labels, opaque tags, plain angle tags). No new terminology rule. Details: [[Update-2A]].
+- Chunk QA and the full 485,704-entry dictionary: 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. `python tools/progress.py --write` regenerated the tables.
+- Overall: 485,704 / 534,257 unique strings (90.91%), in-game coverage 95.14%.
+
+## 2026-10-15 — Session 135: Update-2C — final batch, block completed (idx 533,704–534,256)
+
+- Appended the last 553 rows to `locale/update2c.jsonl`; **Update-2C is complete, 12,553/12,553 (100.00%)**. No commit created. Primary agent only. Details: [[Update-2C]].
+- 462 changed / 91 retained (names, Inner Way/Skill/set/stat labels, opaque tags). No new terminology rule.
+- Batch and full 486,257-entry dictionary: 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. `python tools/progress.py --write` regenerated the tables.
+- Overall: 486,257 / 534,257 unique strings (91.02%), in-game coverage 95.14%.
