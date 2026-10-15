@@ -1815,3 +1815,11 @@ Process slips caught before release: idx 475992 first gained a trailing newline 
 Overall: 501,407 / 534,257 unique strings (93.85%), in-game coverage 97.07% (this total also includes a parallel Update-2B session's progress, 11,150/30,000 at the time of the run).
 
 See [[Update-2A]] and [[Update-2]].
+
+## 2026-10-15 — Session 139: Update-2B third 4,000-row iteration completed (idx 499,704–503,703)
+
+Translated and appended **4,000 sequential rows, idx 499,704–503,703**, to `locale/update2b.jsonl` in twelve chunks by the primary agent only (no subagents). **Update-2B is 12,000/30,000 (40.00%)**; next idx **503,704**. **3,768 changed / 232 retained** under standing conventions; dialogue gue/lo, UI neutral; no new glossary rule. Long classical, ritual, poetry and lore prose translated in full (Analects, Gongyang/Zuo, Mencius, Zhou Li, Tang poems, Inkbound Order history and the Seaward Gate essay). QA caught an idx off-by-one in one chunk and one whole-sentence angle tag before append; both fixed. Every chunk and the full 502,257-entry locale dictionary passed with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings; 4,000 sequential idx confirmed.
+
+Overall: 502,257 / 534,257 unique strings (94.01%), in-game coverage 97.15% (includes the parallel Update-2A session's 16,000/30,000).
+
+See [[Update-2B]] and [[Update-2]].

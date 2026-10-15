@@ -4,6 +4,15 @@ Part of the game v2.3 additions documented in [[Update-2]]. Output: `locale/upda
 
 ## Batches
 
+### 2026-10-15 — Session 139: Third 4,000-row iteration completed (idx 499,704–503,703)
+
+- Translated and appended **4,000 consecutive rows, idx 499,704–503,703**, to `locale/update2b.jsonl` in twelve scratch-file chunks (250–350 rows) by the primary agent only (no subagents). **Update-2B is 12,000/30,000 (40.00%)**; next idx **503,704**; 18,000 rows remain. Earlier 8,000 rows untouched. No commit created.
+- **3,768 changed / 232 retained** (names, poetic titles, Skill/set/stat/Tier labels, developer placement labels, opaque tags, whole-sentence angle tag at 502662). Dialogue gue/lo, UI neutral. No new glossary rule; reused "Kini Menampilkan [X]", "Emote Gleam/Splendor/Silhouette: X", "Membuka …", "Skill Mistik", `s`→`d` and `d`→`h` shorthand, Indonesian dates inside colour tags.
+- Long prose translated in full: Analects XIV (499783) and Ji Shi (503575), Wuyue investiture chronicle (499853), Gongyang/Zuo Duke Min (501257) and Duke Ding (502122, 502465), Zeng Master ritual questions (501630), Mencius Gaozi (500364) and Jinxin (500647), Zhou Li Xia Guan Sima (502445, Chinese source rendered in Indonesian), Tang knight-errant/craft poems (502570), scholar-meeting ceremony (503674), Inkbound Order history register (503547), Seaward Gate essay (503335), plus the Meng Kuan, Ma Er, duck and Gold Fur short stories.
+- Source defects: stray CJK in 502465 and 501257 rendered/dropped; truncated fragments stay unterminated.
+- QA caught two slips before append: chunk 10 had every idx from 502973 labelled +1 (shifted back), and chunk 9 had the whole-sentence angle tag at 502662 translated (restored to source). All chunks and the full 502,257-entry dictionary then passed with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX; 4,000 sequential idx confirmed. `python tools/progress.py --write` refreshed status tables.
+- Overall: 502,257 / 534,257 unique strings (94.01%), in-game coverage 97.15%.
+
 ### 2026-10-15 — Session 137: Update-2B second 4,000-row iteration completed (idx 495,704–499,703)
 
 Translated and appended **4,000 consecutive rows, idx 495,704–499,703**, to `locale/update2b.jsonl`. **Update-2B is 8,000/30,000 (26.67%)**; next idx **499,704**. No commit created.

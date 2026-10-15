@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-15 (session 138) — target: game v2.3.** This is the single source of truth for "how
+**Last updated: 2026-10-15 (session 139) — target: game v2.3.** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **501,757** | **534,257** | **93.92%** |
+| **Unique strings translated (all)** | **503,627** | **534,257** | **94.27%** |
 | ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
-| ↳ game-update strings (Update-N) | 71,870 | 104,370 | 68.86% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,090,284** | **1,122,784** | **97.11%** |
+| ↳ game-update strings (Update-N) | 73,740 | 104,370 | 70.65% |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,092,154** | **1,122,784** | **97.27%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -46,8 +46,8 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 16 | 370,000–399,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 17 | 400,000–429,886 | done | — | 29,887 / 29,887 | 100.00% |
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
-| Update-2A | 461,704–491,703 | **active** | 477,704 | 16,000 / 30,000 | 53.33% |
-| Update-2B | 491,704–521,703 | **active** | 503,204 | 11,500 / 30,000 | 38.33% |
+| Update-2A | 461,704–491,703 | **active** | 479,074 | 17,370 / 30,000 | 57.90% |
+| Update-2B | 491,704–521,703 | **active** | 503,704 | 12,000 / 30,000 | 40.00% |
 | Update-2C | 521,704–534,256 | done | — | 12,553 / 12,553 | 100.00% |
 
 <!-- progress:end -->
@@ -64,8 +64,22 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 remain complete and valid (no idx was renumbered). **Update-2C is now complete** (all 12,553 rows,
 `locale/update2c.jsonl`). Two blocks remain active:
 **Update-2A, next idx 477,704** → `locale/update2a.jsonl` (four 4,000-row iterations done, covering 461,704–477,703) and
-**Update-2B, next idx 499,704** → `locale/update2b.jsonl` (two 4,000-row iterations done: 491,704–495,703 and 495,704–499,703).
+**Update-2B, next idx 503,704** → `locale/update2b.jsonl` (three 4,000-row iterations done: 491,704–495,703, 495,704–499,703 and 499,704–503,703).
 The in-game coverage row above already reflects the v2.3 `strings.jsonl` dump (1,122,784 entries).
+
+## 2026-10-15 — Session 139: Update-2B third 4,000-row iteration completed (idx 499,704–503,703)
+
+Translated and appended **4,000 sequential rows, idx 499,704–503,703**, to `locale/update2b.jsonl` in twelve chunks of 250–350 rows by the primary agent only (no subagents, per the repo rule; the user did not ask for them). Each chunk was written to a scratch file outside the repository, merged by a helper that keeps the source text for every untranslated row, checked with `qa_check.py --locale`, and only then appended. **Update-2B is 12,000/30,000 (40.00%)**; next idx **503,704**; 18,000 rows remain. The existing 8,000 rows were preserved byte-for-byte. No commit created.
+
+**3,768 changed / 232 retained** under standing conventions (character, place and sect names, short poetic titles, Skill/set/stat labels, Tier-gear names, developer/placement labels such as "Hangzhou Resident N", opaque tags, and plain whole-sentence angle tags such as the one at 502662). Dialogue gue/lo; UI/system text neutral. No new glossary rule. Established precedents were reused: "Now Featuring [X]" → "Kini Menampilkan [X]"; "Gleam/Splendor/Silhouette Emote" → "Emote …"; "Unlocks …" → "Membuka …"; "Mystic Skill" → "Skill Mistik"; "Wanderer" → Pengembara; seconds `s` → `d`, days `d` → `h` (including `{}d` and `{diff_day:d}d`); English dates → Indonesian ("1 Okt.") inside `#R…#E` colour tags; `Cooldwn: 45s` → `Cooldown: 45d`.
+
+Long classical and lore prose was translated in full, including the Analects Book XIV (499783), the Wuyue investiture chronicle (499853), the Duke Min Gongyang/Zuo commentary (501257), the Zeng Master ritual questions (501630), the Mencius Jinxin (500647) and Gaozi (500364) excerpts, the Zhou Li Xia Guan Sima office list (502445, source was in Chinese and was rendered in Indonesian), the Duke Ding commentaries (502122, 502465), the Tang "Knight-Errant" and craft poems (502570), the Analects Ji Shi (503575), the Book of Rites scholar-meeting ceremony (503674), the Inkbound Order history register (503547) and the Seaward Gate essay (503335). Source defects: stray CJK characters in 502465 ("贬低") and 501257 ("滑") were rendered in Indonesian / dropped; truncated fragments (e.g. 499955, 503571) stay unterminated.
+
+Process slip caught by QA: in chunk 10 every idx from 502973 on was first labelled one too high (an off-by-one while copying idx from the line numbers), which `qa_check.py --locale` flagged as 33 MARKUP findings before anything was appended; the labels were shifted back and re-validated. Chunk 9's whole-sentence angle tag at 502662 was likewise restored to the source text after QA flagged it. Every chunk and the full 502,257-entry locale dictionary then passed with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings; the 4,000 new rows are exactly sequential and no replacement or CJK characters were introduced. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 502,257 / 534,257 unique strings (94.01%), in-game coverage 97.15% (this total also includes the parallel Update-2A session's progress, 16,000/30,000).
+
+See [[Update-2B]] and [[Update-2]].
 
 ## 2026-10-15 — Session 138: Update-2A fourth 4,000-row iteration completed (idx 473,704–477,703)
 
