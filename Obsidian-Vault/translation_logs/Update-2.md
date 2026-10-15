@@ -37,6 +37,11 @@ Split per ~30,000 strings at the user's request. Letters (not `Update-3`,
 
 ## Batches
 
+### 2026-10-15 — Session 138: Update-2A fourth 4,000-row iteration completed (idx 473,704–477,703)
+
+- Appended **4,000 rows, idx 473,704–477,703**, to `locale/update2a.jsonl` (ten 400-row chunks, primary agent only). Update-2A **16,000/30,000 (53.33%)**; next idx **477,704**. No commit created. 3,280 changed / 720 retained; no new glossary rule; full-dictionary QA 0 findings. Details: [[Update-2A]].
+- Overall: 501,407 / 534,257 unique strings (93.85%), in-game coverage 97.07% (this total also includes a parallel Update-2B session's progress, 11,150/30,000 at the time of the run).
+
 ### 2026-10-15 — Session 137: Update-2B second 4,000-row iteration completed (idx 495,704–499,703)
 
 Translated and appended **4,000 consecutive rows, idx 495,704–499,703**, to `locale/update2b.jsonl`. **Update-2B is 8,000/30,000 (26.67%)**; next idx **499,704**. No commit created.

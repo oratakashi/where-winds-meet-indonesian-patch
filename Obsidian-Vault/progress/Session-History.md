@@ -1799,3 +1799,19 @@ Individual and merged batch QA, then the complete locale dictionary, passed with
 Overall: 494,257 / 534,257 unique strings (92.51%), in-game coverage 96.21%.
 
 See [[Update-2B]] and [[Update-2]].
+
+## 2026-10-15 — Session 138: Update-2A fourth 4,000-row iteration completed (idx 473,704–477,703)
+
+Translated and appended **4,000 sequential rows, idx 473,704–477,703**, to `locale/update2a.jsonl` in ten 400-row chunks by the primary agent only (no subagents, per the repo rule; the user did not ask for them). Each chunk was written to a scratch file outside the repository, checked with `qa_check.py --locale` and an extra script (exact sequential idx, newline count and leading/trailing-newline match per row, `$VAR$`/`@t[...]`/printf token multisets, no replacement or Cyrillic characters) and only then appended. **Update-2A is 16,000/30,000 (53.33%)**; next idx **477,704**; 14,000 rows remain. The existing 12,000 rows were preserved byte-for-byte. No commit created.
+
+**3,280 changed / 720 retained** under standing conventions (character, place and sect names, short poetic titles, Skill/set/stat/Inner Way labels, Tier-gear labels, opaque tags, plain angle tags such as `<The cat will do as you say!>` and the whole-sentence tag at 475360). Dialogue gue/lo; UI/system text neutral. No new glossary rule. Established precedents were reused: Crafter / Homestead / Gift of Gab / Sound Jade / Harmonic Core stay English; "Wanderer" → Pengembara; "Master" (teacher) → Guru; seconds `s` → `d`, days `d` → `h`; decimals in prize-pool tables → comma (5,05%).
+
+Long prose was translated in full, including the Rites of Zhou office list (474013), the Tang geography and music anthologies (474124, 476147), the "Inscription on a Humble Abode" (474023), Analects ch. 4 (474840) and Book 15 (476817), the Mencius Lilou II excerpt (477360), the Zuo Zhuan, Book of Changes and Book of Songs blurbs (475894, 474399, 475778), the Odes of Qin (476086) and Tang (477203), the woodblock-printing steps, the Xingwang secret report (474879), the six-part White Plume short story (476567) and the weapon/ink/brush/paper poem anthology (477524). Source defects: a stray Chinese title at 477628 was rendered as "Shenyi, Bagian ke-39"; the dangling trailing `
+` at 477045 and the leading `
+` at 477654 were kept; the literal `	` at 475078 and the `./w` marker at 475876 were preserved.
+
+Process slips caught before release: idx 475992 first gained a trailing newline that the source lacks (removed in place after append; the check script now compares trailing newlines per row), and a typo "levelkartu-kartumu" at 477307 was fixed. The batch passed per-chunk QA and the full 501,407-entry locale dictionary with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 501,407 / 534,257 unique strings (93.85%), in-game coverage 97.07% (this total also includes a parallel Update-2B session's progress, 11,150/30,000 at the time of the run).
+
+See [[Update-2A]] and [[Update-2]].
