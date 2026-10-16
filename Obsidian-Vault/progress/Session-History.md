@@ -1873,3 +1873,31 @@ Process notes: one chunk-8 typo ("berretorika") and awkward wording at 514359 we
 Overall: 522,257 / 534,257 unique strings (97.75%), in-game coverage 98.93%.
 
 See [[Update-2B]] and [[Update-2]].
+
+## 2026-10-16 — Session 145: Update-2B seventh 4,000-row iteration completed (idx 515,704–519,703)
+
+Translated and appended **4,000 sequential rows, idx 515,704–519,703**, to `locale/update2b.jsonl`. **Update-2B is 28,000/30,000 (93.33%)**; next idx **519,704**; 2,000 rows remain. Three user-authorized subagents translated disjoint ranges; the primary completed 334 rows and three long passages, reviewed, merged and validated. The earlier 24,000 rows were preserved byte-for-byte (SHA-256 prefix verified); new rows use the existing CRLF line endings. No commit created.
+
+**3,709 changed / 291 retained** under the established names, short poetic titles, Skill/stat/set/Tier labels, developer placement labels and opaque-tag conventions. Dialogue gue/lo; UI neutral. No new glossary rule. Nearby precedents were checked and reused for Laureate Lin, Twin Laureates, Ten Sages and Sage Tang; Shengle Sect remains a faction name. Truncated source fragments remain truncated, including 519537 and the stray `<` at 519650.
+
+Long prose translated fully, including mourning rituals (515805), the birds and beasts anthology (515967), Miscellaneous Records II (516047), Kun and its commentaries (516313), the classical allusion anthology (516370), Minor Odes (516375), Duke Yin first/second-year chronicle (516508), the six-part Li Zhaoxue story (516703), Tai Bo (516772), the ritual inheritance text (516785), the allusion anthology (517137), Hundred Flowers II (517656), the Silkworm Mother treatise (517989), Shan Fu's story (518325), the hexagram sequence (518832), the market instructions (519107), Po's letter (519212), Great Declaration II (519648), and the Bin poems (519689). Independent review found no omissions in 516703/516508; review preserved noble-rank distinctions in 516508. A poem typo at 515967 was corrected before merge.
+
+All scratch files stayed outside the repository. The merged 4,000-row batch and full locale dictionary passed `qa_check.py --locale` with **0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings**. Extra checks confirmed exact sequential idx, dollar/date/printf/literal-marker multisets, per-row newline counts and leading/trailing newlines, and no introduced replacement or Cyrillic characters. `python tools/progress.py --write` regenerated the tables. The overall snapshot also includes a parallel Update-2A session's work (27,300 rows at this run).
+
+Overall: 529,557 / 534,257 unique strings (99.12%), in-game coverage 99.58%.
+
+See [[Update-2B]] and [[Update-2]].
+
+## 2026-10-16 — Session 146: Update-2A completed (idx 485,704–491,703)
+
+Translated and appended the **final 6,000 rows of Update-2A, idx 485,704–491,703**, to `locale/update2a.jsonl` in twenty 300-row chunks by the primary agent only (no subagents, per the repo rule; the user did not ask for them). Each chunk was written to a scratch file outside the repository, merged by a helper that fills untouched rows with the source text and checks newline counts, leading/trailing newlines, `$VAR$`/`@t[...]`/`{...}`/printf multisets and replacement characters, then passed `qa_check.py --locale` before being appended (CRLF, matching the file). **Update-2A is now complete: 30,000/30,000 (100.00%)**, strictly consecutive 461,704–491,703 with no gaps or duplicates. No commit was created.
+
+**5,508 changed / 492 retained** under standing conventions (character, place and sect names, short poetic titles, Skill/set/stat/Tier labels, developer placement labels such as "Hangzhou Resident N" / "Placeholder Artisan N", opaque tags, whole-sentence angle tags such as the one at 488716). Dialogue gue/lo; UI/system text neutral. No new glossary rule. Precedents reused: "Kini Menampilkan [X]"; "Membuka Emote …"; Wanderer → Pengembara; Senior/Junior Sister/Brother stay English; Crafter/Homestead/Gift of Gab stay English; seconds `s` → `d`, decimals → comma, English dates → Indonesian inside colour tags ("22 Okt.", "18 Des.").
+
+Long prose translated in full, including Confucius at Leisure (486355), the Leek-cat essay (486469), the Biaoji (488633), the Sacrificial System (487444), the Xici Part 2 (489319), Duke Huan and Duke Min Gongyang commentaries (489108, 489831), the Zhao Xiaogang cooking story (490583), Sun Qi and the Tree of Eternal Life (491342), the Verdant Tavern essays (491533) and Gaozi Part B (491472). Source defects kept: stray CJK characters in 489108 rendered as "bersumpah"; unterminated `<` at 486408 and 487119 (`<Limited` titles) kept literal; the 486167 poetic title and similar short titles left in English.
+
+The full 532,257-entry locale dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. `python tools/progress.py --write` regenerated the tables. The overall figure also includes a parallel Update-2B session's work (28,000/30,000).
+
+Overall: 532,257 / 534,257 unique strings (99.63%), in-game coverage 99.82%.
+
+See [[Update-2A]] and [[Update-2]].

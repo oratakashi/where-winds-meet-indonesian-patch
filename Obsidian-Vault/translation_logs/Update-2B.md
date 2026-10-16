@@ -4,6 +4,20 @@ Part of the game v2.3 additions documented in [[Update-2]]. Output: `locale/upda
 
 ## Batches
 
+### 2026-10-16 — Session 145: Update-2B seventh 4,000-row iteration completed (idx 515,704–519,703)
+
+Translated and appended **4,000 sequential rows, idx 515,704–519,703**, to `locale/update2b.jsonl`. **Update-2B is 28,000/30,000 (93.33%)**; next idx **519,704**; 2,000 rows remain. Three user-authorized subagents translated disjoint ranges; the primary completed 334 rows and three long passages, reviewed, merged and validated. The earlier 24,000 rows were preserved byte-for-byte (SHA-256 prefix verified); new rows use the existing CRLF line endings. No commit created.
+
+**3,709 changed / 291 retained** under the established names, short poetic titles, Skill/stat/set/Tier labels, developer placement labels and opaque-tag conventions. Dialogue gue/lo; UI neutral. No new glossary rule. Nearby precedents were checked and reused for Laureate Lin, Twin Laureates, Ten Sages and Sage Tang; Shengle Sect remains a faction name. Truncated source fragments remain truncated, including 519537 and the stray `<` at 519650.
+
+Long prose translated fully, including mourning rituals (515805), the birds and beasts anthology (515967), Miscellaneous Records II (516047), Kun and its commentaries (516313), the classical allusion anthology (516370), Minor Odes (516375), Duke Yin first/second-year chronicle (516508), the six-part Li Zhaoxue story (516703), Tai Bo (516772), the ritual inheritance text (516785), the allusion anthology (517137), Hundred Flowers II (517656), the Silkworm Mother treatise (517989), Shan Fu's story (518325), the hexagram sequence (518832), the market instructions (519107), Po's letter (519212), Great Declaration II (519648), and the Bin poems (519689). Independent review found no omissions in 516703/516508; review preserved noble-rank distinctions in 516508. A poem typo at 515967 was corrected before merge.
+
+All scratch files stayed outside the repository. The merged 4,000-row batch and full locale dictionary passed `qa_check.py --locale` with **0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings**. Extra checks confirmed exact sequential idx, dollar/date/printf/literal-marker multisets, per-row newline counts and leading/trailing newlines, and no introduced replacement or Cyrillic characters. `python tools/progress.py --write` regenerated the tables. The overall snapshot also includes a parallel Update-2A session's work (27,300 rows at this run).
+
+Overall: 529,557 / 534,257 unique strings (99.12%), in-game coverage 99.58%.
+
+See [[Update-2B]] and [[Update-2]].
+
 ### 2026-10-16 — Session 144: Update-2B sixth 4,000-row iteration completed (idx 511,704–515,703)
 
 Translated and appended **4,000 sequential rows, idx 511,704–515,703**, to `locale/update2b.jsonl` in eleven chunks of 340–400 rows by the primary agent only (no subagents, per the repo rule; the user did not ask for them). Each chunk was written to a scratch file outside the repository and checked with `qa_check.py --locale`; the merged batch was then checked with an extra script (exact sequential idx 511,704–515,703, per-row newline counts and leading/trailing newline match, `$VAR$`/`$T(n)`/`@t[...]`/printf/`{...}` multisets, no replacement or Cyrillic characters) before appending. **Update-2B is 24,000/30,000 (80.00%)**; next idx **515,704**; 6,000 rows remain. The existing 20,000 rows were preserved byte-for-byte (the file uses CRLF line endings; the new rows were appended with CRLF to match). No commit created.

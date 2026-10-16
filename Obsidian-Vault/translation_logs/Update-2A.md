@@ -4,6 +4,20 @@ Part of the game v2.3 additions documented in [[Update-2]]. Output: `locale/upda
 
 ## Batches
 
+### 2026-10-16 — Session 146: Update-2A completed (idx 485,704–491,703)
+
+Translated and appended the **final 6,000 rows of Update-2A, idx 485,704–491,703**, to `locale/update2a.jsonl` in twenty 300-row chunks by the primary agent only (no subagents, per the repo rule; the user did not ask for them). Each chunk was written to a scratch file outside the repository, merged by a helper that fills untouched rows with the source text and checks newline counts, leading/trailing newlines, `$VAR$`/`@t[...]`/`{...}`/printf multisets and replacement characters, then passed `qa_check.py --locale` before being appended (CRLF, matching the file). **Update-2A is now complete: 30,000/30,000 (100.00%)**, strictly consecutive 461,704–491,703 with no gaps or duplicates. No commit was created.
+
+**5,508 changed / 492 retained** under standing conventions (character, place and sect names, short poetic titles, Skill/set/stat/Tier labels, developer placement labels such as "Hangzhou Resident N" / "Placeholder Artisan N", opaque tags, whole-sentence angle tags such as the one at 488716). Dialogue gue/lo; UI/system text neutral. No new glossary rule. Precedents reused: "Kini Menampilkan [X]"; "Membuka Emote …"; Wanderer → Pengembara; Senior/Junior Sister/Brother stay English; Crafter/Homestead/Gift of Gab stay English; seconds `s` → `d`, decimals → comma, English dates → Indonesian inside colour tags ("22 Okt.", "18 Des.").
+
+Long prose translated in full, including Confucius at Leisure (486355), the Leek-cat essay (486469), the Biaoji (488633), the Sacrificial System (487444), the Xici Part 2 (489319), Duke Huan and Duke Min Gongyang commentaries (489108, 489831), the Zhao Xiaogang cooking story (490583), Sun Qi and the Tree of Eternal Life (491342), the Verdant Tavern essays (491533) and Gaozi Part B (491472). Source defects kept: stray CJK characters in 489108 rendered as "bersumpah"; unterminated `<` at 486408 and 487119 (`<Limited` titles) kept literal; the 486167 poetic title and similar short titles left in English.
+
+The full 532,257-entry locale dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. `python tools/progress.py --write` regenerated the tables. The overall figure also includes a parallel Update-2B session's work (28,000/30,000).
+
+Overall: 532,257 / 534,257 unique strings (99.63%), in-game coverage 99.82%.
+
+See [[Update-2A]] and [[Update-2]].
+
 ### 2026-10-16 — Session 143: Update-2A sixth 4,000-row iteration completed (idx 481,704–485,703)
 
 Translated and appended **4,000 sequential rows, idx 481,704–485,703**, to `locale/update2a.jsonl`. **Update-2A is 24,000/30,000 (80.00%)**; next idx **485,704**; 6,000 rows remain. The existing 20,000 rows were preserved byte-for-byte (SHA-256 prefix verified). No commit created.
