@@ -1831,3 +1831,17 @@ Translated and appended **4,000 sequential rows, idx 499,704–503,703**, to `lo
 Overall: 502,257 / 534,257 unique strings (94.01%), in-game coverage 97.15% (includes the parallel Update-2A session's 16,000/30,000).
 
 See [[Update-2B]] and [[Update-2]].
+
+## 2026-10-16 — Session 142: Update-2B fifth 4,000-row iteration completed (idx 507,704–511,703)
+
+Translated and appended **4,000 sequential rows, idx 507,704–511,703**, to `locale/update2b.jsonl`. **Update-2B is 20,000/30,000 (66.67%)**; next idx **511,704**; 10,000 rows remain. The existing 16,000 rows were preserved byte-for-byte. No commit created.
+
+Three user-authorized subagents translated separate ranges; the primary handled 334 additional rows and six long entries, reviewed and merged. The session resumed after a usage limit. Temporary files stayed outside the repository; transient sandbox temp loss was recovered from this session's own tool-call history or rewritten into stable system temp. **3,729 changed / 271 retained** under existing name, poetic-title, Skill/stat/set, developer placement and opaque-tag conventions. Dialogue gue/lo; UI neutral. No new glossary rule.
+
+Long prose translated in full, including ritual texts (507856, 509202, 510039, 510108), lore and stories (508028, 508389, 508575, 509933, 510600, 511025), the Analects Yan Yuan (509002), the Tribute of Yu (509231), classical poetry (510489), the long classical passage at 510941, and King Hui of Liang (511657). Independent review checked the longest passages and poem line completeness. Review corrected square territory side lengths in 511657, an awkward poetry phrase in 510489, and the ordinary developer note at 509030; internal placement labels remain under existing conventions. Two introduced replacement characters were corrected before append.
+
+The merged 4,000-row batch and the full 514,257-entry locale dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. Extra checks confirmed exact sequential idx, dollar/date/printf/literal-marker multisets, per-row newline counts and leading/trailing newline preservation, and no introduced replacement or Cyrillic characters. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 514,257 / 534,257 unique strings (96.26%), in-game coverage 98.22%.
+
+See [[Update-2B]] and [[Update-2]].
