@@ -4,6 +4,16 @@ Part of the game v2.3 additions documented in [[Update-2]]. Output: `locale/upda
 
 ## Batches
 
+### 2026-10-16 — Session 140: Update-2A fifth 4,000-row iteration completed (idx 477,704–481,703)
+
+Appended **4,000 rows** to `locale/update2a.jsonl` in twelve 250–350-row chunks (primary agent only, scratch files outside the repo, per-chunk `qa_check.py --locale` plus sequential-idx/newline/placeholder checks before append). Update-2A is **20,000/30,000 (66.67%)**; next idx **481,704**. No commit created.
+
+- ~3,400 changed / ~600 retained (names, poetic titles, Skill/set/stat labels, dev/placeholder labels, whole-sentence angle tags). Dialogue gue/lo; UI neutral. No new glossary rule.
+- Long prose translated in full: Kaogongji (477756, raw Chinese source rendered structurally), Shuo Gua (478067), Analects Book 3 (478466) and 17 (478860), Mencius Wan Zhang (479071), Miscellaneous Records (479763), Pitch Pot (478026), Hundred Flowers (479592) and Geography (480536) poem anthologies, Odes of Lu (479929), plus the cat/dog stories (480131, 480507, 479300, 481305, 481456, 481486).
+- Source defects kept: unterminated `<` (481532), truncated trailing comma (478317), literal `/n` (479002).
+- Conventions reused: Laureate/Champion kept English; `s`→`d`; decimal point → comma; `Unlocks … Emote` → `Membuka Emote …`.
+- Overall: 508,757 / 534,257 unique strings (95.23%), in-game coverage 97.73% (includes parallel Update-2B progress).
+
 ### 2026-10-15 — Session 138: Update-2A fourth 4,000-row iteration completed (idx 473,704–477,703)
 
 Translated and appended **4,000 sequential rows, idx 473,704–477,703**, to `locale/update2a.jsonl` in ten 400-row chunks by the primary agent only (no subagents, per the repo rule; the user did not ask for them). Each chunk was written to a scratch file outside the repository, checked with `qa_check.py --locale` and an extra script (exact sequential idx, newline count and leading/trailing-newline match per row, `$VAR$`/`@t[...]`/printf token multisets, no replacement or Cyrillic characters) and only then appended. **Update-2A is 16,000/30,000 (53.33%)**; next idx **477,704**; 14,000 rows remain. The existing 12,000 rows were preserved byte-for-byte. No commit created.

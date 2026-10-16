@@ -4,6 +4,15 @@ Part of the game v2.3 additions documented in [[Update-2]]. Output: `locale/upda
 
 ## Batches
 
+### 2026-10-16 — Session 141: Fourth 4,000-row iteration completed (idx 503,704–507,703)
+
+- Translated and appended **4,000 consecutive rows, idx 503,704–507,703**, to `locale/update2b.jsonl` in eight 500-row chunks (primary agent only, no subagents; scratch files outside the repo). **Update-2B is 16,000/30,000 (53.33%)**; next idx **507,704**; 14,000 rows remain. Earlier 12,000 rows untouched. No commit created. (The session was interrupted by a usage limit after the first 1,500 rows and resumed the next day.)
+- Dialogue gue/lo, UI neutral; names, poetic titles, Skill/set/stat/Tier labels, developer placement labels and opaque tags retained. No new glossary rule. Dates inside colour tags rendered Indonesian (`16 Mar`, `10 Okt`); `s`→`d` for seconds/cooldowns; `<Limited` truncated titles keep the stray `<`.
+- Whole-sentence angle tags (504314, 504551, 506797) and the tag-only part of 505195/507202 kept verbatim; the `<TEXT>`/`<IMAGE>` markup at 506859 kept with only "Debate Companion" translated.
+- Long prose translated in full: Mencius Teng Wen Gong (503707), Liji Scholar's Conduct (503827), Yili Officers' Ceremony (504874), Betrothal and Wedding rites (505902, 506753), Zhou Li Earth Officials (506452), Zuo/Gongyang Duke Ai (506907), Yi Zhun hexagram (507240), Canon of Shun (507416), the Gao Sheng story (507418) and the Hundred Flowers poems (506161). Source defect: stray CJK in 507416 rendered in Indonesian.
+- QA caught and fixed before append: whole-sentence angle tags translated at 504314/504551, `<lowers voice>` at 505195, and a stray `#E` at 505228. All chunks, the 4,000-row batch (sequential idx confirmed) and the full 510,257-entry dictionary passed with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX.
+- Overall: 510,257 / 534,257 unique strings (95.51%), in-game coverage 97.86%.
+
 ### 2026-10-15 — Session 139: Third 4,000-row iteration completed (idx 499,704–503,703)
 
 - Translated and appended **4,000 consecutive rows, idx 499,704–503,703**, to `locale/update2b.jsonl` in twelve scratch-file chunks (250–350 rows) by the primary agent only (no subagents). **Update-2B is 12,000/30,000 (40.00%)**; next idx **503,704**; 18,000 rows remain. Earlier 8,000 rows untouched. No commit created.

@@ -1816,6 +1816,14 @@ Overall: 501,407 / 534,257 unique strings (93.85%), in-game coverage 97.07% (thi
 
 See [[Update-2A]] and [[Update-2]].
 
+## 2026-10-16 — Session 141: Update-2B fourth 4,000-row iteration completed (idx 503,704–507,703)
+
+Translated and appended **4,000 sequential rows, idx 503,704–507,703**, to `locale/update2b.jsonl` in eight 500-row chunks by the primary agent only (no subagents). **Update-2B is 16,000/30,000 (53.33%)**; next idx **507,704**; 14,000 rows remain. Interrupted by a usage limit after 1,500 rows and resumed the next day. Every chunk and the merged 4,000-row batch passed `qa_check.py --locale`, as did the full 510,257-entry dictionary (0 PROMPT_LEAK / MARKUP / EMPTY / IDX). Whole-sentence angle tags kept verbatim; no new glossary rule. `python tools/progress.py --write` refreshed the generated tables. No commit created.
+
+Overall: 510,257 / 534,257 unique strings (95.51%), in-game coverage 97.86%.
+
+See [[Update-2B]] and [[Update-2]].
+
 ## 2026-10-15 — Session 139: Update-2B third 4,000-row iteration completed (idx 499,704–503,703)
 
 Translated and appended **4,000 sequential rows, idx 499,704–503,703**, to `locale/update2b.jsonl` in twelve chunks by the primary agent only (no subagents). **Update-2B is 12,000/30,000 (40.00%)**; next idx **503,704**. **3,768 changed / 232 retained** under standing conventions; dialogue gue/lo, UI neutral; no new glossary rule. Long classical, ritual, poetry and lore prose translated in full (Analects, Gongyang/Zuo, Mencius, Zhou Li, Tang poems, Inkbound Order history and the Seaward Gate essay). QA caught an idx off-by-one in one chunk and one whole-sentence angle tag before append; both fixed. Every chunk and the full 502,257-entry locale dictionary passed with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings; 4,000 sequential idx confirmed.
