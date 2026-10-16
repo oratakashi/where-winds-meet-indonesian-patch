@@ -4,6 +4,20 @@ Part of the game v2.3 additions documented in [[Update-2]]. Output: `locale/upda
 
 ## Batches
 
+### 2026-10-16 — Session 143: Update-2A sixth 4,000-row iteration completed (idx 481,704–485,703)
+
+Translated and appended **4,000 sequential rows, idx 481,704–485,703**, to `locale/update2a.jsonl`. **Update-2A is 24,000/30,000 (80.00%)**; next idx **485,704**; 6,000 rows remain. The existing 20,000 rows were preserved byte-for-byte (SHA-256 prefix verified). No commit created.
+
+Three user-authorized subagents translated separate ranges; the primary translated 300 rows, reviewed and merged. The session resumed after a usage limit. All scratch files stayed outside the repository; transient sandbox temp loss was recovered from the session's own tool-call history and outputs were saved to stable shared system temp. **3,672 changed / 328 retained** under existing name, poetic-title, Skill/stat/set, developer placement and opaque-tag conventions. Dialogue gue/lo; UI neutral. No new glossary rule.
+
+Long prose translated in full, including mourning garments (481747), Lin Xiaoyu (481857), Lu Zundu's record (482181), Taoist poems (482286), Gongsun Chou Part B (482521), Zhao Xiaogang (482616), Bright Hall positions (483109), Wang Zhi (483137), music and geography anthologies (483200, 483454), the medicinal treatise (483287), sacrifice ceremony (483969), Eight Immortals (484158), Bei Airs (484170), Huang Zhishui (484546), Zhou Qiang (484654), Chen Zixi (484683), Tan Gong I (485146), Monthly Ordinance VI (485592), and Li Yuzhi (485608). Independent review of nine long passages found no omitted paragraphs or stanzas. Review corrected sleeve versus arm (482286), the youth-age hierarchy in funeral rites (485146), and ordinary labels such as Waterlogged Notes and Stone Lock Toss. The literal backslash-n at 484901 was restored exactly before append.
+
+The merged 4,000-row batch and the full 518,257-entry locale dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. Extra checks confirmed exact sequential idx, dollar/date/printf/literal-marker multisets, per-row newline counts and leading/trailing newline preservation, and no introduced replacement or Cyrillic characters. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 518,257 / 534,257 unique strings (97.01%), in-game coverage 98.57%.
+
+See [[Update-2A]] and [[Update-2]].
+
 ### 2026-10-16 — Session 140: Update-2A fifth 4,000-row iteration completed (idx 477,704–481,703)
 
 Appended **4,000 rows** to `locale/update2a.jsonl` in twelve 250–350-row chunks (primary agent only, scratch files outside the repo, per-chunk `qa_check.py --locale` plus sequential-idx/newline/placeholder checks before append). Update-2A is **20,000/30,000 (66.67%)**; next idx **481,704**. No commit created.
