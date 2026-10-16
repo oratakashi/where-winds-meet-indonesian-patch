@@ -1845,3 +1845,31 @@ The merged 4,000-row batch and the full 514,257-entry locale dictionary passed `
 Overall: 514,257 / 534,257 unique strings (96.26%), in-game coverage 98.22%.
 
 See [[Update-2B]] and [[Update-2]].
+
+## 2026-10-16 — Session 143: Update-2A sixth 4,000-row iteration completed (idx 481,704–485,703)
+
+Translated and appended **4,000 sequential rows, idx 481,704–485,703**, to `locale/update2a.jsonl`. **Update-2A is 24,000/30,000 (80.00%)**; next idx **485,704**; 6,000 rows remain. The existing 20,000 rows were preserved byte-for-byte (SHA-256 prefix verified). No commit created.
+
+Three user-authorized subagents translated separate ranges; the primary translated 300 rows, reviewed and merged. The session resumed after a usage limit. All scratch files stayed outside the repository; transient sandbox temp loss was recovered from the session's own tool-call history and outputs were saved to stable shared system temp. **3,672 changed / 328 retained** under existing name, poetic-title, Skill/stat/set, developer placement and opaque-tag conventions. Dialogue gue/lo; UI neutral. No new glossary rule.
+
+Long prose translated in full, including mourning garments (481747), Lin Xiaoyu (481857), Lu Zundu's record (482181), Taoist poems (482286), Gongsun Chou Part B (482521), Zhao Xiaogang (482616), Bright Hall positions (483109), Wang Zhi (483137), music and geography anthologies (483200, 483454), the medicinal treatise (483287), sacrifice ceremony (483969), Eight Immortals (484158), Bei Airs (484170), Huang Zhishui (484546), Zhou Qiang (484654), Chen Zixi (484683), Tan Gong I (485146), Monthly Ordinance VI (485592), and Li Yuzhi (485608). Independent review of nine long passages found no omitted paragraphs or stanzas. Review corrected sleeve versus arm (482286), the youth-age hierarchy in funeral rites (485146), and ordinary labels such as Waterlogged Notes and Stone Lock Toss. The literal backslash-n at 484901 was restored exactly before append.
+
+The merged 4,000-row batch and the full 518,257-entry locale dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. Extra checks confirmed exact sequential idx, dollar/date/printf/literal-marker multisets, per-row newline counts and leading/trailing newline preservation, and no introduced replacement or Cyrillic characters. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 518,257 / 534,257 unique strings (97.01%), in-game coverage 98.57%.
+
+See [[Update-2A]] and [[Update-2]].
+
+## 2026-10-16 — Session 144: Update-2B sixth 4,000-row iteration completed (idx 511,704–515,703)
+
+Translated and appended **4,000 sequential rows, idx 511,704–515,703**, to `locale/update2b.jsonl` in eleven chunks of 340–400 rows by the primary agent only (no subagents, per the repo rule; the user did not ask for them). Each chunk was written to a scratch file outside the repository and checked with `qa_check.py --locale`; the merged batch was then checked with an extra script (exact sequential idx 511,704–515,703, per-row newline counts and leading/trailing newline match, `$VAR$`/`$T(n)`/`@t[...]`/printf/`{...}` multisets, no replacement or Cyrillic characters) before appending. **Update-2B is 24,000/30,000 (80.00%)**; next idx **515,704**; 6,000 rows remain. The existing 20,000 rows were preserved byte-for-byte (the file uses CRLF line endings; the new rows were appended with CRLF to match). No commit created.
+
+**3,374 changed / 626 retained** under standing conventions (character, place and sect names, short poetic titles, Skill/set/stat/Tier labels, developer placement labels such as "Hangzhou Resident N" / "Placeholder Artisan N", opaque tags, whole-sentence angle tags at 515433 and 515525). Dialogue gue/lo; UI/system text neutral. No new glossary rule. Precedents reused: "Kini Menampilkan [X]"; "Membuka Emote …"; Wanderer → Pengembara; Senior/Junior Sister/Brother stay English; Crafter/Homestead/Gift of Gab stay English; seconds `s` → `d` (including `%02dm%02ds` → `%02dm%02dd`); English dates → Indonesian inside colour tags ("9 Feb", "10 Jun"); decimals → comma (`#Y15,00%#E`, `0,5 detik`); `<Limited` truncated titles keep the stray `<`.
+
+Long prose translated in full, including Gongyang Duke Xuan (511736), Airs of Zheng (511778), Duke Ai Zuo/Gongyang (512076), the Xian and Dun hexagrams (512562, 512791), the Qian hexagram with its commentaries (512759), the Rockspire Street essay (512582), the Qi Xiaozhou and Wei Yidu story (513626), the Moth Immortal journal (513741), the Wellspring Town essay (513803), the Yueji (514080, Chinese source rendered in Indonesian), Interpretation of the Classics No. 26 (514359), Mencius King Hui of Liang Part II (514871), the Erudition Hall essay (514888), the Rite of Sacrifices (513056), the Odes of Wei (515473) and the Shan'er cat, Elder Hu pancake, Good the temple cat and reed-shadow short stories. Source defects kept: leading-comma and trailing-comma fragments (511891, 512251, 514602, 515596), unterminated `<` at 513171, 514109, 514807, 515306; the `<LINK ...>`/`<IMAGE ...>` markup at 514055 and 514433 kept intact with only text outside the tags translated (shop names inside the link left in English).
+
+Process notes: one chunk-8 typo ("berretorika") and awkward wording at 514359 were fixed before append; idx 515576 had its two `#Y…#E` pairs merged and was restored to the source structure after the QA flagged a MARKUP mismatch. A parallel Update-2A session (143) finished its sixth iteration while this one ran, so the overall line below also includes Update-2A's 24,000 rows. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 522,257 / 534,257 unique strings (97.75%), in-game coverage 98.93%.
+
+See [[Update-2B]] and [[Update-2]].
