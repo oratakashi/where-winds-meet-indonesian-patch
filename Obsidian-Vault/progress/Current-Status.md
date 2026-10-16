@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-16 (session 145) — target: game v2.3.** This is the single source of truth for "how
+**Last updated: 2026-10-16 (session 147) — target: game v2.3.** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,10 +16,10 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **532,257** | **534,257** | **99.63%** |
+| **Unique strings translated (all)** | **534,257** | **534,257** | **100.00%** |
 | ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
-| ↳ game-update strings (Update-N) | 102,370 | 104,370 | 98.08% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,120,784** | **1,122,784** | **99.82%** |
+| ↳ game-update strings (Update-N) | 104,370 | 104,370 | 100.00% |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,122,784** | **1,122,784** | **100.00%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -47,7 +47,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | 17 | 400,000–429,886 | done | — | 29,887 / 29,887 | 100.00% |
 | Update-1 | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
 | Update-2A | 461,704–491,703 | done | — | 30,000 / 30,000 | 100.00% |
-| Update-2B | 491,704–521,703 | **active** | 519,704 | 28,000 / 30,000 | 93.33% |
+| Update-2B | 491,704–521,703 | done | — | 30,000 / 30,000 | 100.00% |
 | Update-2C | 521,704–534,256 | done | — | 12,553 / 12,553 | 100.00% |
 
 <!-- progress:end -->
@@ -62,10 +62,28 @@ phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
 **v2.2 was 100% done; the target is now v2.3.** All Phases 0–17 and Update-1
 remain complete and valid (no idx was renumbered). **Update-2C is now complete** (all 12,553 rows,
-`locale/update2c.jsonl`). Only one block remains active:
-**Update-2A** → `locale/update2a.jsonl` is **now complete** (all 30,000 rows) and
-**Update-2B, next idx 519,704** → `locale/update2b.jsonl` (seven 4,000-row iterations done, covering 491,704–519,703; 2,000 rows remain).
+`locale/update2c.jsonl`). No block remains active.
+Update-2A (`locale/update2a.jsonl`, 30,000 rows) and
+**Update-2B** → `locale/update2b.jsonl` is **now complete** (all 30,000 rows).
 The in-game coverage row above already reflects the v2.3 `strings.jsonl` dump (1,122,784 entries).
+
+## 2026-10-16 — Session 147: Update-2B completed (idx 519,704–521,703)
+
+Translated and appended the **final 2,000 rows, idx 519,704–521,703**, to `locale/update2b.jsonl` in six chunks of 300–350 rows by the primary agent only (no subagents). Each chunk was written to a scratch file outside the repository, merged by a helper that fills untouched rows with the source text and checks newline counts, leading/trailing newlines, `$VAR$`/`@t[...]`/printf/`{...}` multisets, replacement characters, end punctuation and length ratio, then passed `qa_check.py --locale` before being appended (CRLF). **Update-2B is now complete: 30,000/30,000 (100.00%)**, strictly consecutive 491,704–521,703.
+
+About 1,740 changed / 260 retained under standing conventions (names, places, short poetic titles, Skill/set/stat/Tier labels, developer placement labels, opaque tags, whole-sentence angle tags such as 519707 and 521226). Dialogue gue/lo; UI neutral. No new glossary rule. Precedents reused: seconds `s` -> `d` (including `#Y8#Es` -> `#Y8#Ed`), decimals -> comma, English dates -> Indonesian inside colour tags; "Master X" (teacher) -> Guru X; Senior/Junior Sister/Brother stay English; "Emote Splendor/Gleam"; "red packets" -> angpao; "County" place labels in `#R...#E` tags stay English (fixed 519735 back to source after first translating it).
+
+Long prose translated in full: Analects Books IX, V, XI (519727, 520714, 521427), Li Baisan's West Lake travel notes (519736), the evening funeral rites (519899), Duke Xiang commentary (520186), Records of Spirits (520381), Xu Wenqing's cocoon story (520739), Dragonfall Camp (520797), Tan Gong II (520915), Mourning Apparel Part 11 (521001), Sacrificial Righteousness (521646) and the Odes of Gui (520816). Source defects kept: stray CJK `威严` at 521646 rendered as "kewibawaan"; typo "Februry"/"2st" normalised only where it was translated text.
+
+Process slip caught before release: in chunk 1 the idx labels drifted by one for ~65 rows (a copy of file line numbers); fixed before append. A shell `grep -c ... &&` chain also skipped one append once; detected via row count and redone.
+
+Full 534,257-entry dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 534,257 / 534,257 unique strings (100.00%), in-game coverage 100.00%.
+
+All of Update-1, Update-2A, 2B and 2C and Phases 0–17 are now complete: nothing remains for game v2.3.
+
+See [[Update-2B]] and [[Update-2]].
 
 ## 2026-10-16 — Session 146: Update-2A completed (idx 485,704–491,703)
 

@@ -4,6 +4,22 @@ Part of the game v2.3 additions documented in [[Update-2]]. Output: `locale/upda
 
 ## Batches
 
+### 2026-10-16 — Session 147: Update-2B completed (idx 519,704–521,703)
+
+Translated and appended the **final 2,000 rows, idx 519,704–521,703**, to `locale/update2b.jsonl` in six chunks of 300–350 rows by the primary agent only (no subagents). Each chunk was written to a scratch file outside the repository, merged by a helper that fills untouched rows with the source text and checks newline counts, leading/trailing newlines, `$VAR$`/`@t[...]`/printf/`{...}` multisets, replacement characters, end punctuation and length ratio, then passed `qa_check.py --locale` before being appended (CRLF). **Update-2B is now complete: 30,000/30,000 (100.00%)**, strictly consecutive 491,704–521,703.
+
+About 1,740 changed / 260 retained under standing conventions (names, places, short poetic titles, Skill/set/stat/Tier labels, developer placement labels, opaque tags, whole-sentence angle tags such as 519707 and 521226). Dialogue gue/lo; UI neutral. No new glossary rule. Precedents reused: seconds `s` -> `d` (including `#Y8#Es` -> `#Y8#Ed`), decimals -> comma, English dates -> Indonesian inside colour tags; "Master X" (teacher) -> Guru X; Senior/Junior Sister/Brother stay English; "Emote Splendor/Gleam"; "red packets" -> angpao; "County" place labels in `#R...#E` tags stay English (fixed 519735 back to source after first translating it).
+
+Long prose translated in full: Analects Books IX, V, XI (519727, 520714, 521427), Li Baisan's West Lake travel notes (519736), the evening funeral rites (519899), Duke Xiang commentary (520186), Records of Spirits (520381), Xu Wenqing's cocoon story (520739), Dragonfall Camp (520797), Tan Gong II (520915), Mourning Apparel Part 11 (521001), Sacrificial Righteousness (521646) and the Odes of Gui (520816). Source defects kept: stray CJK `威严` at 521646 rendered as "kewibawaan"; typo "Februry"/"2st" normalised only where it was translated text.
+
+Process slip caught before release: in chunk 1 the idx labels drifted by one for ~65 rows (a copy of file line numbers); fixed before append. A shell `grep -c ... &&` chain also skipped one append once; detected via row count and redone.
+
+Full 534,257-entry dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 534,257 / 534,257 unique strings (100.00%), in-game coverage 100.00%.
+
+See [[Update-2B]] and [[Update-2]].
+
 ### 2026-10-16 — Session 145: Update-2B seventh 4,000-row iteration completed (idx 515,704–519,703)
 
 Translated and appended **4,000 sequential rows, idx 515,704–519,703**, to `locale/update2b.jsonl`. **Update-2B is 28,000/30,000 (93.33%)**; next idx **519,704**; 2,000 rows remain. Three user-authorized subagents translated disjoint ranges; the primary completed 334 rows and three long passages, reviewed, merged and validated. The earlier 24,000 rows were preserved byte-for-byte (SHA-256 prefix verified); new rows use the existing CRLF line endings. No commit created.
