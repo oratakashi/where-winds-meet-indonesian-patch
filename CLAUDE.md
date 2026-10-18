@@ -14,7 +14,9 @@ Don't add new extracted dumps (`strings_diff.jsonl`, `strings.translated.jsonl`,
 those stay ignored. `strings.jsonl` was tracked too until game v2.3, when it grew past GitHub's
 100 MB limit (114 MB); it is now untracked and regenerated with
 `python wwm_locmap.py dump translate_words_map_en strings.jsonl` (CI does this before
-`progress.py`, which exits with that hint if the file is missing).
+`progress.py`, which exits with that hint if the file is missing). Since the v2.3 hotfix
+(Update-2D) `progress.py` also reports `_diff` coverage, so `strings_diff.jsonl` must be dumped
+the same way (`python wwm_locmap.py dump translate_words_map_en_diff strings_diff.jsonl`).
 
 ## Commands
 

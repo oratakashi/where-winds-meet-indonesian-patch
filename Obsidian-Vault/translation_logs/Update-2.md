@@ -34,6 +34,26 @@ Split per ~30,000 strings at the user's request. Letters (not `Update-3`,
 | Update-2A | 461,704–491,703 | 30,000 | `locale/update2a.jsonl` |
 | Update-2B | 491,704–521,703 | 30,000 | `locale/update2b.jsonl` |
 | Update-2C | 521,704–534,256 | 12,553 | `locale/update2c.jsonl` |
+| Update-2D (v2.3 hotfix) | 534,257–535,918 | 1,662 | `locale/update2d.jsonl` |
+
+Update-2A/2B/2C were all completed on 2026-10-16 (sessions 135, 146, 147).
+
+## How Update-2D was created (session 148, v2.3 hotfix)
+
+| v2.3 hotfix file | Entries | Tombstones | Change vs v2.3 |
+| --- | ---: | ---: | --- |
+| `translate_words_map_en` | 1,122,784 | 0 | byte-identical (same SHA-256) |
+| `translate_words_map_en_diff` | 12,934 (v2.3: 8,422) | 1,919 (v2.3: 1,647) | +4,518 keys, −6 keys, 300 values changed |
+
+- `python tools/rebuild_unique_strings.py` (defaults: `strings.jsonl` +
+  `strings_diff.jsonl`) appended **1,662** new strings, all from `_diff`, as idx
+  534,257–535,918. Existing idx untouched.
+- Named **Update-2D** (next letter) at the user's request: it is a hotfix of
+  v2.3, not a new game update.
+- From this session `tools/progress.py` also reports `_diff` coverage in the
+  generated block, and both workflows dump `strings_diff.jsonl` first.
+- Before any Update-2D work the dictionary covers 100.00% of the base file and
+  73.01% (8,042 / 11,015) of the live `_diff` entries.
 
 ## Batches
 

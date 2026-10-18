@@ -1901,3 +1901,11 @@ The full 532,257-entry locale dictionary passed `qa_check.py --locale` with 0 PR
 Overall: 532,257 / 534,257 unique strings (99.63%), in-game coverage 99.82%.
 
 See [[Update-2A]] and [[Update-2]].
+
+## 2026-10-18 — Session 148: v2.3 hotfix → Update-2D setup
+
+No translation — migration only. The v2.3 hotfix left `translate_words_map_en` byte-identical and grew `translate_words_map_en_diff` from 8,422 to 12,934 entries (1,919 tombstones). `rebuild_unique_strings.py` appended **1,662** new strings as idx 534,257–535,918, registered as **Update-2D** in `tools/progress.py`. `progress.py` now also reports `_diff` coverage (tracked dump `strings_diff.jsonl`); `translation-qa.yml` and `release-patch.yml` dump it before running, and the rolling release is renamed "WWM v2.3 Hotfix". (Session 147 — Update-2B completed, idx 519,704–521,703 — is recorded in [[Current-Status]] and [[Update-2B]].)
+
+Overall: 534,257 / 535,919 unique strings (99.69%), in-game coverage 100.00% (base) / 73.01% (`_diff`).
+
+See [[Update-2]] and [[Update-2D]].

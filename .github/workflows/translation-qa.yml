@@ -8,6 +8,7 @@ on:
       - "locale/**"
       - "translation_work/**"
       - "translate_words_map_en"
+      - "translate_words_map_en_diff"
       - "tools/**"
       - "Obsidian-Vault/progress/Current-Status.md"
   push:
@@ -16,6 +17,7 @@ on:
       - "locale/**"
       - "translation_work/**"
       - "translate_words_map_en"
+      - "translate_words_map_en_diff"
       - "tools/**"
       - "Obsidian-Vault/progress/Current-Status.md"
 
@@ -33,5 +35,8 @@ jobs:
       # strings.jsonl tidak ter-track (>100 MB sejak v2.3) — dump dari binary.
       - name: Dump strings.jsonl
         run: python wwm_locmap.py dump translate_words_map_en strings.jsonl
+      # Sejak hotfix v2.3 coverage _diff juga masuk blok progress.
+      - name: Dump strings_diff.jsonl
+        run: python wwm_locmap.py dump translate_words_map_en_diff strings_diff.jsonl
       - name: Progress block is up to date
         run: python tools/progress.py --check

@@ -9,11 +9,11 @@ Obsidian-Vault/progress/Current-Status.md (blok di antara penanda
     python tools/progress.py --check    # exit 1 kalau blok tidak sesuai data (CI)
 
 Angka dihitung dari file yang ter-track di git (unique_strings.jsonl,
-locale/*.jsonl) plus strings.jsonl, yang TIDAK ter-track (>100 MB sejak game
-v2.3) tapi deterministik: selalu hasil `wwm_locmap.py dump translate_words_map_en
-strings.jsonl` dari binary yang ter-track. Jadi hasilnya sama di mesin mana pun
-dan --check bisa dipakai di CI (CI men-dump-nya dulu). Dump lain yang ada secara lokal (strings_diff.jsonl)
-hanya dicetak ke konsol, tidak ditulis ke blok.
+locale/*.jsonl) plus strings.jsonl dan strings_diff.jsonl, yang TIDAK ter-track
+(strings.jsonl >100 MB sejak game v2.3) tapi deterministik: selalu hasil
+`wwm_locmap.py dump` dari binary translate_words_map_en / _diff yang ter-track.
+Jadi hasilnya sama di mesin mana pun dan --check bisa dipakai di CI (CI
+men-dump keduanya dulu).
 
 Fase baru (Update-N setelah update game) harus ditambahkan ke PHASES di bawah.
 """
@@ -44,11 +44,15 @@ PHASES += [("17", "phase17.jsonl", 400000, 429886),
 PHASES += [("Update-2A", "update2a.jsonl", 461704, 491703),
            ("Update-2B", "update2b.jsonl", 491704, 521703),
            ("Update-2C", "update2c.jsonl", 521704, 534256)]
+# Update-2D = string baru dari hotfix v2.3 (2026-10-17) — hanya _diff yang berubah.
+PHASES += [("Update-2D", "update2d.jsonl", 534257, 535918)]
 
 # Dump yang wajib ada -> dipakai untuk blok. Sisanya hanya info konsol.
-TRACKED_DUMPS = [("translate_words_map_en", "strings.jsonl")]
+# _diff ikut dihitung sejak hotfix v2.3 (string barunya hanya ada di _diff).
+TRACKED_DUMPS = [("translate_words_map_en", "strings.jsonl"),
+                 ("translate_words_map_en_diff", "strings_diff.jsonl")]
 # (__small / __small_diff tidak dikirim lagi sejak game v2.3.)
-LOCAL_DUMPS = [("translate_words_map_en_diff", "strings_diff.jsonl")]
+LOCAL_DUMPS = []
 
 
 def pct(a, b):

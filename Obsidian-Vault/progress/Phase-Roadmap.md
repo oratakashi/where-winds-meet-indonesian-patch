@@ -9,7 +9,7 @@ session-by-session timeline, see [[Session-History]].
 ## Why the work is split into phases
 
 The original 429,887 unique strings (461,704 after [[Update-1]], 534,257
-after [[Update-2]] for game v2.3) are too
+after [[Update-2]] for game v2.3, 535,919 after the v2.3 hotfix) are too
 much for one session (even several small ones). To keep each session light and the output careful (not just
 haphazard translation), the work is split into **phases** based on `idx`
 ranges in `translation_work/unique_strings.jsonl` (already sorted by
@@ -40,16 +40,20 @@ for at the start of each session (see [[Current-Status]] §Batch size).
 | 16 (done)         | 370,000 – 399,999 | 30,000       | ~98.7%                      | —                       | done                  | `locale/phase16.jsonl` |
 | 17 (done)         | 400,000 – 429,886 | 29,887       | 100%*                       | —                       | done                  | `locale/phase17.jsonl` |
 | Update-1 (done)   | 429,887 – 461,703 | 31,817       | additional (see note below) | —                       | done                  | `locale/update1.jsonl` |
-| Update-2A (v2.3)  | 461,704 – 491,703 | 30,000       | additional (v2.3)           | set by user             | **active**            | `locale/update2a.jsonl` |
-| Update-2B (v2.3)  | 491,704 – 521,703 | 30,000       | additional (v2.3)           | set by user             | **active**              | `locale/update2b.jsonl` |
-| Update-2C (v2.3)  | 521,704 – 534,256 | 12,553       | additional (v2.3)           | set by user             | **active**              | `locale/update2c.jsonl` |
+| Update-2A (done)  | 461,704 – 491,703 | 30,000       | additional (v2.3)           | —                       | done                  | `locale/update2a.jsonl` |
+| Update-2B (done)  | 491,704 – 521,703 | 30,000       | additional (v2.3)           | —                       | done                  | `locale/update2b.jsonl` |
+| Update-2C (done)  | 521,704 – 534,256 | 12,553       | additional (v2.3)           | —                       | done                  | `locale/update2c.jsonl` |
+| Update-2D (v2.3 hotfix) | 534,257 – 535,918 | 1,662 | additional (`_diff` only)   | set by user             | **active**            | `locale/update2d.jsonl` |
 
 \* Percentage of the 963,050 total lines in the pre-update `strings.jsonl`,
 based on its frequency distribution. Figures from Phase 2 onward are rough
 interpolations, not precise per-idx counts — don't treat them as exact. For
 the actual current coverage per file, run `tools/patch_all.py` (it prints
 the matched share; 2026-09-24: 64.2% of the base file's 826,388 entries;
-2026-10-15, game v2.3 before any Update-2 work: 90.65% of 1,122,784 entries).
+2026-10-15, game v2.3 before any Update-2 work: 90.65% of 1,122,784 entries;
+2026-10-18, v2.3 hotfix before any Update-2D work: 100% of the base and
+73.01% of the 11,015 live `_diff` entries — `tools/progress.py` now reports
+both).
 
 **Update-1** (formerly labeled "Phase 9") was added on 2026-09-16 after a
 game update — it is not part of the original 429,887 unique strings.
@@ -73,6 +77,14 @@ blocks **Update-2A / 2B / 2C** (letters, not new `Update-N` numbers, since
 they all come from one game update). 29,022 older strings no longer occur in
 v2.3 and are left in place — they cost nothing because matching is by source
 text. See [[Update-2]].
+
+**Update-2D** (2026-10-18) is the **v2.3 hotfix** (files dated 2026-10-17).
+The base `translate_words_map_en` is byte-identical to v2.3; only
+`translate_words_map_en_diff` changed (8,422 → 12,934 entries, 1,919
+tombstones). `rebuild_unique_strings.py` appended **1,662** new strings as idx
+534,257–535,918. It takes the next letter rather than `Update-3` at the
+user's request, since it is a hotfix of the same v2.3 release. Update-2A/2B/2C
+(all of v2.3) were completed on 2026-10-16. See [[Update-2]] and [[Update-2D]].
 
 **Naming convention going forward:** a game-update string batch (appended by
 `rebuild_unique_strings.py`, always a disjoint idx block above the current

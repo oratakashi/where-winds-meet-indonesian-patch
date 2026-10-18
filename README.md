@@ -72,7 +72,7 @@ NetEase frequently ships incremental updates via companion files (`_diff` for de
 | **In-Place Value Editing** | Supported | Preserves control bytes, slot indices, and hash structures |
 | **Arbitrary Key Insertion** | Unsupported | Requires reversing the proprietary 64-bit hash derivation |
 
-**Snapshot Reference**: Tested against global game builds (NetEase Messiah Engine). Localization entry counts vary per game update as keys and shards fluctuate. The current target, **game v2.3** (October 2026), has **1,122,784 entries across 4,387 blocks** in the primary map plus a sparse `_diff` (8,422 entries, 1,647 tombstones), and no `__small` tables. For reference, the September 2026 (v2.2) global release snapshot contains **826,388 entries across 3,230 blocks** in the primary map, accompanied by a sparse `_diff` file (212,117 active entries) and an isolated `__small` table (4,009 entries; see [§4.6 of Format-Spec.md](Obsidian-Vault/knowladge/Format-Spec.md#46-the-__small--__small_diff-variant-a-separate-table-not-part-of-_diff)).
+**Snapshot Reference**: Tested against global game builds (NetEase Messiah Engine). Localization entry counts vary per game update as keys and shards fluctuate. The current target, **game v2.3 hotfix** (October 2026), has **1,122,784 entries across 4,387 blocks** in the primary map (unchanged from v2.3) plus a sparse `_diff` (12,934 entries, 1,919 tombstones; v2.3: 8,422 / 1,647), and no `__small` tables. For reference, the September 2026 (v2.2) global release snapshot contains **826,388 entries across 3,230 blocks** in the primary map, accompanied by a sparse `_diff` file (212,117 active entries) and an isolated `__small` table (4,009 entries; see [§4.6 of Format-Spec.md](Obsidian-Vault/knowladge/Format-Spec.md#46-the-__small--__small_diff-variant-a-separate-table-not-part-of-_diff)).
 
 ---
 
@@ -90,7 +90,7 @@ published as a single rolling GitHub Release (tag `latest`):
 > mod or causes crashes, restore these originals.
 
 > [!NOTE]
-> The current release targets **game v2.3**, which only ships `translate_words_map_en` and
+> The current release targets **game v2.3 (hotfix)**, which only ships `translate_words_map_en` and
 > `translate_words_map_en_diff` — the `__small` / `__small_diff` files from v2.2 no longer exist,
 > so there is nothing to copy for them.
 

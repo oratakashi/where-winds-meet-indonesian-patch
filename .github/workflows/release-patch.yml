@@ -3,15 +3,14 @@ name: release-patch
 # Membangun ulang file translate_words_map_* hasil terjemahan setiap push ke main,
 # lalu mempublikasikannya sebagai satu GitHub Release "rolling" (tag tetap: latest)
 # supaya pemain punya SATU link download yang selalu berisi build terbaru.
-# Target: game v2.3 — hanya translate_words_map_en + _diff (__small/__small_diff
-# sudah tidak dikirim NetEase sejak v2.3).
+# Target: game v2.3 Hotfix — hanya translate_words_map_en + _diff (__small/__small_diff
+# sudah tidak dikirim NetEase sejak v2.3). Hotfix v2.3 hanya mengubah _diff; base tetap.
 on:
   push:
     branches: [main]
     paths:
       - "locale/**"
       - "translation_work/**"
-      - "strings_diff.jsonl"
       - "translate_words_map_en*"
       - "tools/**"
       - "wwm_locmap.py"
@@ -44,6 +43,10 @@ jobs:
       - name: Dump strings.jsonl
         run: python wwm_locmap.py dump translate_words_map_en strings.jsonl
 
+      # Blok progress juga memuat coverage _diff sejak hotfix v2.3.
+      - name: Dump strings_diff.jsonl
+        run: python wwm_locmap.py dump translate_words_map_en_diff strings_diff.jsonl
+
       - name: Compute progress summary
         id: progress
         run: |
@@ -62,14 +65,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
-          name: "Patch Terjemahan Indonesia — WWM v2.3 (build terbaru)"
+          name: "Patch Terjemahan Indonesia — WWM v2.3 Hotfix (build terbaru)"
           prerelease: true
           target_commitish: ${{ github.sha }}
           body: |
             Build otomatis dari commit ${{ github.sha }} (${{ github.event.head_commit.timestamp }}).
 
-            **Untuk Where Winds Meet versi 2.3.** Berisi `translate_words_map_en` dan
-            `translate_words_map_en_diff` — file `__small` / `__small_diff` sudah tidak ada sejak v2.3,
+            **Untuk Where Winds Meet versi 2.3 (Hotfix).** Berisi `translate_words_map_en` dan
+            `translate_words_map_en_diff` — hotfix v2.3 hanya memperbarui `_diff`, jadi pastikan
+            kedua file disalin ulang. File `__small` / `__small_diff` sudah tidak ada sejak v2.3,
             jadi tidak perlu disalin lagi.
 
             Ini adalah build **terbaru dari `main`**, bukan rilis stabil — progress terjemahan
