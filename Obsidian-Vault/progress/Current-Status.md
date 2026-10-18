@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-18 (session 148) — target: game v2.3 hotfix.** This is the single source of truth for "how
+**Last updated: 2026-10-18 (session 149) — game v2.3 hotfix fully translated.** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,11 +16,11 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **534,257** | **535,919** | **99.69%** |
+| **Unique strings translated (all)** | **535,919** | **535,919** | **100.00%** |
 | ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
-| ↳ game-update strings (Update-N) | 104,370 | 106,032 | 98.43% |
+| ↳ game-update strings (Update-N) | 106,032 | 106,032 | 100.00% |
 | **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,122,784** | **1,122,784** | **100.00%** |
-| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **8,042** | **11,015** | **73.01%** |
+| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **11,015** | **11,015** | **100.00%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -50,7 +50,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | Update-2A | 461,704–491,703 | done | — | 30,000 / 30,000 | 100.00% |
 | Update-2B | 491,704–521,703 | done | — | 30,000 / 30,000 | 100.00% |
 | Update-2C | 521,704–534,256 | done | — | 12,553 / 12,553 | 100.00% |
-| Update-2D | 534,257–535,918 | not started | 534,257 | 0 / 1,662 | 0.00% |
+| Update-2D | 534,257–535,918 | done | — | 1,662 / 1,662 | 100.00% |
 
 <!-- progress:end -->
 
@@ -63,14 +63,28 @@ Update-1 is the addition from the 2026-09-16 game update (idx
 100,000/229,887-string "Phase 7"/"Phase 8" split with eleven ~30,000-string
 phases (rebalanced 2026-09-22 — see [[Phase-Roadmap]]).
 
-**v2.3 was 100% done (session 147); the target is now the v2.3 hotfix.** All
-Phases 0–17, Update-1 and Update-2A/2B/2C remain complete and valid (no idx was
+**v2.3 and its hotfix are both 100% done (sessions 147 and 149).** All
+Phases 0–17, Update-1 and Update-2A/2B/2C/2D are complete and valid (no idx was
 renumbered). The hotfix left `translate_words_map_en` byte-identical and only
-changed `translate_words_map_en_diff`, so the base coverage row stays at 100%.
-**Update-2D is the only active block** → `locale/update2d.jsonl` (not created
-yet; next idx **534,257**, 1,662 rows). Since session 148 the generated block
-also reports `_diff` coverage (`strings_diff.jsonl`), which is where the
-hotfix's untranslated text lives.
+changed `translate_words_map_en_diff`; Update-2D (`locale/update2d.jsonl`, idx
+534,257–535,918, 1,662 rows) now covers its text, so the `_diff` coverage row
+is 100% as well. Nothing is active until the next game update.
+
+## 2026-10-18 — Session 149: Update-2D completed (idx 534,257–535,918)
+
+Translated all **1,662 rows of Update-2D, idx 534,257–535,918**, to a new `locale/update2d.jsonl` in seven chunks of 199–250 rows by the primary agent only (no subagents, per the repo rule). Each chunk was written to a scratch file outside the repository (only the changed rows), merged by a helper that fills untouched rows with the source text and checks newline counts, leading/trailing newlines, `$VAR$`/`@t[...]`/printf/`{...}`/`<...>`/colour-token multisets and replacement/Cyrillic characters, then passed `qa_check.py --locale` before being appended (CRLF, matching the other files). **Update-2D is now 1,662/1,662 (100.00%)**, strictly consecutive 534,257–535,918. No commit was created.
+
+**1,407 changed / 255 retained** under standing conventions (names, places, Skill/set/stat/Tier labels, `<LTD>` emote-line tags, `Intelleektual:`/`Lv.N` labels, Tier-N affix chests, `#testN#` debug labels, opaque tags). Dialogue gue/lo; UI neutral. No new glossary rule. Precedents reused: seconds `s` → `d` (including `{}s` and `3s`), decimals → comma, English dates → Indonesian, "Red Packet" → Angpao, Senior Sister stays English, Hit Stagger / Gift of Gab / Hidden Channel / Gab-Quip-Maxim-Fluff Cards stay English, Wanderer → Pengembara, `Mode Channels`-style channel names stay English.
+
+Long prose translated in full: Zhao Xiaogang's stories (534535, 534825), Yang Fan's notebook and posting (534728, 535826), Fan Xiangxiang (535289, 535739), the Mencius King Hui of Liang I and II excerpts (535442, 535464), the Odes of Zhou South I and II (534831, 535871), the dormitory/Study Token/Guild War League rule texts (535804, 535383, 535112) and the Phantom Bubble skill descriptions. Source defects kept: the lone truncated `...` at the end of 535464, the `tota` typo at 535830 normalised to "total", `May 2st`/`3st` quest labels rewritten as "Tanggal 2/3 Mei", and the `Skill: X>` fragments with a stray closing `>` (e.g. 534687, 534873) left as in the source.
+
+Process slips caught by QA before append: 534818 lost one `#E` (restored), 535462 lost the space in `# Chang'an$ …#` (restored), 535804 dropped one `#Hadditional#E` pair (restored). The full 535,919-entry dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 535,919 / 535,919 unique strings (100.00%), in-game coverage 100.00% (base) / 100.00% (`_diff`).
+
+All of Update-1, Update-2A/2B/2C/2D and Phases 0–17 are now complete: nothing remains for the v2.3 hotfix. A patched `_diff` only sticks on the official NetEase launcher (see `CLAUDE.md`).
+
+See [[Update-2D]] and [[Update-2]].
 
 ## 2026-10-18 — Session 148: v2.3 hotfix → Update-2D setup
 

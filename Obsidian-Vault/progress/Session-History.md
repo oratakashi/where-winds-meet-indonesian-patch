@@ -1909,3 +1909,19 @@ No translation — migration only. The v2.3 hotfix left `translate_words_map_en`
 Overall: 534,257 / 535,919 unique strings (99.69%), in-game coverage 100.00% (base) / 73.01% (`_diff`).
 
 See [[Update-2]] and [[Update-2D]].
+
+## 2026-10-18 — Session 149: Update-2D completed (idx 534,257–535,918)
+
+Translated all **1,662 rows of Update-2D, idx 534,257–535,918**, to a new `locale/update2d.jsonl` in seven chunks of 199–250 rows by the primary agent only (no subagents, per the repo rule). Each chunk was written to a scratch file outside the repository (only the changed rows), merged by a helper that fills untouched rows with the source text and checks newline counts, leading/trailing newlines, `$VAR$`/`@t[...]`/printf/`{...}`/`<...>`/colour-token multisets and replacement/Cyrillic characters, then passed `qa_check.py --locale` before being appended (CRLF, matching the other files). **Update-2D is now 1,662/1,662 (100.00%)**, strictly consecutive 534,257–535,918. No commit was created.
+
+**1,407 changed / 255 retained** under standing conventions (names, places, Skill/set/stat/Tier labels, `<LTD>` emote-line tags, `Intelleektual:`/`Lv.N` labels, Tier-N affix chests, `#testN#` debug labels, opaque tags). Dialogue gue/lo; UI neutral. No new glossary rule. Precedents reused: seconds `s` → `d` (including `{}s` and `3s`), decimals → comma, English dates → Indonesian, "Red Packet" → Angpao, Senior Sister stays English, Hit Stagger / Gift of Gab / Hidden Channel / Gab-Quip-Maxim-Fluff Cards stay English, Wanderer → Pengembara, `Mode Channels`-style channel names stay English.
+
+Long prose translated in full: Zhao Xiaogang's stories (534535, 534825), Yang Fan's notebook and posting (534728, 535826), Fan Xiangxiang (535289, 535739), the Mencius King Hui of Liang I and II excerpts (535442, 535464), the Odes of Zhou South I and II (534831, 535871), the dormitory/Study Token/Guild War League rule texts (535804, 535383, 535112) and the Phantom Bubble skill descriptions. Source defects kept: the lone truncated `...` at the end of 535464, the `tota` typo at 535830 normalised to "total", `May 2st`/`3st` quest labels rewritten as "Tanggal 2/3 Mei", and the `Skill: X>` fragments with a stray closing `>` (e.g. 534687, 534873) left as in the source.
+
+Process slips caught by QA before append: 534818 lost one `#E` (restored), 535462 lost the space in `# Chang'an$ …#` (restored), 535804 dropped one `#Hadditional#E` pair (restored). The full 535,919-entry dictionary passed `qa_check.py --locale` with 0 PROMPT_LEAK / MARKUP / EMPTY / IDX findings. `python tools/progress.py --write` regenerated the tables.
+
+Overall: 535,919 / 535,919 unique strings (100.00%), in-game coverage 100.00% (base) / 100.00% (`_diff`).
+
+All of Update-1, Update-2A/2B/2C/2D and Phases 0–17 are now complete: nothing remains for the v2.3 hotfix. A patched `_diff` only sticks on the official NetEase launcher (see `CLAUDE.md`).
+
+See [[Update-2D]] and [[Update-2]].

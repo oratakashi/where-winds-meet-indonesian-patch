@@ -43,7 +43,7 @@ for at the start of each session (see [[Current-Status]] §Batch size).
 | Update-2A (done)  | 461,704 – 491,703 | 30,000       | additional (v2.3)           | —                       | done                  | `locale/update2a.jsonl` |
 | Update-2B (done)  | 491,704 – 521,703 | 30,000       | additional (v2.3)           | —                       | done                  | `locale/update2b.jsonl` |
 | Update-2C (done)  | 521,704 – 534,256 | 12,553       | additional (v2.3)           | —                       | done                  | `locale/update2c.jsonl` |
-| Update-2D (v2.3 hotfix) | 534,257 – 535,918 | 1,662 | additional (`_diff` only)   | set by user             | **active**            | `locale/update2d.jsonl` |
+| Update-2D (done, v2.3 hotfix) | 534,257 – 535,918 | 1,662 | additional (`_diff` only)   | —                       | done                  | `locale/update2d.jsonl` |
 
 \* Percentage of the 963,050 total lines in the pre-update `strings.jsonl`,
 based on its frequency distribution. Figures from Phase 2 onward are rough
