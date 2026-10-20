@@ -17,3 +17,11 @@ All 1,662 strings come from `translate_words_map_en_diff` — the hotfix left th
 - `$D`/`$S…$E`/`$link…$`, `@T[...]`/`@t[...]` and `{}`/`{n}` placeholders preserved; `#x$y#` alternate-text wrappers (535279, 535354, 535462, 535727) keep their `$`/`#` markers while the words are translated.
 - Dates → Indonesian (Jun/Jul/Agustus…), times kept as in the source, `s` → `d`, `h` → `j`, decimals → comma, thousands separators → dot.
 - QA slips fixed before append: 534818 (`#E` count), 535462 (space in `# Chang'an$ …#`), 535804 (`#H…#E` pair).
+
+## Place-name wiki audit & fix (2026-10-20)
+
+- Audited all 133 Fandom wiki location names (see [[Place-Names-Wiki]]) against `unique_strings.jsonl` / `locale/*.jsonl`. 440 existing translations edited in place (idx unchanged, no new rows): Indonesian renderings (Taman Belakang, Istana Kekaisaran, Kota/Prefektur Kaifeng, Lapangan Latihan, Pasir Mengaum, ...) replaced by the wiki-spelled English name; surrounding words untouched.
+- Also fixed idx 74855 ("Wayfarer - Jade Gate Pass"), whose translation was an unrelated sentence.
+- Left on purpose: "Warga Harvestfall" (= Harvestfall Villagers, a different phrase).
+- **Known source/translation misalignments, not fixed** (translation text unrelated to source): idx 74631, 74420, 74679 — need re-translation.
+- QA after: 0 PROMPT_LEAK / MARKUP / EMPTY; `progress.py --check` OK; progress counts unchanged (all 100% in-game coverage).

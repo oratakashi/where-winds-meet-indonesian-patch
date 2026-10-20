@@ -99,7 +99,7 @@
 {"idx": 100098, "v": "Drum Rim"}
 {"idx": 100099, "v": "Festival Kembang Api Penutupan Server"}
 {"idx": 100100, "v": "Legenda lama bercerita tentang benih Moonlit Flower. Dikisahkan ada #Hlorong tersembunyi#E jauh di dalam #HMoon Lake#E, dinaungi #HCrimson Cliff#E. Di ujung jalan gelap itu, benih-benih tersebut konon menunggu. Temukan lorong tersembunyi dan cari benihnya di ujung jalan."}
-{"idx": 100101, "v": "Di Bawah Kuil Sang Jenderal"}
+{"idx": 100101, "v": "Beneath the General's Shrine"}
 {"idx": 100102, "v": "Berisi Lesser Yang Spirit dengan atribut utama tertentu."}
 {"idx": 100103, "v": "EbonyBullet"}
 {"idx": 100104, "v": "HUtaoShAtter"}
@@ -5537,7 +5537,7 @@
 {"idx": 105536, "v": "Arena 1v1"}
 {"idx": 105537, "v": "Baru terbit—daftar buku terlarang yang baru, dan lo bakal nggak percaya? Beberapa buku cerita paling populer di jalanan masuk daftar itu, semuanya gara-gara \"terlalu vulgar\". Pembaca setia pada marah: apa semua yang di bawah leher harus dilarang? Kita pasti pantas dapet cerita yang sedikit lebih pedas!"}
 {"idx": 105538, "v": "%d ruang pribadi dibuka - pasokan yang dibutuhkan %s"}
-{"idx": 105539, "v": "Kabar besar buat yang taat! Prince Manjusri dari Tianzhu telah membawa relik tulang Buddha ke Kaifeng! Kini disemayamkan di East Pagoda di Grand Imperial Temple, berdampingan dengan sisa-sisa suci Master Huiyun di West Pagoda—berkah sejati untuk Kota Kaifeng. \nHarap dicatat: meski pagoda itu sendiri tertutup untuk umum, para penganut dipersilakan berjalan di sekitarnya untuk mendapatkan pahala."}
+{"idx": 105539, "v": "Kabar besar buat yang taat! Prince Manjusri dari Tianzhu telah membawa relik tulang Buddha ke Kaifeng! Kini disemayamkan di East Pagoda di Grand Imperial Temple, berdampingan dengan sisa-sisa suci Master Huiyun di West Pagoda—berkah sejati untuk Kaifeng City. \nHarap dicatat: meski pagoda itu sendiri tertutup untuk umum, para penganut dipersilakan berjalan di sekitarnya untuk mendapatkan pahala."}
 {"idx": 105540, "v": "Hanya Tim"}
 {"idx": 105541, "v": "He Wenhe"}
 {"idx": 105542, "v": "Wuling River"}
@@ -9591,7 +9591,7 @@
 {"idx": 109590, "v": "Tan Gui Ru"}
 {"idx": 109591, "v": "Progres Penyelesaian:"}
 {"idx": 109592, "v": "WriothesleyAquila"}
-{"idx": 109593, "v": "Dua pahlawan berduel di atas menara Kota Kaifeng: satu berselimut salju putih, satu merah membara. Kemenangan sang pahlawan merah memicu tren pakaian merah. #YSafflower#E naik harga sebesar #Y{prop}#E."}
+{"idx": 109593, "v": "Dua pahlawan berduel di atas menara Kaifeng City: satu berselimut salju putih, satu merah membara. Kemenangan sang pahlawan merah memicu tren pakaian merah. #YSafflower#E naik harga sebesar #Y{prop}#E."}
 {"idx": 109594, "v": "Xiao Chen"}
 {"idx": 109595, "v": "Tidak bisa menempatkan Signpost di area konstruksi terbatas"}
 {"idx": 109596, "v": "Camilan Kucing Lezat"}
@@ -12154,7 +12154,7 @@
 {"idx": 112153, "v": "CommanderDestiny"}
 {"idx": 112154, "v": "Item pemeliharaan tidak cukup."}
 {"idx": 112155, "v": "Akun login di perangkat non-mobile atau di area lanjutan. Core Resources Qinghe dibutuhkan sebelum login."}
-{"idx": 112156, "v": "Cih. Rubah tua dari Prefektur Kaifeng itu. Entah apa yang Kaisar lihat darinya..."}
+{"idx": 112156, "v": "Cih. Rubah tua dari Kaifeng Prefecture itu. Entah apa yang Kaisar lihat darinya..."}
 {"idx": 112157, "v": "Salah satu syarat penilaian dari Nine Mortal Ways."}
 {"idx": 112158, "v": "...Wajahmu terlihat sehat. Napasmu juga stabil—ya, kamu baik-baik saja. Syukurlah..."}
 {"idx": 112159, "v": "Bukan untuk itu. Saya diminta Tuan Wang untuk mencari penolongnya."}
@@ -12793,12 +12793,12 @@
 {"idx": 112792, "v": "Luka Tombak"}
 {"idx": 112793, "v": "Li Ni"}
 {"idx": 112794, "v": "Kalau lo ke sini buat cari ilmu, berarti lo di sini buat dapet pelajaran."}
-{"idx": 112795, "v": "Warga Gracetown membayar mahal demi obat rahasia untuk insomnia, tapi malah dapat setumpuk buku matematika kuno tiga hari kemudian! Kirimannya termasuk Zhou Bi Calculation, Nine Chapters on the Mathematical Art, Sunzi's Arithmetical Classic, Wucao Calculation, Xiahou Yang Calculation, Zhang Qiujian Calculation, dan beberapa karya klasik lainnya. Marah karena tertipu, warga desa mengajukan pengaduan ke Prefektur Kaifeng."}
+{"idx": 112795, "v": "Warga Gracetown membayar mahal demi obat rahasia untuk insomnia, tapi malah dapat setumpuk buku matematika kuno tiga hari kemudian! Kirimannya termasuk Zhou Bi Calculation, Nine Chapters on the Mathematical Art, Sunzi's Arithmetical Classic, Wucao Calculation, Xiahou Yang Calculation, Zhang Qiujian Calculation, dan beberapa karya klasik lainnya. Marah karena tertipu, warga desa mengajukan pengaduan ke Kaifeng Prefecture."}
 {"idx": 112796, "v": "Minta bantuan Co-op"}
 {"idx": 112797, "v": "#NDi sebuah bilik lantai tiga#E, beberapa tamu memuji habis-habisan #Ntarian seorang Tuan Muda Xia Barat#E."}
 {"idx": 112798, "v": "Saat ini berada di #Yarea Co-op terlarang#E. Lanjut ke #YSafe Zone#E?"}
 {"idx": 112799, "v": "Anak muda, catatanmu mungkin meleset, tapi takdirmu sudah pasti. Takdir sedang mendekat. Perubahan akan datang. Pilihanmu akan membentuk jalan ke depan..."}
-{"idx": 112800, "v": "Kota Kaifeng?"}
+{"idx": 112800, "v": "Kaifeng City?"}
 {"idx": 112801, "v": "Lv. 66 Silkbind - Jade Attribute Scaling Gear"}
 {"idx": 112802, "v": "Seorang murid Well of Heaven yang mengangkat pedangnya demi membantu gurunya, Wang Qing. Dia gak sabar sampai ke medan perang supaya pedangnya bisa membantu gurunya secepat mungkin."}
 {"idx": 112803, "v": "Setelah menghidupkan kembali target, memberikan efek #Ypenyembuhan seiring waktu#E ke dirinya dan dirimu yang #Yterus memulihkan HP#E."}
@@ -13885,7 +13885,7 @@
 {"idx": 113884, "v": "Mo Neishi"}
 {"idx": 113885, "v": "[He-Style Well] Tugu Batu"}
 {"idx": 113886, "v": "Mengurangi damage yang diterima dari Frostglow sebesar 5% dalam pertarungan melawan Gilded Lament."}
-{"idx": 113887, "v": "Cuaca dingin melanda Kota Kaifeng, mendongkrak permintaan arang dan stok menipis. #YCharcoal#E naik harga sebesar #Y{prop}#E."}
+{"idx": 113887, "v": "Cuaca dingin melanda Kaifeng City, mendongkrak permintaan arang dan stok menipis. #YCharcoal#E naik harga sebesar #Y{prop}#E."}
 {"idx": 113888, "v": "Qian Buhui"}
 {"idx": 113889, "v": "Tercatat setelah menjelajahi semua ruang rahasia"}
 {"idx": 113890, "v": "Tidak bisa menghapus Surat"}
@@ -16002,7 +16002,7 @@
 {"idx": 116001, "v": "Tambah Tutorial"}
 {"idx": 116002, "v": "#YAttuned Tier 96 atau lebih tinggi#E #YGear Epic/Legendary#E \n#999999(Terbatas Musim: Mendukung Relaying Tier Sama untuk Tier 105)#E"}
 {"idx": 116003, "v": "Pintu masuknya sempit dan dijaga. Coba yang lain."}
-{"idx": 116004, "v": "Musim Dingin - Balai Chongyuan"}
+{"idx": 116004, "v": "Musim Dingin - Chongyuan Hall"}
 {"idx": 116005, "v": "Jun Wenhua"}
 {"idx": 116006, "v": "Orang yang Diberkati"}
 {"idx": 116007, "v": "Diam! Guru kami sedang sibuk mencari nafkah untuk kita di sini."}
@@ -16055,7 +16055,7 @@
 {"idx": 116054, "v": "Hui Qi"}
 {"idx": 116055, "v": "10K"}
 {"idx": 116056, "v": "Tetua Peng kembali dari balik gunung dan memeluk Swallow.\nIa segera menyadari bahwa kalian adalah kawan baru Swallow."}
-{"idx": 116057, "v": "Teras Skyreach tiba-tiba mengumumkan ditutup bagi pengunjung \"hingga pemberitahuan lebih lanjut.\" Namun sumber kami mengatakan alasan sebenarnya tak lain adalah Gubernur Prefektur Kaifeng sendiri, yang mampir untuk persembahan dupa pribadi. Dengan pejabat setinggi itu bolos dari tugasnya demi ibadah pribadi, tak heran publik kurang senang!"}
+{"idx": 116057, "v": "Teras Skyreach tiba-tiba mengumumkan ditutup bagi pengunjung \"hingga pemberitahuan lebih lanjut.\" Namun sumber kami mengatakan alasan sebenarnya tak lain adalah Gubernur Kaifeng Prefecture sendiri, yang mampir untuk persembahan dupa pribadi. Dengan pejabat setinggi itu bolos dari tugasnya demi ibadah pribadi, tak heran publik kurang senang!"}
 {"idx": 116058, "v": "Apakah alat terbang benar-benar lebih penting dan layak dipelajari daripada alat pemeliharaan ikan?"}
 {"idx": 116059, "v": "Sedang mengundang. Silakan coba lagi nanti."}
 {"idx": 116060, "v": "Itu melodinya... setiap nada berdenyut rindu akan kampung halaman."}
@@ -16130,7 +16130,7 @@
 {"idx": 116129, "v": "#Y{0}#E menganggap gerakanmu presisi dan menyemangatimu."}
 {"idx": 116130, "v": "Bisa beri tahu aku di mana jamban terdekat? Temanku pergi ke kamar mandi tapi belum kembali."}
 {"idx": 116131, "v": "Tong O' Emas"}
-{"idx": 116132, "v": "Sumber terpercaya melihat Tang Jingchou, penegak terkenal Kantor Enam Larangan dan konstabel Prefektur Kaifeng, berbagi makan dan atap dengan anjing bernama Erlang. Kabarnya, keduanya praktis tak terpisahkan. Bahkan ada yang berbisik mereka \"menikah\"! Reporter pemberani kami berisiko digigit kemarin di penjara Prefektur Kaifeng untuk memastikan: Erlang memang anjing jantan."}
+{"idx": 116132, "v": "Sumber terpercaya melihat Tang Jingchou, penegak terkenal Kantor Enam Larangan dan konstabel Kaifeng Prefecture, berbagi makan dan atap dengan anjing bernama Erlang. Kabarnya, keduanya praktis tak terpisahkan. Bahkan ada yang berbisik mereka \"menikah\"! Reporter pemberani kami berisiko digigit kemarin di penjara Kaifeng Prefecture untuk memastikan: Erlang memang anjing jantan."}
 {"idx": 116133, "v": "Informasi Bonus"}
 {"idx": 116134, "v": "Set Rainwhisper Lv. 91"}
 {"idx": 116135, "v": "Kau sedang berbicara di {}. {} akan dibisukan setelah mengaktifkan voice chat. Konfirmasi?"}
@@ -16157,7 +16157,7 @@
 {"idx": 116156, "v": "Chu Dian"}
 {"idx": 116157, "v": "Kisah tentang Bejana Pembuat Emas tak muncul begitu saja. Soal apakah benar-benar menghasilkan koin sungguhan..."}
 {"idx": 116158, "v": "Aturan Gomoku"}
-{"idx": 116159, "v": "Nikmati Hamparan Bunga di ayunan"}
+{"idx": 116159, "v": "Nikmati Flower Expanse di ayunan"}
 {"idx": 116160, "v": "Jiang Xu"}
 {"idx": 116161, "v": "Tahan Amarah"}
 {"idx": 116162, "v": "Kepala Naga - Fase Peringatan Pola Naga - Bentuk Default"}
@@ -16257,7 +16257,7 @@
 {"idx": 116256, "v": "Pindahkan Colophon"}
 {"idx": 116257, "v": "Menunggu Arena"}
 {"idx": 116258, "v": "Putar Kiri"}
-{"idx": 116259, "v": "Sebaiknya kita bertemu di Kawasan Terbuang besok pagi."}
+{"idx": 116259, "v": "Sebaiknya kita bertemu di Forsaken Quarter besok pagi."}
 {"idx": 116260, "v": "Pengembara muda, tak ada dendam di antara kita! Kenapa kau memukulku?"}
 {"idx": 116261, "v": "Konten Laporan"}
 {"idx": 116262, "v": "Penyimpanan bersama penuh. Tidak dapat menyimpan."}
@@ -16275,7 +16275,7 @@
 {"idx": 116274, "v": "axIongojO"}
 {"idx": 116275, "v": "Tambah Penampilan Performer"}
 {"idx": 116276, "v": "Terhubung ke {} Menara. Aliran sumber daya: {}"}
-{"idx": 116277, "v": "Apa yang membawa pembunuh ke Kuil Jenderal?"}
+{"idx": 116277, "v": "Apa yang membawa pembunuh ke General's Shrine?"}
 {"idx": 116278, "v": "Saudara, istana mempersenjatai dan melatih kita untuk membunuh."}
 {"idx": 116279, "v": "Mata uang tidak cukup, tidak dapat mendaftar."}
 {"idx": 116280, "v": "Wishlist Melody duplikat ada. Rentang harga diperbarui."}
@@ -16321,8 +16321,8 @@
 {"idx": 116320, "v": "AlphaPierce"}
 {"idx": 116321, "v": "Tch! Menyingkirlah! Apa maksudnya mengganggu minumanku?"}
 {"idx": 116322, "v": "Yao Song"}
-{"idx": 116323, "v": "Mengoptimalkan kualitas dan kepadatan vegetasi di sekitar Desa Harvestfall dan Kota Kaifeng di mobile."}
-{"idx": 116324, "v": "Qinchuan - Dataran Rivergaze"}
+{"idx": 116323, "v": "Mengoptimalkan kualitas dan kepadatan vegetasi di sekitar Harvestfall Village dan Kaifeng City di mobile."}
+{"idx": 116324, "v": "Qinchuan - Rivergaze Plateau"}
 {"idx": 116325, "v": "Hapus Perks"}
 {"idx": 116326, "v": "Pembantu Bengkel Ukir Giok dengan sedikit uang tapi banyak waktu luang, bergabung dengan temannya Ding Ge dalam kenakalan iseng."}
 {"idx": 116327, "v": "Kekuatan Amarah Turun"}
@@ -16567,7 +16567,7 @@
 {"idx": 116566, "v": "Terdeteksi item yang tidak dapat ditukar dengan peti. Pilihan telah disesuaikan otomatis untukmu."}
 {"idx": 116567, "v": "Chu Du'e"}
 {"idx": 116568, "v": "XIaoien"}
-{"idx": 116569, "v": "Bencana Desa Harvestfall"}
+{"idx": 116569, "v": "Bencana Harvestfall Village"}
 {"idx": 116570, "v": "Setelah Pemberontakan An Lushan, Mutun menaklukkan Liangzhou. Kehidupan hancur di sini, dengan semua kanal dan tanggul rusak.\n Satu abad kemudian, seorang putri aliansi pernikahan memasuki Liangzhou. Tak tega melihat penderitaan rakyat, ia membagikan mahar pernikahannya, membersihkan saluran air, membangun tanggul dan benteng, mengalirkan air dan membuka mata air, membawa kemakmuran ke Liangzhou.\n Kemudian, Mutun kembali dan menghancurkan benteng-benteng itu lagi. Hanya sebuah prasasti batu yang tersisa, mencatat jasa sang putri."}
 {"idx": 116571, "v": "Meningkatkan semua kerusakan yang diberikan saat cast #YSkill Martial Art#E milik #YSnowparting Blade#E, termasuk kerusakan kejaran dari #YHeng Blade Anxi Soldier#E yang dipanggil."}
 {"idx": 116572, "v": "Sesungguhnya, Boshan Censer Camel hanyalah produk sampingan kebetulan dari penipuan seorang dukun. Sungguh mengagumkan sejauh mana orang bisa pergi dalam pencarian keabadian."}
@@ -16698,7 +16698,7 @@
 {"idx": 116697, "v": "Oh, kakak seperguruan, aku tidak mungkin menerima ini..."}
 {"idx": 116698, "v": "Kau perlu menyelesaikan tutorial [Wrestling]"}
 {"idx": 116699, "v": "Jangan tampilkan selama 7 hari"}
-{"idx": 116700, "v": "Temukan Murid Koki Master di Jalan Gerbang Selatan"}
+{"idx": 116700, "v": "Temukan Murid Koki Master di South Gate Avenue"}
 {"idx": 116701, "v": "Kakakku di sini!"}
 {"idx": 116702, "v": "[Kepandaian Bicara] Puisi atau Lirik"}
 {"idx": 116703, "v": "Itu Kakak Zhang!"}
@@ -16987,7 +16987,7 @@
 {"idx": 116986, "v": "Tukar 50 Commerce Coin dengan 500 chip?"}
 {"idx": 116987, "v": "Konon Pearlglow Lake memiliki tujuh kecantikan, dan masing-masing punya keahlian khusus. Hanya yang paling beruntung bisa bertemu mereka, dan mereka semua bilang kecantikan itu luar biasa. \nMeong, meong! Meong! Luar biasa!"}
 {"idx": 116988, "v": "Direkomendasikan mengaktifkan lebih banyak talenta"}
-{"idx": 116989, "v": "Hexi: Kota Liangzhou"}
+{"idx": 116989, "v": "Hexi: Liangzhou Town"}
 {"idx": 116990, "v": "Bagus kau di sini, pengembara muda. Union baru saja menghadapi sesuatu yang rumit, dan kami sangat butuh bantuanmu."}
 {"idx": 116991, "v": "Penampilan Senjata Baru - Tombak\nAku sayang mekar plum, pucat dan merah tua terang, sendirian mereka berdiri di dahan dingin bagai malam. Percikan musim semi di mana cengkeraman musim dingin ketat, cahaya lembut mereka penuh harapan yang lembut."}
 {"idx": 116992, "v": "Animasi Imunitas"}
@@ -18048,7 +18048,7 @@
 {"idx": 118047, "v": "Judul Hilang"}
 {"idx": 118048, "v": "Pengaturan Tag"}
 {"idx": 118049, "v": "Bonus+"}
-{"idx": 118050, "v": "Sertifikat ganti nama yang dikeluarkan oleh Prefektur Kaifeng pada tanggal tertentu. Secara resmi dilarang untuk dijual atau dialihkan, namun sering ditemukan dengan harga tinggi di Ghostlight Market."}
+{"idx": 118050, "v": "Sertifikat ganti nama yang dikeluarkan oleh Kaifeng Prefecture pada tanggal tertentu. Secara resmi dilarang untuk dijual atau dialihkan, namun sering ditemukan dengan harga tinggi di Ghostlight Market."}
 {"idx": 118051, "v": "Pendekar misterius Tian Ying tak pernah terlihat lagi. Sebagian mengatakan dia berbaris ke perbatasan, lenyap di tengah misteri kematian Kaisar Shizong. Sebagian lain percaya dia menyepi ke desa pegunungan tenang tempat masa mudanya. Dan ada yang mengklaim bahwa selama hari-harinya bersembunyi di antara para biksu, dia benar-benar menemukan keyakinan—setelah menjalankan satu misi terakhir sebagai pembunuh bayaran, dia membuang pedangnya dan memulai jalan pengabdian sejati."}
 {"idx": 118052, "v": "Plain Dual Blades: Swallowcall"}
 {"idx": 118053, "v": "SHadowgray"}
@@ -22311,7 +22311,7 @@
 {"idx": 122310, "v": "Batas jumlah per resep tercapai."}
 {"idx": 122311, "v": "Tetap di dalam, nona! Nona—"}
 {"idx": 122312, "v": "Skill 2 - Dust Attraction Variant - Poison Mist Zone 12"}
-{"idx": 122313, "v": "Pergi ke Kediaman Gubernur"}
+{"idx": 122313, "v": "Pergi ke Governor's Residence"}
 {"idx": 122314, "v": "Bagaimana dia melakukannya?"}
 {"idx": 122315, "v": "Pertahanan pertama Arena Master #Y{1}#E akan segera dimulai!"}
 {"idx": 122316, "v": "Pemain belum membuka fitur tim. Tidak dapat melanjutkan."}
@@ -22658,7 +22658,7 @@
 {"idx": 122657, "v": "Pilih Companion yang Ditampilkan"}
 {"idx": 122658, "v": "A Poem of Rain Sent North"}
 {"idx": 122659, "v": "DabiDraco"}
-{"idx": 122660, "v": "Maaf atas gangguan ini.\nMeski aku tahu hari ini mungkin bukan saat yang tepat untuk mencurahkan isi hatiku, perasaanku tak terbendung seperti Sungai Yangtze yang mengalir ke timur. Bahkan jika kau menganggap kata-kata ini hanya sandiwara, ketulusanku disaksikan oleh langit dan bumi, matahari dan bulan, dan sama sekali tidak dusta.\nKatanya cinta muncul tanpa sebab dan mengakar dalam. Baik itu sekilas pandangan atau ikatan yang tumbuh sepanjang waktu, keajaiban takdir sering terletak dalam satu momen.\nSejujurnya, aku sudah berulang kali berdiam di luar jendelamu, diam-diam melafalkan syair-syairmu dari dinding, hanya untuk menemukan secuil kesamaan rasa; sedikit pun sudah cukup untuk menenangkan jiwaku seumur hidup.\nNamun aku tak berani meninggalkan namaku dalam pujian, karena takut menyinggungmu dan menimbulkan rasa jijik.\nAku hanya ingin berhenti memimpikan cermin dan bulan di air, dan tidak lagi menjadi orang bodoh yang bersembunyi dalam bayangan.\nHari ini aku memberanikan diri menulis hanya untuk mengatakan: keindahanmu adalah kecantikan langka di Kota Kaifeng, dan aku sudah lama mengagumimu.\nSetelah mengatakan ini, kata-kataku tulus dan sungguh dari hati.\nOmong-omong...\nBisakah kau memberiku lima puluh koin?\nAku ingin pergi ke Kaifeng Cuisine untuk membeli Five-Flavor Boneless Chicken guna memuaskan keinginanku."}
+{"idx": 122660, "v": "Maaf atas gangguan ini.\nMeski aku tahu hari ini mungkin bukan saat yang tepat untuk mencurahkan isi hatiku, perasaanku tak terbendung seperti Sungai Yangtze yang mengalir ke timur. Bahkan jika kau menganggap kata-kata ini hanya sandiwara, ketulusanku disaksikan oleh langit dan bumi, matahari dan bulan, dan sama sekali tidak dusta.\nKatanya cinta muncul tanpa sebab dan mengakar dalam. Baik itu sekilas pandangan atau ikatan yang tumbuh sepanjang waktu, keajaiban takdir sering terletak dalam satu momen.\nSejujurnya, aku sudah berulang kali berdiam di luar jendelamu, diam-diam melafalkan syair-syairmu dari dinding, hanya untuk menemukan secuil kesamaan rasa; sedikit pun sudah cukup untuk menenangkan jiwaku seumur hidup.\nNamun aku tak berani meninggalkan namaku dalam pujian, karena takut menyinggungmu dan menimbulkan rasa jijik.\nAku hanya ingin berhenti memimpikan cermin dan bulan di air, dan tidak lagi menjadi orang bodoh yang bersembunyi dalam bayangan.\nHari ini aku memberanikan diri menulis hanya untuk mengatakan: keindahanmu adalah kecantikan langka di Kaifeng City, dan aku sudah lama mengagumimu.\nSetelah mengatakan ini, kata-kataku tulus dan sungguh dari hati.\nOmong-omong...\nBisakah kau memberiku lima puluh koin?\nAku ingin pergi ke Kaifeng Cuisine untuk membeli Five-Flavor Boneless Chicken guna memuaskan keinginanku."}
 {"idx": 122661, "v": "AReX"}
 {"idx": 122662, "v": "PurefrostShock"}
 {"idx": 122663, "v": "wIndvaelith"}
@@ -23101,7 +23101,7 @@
 {"idx": 123100, "v": "Gunakan Contortion untuk melewati lubang"}
 {"idx": 123101, "v": "DiamondRise"}
 {"idx": 123102, "v": "Aku dapat satu! Kau harus mengejar!"}
-{"idx": 123103, "v": "Guild yang tersedia untuk Artificer: #YImperial Works Bureau#E, terletak di Kota Kaifeng"}
+{"idx": 123103, "v": "Guild yang tersedia untuk Artificer: #YImperial Works Bureau#E, terletak di Kaifeng City"}
 {"idx": 123104, "v": "Snake King Bone yang raksasa. Ular berbisa tanpa akhir... \nSnake Doctor menyambutmu dengan keceriaan yang menyeramkan, mungkin kamu akan jadi subjek uji yang bagus."}
 {"idx": 123105, "v": "Kaifeng Strategist"}
 {"idx": 123106, "v": "Pergantian Outfit berhasil"}
@@ -26061,7 +26061,7 @@
 {"idx": 126060, "v": "Titah kekaisaran membawa pedang kuasa raja dengan cepat. Aku pamit pada tuanku untuk menaklukkan Loulan dalam semalam."}
 {"idx": 126061, "v": "Tidak terjadi apa-apa, permainan berlanjut."}
 {"idx": 126062, "v": "Hanya di #HScene Reverse#E fragmen yang didapat bisa dikumpulkan ke dalam Compendium."}
-{"idx": 126063, "v": "Artificer dapat membeli petak tanah dari Biro Pekerjaan Kekaisaran untuk membangun pos kurir dan menghasilkan keuntungan."}
+{"idx": 126063, "v": "Artificer dapat membeli petak tanah dari Imperial Works Bureau untuk membangun pos kurir dan menghasilkan keuntungan."}
 {"idx": 126064, "v": "Route A - 103"}
 {"idx": 126065, "v": "Tingkatkan #8C5823100 Poin#E dari #406182Power#E (Saat ini: $STEADY_STR:.0f$)."}
 {"idx": 126066, "v": "Ikut Kultivasi"}
@@ -26837,7 +26837,7 @@
 {"idx": 126836, "v": "Mak Comblang Kecil"}
 {"idx": 126837, "v": "Relative Reference Angle"}
 {"idx": 126838, "v": "Memberi damage #G95%#E sebanyak #G2#E kali."}
-{"idx": 126839, "v": "Thunderclap Society adalah klub adu jangkrik istana. Kami telah menuangkan catatan dan trik hasil jerih payah kami ke dalam buklet ini untuk sesama penggemar. Edisi bulan ini ditulis oleh Verdant Strider dari Taman Belakang. Komentar sangat diterima.\n\nDalam adu jangkrik, \"tangkap, pelihara, bertarung\" adalah tiga hal pokok. Tapi bagaimana memilih juara yang tepat untuk toplesmu? Kami juga penasaran. Kami ingin tahu.\n\nBagian I: Menilai Jangkrik\n\nKami mengundang Tuan Fan dari Kementerian Perang untuk membagikan tips menilai petarung.\n\n\"Menilai jangkrik sama dengan menilai jenderal. Kalau matamu buruk, kamu sudah kalah sebelum pertandingan dimulai.\n\n\"Saya sudah menjabat lebih dari sepuluh tahun, melayani dua masa pemerintahan, dan masih bisa mempertahankan pijakan. Itu semua berkat tahu cara membaca orang. Jangkrik sama saja.\n\n\"Mulai dari warna kepala, lalu warna sayap. Periksa leher, dan gunakan warna tubuh sebagai petunjuk akhir. Ada yang disebut 'penguasa sekali pandang': kepala kasar, tanda alis menonjol, watak keras yang tak mau menekuk. Petarung seperti itu sering punya rahang tajam melengkung, dibuat untuk menusuk cangkang kepala lawan. Mereka lebih sering menang daripada kalah.\n\n\"Yang lain tampak tenang dan polos, tipe abu-abu karat yang tak pernah pamer. Mungkin kecil, tapi daya tahannya langka. Menyerbu duluan dan menerobos adalah keberanian. Menerima pukulan untuk memancing musuh adalah kecerdikan. Orang ada berbagai macam, jangkrik pun begitu.\"\n\nCatatan Editor:\nBelajar tak ada habisnya. Kalau saya bisa mempelajari cara Tuan Fan membaca orang sekaligus jangkrik, saya bisa bertahan di dasar dunia jangkrik tanpa terkena KO.\n\nBagian II: Memberi Makan dan Memelihara\n\nBagian ini disponsori oleh Pakan Jangkrik Pasokan Istana AAA milik Little Zhangzi.\n\n\"Memelihara jangkrik itu seperti sedang bertugas. Caramu harus benar, dan si kecil harus tangguh. Beberapa amatir, haus kemenangan, memberi jangkrik mereka cabai. Jangan lakukan itu.\n\n\"Kalau kamu mau petarungmu membalikkan lawan di arena, ingat dua kata: segar dan pelan.\n\n\"Segar berarti mengganti pakan setiap hari.\n\"Pelan berarti membangunnya sedikit demi sedikit. Jangan terburu-buru.\n\n\"Dan karena kita sedang membahasnya, saya merekomendasikan Carrying-Pole Cricket Feed milik saya. Nutrisi jujur, bahan berkualitas. Stok terbatas, ambil selagi bisa.\"\n\nCatatan Editor:\nSponsor untuk bagian ini masih diterima.\n\nBagian III: Tanya Jawab dengan Guru\n\nNarasumber: \"Cloud Gazer\"\nEditor: Guru Zhan, sebagai petarung jangkrik terbaik di istana dalam, bagaimana pendapat Anda tentang semua aliran yang bercampur ini?\n\nCloud Gazer: \"Aliran berbeda, gerakan berbeda. Menggigit. Membanting. Mengangkat. Menjepit. Mengait. Menyeret. Menggulung. Menekan. Semua itu taktik yang bisa dipakai jangkrik.\n\n\"Sama seperti dua guru yang saling bertukar pukulan. Kamu menang saat kekuatan, kecerdikan, dan teknik menyatu.\n\n\"Dunia jangkrik hanyalah satu toples kecil. Jangan membuat duniamu sendiri lebih kecil lagi dari itu.\n\n\"Kalau kamu bahkan tak bisa membedakan jenis petarung jangkrikmu, lepaskan saja sekarang. Jangan kirim dia ke arena hanya untuk mati demimu.\n\n\"Menang dan kalah itu hal kecil. Intinya adalah membiarkan para raja bertemu, bertukar jurus, dan belajar sportivitas. Baiklah. Saya harus kembali ke pekerjaan kayu.\"\n\nSampul Belakang\nCatatan Editor: Wawancara yang memuaskan sekali."}
+{"idx": 126839, "v": "Thunderclap Society adalah klub adu jangkrik istana. Kami telah menuangkan catatan dan trik hasil jerih payah kami ke dalam buklet ini untuk sesama penggemar. Edisi bulan ini ditulis oleh Verdant Strider dari Rear Garden. Komentar sangat diterima.\n\nDalam adu jangkrik, \"tangkap, pelihara, bertarung\" adalah tiga hal pokok. Tapi bagaimana memilih juara yang tepat untuk toplesmu? Kami juga penasaran. Kami ingin tahu.\n\nBagian I: Menilai Jangkrik\n\nKami mengundang Tuan Fan dari Kementerian Perang untuk membagikan tips menilai petarung.\n\n\"Menilai jangkrik sama dengan menilai jenderal. Kalau matamu buruk, kamu sudah kalah sebelum pertandingan dimulai.\n\n\"Saya sudah menjabat lebih dari sepuluh tahun, melayani dua masa pemerintahan, dan masih bisa mempertahankan pijakan. Itu semua berkat tahu cara membaca orang. Jangkrik sama saja.\n\n\"Mulai dari warna kepala, lalu warna sayap. Periksa leher, dan gunakan warna tubuh sebagai petunjuk akhir. Ada yang disebut 'penguasa sekali pandang': kepala kasar, tanda alis menonjol, watak keras yang tak mau menekuk. Petarung seperti itu sering punya rahang tajam melengkung, dibuat untuk menusuk cangkang kepala lawan. Mereka lebih sering menang daripada kalah.\n\n\"Yang lain tampak tenang dan polos, tipe abu-abu karat yang tak pernah pamer. Mungkin kecil, tapi daya tahannya langka. Menyerbu duluan dan menerobos adalah keberanian. Menerima pukulan untuk memancing musuh adalah kecerdikan. Orang ada berbagai macam, jangkrik pun begitu.\"\n\nCatatan Editor:\nBelajar tak ada habisnya. Kalau saya bisa mempelajari cara Tuan Fan membaca orang sekaligus jangkrik, saya bisa bertahan di dasar dunia jangkrik tanpa terkena KO.\n\nBagian II: Memberi Makan dan Memelihara\n\nBagian ini disponsori oleh Pakan Jangkrik Pasokan Istana AAA milik Little Zhangzi.\n\n\"Memelihara jangkrik itu seperti sedang bertugas. Caramu harus benar, dan si kecil harus tangguh. Beberapa amatir, haus kemenangan, memberi jangkrik mereka cabai. Jangan lakukan itu.\n\n\"Kalau kamu mau petarungmu membalikkan lawan di arena, ingat dua kata: segar dan pelan.\n\n\"Segar berarti mengganti pakan setiap hari.\n\"Pelan berarti membangunnya sedikit demi sedikit. Jangan terburu-buru.\n\n\"Dan karena kita sedang membahasnya, saya merekomendasikan Carrying-Pole Cricket Feed milik saya. Nutrisi jujur, bahan berkualitas. Stok terbatas, ambil selagi bisa.\"\n\nCatatan Editor:\nSponsor untuk bagian ini masih diterima.\n\nBagian III: Tanya Jawab dengan Guru\n\nNarasumber: \"Cloud Gazer\"\nEditor: Guru Zhan, sebagai petarung jangkrik terbaik di istana dalam, bagaimana pendapat Anda tentang semua aliran yang bercampur ini?\n\nCloud Gazer: \"Aliran berbeda, gerakan berbeda. Menggigit. Membanting. Mengangkat. Menjepit. Mengait. Menyeret. Menggulung. Menekan. Semua itu taktik yang bisa dipakai jangkrik.\n\n\"Sama seperti dua guru yang saling bertukar pukulan. Kamu menang saat kekuatan, kecerdikan, dan teknik menyatu.\n\n\"Dunia jangkrik hanyalah satu toples kecil. Jangan membuat duniamu sendiri lebih kecil lagi dari itu.\n\n\"Kalau kamu bahkan tak bisa membedakan jenis petarung jangkrikmu, lepaskan saja sekarang. Jangan kirim dia ke arena hanya untuk mati demimu.\n\n\"Menang dan kalah itu hal kecil. Intinya adalah membiarkan para raja bertemu, bertukar jurus, dan belajar sportivitas. Baiklah. Saya harus kembali ke pekerjaan kayu.\"\n\nSampul Belakang\nCatatan Editor: Wawancara yang memuaskan sekali."}
 {"idx": 126840, "v": "Kong Feiqing"}
 {"idx": 126841, "v": "Lompat turun"}
 {"idx": 126842, "v": "Senior Lone Cloud yang membuat aturan ini aneh banget. Gue cuma nanya, apa bakal canggung buat lo kalau gue datang, hahaha."}
@@ -27517,7 +27517,7 @@
 {"idx": 127516, "v": "Kalahkan boss di Xiao Pass Old Road Outpost"}
 {"idx": 127517, "v": "Hidup di jianghu memang nggak mudah!"}
 {"idx": 127518, "v": "Sapu tangan buatan halus bersulam bunga plum, \nsama sekali bertentangan dengan watak pemiliknya. \n\nDi Moonveil Peak, Han Xiangxun dengan khidmat menyerahkan benda itu, \nkemudian merebutnya kembali di Still Shore, bersumpah membakarnya. \n\nItu tiga belas tahun lalu."}
-{"idx": 127519, "v": "Hutan Bambu Utara"}
+{"idx": 127519, "v": "Northern Bamboo Grove"}
 {"idx": 127520, "v": "OMeGasOul"}
 {"idx": 127521, "v": "Sensitivitas - Horizontal"}
 {"idx": 127522, "v": "oLoneBeamo"}

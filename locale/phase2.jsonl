@@ -999,7 +999,7 @@
 {"idx": 2998, "v": "Everspring Umbrella - Martial Art Skill DMG Boost"}
 {"idx": 2999, "v": "Shang Lu"}
 {"idx": 3000, "v": "Di dalam istana ada Kaisar Kucing. Di luar sana di Jianghu, ada gue, Kaisar Kecil!"}
-{"idx": 3001, "v": "Tukang Tembikar Balai Perajin Istana"}
+{"idx": 3001, "v": "Tukang Tembikar Imperial Artisan Court"}
 {"idx": 3002, "v": "Draw - Gema"}
 {"idx": 3003, "v": "Foto Bersama"}
 {"idx": 3004, "v": "Jeda Sejenak"}
@@ -1050,7 +1050,7 @@
 {"idx": 3049, "v": "Whirlsnow"}
 {"idx": 3050, "v": "Pertunjukan Kembang Api"}
 {"idx": 3051, "v": "Cloudtop Ascent: Pivot"}
-{"idx": 3052, "v": "Kau menyaksikan Jiang Yan, gemilang di masa mudanya, berjalan di samping Han Xiangxun menuju Balai Sejarah, siap memimpin Sumpah Utara. Mungkin ini memang jalan takdir mereka sejak awal... di dunia tanpa dirimu."}
+{"idx": 3052, "v": "Kau menyaksikan Jiang Yan, gemilang di masa mudanya, berjalan di samping Han Xiangxun menuju Palace of Annals, siap memimpin Sumpah Utara. Mungkin ini memang jalan takdir mereka sejak awal... di dunia tanpa dirimu."}
 {"idx": 3053, "v": "Unfettered Rope Dart - Special Skill DMG Boost"}
 {"idx": 3054, "v": "Silk Streamveil"}
 {"idx": 3055, "v": "Keserakahan Angsa"}
@@ -1497,7 +1497,7 @@
 {"idx": 3496, "v": "Kau melihat seorang kakek yang cemas sedang membicarakan sesuatu dengan cucunya yang cuek di dekat hutan liar. Dekati mereka dan cari tahu ada apa."}
 {"idx": 3497, "v": "Tersesat dalam Cahaya Bulan"}
 {"idx": 3498, "v": "Xiaowu"}
-{"idx": 3499, "v": "Markas Nine Mortal Ways"}
+{"idx": 3499, "v": "Nine Mortal Ways Base"}
 {"idx": 3500, "v": "Tambah buff"}
 {"idx": 3501, "v": "Saat [Charged Skill: Fury Spear] mengenai unit yang tidak sedang bertahan, damage yang diberikan meningkat 30%. Jika pukulan terakhir mengenai unit yang memiliki Tenacity, memberikan efek [Immobilized] selama 0.8 detik."}
 {"idx": 3502, "v": "Gundukan Bisikan"}
@@ -1758,7 +1758,7 @@
 {"idx": 3757, "v": "Meja"}
 {"idx": 3758, "v": "Bayangan sebatang kara melolong pada bulan; luka merah membelah padang liar. Terkunci dalam tatapan tajam, tak ada pihak yang mau mengalah."}
 {"idx": 3759, "v": "Pagar"}
-{"idx": 3760, "v": "Tukang Celup Balai Perajin Istana"}
+{"idx": 3760, "v": "Tukang Celup Imperial Artisan Court"}
 {"idx": 3761, "v": "Doa yang Sia-Sia"}
 {"idx": 3762, "v": "Dapatkan Material"}
 {"idx": 3763, "v": "Beristirahat di bawah senja, tanpa beban dunia.\nCambuk di tangan, kita berkuda mengejar langit.\nBernyanyi untuk lembah, melantun bersama padang liar."}
@@ -1818,7 +1818,7 @@
 {"idx": 3817, "v": "Anggota sirkus Skybrim Market."}
 {"idx": 3818, "v": "Aktifkan talent total 20 kali di halaman Talent mana pun"}
 {"idx": 3819, "v": "Kau ngapain?!"}
-{"idx": 3820, "v": "Hamparan Bunga"}
+{"idx": 3820, "v": "Flower Expanse"}
 {"idx": 3821, "v": "Nenek Yin, yang paham akan bahaya tersembunyi di Ghostlight Market, menempa topeng ini agar pemakainya bisa berjalan tanpa cedera."}
 {"idx": 3822, "v": "Bendera itu basah oleh darah, namun disulam dengan harapan..."}
 {"idx": 3823, "v": "Pembawa Kabar Timur"}
@@ -2180,7 +2180,7 @@
 {"idx": 4179, "v": "Meningkatkan Critical Rate berdasarkan nilai yang lebih tinggi antara Body atau Power."}
 {"idx": 4180, "v": "Guide Swallow III"}
 {"idx": 4181, "v": "Log Aktivitas"}
-{"idx": 4182, "v": "Penjaga Istana Kekaisaran"}
+{"idx": 4182, "v": "Penjaga Imperial Palace"}
 {"idx": 4183, "v": "Bangkit Melampaui"}
 {"idx": 4184, "v": "Buka Spectate"}
 {"idx": 4185, "v": "Berandal Greenwood"}
@@ -2519,7 +2519,7 @@
 {"idx": 4518, "v": "Kemenangan"}
 {"idx": 4519, "v": "NPC Ambient Gerbang Kota Peachgrove Pass"}
 {"idx": 4520, "v": "Master Jian"}
-{"idx": 4521, "v": "Lapangan Latihan"}
+{"idx": 4521, "v": "Training Grounds"}
 {"idx": 4522, "v": "Pengurangan Damage Saat Membawa Fortune Tree"}
 {"idx": 4523, "v": "Perkuat konstitusi organ"}
 {"idx": 4524, "v": "Heaven's Pier menggelar perjamuan surgawi."}

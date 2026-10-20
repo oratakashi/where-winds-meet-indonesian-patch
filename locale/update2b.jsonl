@@ -1311,7 +1311,7 @@
 {"idx": 493014, "v": "Biksu Penjaga Gerbang"}
 {"idx": 493015, "v": "Masuk akal! Tenang, gue urus."}
 {"idx": 493016, "v": "Poin Kebenaran telah mencapai batas"}
-{"idx": 493017, "v": "Perbendaharaan Tersegel: Pungut emas dari pemain lain."}
+{"idx": 493017, "v": "Sealed Treasury: Pungut emas dari pemain lain."}
 {"idx": 493018, "v": "Istirahat beberapa hari lagi."}
 {"idx": 493019, "v": "Raih skor 2000 di Stage \"Clean Sweep\" dalam \"Divinecraft's Peacekeeping\" ({0}/1)"}
 {"idx": 493020, "v": "Kenapa lo lari sekencang itu..."}
@@ -2121,7 +2121,7 @@
 {"idx": 493824, "v": "Tapi dia sudah mengirim surat. Kenapa kirim mantelnya juga? Tunggu, ada uang tersembunyi di pelapisnya! Dia selalu memakai saku ini saat bepergian."}
 {"idx": 493825, "v": "Ada hidung, ada mata... Ya, ini lo!"}
 {"idx": 493826, "v": "Dia tersesat dalam perjalanan pulang, tetapi segera berbalik"}
-{"idx": 493827, "v": "Fase Event Istana Kekaisaran Festival Perahu Naga"}
+{"idx": 493827, "v": "Fase Event Imperial Palace Festival Perahu Naga"}
 {"idx": 493828, "v": "Yakin keluar?"}
 {"idx": 493829, "v": "Oh, itu yang lo doakan? Lo tahu, nasib buruk nggak selalu jadi alasan orang kesulitan belajar."}
 {"idx": 493830, "v": "Temukan teman baru"}
@@ -3115,7 +3115,7 @@
 {"idx": 494818, "v": "Spirit Ward... Oh! Gue ingat! Beberapa disciple senior menyebutnya saat pelajaran Geomansi. Katanya roh pendendam tujuh disciple yang mati di sana masih berkeliaran."}
 {"idx": 494819, "v": "Salah satu Three Prodigies, dia belajar di Jadestream Valley sebelum dikirim ke Mohist City. Usil, dia ingin menyempurnakan Sky Shuttle."}
 {"idx": 494820, "v": "Benar, pelancong maupun penduduk setempat. Mereka bekerja siang hari dan tidur saat malam, tak pernah diganggu bandit."}
-{"idx": 494821, "v": "Old Raftsman - Tempat Latihan"}
+{"idx": 494821, "v": "Old Raftsman - Training Grounds"}
 {"idx": 494822, "v": "Crownleek Village - Pemeriksaan Kegagalan Zhao Xiaogang dan Siba"}
 {"idx": 494823, "v": "Mengurangi cooldown sebesar 15 detik. Dengan demikian, waktu pemain sekutu tidak dapat kembali menerima HP Shield dan bonus Physical Attack (Attribute), serta pemain musuh kebal terhadap Silence, berkurang 15 detik"}
 {"idx": 494824, "v": "Kalau tak sengaja mengambilnya, kembalikan saja. Tak perlu disembunyikan."}
@@ -6999,7 +6999,7 @@
 {"idx": 498702, "v": "Hmm... jadi lo bilang suka yang manis, ya?"}
 {"idx": 498703, "v": "Distribusi Harga Transaksi Minimum 24 Jam"}
 {"idx": 498704, "v": "Jadilah pahlawan hebat."}
-{"idx": 498705, "v": "Adegan PVE Lapangan Latihan - Multipemain"}
+{"idx": 498705, "v": "Adegan PVE Training Grounds - Multipemain"}
 {"idx": 498706, "v": "Radiant Glow"}
 {"idx": 498707, "v": "Kalau begitu asal kita hampir sama. Perlu surat untuk keluarga? Selalu baik memberi kabar kalau lo selamat."}
 {"idx": 498708, "v": "Semuanya terkendali. Tenang, semuanya."}
@@ -7368,7 +7368,7 @@
 {"idx": 499071, "v": "Warga Hangzhou 325"}
 {"idx": 499072, "v": "Kamar Pemilik Penginapan: Gambar di Sudut"}
 {"idx": 499073, "v": "Kupon ini memberikan diskon 10% untuk Lingering Melody. Otomatis digunakan saat diperoleh. Maksimal satu kupon per Item. Berlaku 30 hari."}
-{"idx": 499074, "v": "Lumbung Ever-Normal: Sistem membagikan biji-bijian secara acak kepada semua pemain."}
+{"idx": 499074, "v": "Ever-Normal Granary: Sistem membagikan biji-bijian secara acak kepada semua pemain."}
 {"idx": 499075, "v": "Shen Qiu"}
 {"idx": 499076, "v": "Adik perempuan Pemilik Toko Huang, lahir ketika ayahnya, Huang Zhishui, pemilik Pinemist Pavilion sebelumnya, sudah berusia lanjut. Saat Yi Zheng kembali ke kota, Pemilik Toko Huang langsung menyukainya dan mengatur pernikahan adiknya dengan keluarga Yi."}
 {"idx": 499077, "v": "Tukang Rakit Tua - Tongkat Kayu"}
@@ -18934,7 +18934,7 @@
 {"idx": 510637, "v": "Baiklah, sekarang lo boleh lihat. Naskahnya ada di tanah."}
 {"idx": 510638, "v": "Velvet Shade bukan sesuatu yang bisa lo kuasai dengan begadang semalaman di meja."}
 {"idx": 510639, "v": "Terima Undangan Upacara Drumbeat Grace"}
-{"idx": 510640, "v": "Mount Tai Badai Salju_Penginapan Bersalju_Arena Latihan Boss Fase I"}
+{"idx": 510640, "v": "Mount Tai Badai Salju_Penginapan Bersalju_Training Grounds Boss Fase I"}
 {"idx": 510641, "v": "Serangga ini tampak seperti dituang dari emas merah, dan sering terlihat beterbangan di antara aula istana. \"Emas tak pernah lapuk ataupun membusuk, sehingga dihargai di atas segala benda.\" Di mana pun ia muncul, cahaya keemasan menyertainya. Para pelayan istana menganggapnya pertanda dinasti baru yang makmur, atau gema kejayaan dinasti sebelumnya. Mereka tak tahu bahwa keajaiban aneh ini hanyalah seekor kumbang."}
 {"idx": 510642, "v": "Membuka Emote Siluet: Ye Wanshan"}
 {"idx": 510643, "v": "Komponen dasar anggota tubuh atas untuk merakit boneka."}
@@ -24776,7 +24776,7 @@
 {"idx": 516479, "v": "Gue lupa dengar dari mana, tapi tahun lalu umurnya udah sembilan puluh sembilan."}
 {"idx": 516480, "v": "S7H1 Bellstrike - Perlengkapan dengan Skala Atribut Umbra"}
 {"idx": 516481, "v": "Tentu. Bukan cuma itu, Willowbend Fan, buku yang dibawa Sun Buqi, ditinggal di tempat yang sama saat dia dan Guru Moonstream berpisah."}
-{"idx": 516482, "v": "Inkbound Order berdiri sebagai akademi terkemuka di seluruh dunia, meski nama-namanya pada masa lampau kini sulit dilacak. Konon di dalam Istana Kekaisaran Chang'an pada dinasti Tang terdapat Inkbound Hall—kedudukan Order dahulu. Setelah Insiden Baima, tempat itu hancur, dan baru setelah melewati kesulitan tak terhitung, dibangun kembali di Qingzhou. Sebagai kenangan, nama \"Inkbound\" dipertahankan seperti sedia kala. Para disciple Konfusianisme menaruh urusan dunia dekat di hati, sehingga tak terelakkan mereka terseret ke pusat kekuasaan—nasib baik dan buruk akademi ini selalu terikat erat dengan bangkit dan runtuhnya tiap dinasti. Inilah berkah sekaligus beban Inkbound Order."}
+{"idx": 516482, "v": "Inkbound Order berdiri sebagai akademi terkemuka di seluruh dunia, meski nama-namanya pada masa lampau kini sulit dilacak. Konon di dalam Imperial Palace Chang'an pada dinasti Tang terdapat Inkbound Hall—kedudukan Order dahulu. Setelah Insiden Baima, tempat itu hancur, dan baru setelah melewati kesulitan tak terhitung, dibangun kembali di Qingzhou. Sebagai kenangan, nama \"Inkbound\" dipertahankan seperti sedia kala. Para disciple Konfusianisme menaruh urusan dunia dekat di hati, sehingga tak terelakkan mereka terseret ke pusat kekuasaan—nasib baik dan buruk akademi ini selalu terikat erat dengan bangkit dan runtuhnya tiap dinasti. Inilah berkah sekaligus beban Inkbound Order."}
 {"idx": 516483, "v": "Bahwa tak perlu belajar"}
 {"idx": 516484, "v": "Betul. Siapa tahu rumor itu mulai dari mana? Katanya jubah dari Spring Brocade bisa membersihkan sumsum... bahkan memperpanjang umur."}
 {"idx": 516485, "v": "Besok gue nganter nyonya tua ke New Lingyin Temple. Panas banget, dia bakal tersiksa di kereta biasa. Lo punya yang lebih sejuk?"}

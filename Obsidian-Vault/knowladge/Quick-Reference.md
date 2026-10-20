@@ -31,6 +31,11 @@ the player-username Hall of Fame list, leaked developer Lua code.
   different from the generic word "Sect", which IS translated (§5). "Swordsman Sinan" is one
   combined name-unit, not "Swordsman" + a name.
 
+- **Place names** follow the Fandom wiki location list verbatim (e.g. `Rear Garden`, `Imperial
+  Palace`, `Kaifeng Prefecture`, `Training Grounds`) — never "Taman Belakang"/"Istana
+  Kekaisaran"/"Prefektur Kaifeng". Generic words around the name still translate.
+  → [[Place-Names-Wiki]]
+
 → Full detail/history: [[Names-Not-Translated]], [[Special-Cases]]
 
 ## 2. Kept in English (not proper nouns, but convention)

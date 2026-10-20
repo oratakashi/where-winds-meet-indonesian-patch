@@ -13,6 +13,10 @@ Wanshan, Murong Yuan, Yi Dao, Qinghe, Raven, etc. *(Phase 1)*
 
 ## Place / location names
 
+> **Canonical list = the Fandom wiki location category — see [[Place-Names-Wiki]]** (133 names,
+> audited 2026-10-20). The lists below are historical; where they differ the wiki spelling
+> wins, and the place name stays 100% English even inside longer phrases.
+
 Sixteen Lanes, Hutuo River, Mirkvale, Kaifeng, Eastwind Pavilion, Sunken City Lake, Unbound
 Cavern, Confinement Tower, Bandit Encampment, Great Song Prefecture Hall, Heavenfall,
 Skybrim Market, Harvestfall Village, Blissful Retreat, Wansheng Town, West Market, Forsaken

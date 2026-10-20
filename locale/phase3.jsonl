@@ -278,7 +278,7 @@
 {"idx": 5277, "v": "Setiap 5 pukulan berturut-turut dari <Special Skill: Cyclone Waltz> pada unit yang sama memberikan tambahan 12 Qi damage ke mereka. Efek ini memiliki cooldown 5 detik pada target yang sama."}
 {"idx": 5278, "v": "Penerbangan Pertama Sang Fledgling"}
 {"idx": 5279, "v": "Meng Wuya"}
-{"idx": 5280, "v": "Kediaman Gubernur"}
+{"idx": 5280, "v": "Governor's Residence"}
 {"idx": 5281, "v": "Revitalisasi Lanjutan"}
 {"idx": 5282, "v": "Pemain"}
 {"idx": 5283, "v": "Starveil Grassland Ambience"}
@@ -860,7 +860,7 @@
 {"idx": 5859, "v": "15"}
 {"idx": 5860, "v": "Isi Hadiah"}
 {"idx": 5861, "v": "Sedang Digunakan"}
-{"idx": 5862, "v": "Situs Patung Buddha"}
+{"idx": 5862, "v": "Buddha Statue Site"}
 {"idx": 5863, "v": "Hanya mereka yang telah melewati jalan ini berulang kali yang benar-benar memahami kisah yang dikandungnya..."}
 {"idx": 5864, "v": "Bulan yang Hancur"}
 {"idx": 5865, "v": "Undangan terkirim. Menunggu bantuan dari pemain lain."}
@@ -876,7 +876,7 @@
 {"idx": 5875, "v": "Damage Boost"}
 {"idx": 5876, "v": "Aku selalu lebih suka hidangan #Y{}#E."}
 {"idx": 5877, "v": "Bukti"}
-{"idx": 5878, "v": "Menuju Liangzhou (Runtuh)"}
+{"idx": 5878, "v": "Menuju Liangzhou (Fallen)"}
 {"idx": 5879, "v": "Kelopak Bunga Dingin"}
 {"idx": 5880, "v": "Yue Xiaoshuang"}
 {"idx": 5881, "v": "Perlengkapan Besar"}
@@ -1101,7 +1101,7 @@
 {"idx": 6100, "v": "Amplop Merah! Amplop Merah sekarang!"}
 {"idx": 6101, "v": "...Hmm?"}
 {"idx": 6102, "v": "Ditulis oleh tangan tak dikenal, tintanya masih basah di halaman."}
-{"idx": 6103, "v": "Hamparan Bunga di Kejauhan"}
+{"idx": 6103, "v": "Floral Expanse Beyond"}
 {"idx": 6104, "v": "Warisan: Panggilan Sang Penyembuh"}
 {"idx": 6105, "v": "Arena - Group Strategy Game 1 Buff"}
 {"idx": 6106, "v": "Ditolak"}
@@ -1158,7 +1158,7 @@
 {"idx": 6157, "v": "Skyward City tiba-tiba aktif saat kau bertarung melawan Qianye.\nMenyadari dirinya hanyalah bidak catur yang dibuang, Qianye melompat dari tebing dan melarikan diri.\nMengejarnya, atau melindungi rekan-rekanmu? Kau memilih yang kedua."}
 {"idx": 6158, "v": "Surat yang Tak Terkirim"}
 {"idx": 6159, "v": "Dungeon Boss Name Reserved"}
-{"idx": 6160, "v": "Punggung Bukit Keputusasaan"}
+{"idx": 6160, "v": "Desperation Ridge"}
 {"idx": 6161, "v": "Sinkronisasi Sempurna"}
 {"idx": 6162, "v": "Infernal Twinblades - EX"}
 {"idx": 6163, "v": "Petunjuk"}
@@ -1547,7 +1547,7 @@
 {"idx": 6546, "v": "Rona Merah Merona"}
 {"idx": 6547, "v": "Alihkan"}
 {"idx": 6548, "v": "Memberikan damage seiring waktu atau healing memberikan #Y1#E stack Eaglerise: Mengurangi damage yang diterima sebesar #Y1.2%#E selama #Y10#E detik, bertumpuk hingga #Y5#E kali. Pada stack maksimum, menerima efek Eagle Guard yang mengurangi damage masuk berikutnya dalam #Y10#E detik sebesar #Y90%#E (berkurang setengah kalau damage berasal dari boss). Efek ini hanya bisa terpicu sekali setiap #Y30#E detik."}
-{"idx": 6549, "v": "Taman Belakang"}
+{"idx": 6549, "v": "Rear Garden"}
 {"idx": 6550, "v": "Membutuhkan Kaifeng terbuka"}
 {"idx": 6551, "v": "Pedagang barang antik itu bilang ini satu bagian dari set pusaka keluarganya, \"The Twelve Windtail Scrolls.\""}
 {"idx": 6552, "v": "Tingkatkan menjadi #8C5823167 Poin#E dari #406182Min Silkbind Attack#E (Saat ini: $STEADY_MIN_PRO_ATK_C:.1f$)."}
@@ -1557,7 +1557,7 @@
 {"idx": 6556, "v": "Qi DMG Bonus"}
 {"idx": 6557, "v": "Kesempurnaan Puncak"}
 {"idx": 6558, "v": "Kau cuma lihat sisi bebas dan heroik para pendekar pedang—tapi apa kau pernah mikir mereka juga harus memikul harapan dan suara rakyat jelata? Gimana bisa seseorang cuma ngejar kesenangannya sendiri tanpa peduli?"}
-{"idx": 6559, "v": "Istana Kekaisaran"}
+{"idx": 6559, "v": "Imperial Palace"}
 {"idx": 6560, "v": "Fungsi bangunan ini akan segera hadir!"}
 {"idx": 6561, "v": "Selesaikan Bounty"}
 {"idx": 6562, "v": "Bola Berduri"}
@@ -1608,7 +1608,7 @@
 {"idx": 6607, "v": "Hidden Mountain Main Story P2 - The Expansion (no path change)"}
 {"idx": 6608, "v": "Bonus Attack"}
 {"idx": 6609, "v": "Bisa didapat lewat quest atau hadiah teman setelah menyelesaikan quest panduan \"Voyage of Lanterns\". Digunakan untuk membuat komponen."}
-{"idx": 6610, "v": "Area Tungku"}
+{"idx": 6610, "v": "Furnace Area"}
 {"idx": 6611, "v": "Lantai 4"}
 {"idx": 6612, "v": "Semilir Musim Panas ×3"}
 {"idx": 6613, "v": "Teks Deskripsi"}
@@ -1980,7 +1980,7 @@
 {"idx": 6979, "v": "Anak Laki-Laki Tak Dikenal"}
 {"idx": 6980, "v": "Netral"}
 {"idx": 6981, "v": "Turnamen di General's Shrine sedang berlangsung seru. Mengejutkanmu, Ruby telah mendaftarkan namamu, sepenuhnya yakin akan kemampuanmu untuk menang."}
-{"idx": 6982, "v": "Hutan Sang Pelahap"}
+{"idx": 6982, "v": "Gourmand's Grove"}
 {"idx": 6983, "v": "Malapetaka Surgawi"}
 {"idx": 6984, "v": "Zhang Yan"}
 {"idx": 6985, "v": "Mengurangi biaya Vitality sebesar 10 poin."}
@@ -2579,7 +2579,7 @@
 {"idx": 7578, "v": "Gema terompet perkemahan masih terngiang saat dart dingin menembus malam, mengungkap dendam lama dan permusuhan baru dalam bayangan."}
 {"idx": 7579, "v": "Campaign - Qinghe"}
 {"idx": 7580, "v": "Area Baru"}
-{"idx": 7581, "v": "Arsip Cadangan"}
+{"idx": 7581, "v": "Reserve Archives"}
 {"idx": 7582, "v": "Berisi senjata Epic Swaying Heights dari tipe yang ditentukan. Bisa disesuaikan dengan Path apa pun."}
 {"idx": 7583, "v": "Perwira dan Prajurit"}
 {"idx": 7584, "v": "Elite Buddha Fort"}
@@ -2907,7 +2907,7 @@
 {"idx": 7906, "v": "Overpowered"}
 {"idx": 7907, "v": "Hapus Semua"}
 {"idx": 7908, "v": "Aku bukan anak umur tiga tahun. Mau kusuruh keluarkan biar bisa kamu curi? Bawa aku ke Kaifeng, dan begitu kita sampai di sana, kuberikan liontin itu kepadamu."}
-{"idx": 7909, "v": "Wilayah Istana Kekaisaran"}
+{"idx": 7909, "v": "Wilayah Imperial Palace"}
 {"idx": 7910, "v": "Menggunakan jembatan yang dibentuk oleh burung-burung kayu, kau dan Swallow berhasil menaiki Skyward City. Di ujungnya, seseorang telah menanti."}
 {"idx": 7911, "v": "Tantangan [Lv. 16]"}
 {"idx": 7912, "v": "Mengalahkan Xiao Han, kau mendengar dentang gong dari kejauhan. Itu bukan tanda kemenangan; Jenderal Wang telah gugur.\nPasukan penyerbu yang merangsek memaksa kau dan sekutumu mundur, jengkal demi jengkal yang pahit..."}
@@ -3411,7 +3411,7 @@
 {"idx": 8410, "v": "Inner Way: Soaring High"}
 {"idx": 8411, "v": "Heavenwill Gauntlets: Common"}
 {"idx": 8412, "v": "Crate Ward"}
-{"idx": 8413, "v": "Penjaga Perbendaharaan Tersegel"}
+{"idx": 8413, "v": "Penjaga Sealed Treasury"}
 {"idx": 8414, "v": "Menerima damage saat HP di bawah level tertentu akan menghasilkan perisai. Efek ini memiliki jeda pemicu."}
 {"idx": 8415, "v": "Murid biasa Sekte Silver Needle boleh melakukan studi lapangan bersama instruktur mereka."}
 {"idx": 8416, "v": "akhirnya selesai."}
@@ -3499,7 +3499,7 @@
 {"idx": 8498, "v": "Stage Duo"}
 {"idx": 8499, "v": "Nameless Sword - Common"}
 {"idx": 8500, "v": "Retorika Kosong"}
-{"idx": 8501, "v": "Gunung Moonveil"}
+{"idx": 8501, "v": "Moonveil Mountain"}
 {"idx": 8502, "v": "Ambil kunci haven rahasia"}
 {"idx": 8503, "v": "Menyeberangi aliran air demi sebuyung arak, ia bertemu dengannya saat hujan reda dan kelopak bunga berguguran."}
 {"idx": 8504, "v": "Menjahit"}
@@ -3567,7 +3567,7 @@
 {"idx": 8566, "v": "Hei, sudah mendingan?"}
 {"idx": 8567, "v": "Di kelokan sungai tempat anggrek melambai, cahaya bulan menghiasi mekarnya bunga, sementara embun pagi memudar perlahan."}
 {"idx": 8568, "v": "Surat dari Li Baiyuan"}
-{"idx": 8569, "v": "Gunung Ethereal"}
+{"idx": 8569, "v": "Ethereal Mountain"}
 {"idx": 8570, "v": "Ming Ci"}
 {"idx": 8571, "v": "Dikuasai oleh: Buddha Fort"}
 {"idx": 8572, "v": "Sejak mengikuti kelas malam, Tang Shuhu terus-menerus mendeklamasikan puisi cengeng, membuat saudara-saudara Qingjiao Hall pusing tujuh keliling. Mungkinkah dia sedang jatuh cinta?"}
@@ -3591,7 +3591,7 @@
 {"idx": 8590, "v": "Buka Hexi Boundary Stone untuk pertama kalinya"}
 {"idx": 8591, "v": "Wayfarer's Brew ×3"}
 {"idx": 8592, "v": "Login selama 1 Hari"}
-{"idx": 8593, "v": "Jurang Pipa"}
+{"idx": 8593, "v": "Pipa Chasm"}
 {"idx": 8594, "v": "Dapatkan 10.000 Jade Fish ({}/10,000)"}
 {"idx": 8595, "v": "Ganti Kamera"}
 {"idx": 8596, "v": "Pendekar Feng"}
@@ -3684,7 +3684,7 @@
 {"idx": 8683, "v": "<Critical Rate|780|#C|21> dapat ditingkatkan berdasarkan Agility. Bonus saat ini: #Y{0:.1%}#E. Bonus maksimal membutuhkan #Y25#E <Agility|780|#C|10> ($STEADY_CRI:.0f$ now)."}
 {"idx": 8684, "v": "Melepaskan diri dari masa lalu, pengembara tersesat."}
 {"idx": 8685, "v": "Lemari Pajangan"}
-{"idx": 8686, "v": "Jalan Kuno Xiao Pass"}
+{"idx": 8686, "v": "Xiao Pass Old Road"}
 {"idx": 8687, "v": "Kantor Bela Diri dan Kebajikan"}
 {"idx": 8688, "v": "Saat kau bertransformasi menjadi Bulwark, meningkatkan skill damage milikmu sebesar persentase tertentu dan mengurangi damage yang diterima Bulwark sebesar persentase tertentu. #Yassistance effect#E dapat ditingkatkan pada #YLv.1#E dan #YLv.2#E. Semua pemain yang berpartisipasi dalam Guild War bisa mendapatkan buff tersebut."}
 {"idx": 8689, "v": "Mendengar bahwa persediaan makanan menipis, kerumunan orang merangsek maju, berebut apa pun yang bisa mereka raih.\nWagtail dan Swallow terdorong jatuh ke tanah, kendati Swallow tampak menyadari sesuatu. Beruntung, Bibi Chunhua menarik mereka ke tempat aman.\nSituasi kian tak terkendali..."}
@@ -3773,7 +3773,7 @@
 {"idx": 8772, "v": "Memberikan damage #G45%#E."}
 {"idx": 8773, "v": "Akik"}
 {"idx": 8774, "v": "Musim baru telah dimulai, selesaikan quest tantangan untuk menjadi lebih kuat."}
-{"idx": 8775, "v": "Danau Melingkar"}
+{"idx": 8775, "v": "Encircling Lake"}
 {"idx": 8776, "v": "Laozi"}
 {"idx": 8777, "v": "Batas Waktu: 1j"}
 {"idx": 8778, "v": "$T(2011), kenapa kau menyerang secara sembrono begitu?"}
@@ -4184,7 +4184,7 @@
 {"idx": 9183, "v": "Kau Duluan"}
 {"idx": 9184, "v": "Eastgaze Bow: Divine"}
 {"idx": 9185, "v": "Orang Asing"}
-{"idx": 9186, "v": "Perbendaharaan Kekaisaran"}
+{"idx": 9186, "v": "Imperial Vaults"}
 {"idx": 9187, "v": "Terapi Qi"}
 {"idx": 9188, "v": "Cleardew Terrace"}
 {"idx": 9189, "v": "Angin Tandus"}
@@ -4362,7 +4362,7 @@
 {"idx": 9361, "v": "Kisah Tak Dikenal"}
 {"idx": 9362, "v": "Tanyakan pada keduanya apa yang terjadi"}
 {"idx": 9363, "v": "Kulit Hewan"}
-{"idx": 9364, "v": "Jalan Huayu"}
+{"idx": 9364, "v": "The Huayu Road"}
 {"idx": 9365, "v": "Milik Tikus Pendengar Timur"}
 {"idx": 9366, "v": "Tier #Y{standard_value}#E direkomendasikan"}
 {"idx": 9367, "v": "Judul Utama"}
@@ -4412,10 +4412,10 @@
 {"idx": 9411, "v": "Berhasil dimodifikasi"}
 {"idx": 9412, "v": "Silver Needle Trial - Tiga Pertanyaan"}
 {"idx": 9413, "v": "Ampun, tolong ampuni aku!"}
-{"idx": 9414, "v": "Buka arsip #YTutorial Dasar Kuil Jenderal#E"}
+{"idx": 9414, "v": "Buka arsip #YTutorial Dasar General's Shrine#E"}
 {"idx": 9415, "v": "Penyelesaian Otomatis"}
 {"idx": 9416, "v": "Warga Sipil"}
-{"idx": 9417, "v": "Seorang pengguna pedang tanpa nama sering terlihat di Stasiun Tepi Sungai di Qinghe, memburu hadiah dan membuat perampok ketakutan."}
+{"idx": 9417, "v": "Seorang pengguna pedang tanpa nama sering terlihat di Riverside Station di Qinghe, memburu hadiah dan membuat perampok ketakutan."}
 {"idx": 9418, "v": "VII"}
 {"idx": 9419, "v": "Benarkah itu?"}
 {"idx": 9420, "v": "Feng Jiujiu"}
@@ -4506,7 +4506,7 @@
 {"idx": 9505, "v": "Digunakan untuk meningkatkan dan terobosan Mystic Skills ofensif."}
 {"idx": 9506, "v": "Black Omen %s"}
 {"idx": 9507, "v": "Selesaikan Koleksi Inner Way I"}
-{"idx": 9508, "v": "Desa Seribu Buddha"}
+{"idx": 9508, "v": "Thousand-Buddha Village"}
 {"idx": 9509, "v": "Tingkatkan peluang Rebuttal, menumpuk hingga 6 kali."}
 {"idx": 9510, "v": "Bicara dengan Xiaojin"}
 {"idx": 9511, "v": "Stasiun Baima"}
@@ -4545,7 +4545,7 @@
 {"idx": 9544, "v": "Tidak ada target"}
 {"idx": 9545, "v": "Fase berikutnya dalam Xh Xm"}
 {"idx": 9546, "v": "Kecelakaan musim dingin biasanya hanya tergelincir di es, radang dingin, atau masuk angin... Lo bilang ada prajurit yang lidahnya membeku menempel ke pilar di ruang istirahat?"}
-{"idx": 9547, "v": "Pasir Mengaum"}
+{"idx": 9547, "v": "Roaring Sands"}
 {"idx": 9548, "v": "Mematuk"}
 {"idx": 9549, "v": "HP Tersisa > {}"}
 {"idx": 9550, "v": "Seorang murid Mohist Hill yang mengunjungi Mirkvale untuk membeli komponen."}
@@ -4709,7 +4709,7 @@
 {"idx": 9708, "v": "Liu"}
 {"idx": 9709, "v": "Penumpang Laki-laki yang Mudah Marah"}
 {"idx": 9710, "v": "Memberikan damage sebesar 90%."}
-{"idx": 9711, "v": "Polisi Prefektur Kaifeng"}
+{"idx": 9711, "v": "Polisi Kaifeng Prefecture"}
 {"idx": 9712, "v": "Ganti Tampilan"}
 {"idx": 9713, "v": "Bantal Meditasi"}
 {"idx": 9714, "v": "Ketika Burung-burung Kembali"}
@@ -4862,7 +4862,7 @@
 {"idx": 9861, "v": "Meningkatkan bonus damage yang diberikan saat Weak Point Break."}
 {"idx": 9862, "v": "Akhiri Tinggal Bersama"}
 {"idx": 9863, "v": "Aturan Turnamen Arena 1v1"}
-{"idx": 9864, "v": "Di Jurang Berkilauan"}
+{"idx": 9864, "v": "Di Gleaming Abyss"}
 {"idx": 9865, "v": "Tirai Bambu"}
 {"idx": 9866, "v": "Kenangan: Sore yang Panjang"}
 {"idx": 9867, "v": "Speedrun Multiplayer"}
@@ -4898,7 +4898,7 @@
 {"idx": 9897, "v": "Manual Kemakmuran"}
 {"idx": 9898, "v": "Langkah yang Kalah"}
 {"idx": 9899, "v": "Gao Xiang"}
-{"idx": 9900, "v": "Prajurit Pengrajin Imperial"}
+{"idx": 9900, "v": "Prajurit Imperial Artisan Court"}
 {"idx": 9901, "v": "Seberapa lezat \"hotpot\" itu? Begitu lezatnya sampai kamu rela memulai perang demi satu gigitan."}
 {"idx": 9902, "v": "Bunga Bercahaya"}
 {"idx": 9903, "v": "Kembali ke November"}
@@ -4956,7 +4956,7 @@
 {"idx": 9955, "v": "Meng Yao"}
 {"idx": 9956, "v": "Terbuka setelah berhasil membangun Tungku Porselen"}
 {"idx": 9957, "v": "Glint Cloudshade"}
-{"idx": 9958, "v": "Di Kuil Jenderal di Verdant Wilds, suara aneh \"Bang... bang...\" bergema dari kuil—Layak diselidiki."}
+{"idx": 9958, "v": "Di General's Shrine di Verdant Wilds, suara aneh \"Bang... bang...\" bergema dari kuil—Layak diselidiki."}
 {"idx": 9959, "v": "Total Keping"}
 {"idx": 9960, "v": "Effective Critical Rate"}
 {"idx": 9961, "v": "Qianye Showdown - Charged Double Slash"}

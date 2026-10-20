@@ -549,7 +549,7 @@
 {"idx": 10548, "v": "Peti Kayu"}
 {"idx": 10549, "v": "Execution Skill menguras #G6%#E HP dari damage yang diberikan."}
 {"idx": 10550, "v": "Kaum Mohis tidak mementingkan diri sendiri. Sejak diciptakan, metode ini disimpan di Universal Love Shop agar semua orang bisa mempelajarinya."}
-{"idx": 10551, "v": "Kembali ke Hamparan Bunga"}
+{"idx": 10551, "v": "Kembali ke Flower Expanse"}
 {"idx": 10552, "v": "VFX Senjata"}
 {"idx": 10553, "v": "Apa yang dunia anggap mustahil, belum tentu mustahil bagi Weiyang."}
 {"idx": 10554, "v": "Capai puncak Pavilion of Tomes"}
@@ -1393,7 +1393,7 @@
 {"idx": 11392, "v": "#YMusim ini berakhir pada \n08 Agustus 2026 pukul 04:59.#E"}
 {"idx": 11393, "v": "Sahabat Terbaik di Dunia"}
 {"idx": 11394, "v": "— Han Timur, Zhang Zhongjing – Treatise on Cold Damage and Miscellaneous Diseases: Bagian tentang Gangguan Lily, Kebingungan, dan Racun Yin-Yang"}
-{"idx": 11395, "v": "Stasiun Tepi Sungai"}
+{"idx": 11395, "v": "Riverside Station"}
 {"idx": 11396, "v": "Melodi Kebijaksanaan II"}
 {"idx": 11397, "v": "Imperial Rope Dart - Reload"}
 {"idx": 11398, "v": "Lompat ke Kiri"}
@@ -1422,7 +1422,7 @@
 {"idx": 11421, "v": "Meningkatkan <Body|780|#C|7> sebesar #Y{0:.0f}#E."}
 {"idx": 11422, "v": "Su Huaiwei"}
 {"idx": 11423, "v": "Syarat Tinggal Bersama"}
-{"idx": 11424, "v": "Ruang Dalam"}
+{"idx": 11424, "v": "Inner Quarters"}
 {"idx": 11425, "v": "Bicara dengan Kang Mingluo"}
 {"idx": 11426, "v": "Kejar Shimmer of South"}
 {"idx": 11427, "v": "Status Companion"}
@@ -2029,7 +2029,7 @@
 {"idx": 12028, "v": "Pemimpin Rombongan"}
 {"idx": 12029, "v": "Boss Misterius"}
 {"idx": 12030, "v": "Kupon ini memberikan diskon 20% untuk Verdant Flute. Otomatis terpakai saat didapat. Maksimal satu kupon per item."}
-{"idx": 12031, "v": "Mencari Kemegahan: Hamparan Bunga"}
+{"idx": 12031, "v": "Mencari Kemegahan: Flower Expanse"}
 {"idx": 12032, "v": "Promosi Mingguan"}
 {"idx": 12033, "v": "Peaceward Camp"}
 {"idx": 12034, "v": "Selatan"}
@@ -2873,7 +2873,7 @@
 {"idx": 12872, "v": "Bunga Tulang Pelangi"}
 {"idx": 12873, "v": "Lv.3: Amati"}
 {"idx": 12874, "v": "dan"}
-{"idx": 12875, "v": "Perwira Patrol and Inspection Agency Distrik Luar Kota Kaifeng."}
+{"idx": 12875, "v": "Perwira Patrol and Inspection Agency Distrik Luar Kaifeng City."}
 {"idx": 12876, "v": "Su Bu"}
 {"idx": 12877, "v": "Tulang Naga"}
 {"idx": 12878, "v": "Majikanku"}
@@ -3340,7 +3340,7 @@
 {"idx": 13339, "v": "Meningkatkan <Critical Healing Bonus|780|#C|157> sebesar #Y{0:.1%}#E."}
 {"idx": 13340, "v": "Hama Greenwood"}
 {"idx": 13341, "v": "untuk menaburkan koin selama satu hari, dengan bantuan Gold-Making Vessel."}
-{"idx": 13342, "v": "Mercy Hall yang Ditinggalkan"}
+{"idx": 13342, "v": "Abandoned Mercy Hall"}
 {"idx": 13343, "v": "Begitukah?"}
 {"idx": 13344, "v": "Tidak Ada Koleksi"}
 {"idx": 13345, "v": "Liang Dao"}
@@ -3856,7 +3856,7 @@
 {"idx": 13855, "v": "Uji Kolom Gosip"}
 {"idx": 13856, "v": "Melodi Harmoni III"}
 {"idx": 13857, "v": "Memulihkan #G20#E Qi saat berhasil menghancurkan pertahanan target dengan Defense Break Skill."}
-{"idx": 13858, "v": "Bukit Sang Bijak"}
+{"idx": 13858, "v": "Sage's Knoll"}
 {"idx": 13859, "v": "Pembalikan Kesehatan"}
 {"idx": 13860, "v": "Potongan Kain Celup"}
 {"idx": 13861, "v": "Sesuaikan Otomatis Orientasi Snap"}
@@ -4099,7 +4099,7 @@
 {"idx": 14098, "v": "Sang Penggali Kubur"}
 {"idx": 14099, "v": "Aku ngerasa hangat banget di dalam setelah nerima semua Angpao ini!"}
 {"idx": 14100, "v": "Kartu As"}
-{"idx": 14101, "v": "Seorang penjaga Dinas Kekaisaran yang sedang menginterogasi tahanan terlihat tidak sabar, seakan ada sesuatu yang tidak menyenangkan terjadi..."}
+{"idx": 14101, "v": "Seorang penjaga Imperial Service yang sedang menginterogasi tahanan terlihat tidak sabar, seakan ada sesuatu yang tidak menyenangkan terjadi..."}
 {"idx": 14102, "v": "Manajemen Penerimaan"}
 {"idx": 14103, "v": "Penduduk gunung di dekat Encircling Lake"}
 {"idx": 14104, "v": "Gelar Kehormatan"}
@@ -5606,7 +5606,7 @@
 {"idx": 15605, "v": "Pose Companion"}
 {"idx": 15606, "v": "Nyonya Qi selalu bilang bahwa mencari nafkah itu seperti menguleni adonan sourdough lama... lengket, keras kepala, dan sulit diatur. Tapi jika kau berpegang pada harapan, cahaya di hatimu takkan pernah pudar."}
 {"idx": 15607, "v": "Dalam Mist Breaker, meningkatkan Spark awal Healer sebesar 1 poin pada ronde perawatan pertama"}
-{"idx": 15608, "v": "Liangzhou (Jatuh)"}
+{"idx": 15608, "v": "Liangzhou (Fallen)"}
 {"idx": 15609, "v": "Semoga kita berumur panjang dan berbagi keindahan bulan bersama, meski dari kejauhan. Gelombang kembang api keempat belas telah diluncurkan! Semoga semua orang tetap muda selama mungkin!"}
 {"idx": 15610, "v": "Skill yang Bangkit"}
 {"idx": 15611, "v": "Terima kasih $T(1)"}
@@ -5936,7 +5936,7 @@
 {"idx": 15935, "v": "Satu kuntum bunga merah tua memesona semua orang!"}
 {"idx": 15936, "v": "Bamboocut Penetration +#G4#E."}
 {"idx": 15937, "v": "Suasana"}
-{"idx": 15938, "v": "Kapal Istana Kekaisaran"}
+{"idx": 15938, "v": "Kapal Imperial Palace"}
 {"idx": 15939, "v": "Keanggunan Sedemikian Rupa"}
 {"idx": 15940, "v": "Pecahkan"}
 {"idx": 15941, "v": "Saat jalan-jalan Kaifeng meriah dengan perayaan Qixi, kau melihat Nona Shen di sebuah persimpangan. Lihat apa yang mengganggunya."}
@@ -6198,7 +6198,7 @@
 {"idx": 16197, "v": "Ding Pu"}
 {"idx": 16198, "v": "Melodi Kebajikan III"}
 {"idx": 16199, "v": "Lahan Kosong"}
-{"idx": 16200, "v": "Patroli Istana Kekaisaran"}
+{"idx": 16200, "v": "Patroli Imperial Palace"}
 {"idx": 16201, "v": "Memainkan Xiao"}
 {"idx": 16202, "v": "Tren Sepanjang Masa"}
 {"idx": 16203, "v": "Mulai penyelidikan"}
@@ -6944,7 +6944,7 @@
 {"idx": 16943, "v": "Gaya tampilan senjata %s memiliki tiga grade yaitu #44729fBiru#E, #734fa0AUngu#E, dan #a7781fEmas#E, yang dapat diubah lewat penempaan ulang senjata."}
 {"idx": 16944, "v": "Buff Aktif"}
 {"idx": 16945, "v": "Nilai Kemitraan:"}
-{"idx": 16946, "v": "Lintasan Sang Kuda"}
+{"idx": 16946, "v": "Steed's Pass"}
 {"idx": 16947, "v": "Hapus Buff"}
 {"idx": 16948, "v": "Dihormati"}
 {"idx": 16949, "v": "Chu Yuan"}
@@ -7282,7 +7282,7 @@
 {"idx": 17281, "v": "Tutup percakapan secara massal."}
 {"idx": 17282, "v": "Saat kau melangkah keluar dari lukisan itu, napas busuk sang ular membanjirimu. Tak ada waktu untuk berpikir—lari!"}
 {"idx": 17283, "v": "Kesemek"}
-{"idx": 17284, "v": "Ruang Dalam"}
+{"idx": 17284, "v": "Inner Chambers"}
 {"idx": 17285, "v": "Buku Harian Anak Laki-laki yang Dimabuk Cinta"}
 {"idx": 17286, "v": "Pedagang yang Membeli Treasure Basin"}
 {"idx": 17287, "v": "Imperial Palace - Shengping Tower"}
@@ -8155,13 +8155,13 @@
 {"idx": 18154, "v": "Ah! Ada orang jatuh ke air!"}
 {"idx": 18155, "v": "Adept I"}
 {"idx": 18156, "v": "Pedagang Giok - Old Shi"}
-{"idx": 18157, "v": "Para pendebat cendekiawan yang mahir mendirikan Huiyan Hall di jantung Kota Kaifeng sebagai tempat berlindung bagi para cendekiawan dari seluruh negeri untuk berdebat dan bertukar pikiran."}
+{"idx": 18157, "v": "Para pendebat cendekiawan yang mahir mendirikan Huiyan Hall di jantung Kaifeng City sebagai tempat berlindung bagi para cendekiawan dari seluruh negeri untuk berdebat dan bertukar pikiran."}
 {"idx": 18158, "v": "Tanyakan soal perdebatan itu"}
 {"idx": 18159, "v": "Cahaya yang Digenggam"}
 {"idx": 18160, "v": "♪ Semua mimpimu akan segera terbang tinggi. ♪"}
 {"idx": 18161, "v": "Ceritakan kisah kakek dan pembuat hio"}
 {"idx": 18162, "v": "Murong Yuan memutar-mutar elang kayu di tangannya, matanya berbinar bangga saat mengamati mahakaryanya.\nLalu, dengan satu gerakan lembut, elang itu terbang, melesat menuju Jinming Pool.\nDi kejauhan, genderang perang bergema. Latihan angkatan laut Jinming Pool telah dimulai."}
-{"idx": 18163, "v": "Pinggiran Kaifeng - Utara"}
+{"idx": 18163, "v": "Kaifeng Suburbs - North"}
 {"idx": 18164, "v": "Dimiliki %d"}
 {"idx": 18165, "v": "Semua Dialog"}
 {"idx": 18166, "v": "Divine Counter"}
@@ -8318,7 +8318,7 @@
 {"idx": 18317, "v": "Huang Daniu"}
 {"idx": 18318, "v": "Li Xiu"}
 {"idx": 18319, "v": "Pemeriksaan Logika"}
-{"idx": 18320, "v": "Pinggiran Kaifeng - Selatan"}
+{"idx": 18320, "v": "Kaifeng Suburbs - South"}
 {"idx": 18321, "v": "Pengembara yang terhormat,\r\nUsahamu dalam event \"Paint Hexi Together\" tidak berlalu tanpa diperhatikan. Sebagai tanda terima kasih yang tulus, kami telah menyiapkan hadiah sederhana. Kami harap kamu bisa menerimanya dengan senang hati."}
 {"idx": 18322, "v": "Yanhe"}
 {"idx": 18323, "v": "Bukit Merah"}
@@ -8651,7 +8651,7 @@
 {"idx": 18650, "v": "\"Wadah Pembuat Emas\""}
 {"idx": 18651, "v": "You Haomiao"}
 {"idx": 18652, "v": "Tekan {} sebelum terkena hit untuk memicu Deflection"}
-{"idx": 18653, "v": "Tata Letak Istana Kekaisaran Kaifeng"}
+{"idx": 18653, "v": "Tata Letak Kaifeng Imperial Palace"}
 {"idx": 18654, "v": "[Memuat...]"}
 {"idx": 18655, "v": "Zheng Yuanji"}
 {"idx": 18656, "v": "Anggur Tua"}
@@ -9425,7 +9425,7 @@
 {"idx": 19424, "v": "Inkveil Peak"}
 {"idx": 19425, "v": "Paviliun Kecil"}
 {"idx": 19426, "v": "Rasakan itu."}
-{"idx": 19427, "v": "Kamu udah janji kita bakal pergi ke Kuil Jenderal!"}
+{"idx": 19427, "v": "Kamu udah janji kita bakal pergi ke General's Shrine!"}
 {"idx": 19428, "v": "Kirim Email"}
 {"idx": 19429, "v": "Yi Yao"}
 {"idx": 19430, "v": "Lambaikan Tangan"}
@@ -9561,7 +9561,7 @@
 {"idx": 19560, "v": "Wu Meilian"}
 {"idx": 19561, "v": "Kamu tunjukkan jalan untukku, aku tunjukkan jalan untukmu. Kita bepergian bersama dengan bahagia!"}
 {"idx": 19562, "v": "Harmoni Hati"}
-{"idx": 19563, "v": "Meow Meow Temple, Istana Kekaisaran"}
+{"idx": 19563, "v": "Meow Meow Temple, Imperial Palace"}
 {"idx": 19564, "v": "Didapat lewat Berburu"}
 {"idx": 19565, "v": "Wang Dalang"}
 {"idx": 19566, "v": "Jangan beli itu"}
@@ -9703,7 +9703,7 @@
 {"idx": 19702, "v": "Wakil kepala Brewery, Mi Shu, mengawasi produksi Parting Tears."}
 {"idx": 19703, "v": "Seorang penduduk desa dari Heaven's Pier, terkenal karena cintanya pada kucing..."}
 {"idx": 19704, "v": "Warga biasa Prosperity Haven, membersihkan lumpur atas perintah pemerintah untuk membantu pembangunan kanal."}
-{"idx": 19705, "v": "Pecahan Lonceng Gunung Moonveil"}
+{"idx": 19705, "v": "Pecahan Lonceng Moonveil Mountain"}
 {"idx": 19706, "v": "Sistem Operasi"}
 {"idx": 19707, "v": "Li Yan"}
 {"idx": 19708, "v": "Daftar Material"}
@@ -9737,7 +9737,7 @@
 {"idx": 19736, "v": "Rekor Pertarungan"}
 {"idx": 19737, "v": "Pilih Posisi Awal"}
 {"idx": 19738, "v": "Penyeberangan Tersembunyi"}
-{"idx": 19739, "v": "Geografi: Ruang Dalam"}
+{"idx": 19739, "v": "Geografi: Inner Quarters"}
 {"idx": 19740, "v": "Aku ikut"}
 {"idx": 19741, "v": "Qiao Sang Pembawa"}
 {"idx": 19742, "v": "Selidiki area ini"}
@@ -9795,7 +9795,7 @@
 {"idx": 19794, "v": "Kuil Shaolin"}
 {"idx": 19795, "v": "Tidak bisa ditempatkan di bawah tanah"}
 {"idx": 19796, "v": "Sembuhkan Spellbound"}
-{"idx": 19797, "v": "Pinggiran Kaifeng - Timur"}
+{"idx": 19797, "v": "Kaifeng Suburbs - East"}
 {"idx": 19798, "v": "Anak panah kayu yang diukir dari kayu gelondongan. Di tangan pemanah yang cukup kuat, mereka bisa memberi damage yang mengejutkan."}
 {"idx": 19799, "v": "Seni Pedang Tanpa Nama"}
 {"idx": 19800, "v": "Kamu sedang buat minuman?"}

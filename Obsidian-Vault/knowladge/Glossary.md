@@ -17,6 +17,7 @@ rule, or the term is on the "not yet locked" list.
 
 ## Topic files
 
+- [[Place-Names-Wiki]] — canonical place-name list from the Fandom wiki + audit of deviations.
 - [[Names-Not-Translated]] — proper nouns copied verbatim: character/NPC names, places,
   factions, named weapons/skills/gear-sets/boats, unique bosses, legendary items, hero
   titles, Homestead materials.
