@@ -1,0 +1,139 @@
+name: release-patch-cn
+
+# WWM China (燕云十六声): rebuild translate_words_map_zh_cn* with the Indonesian
+# translation on every relevant push to main and publish them as one rolling GitHub
+# Release (fixed tag: cn-latest), separate from the global release (tag: latest).
+#
+# A CN build depends on the global translation too: CN entries reuse it through the
+# keyHash/text bridge (tools/bridge.py), so global locale/ changes also trigger it.
+#
+# Needs the CN_KEYSTREAM_PASSPHRASE secret: the CN files' zstd dictionary is encrypted
+# (Format-Spec.md §8); the keystream is committed only as cn/keystream_v2.bin.gpg.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "cn/**"
+      - "locale/**"
+      - "translation_work/**"
+      - "translate_words_map_en"
+      - "translate_words_map_en_diff"
+      - "tools/**"
+      - "wwm_locmap.py"
+      - ".github/workflows/release-patch-cn.yml"
+  workflow_dispatch: {}
+
+# Several pushes in a row: only the newest build needs to finish.
+concurrency:
+  group: release-patch-cn
+  cancel-in-progress: true
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      CN_KEYSTREAM_PASSPHRASE: ${{ secrets.CN_KEYSTREAM_PASSPHRASE }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - name: Decrypt CN dictionary keystream
+        run: |
+          if [ -z "$CN_KEYSTREAM_PASSPHRASE" ]; then
+            echo "::error::secret CN_KEYSTREAM_PASSPHRASE is not set"; exit 1
+          fi
+          mkdir -p cn/work
+          printf '%s' "$CN_KEYSTREAM_PASSPHRASE" | gpg --batch --yes --quiet --pinentry-mode loopback \
+            --passphrase-fd 0 -o cn/work/keystream_v2.bin -d cn/keystream_v2.bin.gpg
+
+      # The bridge reads the global dumps (keyHash -> English) and the CN dumps
+      # (shared texts); none of them is tracked.
+      - name: Dump global and CN files
+        run: |
+          python wwm_locmap.py dump translate_words_map_en strings.jsonl
+          python wwm_locmap.py dump translate_words_map_en_diff strings_diff.jsonl
+          python wwm_locmap.py dump cn/translate_words_map_zh_cn cn/work/strings_zh_cn.jsonl
+          python wwm_locmap.py dump cn/translate_words_map_zh_cn__small cn/work/strings_zh_cn__small.jsonl
+
+      - name: Build patched CN files
+        run: |
+          python tools/patch_all.py --profile cn --outdir patched-cn --level 19 | tee patch-cn.log
+
+      - name: Compute progress summary
+        id: progress
+        run: |
+          {
+            echo "line<<EOF"
+            echo "**Isi patch (entri yang sudah berbahasa Indonesia):**"
+            echo
+            grep '^translate_words_map' patch-cn.log | awk '{
+              split($2, e, "="); split($4, c, "="); p = $5; gsub(/[()]/, "", p)
+              printf "- `%s`: %s dari %s entri (%s)\n", $1, c[2], e[2], p }'
+            echo
+            python tools/progress.py --profile cn
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Zip patched output
+        run: |
+          cd patched-cn
+          zip -r ../wwm-cn-indonesian-patch.zip .
+
+      - name: Publish rolling release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: cn-latest
+          name: "Patch Terjemahan Indonesia — WWM China 燕云十六声 (build terbaru)"
+          prerelease: true
+          make_latest: false
+          target_commitish: ${{ github.sha }}
+          body: |
+            Build otomatis dari commit ${{ github.sha }} (${{ github.event.head_commit.timestamp }}).
+
+            **Untuk client China Where Winds Meet (燕云十六声)** — bukan untuk versi global (versi
+            global ada di release [`latest`](https://github.com/oratakashi/where-winds-meet-indonesian-patch/releases/tag/latest)).
+            Berisi `translate_words_map_zh_cn` dan `translate_words_map_zh_cn__small`.
+
+            Teks yang juga ada di versi global memakai terjemahan Indonesia versi global; teks khusus
+            versi China diterjemahkan langsung dari Mandarin dan masih berjalan, jadi sebagian teks
+            masih tampil dalam bahasa Mandarin. File di release ini selalu ter-overwrite tiap ada
+            perubahan yang di-push ke `main`.
+
+            ${{ steps.progress.outputs.line }}
+
+            ### Cara pasang
+
+            Panduan lengkap: [README — PC — China Client](https://github.com/oratakashi/where-winds-meet-indonesian-patch#pc--china-client-燕云十六声).
+
+            1. Tutup game **dan** launcher.
+            2. Buka folder `<folder instalasi>\yysls_fast\LocalData\Patch\HD\v2\locale\`
+               (contoh: `D:\yysls\yysls_fast\LocalData\Patch\HD\v2\locale\`).
+            3. **Backup** dulu `translate_words_map_zh_cn` dan `translate_words_map_zh_cn__small` yang lama.
+            4. Salin kedua file dari release ini ke folder tersebut (timpa file lama).
+            5. Jalankan game seperti biasa, bahasa game tetap **简体中文**.
+
+            > [!WARNING]
+            > Patch ini dibuat untuk versi client China tertentu. Setelah game mendapat update yang
+            > mengubah file bahasa, jangan pasang ulang file lama — tunggu build baru di release ini.
+            > Untuk kembali ke bahasa Mandarin, kembalikan file backup.
+
+            ---
+
+            ## Support & Donation
+
+            This Indonesian patch is, and will always remain, **free for everyone**. If it made the game more enjoyable for you, please consider supporting its development — every contribution goes toward AI translation costs and keeping the patch current after each game update.
+
+            ![QR](https://raw.githubusercontent.com/oratakashi/where-winds-meet-indonesian-patch/main/.donation/saweria.png)
+
+            **Donate via Saweria:** [https://saweria.co/oratakashi](https://saweria.co/oratakashi)
+          files: |
+            wwm-cn-indonesian-patch.zip
+            patched-cn/translate_words_map_zh_cn
+            patched-cn/translate_words_map_zh_cn__small

@@ -32,3 +32,6 @@ Thumbs.db
 
 # Salinan file game versi sebelumnya (pembanding saat update)
 *.before
+
+# WWM China: dump, kamus/keystream hasil RE, hasil patch
+cn/work/

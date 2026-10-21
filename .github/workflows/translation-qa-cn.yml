@@ -1,0 +1,52 @@
+name: translation-qa-cn
+
+# WWM China (燕云十六声, profile cn): every translation session must leave
+# cn/locale/*.jsonl and cn/overrides.jsonl valid and the generated progress block in
+# Obsidian-Vault/cn/progress/CN-Current-Status.md up to date. These checks need no
+# dump — cn coverage comes from the `freq` column of cn/translation_work/unique_strings.jsonl.
+# When the CN_KEYSTREAM_PASSPHRASE secret is available, the CN game files are also
+# decrypted and parsed as a smoke test of the tracked binaries + keystream.
+on:
+  pull_request:
+    paths:
+      - "cn/**"
+      - "tools/**"
+      - "wwm_locmap.py"
+      - "Obsidian-Vault/cn/progress/CN-Current-Status.md"
+      - ".github/workflows/translation-qa-cn.yml"
+  push:
+    branches: [main]
+    paths:
+      - "cn/**"
+      - "tools/**"
+      - "wwm_locmap.py"
+      - "Obsidian-Vault/cn/progress/CN-Current-Status.md"
+      - ".github/workflows/translation-qa-cn.yml"
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    env:
+      CN_KEYSTREAM_PASSPHRASE: ${{ secrets.CN_KEYSTREAM_PASSPHRASE }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Validate CN translation files
+        run: python tools/qa_check.py --profile cn --locale "cn/locale/*.jsonl"
+      - name: CN progress block is up to date
+        run: python tools/progress.py --profile cn --check
+      # Secrets are not passed to pull requests from forks — skip the smoke test there.
+      - name: Decrypt CN dictionary keystream
+        if: env.CN_KEYSTREAM_PASSPHRASE != ''
+        run: |
+          mkdir -p cn/work
+          printf '%s' "$CN_KEYSTREAM_PASSPHRASE" | gpg --batch --yes --quiet --pinentry-mode loopback \
+            --passphrase-fd 0 -o cn/work/keystream_v2.bin -d cn/keystream_v2.bin.gpg
+      - name: CN game files decrypt and parse
+        if: env.CN_KEYSTREAM_PASSPHRASE != ''
+        run: |
+          python wwm_locmap.py info cn/translate_words_map_zh_cn
+          python wwm_locmap.py info cn/translate_words_map_zh_cn__small

@@ -3,12 +3,27 @@
 #
 # Kalau commit menyentuh data terjemahan, pastikan file locale valid dan blok
 # progress di Current-Status.md sudah diperbarui (tools/progress.py --write).
+PY=python
+command -v "$PY" >/dev/null 2>&1 || PY=python3
+
+# WWM China (profil cn) — data di cn/, status di Obsidian-Vault/cn/.
+staged_cn=$(git diff --cached --name-only -- cn/locale cn/translation_work cn/overrides.jsonl \
+            Obsidian-Vault/cn/progress/CN-Current-Status.md tools)
+if [ -n "$staged_cn" ]; then
+    "$PY" tools/qa_check.py --profile cn --locale "cn/locale/*.jsonl" || {
+        echo "pre-commit: qa_check.py --profile cn --locale menemukan masalah — perbaiki dulu." >&2
+        exit 1
+    }
+    "$PY" tools/progress.py --profile cn --check || {
+        echo "pre-commit: jalankan 'python tools/progress.py --profile cn --write', lalu git add" >&2
+        echo "            Obsidian-Vault/cn/progress/CN-Current-Status.md dan commit ulang." >&2
+        exit 1
+    }
+fi
+
 staged=$(git diff --cached --name-only -- locale translation_work translate_words_map_en \
          Obsidian-Vault/progress/Current-Status.md tools)
 [ -z "$staged" ] && exit 0
-
-PY=python
-command -v "$PY" >/dev/null 2>&1 || PY=python3
 
 "$PY" tools/qa_check.py --locale "locale/*.jsonl" || {
     echo "pre-commit: qa_check.py --locale menemukan masalah — perbaiki dulu." >&2

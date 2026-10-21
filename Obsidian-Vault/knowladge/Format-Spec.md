@@ -210,7 +210,7 @@ is automatically correct for any file variant).
 
 `translate_words_map_en_mobile` (added to the repo 2026-09-22) is
 **byte-identical** to `translate_words_map_en` of the same version. It
-is in `tools/patch_all.py`'s `FILES` list anyway, so if a future update
+is in the global profile's `files` list (`tools/profiles.py`) anyway, so if a future update
 makes the two diverge, it still gets patched independently by source
 text. Re-check with a plain byte compare after each game update.
 
@@ -275,3 +275,54 @@ So on the official launcher all patched files stick, `_diff` included
 (212,117 entries in the 2026-09 update). On Steam only the base and
 `__small` patches stick; the `_diff` layer there becomes permanent only
 when NetEase folds it into the base package in a later update.
+
+## 8. Container v2 — WWM China (燕云十六声), found 2026-10-20
+
+The CN client (`D:\yysls\yysls_fast\LocalData\Patch\HD\v2\locale\`) ships
+`translate_words_map_zh_cn` / `__small` (+ near-empty `_diff`s) in a **version 2**
+container. Sample files live in `cn/`; `wwm_locmap.py` reads and writes v2 (see below).
+
+```
+u32 magic = 0xDEADBEEF
+u32 version = 2
+u32 mode               # 4 = plain zstd blocks (codec 4), 6 = zstd + encrypted dictionary (codec 5)
+-- mode 6 only --
+u32 dictSize           # 0x40000 for translate_words_map_*, 0x10000 (or less) for data*/index*
+u8[dictSize]           # zstd dictionary (magic 37 A4 30 EC + dictID ...) XOR keystream
+-- both modes --
+u64 blockCount         # (v1 had u32 blockCount + u32 reserved in the header instead)
+u32[blockCount]        # block end offsets, relative to the end of this table (same as v1)
+blocks                 # u8 codec | u32 cs | u32 us | payload — codec 5 = zstd frame with dictID
+```
+
+- Block 0 is the same index as v1 (`u64 total, u64 dataBlockCount, u32[] ids`); shards are
+  expected to be the v1 SwissTable layout (unverified until a dictionary is decrypted).
+- `zh_cn`: 8133 blocks, dictID `3fc25256`; `__small`: 87 blocks, dictID `3c8b2d1b`.
+- **One keystream for every file.** All 38 mode-6 containers in the client (the two locale maps
+  plus `data*`/`index*` in `HD\v2`) decrypt their first 8 bytes to `37 A4 30 EC <own dictID>`
+  with the same keystream (`36 89 40 07 d9 d3 72 38 ...`). It is not a repeating XOR key
+  (no period ≤ 196 K) and not GF(2)-linear (Berlekamp–Massey ≈ n/2) — a real stream cipher.
+- Many-time-pad statistics over the 38 files recover ~95 % of keystream bytes 0..64 K
+  (dictionary *content*, e.g. Chinese text at offset 300 of the zh_cn dict), saved as
+  `cn/work/keystream_v2_statistical_64k.bin`. They can't recover the ~160-byte entropy-table
+  header (high-entropy bitstream) nor bytes 64 K..256 K (only the two locale dicts are that long).
+- **Solved 2026-10-20**: scanning the running client (login screen, elevated terminal —
+  the CN client runs as admin) with `cn/tools/find_dict_in_dump.py --pid <yysls.exe>` found 34
+  plaintext dictionaries, including the 256 KB `zh_cn` one → full 262,144-byte keystream in
+  `cn/work/keystream_v2.bin` (gitignored). The `__small` dictionary was not in memory but
+  decrypts correctly with it, confirming the single-keystream model. (The statistical guess
+  above turned out 99.9 % correct on the first 64 K.)
+- Shards are byte-for-byte the v1 SwissTable layout: `wwm_locmap.py info/dump/patch` handle v2
+  via `read_container_ex`/`write_container_ex`; `patch` copies the encrypted dictionary
+  verbatim and recompresses blocks as codec 5 with the same dictID. Round trip (50 edits)
+  verified on both files: 0 mismatches, header + encrypted dict byte-identical.
+- Sizes (CN, 2026-10-20): `zh_cn` 2,081,685 entries / 8132 shards, `__small` 21,932 entries /
+  86 shards (every `__small` text also occurs in `zh_cn`); 627,412 unique texts, ~10.9 M
+  characters; a CN `unique_strings.jsonl` would be ≈ 47 MB. Markup is the global set
+  (`#E #Y #G #R`, `#rrggbb`, `%s`, `{0}`, `<LINK…>`/`<IMAGE…>`) plus `$STEADY_…`-style
+  variables and `#C|151>` forms that `qa_check.TOKEN` doesn't cover yet.
+- Deployment caveat: the CN locale files live in the client's `LocalData\Patch\HD\v2\locale\`
+  overlay — the folder the Steam patcher re-verifies on the global client. **Tested 2026-10-20:**
+  the CN client loads repacked v2 files (Latin text renders fine) and the CN launcher's
+  `StageCheck` (4,852 files passed) did not revert them. Main-menu `退出游戏` is artwork, and
+  the account login dialog is the NetEase SDK UI — neither comes from these files.

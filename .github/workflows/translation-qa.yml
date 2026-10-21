@@ -2,6 +2,7 @@ name: translation-qa
 
 # Every translation session must leave locale/*.jsonl valid and the generated
 # progress block in Obsidian-Vault/progress/Current-Status.md up to date.
+# WWM China (cn/) has its own workflow: translation-qa-cn.yml.
 on:
   pull_request:
     paths:
@@ -11,6 +12,7 @@ on:
       - "translate_words_map_en_diff"
       - "tools/**"
       - "Obsidian-Vault/progress/Current-Status.md"
+      - ".github/workflows/translation-qa.yml"
   push:
     branches: [main]
     paths:
@@ -20,6 +22,7 @@ on:
       - "translate_words_map_en_diff"
       - "tools/**"
       - "Obsidian-Vault/progress/Current-Status.md"
+      - ".github/workflows/translation-qa.yml"
 
 jobs:
   qa:
