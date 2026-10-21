@@ -1,7 +1,10 @@
 name: translation-qa
 
 # Every translation session must leave locale/*.jsonl valid and the generated
-# progress block in Obsidian-Vault/progress/Current-Status.md up to date.
+# progress block in Obsidian-Vault/progress/Current-Status.md up to date — and the
+# same for the WWM China profile (cn/locale/, Obsidian-Vault/cn/progress/CN-Current-Status.md).
+# The cn checks need no dump: cn coverage comes from the `freq` column, because dumping
+# the CN files needs the (untracked) dictionary keystream.
 on:
   pull_request:
     paths:
@@ -11,6 +14,10 @@ on:
       - "translate_words_map_en_diff"
       - "tools/**"
       - "Obsidian-Vault/progress/Current-Status.md"
+      - "cn/locale/**"
+      - "cn/translation_work/**"
+      - "cn/overrides.jsonl"
+      - "Obsidian-Vault/cn/progress/CN-Current-Status.md"
   push:
     branches: [main]
     paths:
@@ -20,6 +27,10 @@ on:
       - "translate_words_map_en_diff"
       - "tools/**"
       - "Obsidian-Vault/progress/Current-Status.md"
+      - "cn/locale/**"
+      - "cn/translation_work/**"
+      - "cn/overrides.jsonl"
+      - "Obsidian-Vault/cn/progress/CN-Current-Status.md"
 
 jobs:
   qa:
@@ -40,3 +51,7 @@ jobs:
         run: python wwm_locmap.py dump translate_words_map_en_diff strings_diff.jsonl
       - name: Progress block is up to date
         run: python tools/progress.py --check
+      - name: Validate CN translation files
+        run: python tools/qa_check.py --profile cn --locale "cn/locale/*.jsonl"
+      - name: CN progress block is up to date
+        run: python tools/progress.py --profile cn --check

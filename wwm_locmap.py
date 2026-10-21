@@ -48,7 +48,7 @@ CATATAN PENTING
   tabel hash. Cukup pertahankan ctrl + keyHash + posisi slot apa adanya, lalu
   tulis ulang string blob dan perbarui relOffset/byteLen tiap slot.
 """
-import argparse, json, struct, sys
+import argparse, json, os, struct, sys
 
 try:
     import zstandard as zstd
@@ -57,6 +57,18 @@ except ImportError:
 
 MAGIC = 0xDEADBEEF
 CODEC_ZSTD = 4
+CODEC_ZSTD_DICT = 5          # container v2: zstd frame compressed with the file's dictionary
+
+# Container v2 (WWM China, see Format-Spec.md §8):
+#   u32 magic | u32 version=2 | u32 mode
+#   mode 6 only: u32 dictSize | u8[dictSize] zstd dictionary XOR keystream
+#   u64 blockCount | u32[blockCount] endOffset | blocks (codec 4 or 5)
+# Every mode-6 file in the client shares one keystream; it is recovered with
+# cn/tools/find_dict_in_dump.py. The encrypted dictionary is written back
+# verbatim, so patching never needs to re-encrypt anything.
+MODE_ZSTD, MODE_ZSTD_DICT = 4, 6
+KEYSTREAM_PATH = os.environ.get('WWM_KEYSTREAM') or os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), 'cn', 'work', 'keystream_v2.bin')
 
 # `translate_words_map_*_diff` (incremental patch shipped between game updates)
 # uses this exact same container/shard format, but only carries entries that
@@ -66,39 +78,98 @@ TOMBSTONE = b'\xff'
 
 
 # ---------------------------------------------------------------- container
-def read_container(path):
+def load_keystream(path=None):
+    path = path or KEYSTREAM_PATH
+    if not os.path.exists(path):
+        raise ValueError(
+            "container v2 butuh keystream kamus (%s tidak ada) — buat dengan "
+            "cn/tools/find_dict_in_dump.py atau set WWM_KEYSTREAM" % path)
+    with open(path, 'rb') as f:
+        return f.read()
+
+
+def _xor(a, b):
+    return (int.from_bytes(a, 'little') ^ int.from_bytes(b, 'little')).to_bytes(len(a), 'little')
+
+
+def _zdict(raw):
+    return zstd.ZstdCompressionDict(raw, dict_type=zstd.DICT_TYPE_FULLDICT)
+
+
+def read_container_ex(path, keystream=None):
+    """Read a v1 or v2 container. Returns (hdr, blocks); hdr is a dict with
+    `version`, `mode` and, for mode 6, `enc_dict` (as stored) and `zdict`
+    (decrypted). Pass hdr unchanged to write_container_ex()."""
     with open(path, 'rb') as f:
         d = f.read()
-    magic, ver, cnt, _ = struct.unpack_from('<IIII', d, 0)
+    magic, ver = struct.unpack_from('<II', d, 0)
     if magic != MAGIC:
         raise ValueError("magic tidak cocok: %08x" % magic)
+    hdr = {"version": ver, "mode": MODE_ZSTD, "enc_dict": None, "zdict": None}
+    if ver == 1:
+        cnt, = struct.unpack_from('<I', d, 8)
+        p = 16
+    elif ver == 2:
+        hdr["mode"], = struct.unpack_from('<I', d, 8)
+        p = 12
+        if hdr["mode"] == MODE_ZSTD_DICT:
+            ds, = struct.unpack_from('<I', d, 12)
+            enc = d[16:16 + ds]
+            ks = keystream if keystream is not None else load_keystream()
+            if len(ks) < ds:
+                raise ValueError("keystream %d byte < kamus %d byte" % (len(ks), ds))
+            hdr["enc_dict"], hdr["zdict"] = enc, _xor(enc, ks[:ds])
+            if hdr["zdict"][:4] != b'\x37\xa4\x30\xec':
+                raise ValueError("kamus hasil dekripsi tidak valid (keystream salah?)")
+            p = 16 + ds
+        elif hdr["mode"] != MODE_ZSTD:
+            raise ValueError("mode container v2 tak dikenal: %d" % hdr["mode"])
+        cnt, = struct.unpack_from('<Q', d, p)
+        p += 8
+    else:
+        raise ValueError("versi container tak dikenal: %d" % ver)
     if cnt == 0:
         raise ValueError("container tanpa blok (blockCount = 0)")
-    offs = struct.unpack_from('<%dI' % cnt, d, 16)
-    base = 16 + cnt * 4
+    offs = struct.unpack_from('<%dI' % cnt, d, p)
+    base = p + cnt * 4
     if base + offs[-1] != len(d):
         raise ValueError("ukuran file tidak konsisten dengan tabel offset")
-    dctx = zstd.ZstdDecompressor()
+    dctx = {CODEC_ZSTD: zstd.ZstdDecompressor()}
+    if hdr["zdict"]:
+        dctx[CODEC_ZSTD_DICT] = zstd.ZstdDecompressor(dict_data=_zdict(hdr["zdict"]))
     blocks = []
     for i in range(cnt):
         s = base + (offs[i - 1] if i else 0)
         b = d[s:base + offs[i]]
         codec, cs, us = struct.unpack_from('<BII', b, 0)
-        if codec != CODEC_ZSTD:
+        if codec not in dctx:
             raise ValueError("codec tak dikenal: %d" % codec)
-        raw = dctx.decompress(b[9:9 + cs], max_output_size=us)
+        raw = dctx[codec].decompress(b[9:9 + cs], max_output_size=us)
         if len(raw) != us:
             raise ValueError("blok %d: ukuran hasil dekompresi %d != %d"
                              % (i, len(raw), us))
         blocks.append(raw)
-    return ver, blocks
+    return hdr, blocks
 
 
-def write_container(path, ver, blocks, level=19, threads=-1):
-    cctx = zstd.ZstdCompressor(level=level, threads=threads)
-    payloads = [struct.pack('<BII', CODEC_ZSTD, len(c), len(r)) + c
+def write_container_ex(path, hdr, blocks, level=19, threads=-1):
+    if hdr["zdict"]:
+        codec = CODEC_ZSTD_DICT
+        cctx = zstd.ZstdCompressor(level=level, threads=threads,
+                                   dict_data=_zdict(hdr["zdict"]), write_dict_id=True,
+                                   write_content_size=True, write_checksum=False)
+    else:
+        codec = CODEC_ZSTD
+        cctx = zstd.ZstdCompressor(level=level, threads=threads)
+    payloads = [struct.pack('<BII', codec, len(c), len(r)) + c
                 for r, c in ((r, cctx.compress(r)) for r in blocks)]
-    out = bytearray(struct.pack('<IIII', MAGIC, ver, len(blocks), 0))
+    if hdr["version"] == 1:
+        out = bytearray(struct.pack('<IIII', MAGIC, 1, len(blocks), 0))
+    else:
+        out = bytearray(struct.pack('<III', MAGIC, 2, hdr["mode"]))
+        if hdr["mode"] == MODE_ZSTD_DICT:
+            out += struct.pack('<I', len(hdr["enc_dict"])) + hdr["enc_dict"]
+        out += struct.pack('<Q', len(blocks))
     acc, table = 0, []
     for p in payloads:
         acc += len(p)
@@ -108,6 +179,21 @@ def write_container(path, ver, blocks, level=19, threads=-1):
         out += p
     with open(path, 'wb') as f:
         f.write(out)
+
+
+def read_container(path):
+    """v1-style API: (version, blocks). Use read_container_ex to also keep the
+    v2 header needed to write the file back."""
+    hdr, blocks = read_container_ex(path)
+    return hdr["version"], blocks
+
+
+def write_container(path, ver, blocks, level=19, threads=-1):
+    """v1-only writer kept for existing callers; v2 needs write_container_ex."""
+    if ver != 1:
+        raise ValueError("write_container hanya untuk v1; pakai write_container_ex")
+    write_container_ex(path, {"version": 1, "mode": MODE_ZSTD, "enc_dict": None,
+                              "zdict": None}, blocks, level, threads)
 
 
 # -------------------------------------------------------------------- shard
@@ -206,7 +292,7 @@ def cmd_dump(a):
 
 
 def cmd_patch(a):
-    ver, blocks = read_container(a.src)
+    hdr, blocks = read_container_ex(a.src)
     edits = {}
     with open(a.jsonl, encoding='utf-8') as f:
         for ln, line in enumerate(f, 1):
@@ -243,7 +329,7 @@ def cmd_patch(a):
                     % (a.jsonl, ln, h, hashes[s], bi, s))
             vals[s] = v
         out.append(rebuild_shard(blk, vals))
-    write_container(a.out, ver, out, level=a.level)
+    write_container_ex(a.out, hdr, out, level=a.level)
     print("ditulis:", a.out)
 
 

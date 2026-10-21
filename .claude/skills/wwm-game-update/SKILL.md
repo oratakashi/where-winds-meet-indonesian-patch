@@ -32,10 +32,10 @@ appeared or disappeared, and the projected `unique_strings.jsonl` size (GitHub w
 
 Read the result carefully:
 - **New variant** (no `.before`): confirm `python wwm_locmap.py info <file>` parses it, then it
-  must be added to `FILES` in `tools/patch_all.py`, the release `files:` list, and possibly
+  must be added to the profile's `files` in `tools/profiles.py`, the release `files:` list, and possibly
   `TRACKED_DUMPS` in `tools/progress.py`.
 - **Variant gone** (only `.before`): check on the user's client(s) whether NetEase really
-  dropped it (v2.3 dropped `__small`/`__small_diff`); then remove it from `FILES`,
+  dropped it (v2.3 dropped `__small`/`__small_diff`); then remove it from the profile's `files`,
   `rebuild_unique_strings.py` defaults, `progress.py` dumps, the release and the README.
 - **Parse error**: stop — the container/shard format changed; that's reverse-engineering
   work, not this procedure (see `Obsidian-Vault/knowladge/Format-Spec.md`).
@@ -104,3 +104,16 @@ tracked dump), anything skipped, and offer to commit. If the user asks to commit
 files explicitly (binaries, `unique_strings.jsonl`, `tools/`, workflows, vault docs, README),
 let the pre-commit hook run, and include the push warning about file size if GitHub prints it.
 Then propose the translation of the new block as a follow-up session.
+
+## WWM China (`--profile cn`)
+
+A CN client update follows the same idea with the CN profile (`tools/profiles.py`, data in `cn/`):
+copy the new `translate_words_map_zh_cn*` from `D:\yysls\yysls_fast\LocalData\Patch\HD\v2\locale\`
+into `cn/` (keep `*.before`), check `python wwm_locmap.py info` still decrypts them (a failure
+means the keystream changed — rerun `cn/tools/find_dict_in_dump.py --pid …` from an admin
+terminal), re-dump to `cn/work/`, then `python tools/rebuild_unique_strings.py --profile cn`
+(appends only strings never translated in global, see `tools/bridge.py`), add an `Update-N`
+block to `CN_PHASES` and `python tools/progress.py --profile cn --write`. Docs live in
+`Obsidian-Vault/cn/`. A **global** update also changes the CN bridge: re-run the CN
+rebuild after it (new global keys can turn CN-only strings into bridged ones — they stay in
+`unique_strings.jsonl`, harmlessly, since idx are never removed).

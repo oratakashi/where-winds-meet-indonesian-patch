@@ -8,12 +8,13 @@ qa_check.py — validator untuk hasil terjemahan sebelum di-repack.
     # mode locale: validasi file per-idx terhadap translation_work/unique_strings.jsonl
     python tools/qa_check.py --locale locale/phase6.jsonl [locale/update1.jsonl ...]
     python tools/qa_check.py --locale "locale/*.jsonl"
+    python tools/qa_check.py --profile cn --locale "cn/locale/*.jsonl"   # WWM China
 
 Memeriksa tiga kelas bug yang paling sering muncul di pack terjemahan MT/LLM:
 
   1. PROMPT_LEAK   instruksi system prompt ikut tertulis ke dalam nilai
   2. MARKUP        multiset token format engine (#Y ... #E, #aabbcc, %s, %d, {0},
-                   <Tag|id|#C|n>) tidak sama antara sumber dan terjemahan
+                   <Tag|id|#C|n>, $STEADY_CRI:.0f$) tidak sama antara sumber dan terjemahan
                    (jumlah per token dicek, urutan TIDAK)
   3. EMPTY         sumber tidak kosong tapi terjemahan kosong
 
@@ -25,8 +26,8 @@ Exit code 1 jika ada temuan, jadi bisa dipasang di CI / pre-commit.
 import argparse, glob, json, os, re, sys
 from collections import Counter
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-UNIQUE_PATH = os.path.join(ROOT, "translation_work", "unique_strings.jsonl")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import profiles
 
 # Token format milik Messiah/WWM — regex kanonik tunggal untuk seluruh proyek.
 # Urutan alternasi penting:
@@ -36,7 +37,12 @@ UNIQUE_PATH = os.path.join(ROOT, "translation_work", "unique_strings.jsonl")
 #   %s %d       printf placeholder
 #   {0} {name}  placeholder kurung kurawal
 #   <...>       tag stat `<Name|id|#C|n>` atau tag polos — seluruh isinya satu token
-TOKEN = re.compile(r'#[0-9a-fA-F]{6}|#[A-Za-z]|%[sd]|\{[^}]*\}|<[^>]*>')
+#   $VAR:.0f$   variabel stat `$STEADY_CRI:.0f$` (global & CN). Hanya bentuk yang diapit
+#               `$...$` dengan nama >= 2 huruf kapital: `$` tunggal juga dipakai sebagai
+#               pemisah pilihan (`#painter$wanderer#`) dan kode `$S...$E`, yang menempel
+#               ke teks sehingga tidak bisa dipisahkan dengan aman
+TOKEN = re.compile(r'#[0-9a-fA-F]{6}|#[A-Za-z]|%[sd]|\{[^}]*\}|<[^>]*>'
+                   r'|\$[A-Z][A-Z0-9_]+(?::[^$\s]*)?\$')
 
 # Tanda tangan kebocoran prompt. Tambahkan sendiri kalau ketemu varian baru.
 LEAK_SIGNATURES = (
@@ -77,8 +83,8 @@ def load(path):
     return d
 
 
-def load_unique():
-    return {r['idx']: r['v'] for r in iter_jsonl(UNIQUE_PATH)}
+def load_unique(profile='global'):
+    return {r['idx']: r['v'] for r in iter_jsonl(profiles.get(profile).unique)}
 
 
 def summarize(findings, total, report):
@@ -121,8 +127,15 @@ def run_dump(a):
 
 
 def run_locale(a):
-    paths = sorted({p for pat in a.locale for p in (glob.glob(pat) or [pat])})
-    src = load_unique()
+    # Pola glob tanpa hasil dilewati (mis. cn/locale/ sebelum fase pertama dimulai);
+    # path biasa yang tidak ada tetap error saat dibuka.
+    paths = sorted({p for pat in a.locale
+                    for p in (glob.glob(pat) or ([] if glob.has_magic(pat) else [pat]))})
+    P = profiles.get(a.profile)
+    if not paths and not (P.overrides and os.path.exists(P.overrides)):
+        print('tidak ada file locale yang cocok:', ' '.join(a.locale))
+        return 0
+    src = load_unique(a.profile)
     findings, seen, total = [], {}, 0
     for path in paths:
         name = os.path.basename(path)
@@ -143,6 +156,15 @@ def run_locale(a):
             kind = check_pair(s, t)
             if kind:
                 findings.append(({'idx': i, 'file': name}, kind, s, t))
+    P = profiles.get(a.profile)
+    if P.overrides and os.path.exists(P.overrides):     # override per key: {"h","src","v"}
+        name = os.path.basename(P.overrides)
+        for r in iter_jsonl(P.overrides):
+            total += 1
+            kind = check_pair(r['src'], r['v'])
+            if kind:
+                findings.append(({'h': r['h'], 'file': name}, kind, r['src'], r['v']))
+        paths.append(P.overrides)
     print('file:', ', '.join(os.path.basename(p) for p in paths))
     return summarize(findings, total, a.report)
 
@@ -155,6 +177,7 @@ def main():
     ap.add_argument('--locale', nargs='+', metavar='FILE_OR_GLOB',
                     help='validasi file locale per-idx terhadap unique_strings.jsonl')
     ap.add_argument('--report')
+    profiles.add_argument(ap)
     a = ap.parse_args()
     if a.locale:
         return run_locale(a)

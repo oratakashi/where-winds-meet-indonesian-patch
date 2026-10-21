@@ -6,6 +6,12 @@ sudah diterjemahkan tetap valid/tidak perlu di-remap).
 
     python tools/rebuild_unique_strings.py [--strings strings.jsonl]
         [--extra strings_diff.jsonl]
+    python tools/rebuild_unique_strings.py --profile cn     # WWM China (cn/)
+
+Default --strings/--extra = dump-dump profil (tools/profiles.py). Kalau
+unique_strings.jsonl profil belum ada, file dibuat dari nol (bootstrap: idx 0..N-1).
+Profil dengan jembatan (cn) melewati entri yang key-nya ada di global dan teks yang
+muncul di key bersama — itu diterjemahkan lewat tools/bridge.py, bukan di profil ini.
 
 Mengumpulkan semua teks (`v`) yang sedang "hidup" di dump-dump saat ini (melewati
 entri "deleted" dari file *_diff). Teks yang sudah pernah tercatat di
@@ -18,13 +24,15 @@ diberi freq minimal 1.
 import argparse, json, os
 from collections import Counter
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-UNIQUE_PATH = os.path.join(ROOT, "translation_work", "unique_strings.jsonl")
+import profiles
+from bridge import global_keys, shared_texts
 
 
-def load_existing():
+def load_existing(unique_path):
     seen, max_idx, count = set(), -1, 0
-    with open(UNIQUE_PATH, encoding="utf-8") as f:
+    if not os.path.exists(unique_path):         # bootstrap profil baru
+        return seen, max_idx, count
+    with open(unique_path, encoding="utf-8") as f:
         for line in f:
             if not line.strip():
                 continue
@@ -35,7 +43,7 @@ def load_existing():
     return seen, max_idx, count
 
 
-def iter_live_texts(path):
+def iter_live_texts(path, skip_keys=(), skip_texts=()):
     if not os.path.exists(path):
         return
     with open(path, encoding="utf-8") as f:
@@ -44,29 +52,45 @@ def iter_live_texts(path):
             if not line:
                 continue
             d = json.loads(line)
-            if d.get("deleted"):
+            if d.get("deleted") or d["h"] in skip_keys or d["v"] in skip_texts:
                 continue
             yield d["v"]
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--strings", default=os.path.join(ROOT, "strings.jsonl"))
-    ap.add_argument("--extra", nargs="*", default=[
-        os.path.join(ROOT, "strings_diff.jsonl"),
-    ])
+    profiles.add_argument(ap)
+    ap.add_argument("--strings", help="default: dump pertama profil")
+    ap.add_argument("--extra", nargs="*", help="default: dump profil lainnya")
     ap.add_argument("--dry-run", action="store_true",
                      help="hitung & laporkan saja, jangan tulis ke unique_strings.jsonl")
     a = ap.parse_args()
+    P = profiles.get(a.profile)
+    UNIQUE_PATH = P.unique
+    dumps = [P.path(d) for _, d in P.dumps]
+    if a.strings is None:
+        a.strings = dumps[0]
+    if a.extra is None:
+        a.extra = dumps[1:]
+    if not os.path.exists(a.strings):
+        raise SystemExit("%s tidak ada — dump dulu binary-nya dengan wwm_locmap.py dump"
+                         % a.strings)
 
-    seen, max_idx, old_count = load_existing()
+    skip, skip_texts = set(), set()
+    if P.bridge_from == "global":
+        skip = global_keys()
+        skip_texts = set(shared_texts(P, skip))
+        print("jembatan global: %d key global + %d teks di key bersama dilewati "
+              "(diterjemahkan lewat profil global)" % (len(skip), len(skip_texts)))
+
+    seen, max_idx, old_count = load_existing(UNIQUE_PATH)
     print("unique_strings.jsonl lama: %d entri, idx maksimum: %d" % (old_count, max_idx))
 
-    freq = Counter(iter_live_texts(a.strings))
+    freq = Counter(iter_live_texts(a.strings, skip, skip_texts))
 
     new_texts, new_seen, first_seen, order = [], set(), {}, 0
     for path in [a.strings] + a.extra:
-        for v in iter_live_texts(path):
+        for v in iter_live_texts(path, skip, skip_texts):
             if v in seen or v in new_seen:
                 continue
             new_seen.add(v)
@@ -86,7 +110,8 @@ def main():
 
     # Pastikan baris baru tidak menempel ke baris terakhir kalau file tidak
     # diakhiri newline (akan merusak JSON baris itu).
-    with open(UNIQUE_PATH, "rb") as f:
+    os.makedirs(os.path.dirname(UNIQUE_PATH), exist_ok=True)
+    with open(UNIQUE_PATH, "ab+") as f:
         size = f.seek(0, os.SEEK_END)
         needs_nl = False
         if size:

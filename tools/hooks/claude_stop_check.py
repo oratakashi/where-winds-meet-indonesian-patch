@@ -2,12 +2,13 @@
 """
 Claude Code Stop hook (didaftarkan di .claude/settings.json).
 
-Kalau sesi ini mengubah locale/*.jsonl (perubahan belum di-commit) dan blok
-progress di Obsidian-Vault/progress/Current-Status.md sudah basi, Claude tidak
-boleh mengakhiri turn: dia diminta menjalankan `tools/progress.py --write` dan
-melaporkan overall progress ke user dulu.
+Kalau sesi ini mengubah locale/*.jsonl atau cn/locale/*.jsonl (perubahan belum
+di-commit) dan blok progress profil itu (Obsidian-Vault/progress/Current-Status.md
+atau Obsidian-Vault/cn/progress/CN-Current-Status.md) sudah basi, Claude tidak
+boleh mengakhiri turn: dia diminta menjalankan `tools/progress.py [--profile cn]
+--write` dan melaporkan overall progress ke user dulu.
 
-Tidak ada perubahan di locale/ -> langsung lolos (tanpa biaya ~4 detik).
+Tidak ada perubahan di folder locale -> langsung lolos (tanpa biaya ~4 detik).
 """
 import json, os, subprocess, sys
 
@@ -24,26 +25,25 @@ def main():
     if payload.get("stop_hook_active"):
         return 0
 
-    changed = subprocess.run(
-        ["git", "status", "--porcelain", "--", "locale"],
-        cwd=ROOT, capture_output=True, text=True).stdout.strip()
-    if not changed:
+    import progress, profiles
+    for name, folder in (("global", "locale"), ("cn", "cn/locale")):
+        changed = subprocess.run(
+            ["git", "status", "--porcelain", "--", folder],
+            cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        if not changed or not progress.is_stale(name):
+            continue
+        P = profiles.get(name)
+        flag = "" if name == "global" else " --profile " + name
+        print(json.dumps({
+            "decision": "block",
+            "reason": (
+                "%s/ changed this session but the generated progress block in "
+                "%s is stale. Run `python tools/progress.py%s --write`, then include "
+                "its overall line (unique strings done/total/%% and in-game coverage %%) "
+                "in the status/session write-up and in your final message to the user "
+                "(Resume-Procedure step 8)." % (folder, P.rel(P.status), flag)),
+        }))
         return 0
-
-    import progress
-    if not progress.is_stale():
-        return 0
-
-    print(json.dumps({
-        "decision": "block",
-        "reason": (
-            "locale/ changed this session but the generated progress block in "
-            "Obsidian-Vault/progress/Current-Status.md is stale. Run "
-            "`python tools/progress.py --write`, then include its overall line "
-            "(unique strings done/total/% and in-game coverage %) in the "
-            "Current-Status/Session-History write-up and in your final message "
-            "to the user (Resume-Procedure step 8)."),
-    }))
     return 0
 
 
