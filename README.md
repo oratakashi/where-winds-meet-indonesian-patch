@@ -84,6 +84,13 @@ published as a single rolling GitHub Release (tag `latest`):
 
 **[⬇ Download the Latest Patch (`wwm-indonesian-patch.zip`)](../../releases/tag/latest)**
 
+> [!TIP]
+> Playing the **China client (燕云十六声)** instead? It has its own rolling release (tag `cn-latest`) with
+> `translate_words_map_zh_cn` / `__small` and install steps for the CN launcher:
+> **[⬇ Download the CN Patch (`wwm-cn-indonesian-patch.zip`)](../../releases/tag/cn-latest)**.
+> Lines shared with the global game reuse the global translation; CN-only lines are still in progress
+> (see [`CN-Current-Status.md`](Obsidian-Vault/cn/progress/CN-Current-Status.md)).
+
 > [!WARNING]
 > **Always back up the original files before overwriting anything.** Copy the original
 > `translate_words_map_en` and `translate_words_map_en_diff` to a separate folder first. If a game update breaks the

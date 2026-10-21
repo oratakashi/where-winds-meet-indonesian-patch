@@ -64,7 +64,11 @@ variants, dumps and phases per profile live in `tools/profiles.py`. The `cn` pro
 Indonesian translation of **WWM China (燕云十六声)**, sourced from Mandarin:
 
 ```bash
-# once per machine: dictionary keystream (gitignored) — game at the login screen, ADMIN terminal
+# once per machine: dictionary keystream -> cn/work/keystream_v2.bin (gitignored). Either decrypt the
+# committed copy (passphrase = repo secret CN_KEYSTREAM_PASSPHRASE; the owner also keeps it in
+# cn/work/keystream_passphrase.txt) ...
+gpg --batch --pinentry-mode loopback --passphrase-file cn/work/keystream_passphrase.txt -o cn/work/keystream_v2.bin -d cn/keystream_v2.bin.gpg
+# ... or recover it from the running client (login screen, ADMIN terminal)
 python cn/tools/find_dict_in_dump.py --pid <yysls.exe PID> --v2-dir "D:\yysls\yysls_fast\LocalData\Patch\HD\v2"
 python wwm_locmap.py dump cn/translate_words_map_zh_cn cn/work/strings_zh_cn.jsonl
 python wwm_locmap.py dump cn/translate_words_map_zh_cn__small cn/work/strings_zh_cn__small.jsonl
@@ -94,7 +98,18 @@ python cn/tools/term_lookup.py 止戈定音技 …            # how global trans
 - CN translation sessions follow `Obsidian-Vault/cn/` (`CN-Current-Status`, `CN-Resume-Procedure`,
   `CN-Quick-Reference`, `CN-Phase-Roadmap`, logs in `cn/translation_logs/CN-Phase-N.md`) under the
   same rules as global: end with `progress.py --profile cn --write` and update the phase log.
-  The Stop hook, `.githooks/pre-commit` and CI cover `cn/locale/` too.
+  The Stop hook and `.githooks/pre-commit` cover `cn/` too.
+- **CI and releases are split per profile.** Global: `translation-qa.yml` + `release-patch.yml`
+  (rolling release, tag `latest`). CN: `translation-qa-cn.yml` (QA + progress check without
+  secrets; with the secret also decrypts and parses the CN binaries) + `release-patch-cn.yml`
+  (rolling release, tag `cn-latest`; decrypts `cn/keystream_v2.bin.gpg` with the
+  `CN_KEYSTREAM_PASSPHRASE` secret, dumps global + CN, runs `patch_all --profile cn`). A global
+  `locale/` change also rebuilds `cn-latest`, because CN reuses it through the bridge.
+- The CN binaries `cn/translate_words_map_zh_cn*` are tracked (like the global ones) so CI can
+  build them; the keystream is only ever committed encrypted. After a CN game update, re-encrypt
+  only if the keystream changed: `gpg --batch --pinentry-mode loopback --passphrase-file
+  cn/work/keystream_passphrase.txt --symmetric --cipher-algo AES256 -o cn/keystream_v2.bin.gpg
+  cn/work/keystream_v2.bin` (the passphrase file must have no trailing newline).
 - The CN client runs elevated and keeps its locale files in the patcher overlay
   `LocalData\Patch\HD\v2\locale\`. Tested 2026-10-20: the client loads repacked files and the CN
   launcher's `StageCheck` left them patched. `cn/tools/install_patch.ps1 install|status|restore`

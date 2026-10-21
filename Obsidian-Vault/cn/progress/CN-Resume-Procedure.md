@@ -8,7 +8,10 @@ paths and the `--profile cn` flag differ.
 
 ```bash
 pip install -r requirements.txt
-# CN keystream (gitignored). Game at the login screen, ADMIN terminal (the client runs elevated):
+# CN keystream -> cn/work/keystream_v2.bin (gitignored). Decrypt the committed copy with the
+# passphrase (repo secret CN_KEYSTREAM_PASSPHRASE, kept by the owner in cn/work/keystream_passphrase.txt):
+gpg --batch --pinentry-mode loopback --passphrase-file cn/work/keystream_passphrase.txt -o cn/work/keystream_v2.bin -d cn/keystream_v2.bin.gpg
+# ...or recover it from the client at the login screen, ADMIN terminal (the client runs elevated):
 python cn/tools/find_dict_in_dump.py --pid <yysls.exe PID> --v2-dir "D:\yysls\yysls_fast\LocalData\Patch\HD\v2"
 # dumps (gitignored): CN + global (the bridge and term_lookup need both)
 python wwm_locmap.py dump cn/translate_words_map_zh_cn cn/work/strings_zh_cn.jsonl
@@ -34,6 +37,10 @@ Translating and validating only needs `cn/translation_work/unique_strings.jsonl`
    log and the final message.
 
 ## Building a playable CN patch
+
+Every push to `main` that touches `cn/` (or the global translation, which CN reuses) rebuilds
+the rolling GitHub Release **`cn-latest`** via `.github/workflows/release-patch-cn.yml` — players
+download from there. To build locally:
 
 ```bash
 python tools/patch_all.py --profile cn --level 12   # -> cn/work/patched/translate_words_map_zh_cn*
