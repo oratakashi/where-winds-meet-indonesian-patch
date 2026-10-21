@@ -32,6 +32,7 @@ NetEase frequently ships incremental updates via companion files (`_diff` for de
   - [Android](#android)
     - [Method A — File manager on the phone](#method-a--file-manager-on-the-phone-no-pc-needed)
     - [Method B — ADB from a PC](#method-b--adb-from-a-pc-step-by-step-for-beginners)
+  - [PC — China Client (燕云十六声)](#pc--china-client-燕云十六声)
   - [Reverting to English / Handling Game Updates](#reverting-to-english--handling-game-updates)
 - [Prerequisites & Installation](#prerequisites--installation)
 - [Quickstart Guide](#quickstart-guide)
@@ -85,11 +86,8 @@ published as a single rolling GitHub Release (tag `latest`):
 **[⬇ Download the Latest Patch (`wwm-indonesian-patch.zip`)](../../releases/tag/latest)**
 
 > [!TIP]
-> Playing the **China client (燕云十六声)** instead? It has its own rolling release (tag `cn-latest`) with
-> `translate_words_map_zh_cn` / `__small` and install steps for the CN launcher:
-> **[⬇ Download the CN Patch (`wwm-cn-indonesian-patch.zip`)](../../releases/tag/cn-latest)**.
-> Lines shared with the global game reuse the global translation; CN-only lines are still in progress
-> (see [`CN-Current-Status.md`](Obsidian-Vault/cn/progress/CN-Current-Status.md)).
+> Playing the **China client (燕云十六声)** instead? It has its own rolling release (tag `cn-latest`) —
+> see [PC — China Client](#pc--china-client-燕云十六声).
 
 > [!WARNING]
 > **Always back up the original files before overwriting anything.** Copy the original
@@ -265,6 +263,37 @@ To restore the originals later, repeat step 10 using the files from the `backup`
 > The game's own patcher may re-verify and silently restore modified files on launch, similar to
 > the `_diff` behavior on the Steam PC client (see [Known Limitations](#known-limitations--deployment-gotchas)). If
 > the Indonesian text reverts to English after a launch or update, re-copy the patched files.
+
+### PC — China Client (燕云十六声)
+
+For the Chinese client only — it uses its own files and its own release (tag `cn-latest`), not the
+global ones above. Lines shared with the global game reuse the global translation; CN-only lines
+are still being translated (see [`CN-Current-Status.md`](Obsidian-Vault/cn/progress/CN-Current-Status.md)),
+so some text stays in Chinese.
+
+**[⬇ Download the CN Patch (`wwm-cn-indonesian-patch.zip`)](../../releases/tag/cn-latest)**
+
+1. Close the game **and** the launcher.
+2. Open the locale folder of your installation (`<InstallDir>` is where the client is installed,
+   e.g. `D:\yysls`):
+
+   ```
+   <InstallDir>\yysls_fast\LocalData\Patch\HD\v2\locale\
+   ```
+
+3. Back up the original `translate_words_map_zh_cn` and `translate_words_map_zh_cn__small` to a
+   separate folder.
+4. Extract the contents of `wwm-cn-indonesian-patch.zip` into this `locale\` folder, overwriting
+   both files. Leave the small `*_diff` files there untouched.
+5. Launch the game through the launcher as usual, keeping the game language on
+   **Chinese (简体中文)** — unlike the global client, the CN patch replaces the Chinese text itself.
+
+> [!NOTE]
+> Tested 2026-10-20: the CN launcher checks its files on start but did not restore the patched ones.
+> A CN game update that changes these files replaces them — restore your backup or wait for the next
+> `cn-latest` build instead of re-copying an old patch over the new version. The main-menu
+> "退出游戏" button (artwork) and the NetEase account login dialog are not part of these files and
+> stay in Chinese.
 
 ### Reverting to English / Handling Game Updates
 

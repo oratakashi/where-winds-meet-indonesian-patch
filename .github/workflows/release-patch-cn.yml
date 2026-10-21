@@ -110,6 +110,8 @@ jobs:
 
             ### Cara pasang
 
+            Panduan lengkap: [README — PC — China Client](https://github.com/oratakashi/where-winds-meet-indonesian-patch#pc--china-client-燕云十六声).
+
             1. Tutup game **dan** launcher.
             2. Buka folder `<folder instalasi>\yysls_fast\LocalData\Patch\HD\v2\locale\`
                (contoh: `D:\yysls\yysls_fast\LocalData\Patch\HD\v2\locale\`).

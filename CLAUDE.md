@@ -112,8 +112,7 @@ python cn/tools/term_lookup.py 止戈定音技 …            # how global trans
   cn/work/keystream_v2.bin` (the passphrase file must have no trailing newline).
 - The CN client runs elevated and keeps its locale files in the patcher overlay
   `LocalData\Patch\HD\v2\locale\`. Tested 2026-10-20: the client loads repacked files and the CN
-  launcher's `StageCheck` left them patched. `cn/tools/install_patch.ps1 install|status|restore`
-  installs them (backup first) and tells whether they're still in place.
+  launcher's `StageCheck` left them patched. Player install steps: README "PC — China Client".
 
 `translation_work/build_unique.py` is the one-time bootstrap that created `unique_strings.jsonl`.
 Never re-run it: it renumbers every idx and silently breaks all `locale/*.jsonl` progress (it now

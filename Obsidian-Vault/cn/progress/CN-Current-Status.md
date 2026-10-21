@@ -42,7 +42,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale
 ## Session log
 
 - **2026-10-20 — first in-game test.** Bridge-only patch (`zh_cn` 60.46 %, `__small` 56.89 %)
-  installed with `cn/tools/install_patch.ps1`: the client loads it, Latin text renders, the
+  installed by hand (backup + copy, now the README "PC — China Client" guide): the client loads it, Latin text renders, the
   launcher's `StageCheck` left the files patched. The login-screen health notice and ISBN line
   overlapped (global text too long / extra `\n`) → first two rows of `cn/overrides.jsonl`
   ([[CN-Quick-Reference]] §5). `退出游戏` on the main menu is artwork; the account dialog is the
