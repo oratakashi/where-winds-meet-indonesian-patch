@@ -22,6 +22,12 @@ Session history and terminology for `cn/locale/phase2.jsonl`. Consolidated rules
   37,800–37,999 was redone in two 100-row pieces built programmatically by idx. QA 18,002
   entries, 0 findings. Next idx: **40,000**.
 
+- **2026-10-22 — batch 4, idx 40,000–43,999 (4,000 rows).** Sixteen subagents, 250 rows each
+  (40,000–40,249 … 43,750–43,999), each told to build its output by iterating source idx.
+  Merge verified idx-exact (no gaps/shifts). QA first run: 4 MARKUP findings (40,135 and 42,437
+  `<…>` content, 41,003 `《…》` turned into `<…>`, 42,395 `#…` hashtag) fixed by hand; final QA
+  30,002 entries, 0 findings. Next idx: **44,000**.
+
 ## Translation decisions — 2026-10-22
 
 - All freq-3 strings here are almost entirely internal editor labels (NPC / spawn / entity /
@@ -70,3 +76,16 @@ Session history and terminology for `cn/locale/phase2.jsonl`. Consolidated rules
   熔炉地牢 "Penjara Tungku"; 绣金楼 "Paviliun Sulam Emas"; 太平钟楼 "Menara Lonceng Taiping".
 - Lesson: for chunks, tell agents to build output by iterating source idx, and compare digit
   sequences src vs. translation after merging to catch silent one-row shifts.
+
+## Batch 4 decisions (idx 40,000–43,999)
+
+- Still mostly editor labels (spawn/NPC/reward tables, quest/activity names). Agents were given
+  the fixed global names (Bamboocut, Stonesplit, Bellstrike, Silkbind, Revelry Hall, Nine Mortal
+  Ways, Jadeheart Garden, Kisah-Kisah Pengembara, Tebing yang Terengah) so these are consistent
+  in this batch.
+- Markup lesson: Mandarin `<…>` and `#…` text inside a line counts as a markup token for QA, so
+  it must stay verbatim (e.g. 42,679 `<心通百兽>`, 42,437, 40,135 `<大宋官兵>`, hashtag in 42,395);
+  `《…》` book-title marks must not become `<…>` (use quotes).
+- New CN-only names seen: 常平堡 "Changping Fort"; 无忧洞 "Gua Wuyou" / 无忧帮 "Geng Wuyou"
+  (vs. earlier "Geng Unbound Cavern" — editor label, harmonize later); 文津馆 "Wenjin Guan";
+  中渡桥 "Jembatan Zhongdu"; 丰和村 "Desa Fenghe"; 花船集 "Pasar Perahu Bunga".
