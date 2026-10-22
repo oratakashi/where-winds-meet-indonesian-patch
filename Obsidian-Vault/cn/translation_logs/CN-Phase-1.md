@@ -5,6 +5,28 @@ Session history and terminology for `cn/locale/phase1.jsonl`. Consolidated rules
 
 ## Batches
 
+- **2026-10-22 — batch 6, idx 20,000–23,999 (4,000 rows).** Three parallel ranges:
+  20,000–21,333, 21,334–22,666 and 22,667–23,999. Validated each segment before append
+  to `cn/locale/phase1.jsonl`; exact final range verified without gaps or duplicates and
+  the preceding 20,000 rows retained byte-for-byte. Commit pending.
+  Phase 1: **24,000 / 30,000 (80.00%)**; next idx **24,000**.
+  Full CN QA: **38,002 entries**, including 2 overrides; **0 findings**.
+  **Overall: 38,000 / 159,176 unique strings (23.87%); CN-only in-game coverage
+  635,797 / 823,139 (77.24%).** Generated with
+  `python tools/progress.py --profile cn --write`. Coverage includes internal editor
+  labels and excludes the separate global bridge.
+
+- **2026-10-22 — batch 5, idx 16,000–19,999 (4,000 rows).** Three parallel ranges:
+  16,000–17,333, 17,334–18,666 and 18,667–19,999. Validated the merged batch before
+  appending to `cn/locale/phase1.jsonl`; existing translations retained byte-for-byte.
+  Commit pending. Phase 1: **20,000 / 30,000 (66.67%)**; next idx **20,000**.
+  Exact contiguous merged range verified without duplicates or gaps. Full CN QA:
+  **34,002 entries**, including 2 overrides; **0 findings**.
+  **Overall: 34,000 / 159,176 unique strings (21.36%); CN-only in-game coverage
+  619,797 / 823,139 (75.30%).** Generated with
+  `python tools/progress.py --profile cn --write`, including concurrent Phase 2 progress.
+  Coverage includes internal editor labels and excludes the separate global bridge.
+
 - **2026-10-22 — batch 4, idx 12,000–15,999 (4,000 rows).** Three parallel ranges:
   12,000–13,333, 13,334–14,666 and 14,667–15,999. Validated temporary batches before
   appending to `cn/locale/phase1.jsonl`; previous translations retained. Commit pending.
@@ -369,3 +391,127 @@ Pinyin; short descriptive labels use Indonesian. Source/name pairs are indexed b
 
 Additional CN-only person-name precedents in this batch: Chen Wenjing, Liang Xueqing,
 Wu Heng, Shi Wan, Qiu Shan, Zheng Wanhe and Xun Sanniang.
+
+## Translation decisions — batch 5 (2026-10-22)
+
+- Shared-key lookups retain global names: Grand Imperial Temple, Academy of Scholars,
+  Taman Kewaspadaan, Peachgrove Pass, Tepi Sungai Harum, Menara Kesucian, Skybrim Market,
+  Stillheart Grove, Bloodscale Hall, Huzi Dike, Halo Peak, Fishwood River, Qiongqi Artificer,
+  Murong Yuan, Palace of Supreme Oneness and Perception Forest.
+- Additional lookup precedents: 临津渡 → "Harborlink Crossing", 玉壶园 → "Jadeheart Garden",
+  封桩库 → "Sealed Treasury", 封丘村 → "Desa Verdant Hill", 天工阁 → "Divinecraft Pavilion",
+  千佛村 → "Thousand-Buddha Village", 八音窍 → "Inti Harmonis", 悟真璞 → "Batu Giok Wawasan",
+  长鸣珠 → "Manik Gema", 袅袅之音 → "Melodi yang Membekas", 磨喝乐 → "Boneka Tanah Liat".
+  Other item/Skill names follow lookup: Babi Hutan Terakota, Piaoyao Battleboard, Flamelash,
+  Ikan Isi Ilahi, Satin Langit, Inner Way Notes, Tuning Stone, Large Tuning Stone: Vanguard,
+  Bubuk Pewarna Softweave, Pewarna Rambut Inkshade and Ember Ayam Beruntung.
+- 锦芳苑 → "Jinfang Yuan" at idx 17,147/18,943: lookup only returned a generic Jiangnan
+  Outpost placeholder, not a reliable proper name. 天宫阁 → "Tiangong Ge" at idx 16,144
+  remains distinct from 天工阁 (Divinecraft Pavilion).
+- Preserve full umbrella mechanics at 16,121/16,991, lore at 17,147, cooldown/shield text
+  at 17,245/17,290, dialogue at 17,295, board-game rules at 18,172, story at 18,898 and
+  poem/lore at 18,943. Loading strings retain every repetition and trailing fragment
+  (18,305/18,910); Event placeholders retain repetitions at 19,953.
+- Mandarin remains only inside opaque placeholders/tags: `{npc名}` at 17,001,
+  `<尚食>` at 17,579, `<司苑>` at 18,545 and `<司宾>` at 19,872. Keep these verbatim.
+
+## CN-only names introduced in batch 5
+
+Provisional forms where lookup supplied no reliable proper-name match; full source/name
+pairs remain indexed in the source corpus and `cn/locale/phase1.jsonl`.
+
+| Source | Indonesian / Pinyin |
+| --- | --- |
+| 墨池 | Mochi |
+| 谷羡雨 | Gu Xianyu |
+| 陈涉 | Chen She |
+| 董曰 | Dong Yue |
+| 吴服齐 | Wu Fuqi |
+| 释知山 | Shi Zhishan |
+| 禹杨碧晗 | Yu Yangbihan |
+| 求千刃 | Qiu Qianren |
+| 丧魂林 | Sanghun Forest |
+| 月明渡 | Yueming Ferry |
+| 齐云社 | Qiyun Society |
+| 舒韵 | Shu Yun |
+| 河乐市 | Hele Shi |
+| 大葱村 | Dacong Village |
+| 怒虎无双 | Harimau Murka Tanpa Tanding |
+| 定心清磬 | Lonceng Jernih Penenang Hati |
+| 逐猎 | Perburuan |
+| 飞翼 | Sayap Terbang |
+| 藏贤掌 | Telapak Kebajikan Tersembunyi |
+| 寒芒三剑 | Tiga Pedang Kilau Dingin |
+| 寒星剑雨 | Hujan Pedang Bintang Dingin |
+| 残血铁骨·绝 | Darah Tersisa Tulang Besi-Ultimate |
+| 雪月凝光 | Cahaya Salju dan Bulan |
+| 千江有水千江月 | Seribu Sungai Berair Seribu Bulan |
+| 天雷辟易 | Guntur Menghalau Segala |
+| 身外之饼 | Kue Duniawi |
+| 漱云笙 | Seruling Awan |
+
+Additional CN-only precedents: Wenxing Zhai, Huangfen Village, Shenming Zhai, Guanqian Ai,
+Mo Choushao, Ximen Hualang, Zheliu Pavilion, Ye Rongmu, Yao Wen and Xing Tianming.
+
+## Translation decisions — batch 6 (2026-10-22)
+
+- Shared-key lookups and final corrections retain global forms: 怜花禅院 → "Bloomveil
+  Monastery", 万古一人殿 → "Eternal Solitude Hall", 御猫大王 → "Cat Emperor",
+  飞夷由 → "Tupai Peltwing", 玉鸣蝉 → "Jadesong Cicada", 鹰爪连凿 → "Serangan Cakar",
+  药叉破魔 → "Yaksha Rush", 春水阁 → "Springwave Pavilion", 南屏山 → "Nanping Hill",
+  怀信驿 → "Huaixin Post", 天水集 → "Skybrim Market". Other confirmed forms include
+  Mubeli, Lin Terrace, Cao Manor, Bodhi Sea, Amidst Flowers, Sarang Judi Changle,
+  Blissful Retreat and Fillet Ikan Iris.
+- Further lookup precedents: 来苏蒙学 → "Hopewell Academy", 岱山 → "Mount Tai",
+  万胜镇 → "Wansheng Town", 碧水云涛 → "Jadestream Valley", 鹿井丹泉 → "Deerwell Spring",
+  弱水岸 → "Still Shore", 武成王庙 → "Martial Temple", 清心圃 → "Stillheart Grove",
+  星隐野 → "Starveil Grassland", 黄沙客栈 → "Desert Twilight Inn", 陷城湖 → "Sunken City
+  Lake", 稽古斋 → "Antiquity Hall", 驴道人 → "Daois Keledai", 容鸢 → "Murong Yuan".
+  文津馆 remains "Perintah Terikat Tinta"; 明川药典 → "Panacea Fan";
+  金玉手 → "Meridian Touch"; 红袖甲 → "Red Sleeve Armor".
+  关大雁 → "Guan Dayan" and 柳陌 → "Liu Mo" are also confirmed shared-key names.
+  毛不拔 uses the shared-key NPC form "Mao Si Pelit" at 23,893.
+  Cosmetics at 23,881 follow the individual official/global names; 踏莎行 at 22,949
+  follows "Menyeberangi Padang Rumput". The outfit title 花闻诏 at 22,789 uses
+  "Titah yang Didengar Bunga", distinct from provisional person-name Pinyin.
+- Preserve full Chishan Bu lore at 20,246, historical strategy text (five paragraphs)
+  at 21,632, lore at 22,952, and stories at 23,022/23,732. Mechanical descriptions
+  retain all actions, quantities and durations, including 20,080/20,668/20,724/20,980,
+  21,198/21,234, 23,452/23,647/23,943. The cinematic developer note at 20,216 is retained.
+- IMAGE/TEXT tags at 20,511 remain intact while their text nodes are translated.
+  Opaque Mandarin tags <司灯> (21,822), <武德司-亲事官> (22,526) and <司赞> (23,064)
+  stay verbatim. Loading placeholders at 21,301/23,169 preserve repetitions and
+  incomplete source fragments.
+
+## CN-only names introduced in batch 6
+
+Provisional forms where no reliable global match was found; source/name pairs remain
+indexed in the corpus and `cn/locale/phase1.jsonl`.
+
+| Source | Indonesian / Pinyin |
+| --- | --- |
+| 南山陌 | Nanshan Mo |
+| 赤山埠 | Chishan Bu |
+| 花闻诏 | Hua Wenzhao |
+| 河市乐 | Heshile (distinct source order from 河乐市 / Hele Shi) |
+| 金瓯鸟 | burung cawan emas |
+| 玄冰重剑 | Pedang Besar Es Hitam |
+| 青锋卷雪 | Bilah Hijau Menggulung Salju |
+| 云霞染膏 | Pewarna Rambut Awan Senja (no exact match; do not assume Inkshade) |
+| 风摇扇 | Kipas Bergoyang Angin |
+| 天如水 | Langit Bagai Air |
+| 接星汉 | Menjangkau Bima Sakti |
+| 雷鸣 | Gemuruh Guntur |
+| 斗魂 | Jiwa Tempur |
+| 松烟阁 | Songyan Pavilion |
+| 丰乐楼 | Fengle Lou |
+| 月桂林 | Yuegui Lin |
+| 栖居寺 | Qiju Temple |
+| 熊蛰父 | Xiong Zhefu |
+| 徐真 | Xu Zhen |
+| 毛不拔 | Mao Si Pelit (NPC cerdas, shared-key) |
+| 投胡河 | Touhu He |
+| 葵花点穴手 | Tangan Totok Bunga Matahari |
+| 牵丝戏 | Pertunjukan Benang Boneka |
+| 气垣 | Dinding Qi |
+| 破气斩 | Tebasan Pemecah Qi |
