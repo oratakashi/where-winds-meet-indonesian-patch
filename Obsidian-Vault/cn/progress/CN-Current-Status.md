@@ -1,6 +1,6 @@
 # CN Current Status
 
-**Last updated: 2026-10-22 — CN Phase 1 batch 3 complete: idx 8,000–11,999 translated (12,000 rows total); next idx 12,000 (Phase 2: next 40,000).**
+**Last updated: 2026-10-22 — CN Phase 1 batch 4 complete: idx 12,000–15,999 translated (16,000 rows total); next idx 16,000 (Phase 2: next 40,000).**
 Single source of truth for the **WWM China (燕云十六声)** translation — overwritten each
 session. Phase plan: [[CN-Phase-Roadmap]]; resume checklist: [[CN-Resume-Procedure]];
 rules: [[CN-Quick-Reference]]. The global translation has its own [[Current-Status]].
@@ -20,9 +20,9 @@ never edit them by hand. CI fails a PR whose block is stale (`--profile cn --che
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **22,000** | **159,176** | **13.82%** |
-| ↳ CN-only corpus (Phases 1–6) | 22,000 | 159,176 | 13.82% |
-| **In-game text coverage** — CN-only `translate_words_map_zh_cn` entries (`freq` in `unique_strings.jsonl`; keys shared with global come via the bridge) | **576,403** | **823,139** | **70.02%** |
+| **Unique strings translated (all)** | **26,000** | **159,176** | **16.33%** |
+| ↳ CN-only corpus (Phases 1–6) | 26,000 | 159,176 | 16.33% |
+| **In-game text coverage** — CN-only `translate_words_map_zh_cn` entries (`freq` in `unique_strings.jsonl`; keys shared with global come via the bridge) | **595,797** | **823,139** | **72.38%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -30,7 +30,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale
 
 | Phase | Range | Status | Next idx | Done / total | % |
 | --- | --- | --- | --- | ---: | ---: |
-| 1 | 0–29,999 | **active** | 12,000 | 12,000 / 30,000 | 40.00% |
+| 1 | 0–29,999 | **active** | 16,000 | 16,000 / 30,000 | 53.33% |
 | 2 | 30,000–59,999 | **active** | 40,000 | 10,000 / 30,000 | 33.33% |
 | 3 | 60,000–89,999 | not started | 60,000 | 0 / 30,000 | 0.00% |
 | 4 | 90,000–119,999 | not started | 90,000 | 0 / 30,000 | 0.00% |
@@ -40,6 +40,15 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale
 <!-- progress:end -->
 
 ## Session log
+
+- **2026-10-22 — Phase 1 batch 4 (idx 12,000–15,999, 4,000 rows)** via three parallel
+  translation ranges → `cn/locale/phase1.jsonl`. Phase 1: **16,000 / 30,000 (53.33%)**;
+  next idx **16,000**. Exact merged range verified without gaps or duplicates; existing
+  translations retained. Full CN QA: **26,002 entries** including 2 overrides, **0 findings**.
+  Palace/editor labels, Skill mechanics, lore and poetry translated; decisions in [[CN-Phase-1]].
+  **Overall: 26,000 / 159,176 unique strings (16.33%); CN-only in-game coverage
+  595,797 / 823,139 (72.38%).** Generated with `python tools/progress.py --profile cn --write`.
+  Coverage includes internal labels and excludes the separate global bridge.
 
 - **2026-10-22 — Phase 1 batch 3 (idx 8,000–11,999, 4,000 rows)** via three parallel
   translation ranges → `cn/locale/phase1.jsonl`. Phase 1: **12,000 / 30,000 (40.00%)**;
