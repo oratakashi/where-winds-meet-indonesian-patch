@@ -1,6 +1,6 @@
 # CN Current Status
 
-**Last updated: 2026-10-20 (CN setup session) — framework ready, no CN strings translated yet.**
+**Last updated: 2026-10-22 — CN Phase 1 batch 2 complete: idx 0–7,999 translated (8,000 rows); next idx 8,000.**
 Single source of truth for the **WWM China (燕云十六声)** translation — overwritten each
 session. Phase plan: [[CN-Phase-Roadmap]]; resume checklist: [[CN-Resume-Procedure]];
 rules: [[CN-Quick-Reference]]. The global translation has its own [[Current-Status]].
@@ -20,9 +20,9 @@ never edit them by hand. CI fails a PR whose block is stale (`--profile cn --che
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **0** | **159,176** | **0.00%** |
-| ↳ CN-only corpus (Phases 1–6) | 0 | 159,176 | 0.00% |
-| **In-game text coverage** — CN-only `translate_words_map_zh_cn` entries (`freq` in `unique_strings.jsonl`; keys shared with global come via the bridge) | **0** | **823,139** | **0.00%** |
+| **Unique strings translated (all)** | **12,000** | **159,176** | **7.54%** |
+| ↳ CN-only corpus (Phases 1–6) | 12,000 | 159,176 | 7.54% |
+| **In-game text coverage** — CN-only `translate_words_map_zh_cn` entries (`freq` in `unique_strings.jsonl`; keys shared with global come via the bridge) | **533,445** | **823,139** | **64.81%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -30,8 +30,8 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale
 
 | Phase | Range | Status | Next idx | Done / total | % |
 | --- | --- | --- | --- | ---: | ---: |
-| 1 | 0–29,999 | not started | 0 | 0 / 30,000 | 0.00% |
-| 2 | 30,000–59,999 | not started | 30,000 | 0 / 30,000 | 0.00% |
+| 1 | 0–29,999 | **active** | 8,000 | 8,000 / 30,000 | 26.67% |
+| 2 | 30,000–59,999 | **active** | 34,000 | 4,000 / 30,000 | 13.33% |
 | 3 | 60,000–89,999 | not started | 60,000 | 0 / 30,000 | 0.00% |
 | 4 | 90,000–119,999 | not started | 90,000 | 0 / 30,000 | 0.00% |
 | 5 | 120,000–149,999 | not started | 120,000 | 0 / 30,000 | 0.00% |
@@ -40,6 +40,32 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale
 <!-- progress:end -->
 
 ## Session log
+
+- **2026-10-22 — Phase 1 batch 2 (idx 4,000–7,999, 4,000 rows)** via three parallel
+  translation ranges → `cn/locale/phase1.jsonl`. Phase 1 now **8,000 / 30,000 (26.67%)**;
+  next idx **8,000**. Exact contiguous range verified; full CN QA **12,002 entries**
+  (12,000 translations + 2 overrides), **0 findings**. Lore, Skill descriptions, equipment,
+  internal labels and repeated test placeholders translated; terminology in [[CN-Phase-1]].
+  **Overall: 12,000 / 159,176 unique strings (7.54%); CN-only in-game coverage
+  533,445 / 823,139 (64.81%).** Generated with `python tools/progress.py --profile cn --write`.
+  Frequency-weighted coverage includes internal editor entries and excludes the global bridge.
+
+- **2026-10-22 — Phase 2 batch 1 (idx 30,000–33,999, 4,000 rows)** via parallel subagents →
+  `cn/locale/phase2.jsonl`; QA 0 findings. Overall: 8,000 / 159,176 unique strings (5.03 %),
+  in-game coverage 496,616 / 823,139 (60.33 %) — counts the 4,000 Phase 1 rows from the
+  parallel session too. Log: [[CN-Phase-2]]. Next idx Phase 2: 34,000.
+
+- **2026-10-22 — CN Phase 1, batch 1.** Translated **4,000 rows, idx 0–3,999**, into
+  `cn/locale/phase1.jsonl`. Phase 1: **4,000 / 30,000 (13.33%)**; resume at **idx 4,000**.
+  Mostly internal editor labels, developer names, spawn configurations, plus UI, items,
+  skill effects and descriptions. Proper nouns checked against the global bridge;
+  terminology and CN-only names recorded in [[CN-Phase-1]]. Merged idx range verified
+  contiguous, no duplicates or gaps. Full CN QA: **4,002 entries** (4,000 translations +
+  2 existing overrides), **0 findings**.
+  **Overall: 4,000 / 159,176 unique strings (2.51%); CN-only in-game coverage
+  484,616 / 823,139 (58.87%).** Generated with `python tools/progress.py --profile cn --write`.
+  Coverage is frequency-weighted and includes internal editor entries; it is not a measure
+  of player-visible text alone or the total client coverage including the global bridge.
 
 - **2026-10-20 — first in-game test.** Bridge-only patch (`zh_cn` 60.46 %, `__small` 56.89 %)
   installed by hand (backup + copy, now the README "PC — China Client" guide): the client loads it, Latin text renders, the
