@@ -12,6 +12,16 @@ Session history and terminology for `cn/locale/phase2.jsonl`. Consolidated rules
   error, so it was re-run in 250-row pieces. Output: `cn/locale/phase2.jsonl`. QA
   (`qa_check --profile cn --locale`) 0 findings. Next idx: **34,000**.
 
+- **2026-10-22 — batch 2, idx 34,000–35,999 (2,000 rows).** Eight subagents, 250 rows each
+  (34,000–34,249 … 35,750–35,999). QA 0 findings. 34,725 `{confirm_text="…"}` kept verbatim
+  (the whole `{…}` is one markup token). Next idx: **36,000**.
+
+- **2026-10-22 — batch 3, idx 36,000–39,999 (4,000 rows).** Sixteen subagents, 250 rows each
+  (36,000–36,249 … 39,750–39,999). The 37,750 chunk came back misaligned (translations shifted
+  one row from ~37,816 to 37,963, caught by QA MARKUP findings and a digit-sequence comparison);
+  37,800–37,999 was redone in two 100-row pieces built programmatically by idx. QA 18,002
+  entries, 0 findings. Next idx: **40,000**.
+
 ## Translation decisions — 2026-10-22
 
 - All freq-3 strings here are almost entirely internal editor labels (NPC / spawn / entity /
@@ -34,3 +44,29 @@ Session history and terminology for `cn/locale/phase2.jsonl`. Consolidated rules
   ("Kisah-Kisah Pengembara" vs. "Wanshizhi" vs. "Wandering Tales"), 峰林区.
 - Guesses: 镜菱花 "Bunga Cermin Water Caltrop" (32703), 会伤率 / 纳气 / 行会任务 (chunk 2a rows
   155, 189), items at 33506 and 33814.
+
+## Batch 2 decisions (idx 34,000–35,999)
+
+- Mostly editor labels again. Subagents did not all run `term_lookup`, so names are unharmonized:
+  万事知 appears as "Wanshizhi" / "Kisah-Kisah Pengembara"; 流派塔 floors as Pinyin
+  (Pozhu/Lieshi/Mingjin/Qiansi/Zhuomu + 风 Feng, 钧 Jun, 尘 Chen, 影 Ying…) or Indonesian
+  ("Menara Aliran …", "Pecah Batu·Wei"); 嗟叹崖 as Jiete / Jietan / "Jurang Keluh Kesah";
+  樊楼 as "Fan Tower" / "Revelry Hall" (global hit — prefer this); 玉壶园 "Taman Yuhu" /
+  "Taman Guci Giok" / "Yuhu Garden"; 封桩库 Fengzhuang variants. All editor labels — harmonize later.
+- New CN-only names: 松烟阁 "Paviliun Songyan"; 六尚局 "Biro Enam Pejabat"; 化怨榜 "Papan
+  Penghapus Dendam"; 常平仓 "Changping Granary"; 无相皇 "Kaisar Tanpa Rupa"; 突厥 "Turk";
+  杭西赏游社 "Perkumpulan Wisata Hangxi"; 灵台 "Observatorium Guanxiang"; 九流门 "Sekte Jiuliu";
+  龙女泪 "Air Mata Putri Naga"; person names in Pinyin (Murong Wan, Shen Yilun, Li Zhaoxue,
+  Zhai Xu, Cai Zhi…).
+
+## Batch 3 decisions (idx 36,000–39,999)
+
+- Still editor labels. Most agents skipped `term_lookup`, so names stay unharmonized (万事知,
+  嗟叹崖 "Gasping Cliff"/"Jurang Jietan"/"Jurang Keluh Kesah", 樊楼 "Fan Tower"/"Revelry Hall",
+  流派塔 floors Pinyin vs. Indonesian, 九流门 global "Nine Mortal Ways" vs. "Sekte Jiuliu").
+- New CN-only names: 铁壁谷 "Lembah Tiebi"; 燕云别馆 "Wisma Yanyun"; 万人殿 "Aula Sepuluh Ribu
+  Orang"; 太岳台 "Taiyue Terrace"; 怜花禅院 "Kuil Lianhua"; 束罪阁 "Paviliun Pengikat Dosa";
+  武成王庙 "Kuil Raja Wucheng"; 石羊戍垒 "Benteng Shiyang"; 辩经堂 "Aula Debat Sutra";
+  熔炉地牢 "Penjara Tungku"; 绣金楼 "Paviliun Sulam Emas"; 太平钟楼 "Menara Lonceng Taiping".
+- Lesson: for chunks, tell agents to build output by iterating source idx, and compare digit
+  sequences src vs. translation after merging to catch silent one-row shifts.
