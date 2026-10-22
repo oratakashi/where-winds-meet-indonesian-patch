@@ -7,11 +7,16 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 A reverse-engineering toolkit for the `translate_words_map_*` localization file format used by
 **Where Winds Meet** (NetEase / Everstone Studio, Messiah Engine), plus an in-progress
 Indonesian translation built with it. Note the repo **does** track game-derived data: the
-`translate_words_map_en*` binaries, the `strings.jsonl` dump, `translation_work/unique_strings.jsonl`
+`translate_words_map_en*` binaries, `translation_work/unique_strings.jsonl`
 (extracted source text) and `locale/*.jsonl` (translations). `.gitignore` lists some of these, but
 they were committed before that and remain tracked — keeping them tracked is the owner's decision.
 Don't add new extracted dumps (`strings_diff.jsonl`, `strings.translated.jsonl`, `patched/`, ...);
-those stay ignored.
+those stay ignored. `strings.jsonl` was tracked too until game v2.3, when it grew past GitHub's
+100 MB limit (114 MB); it is now untracked and regenerated with
+`python wwm_locmap.py dump translate_words_map_en strings.jsonl` (CI does this before
+`progress.py`, which exits with that hint if the file is missing). Since the v2.3 hotfix
+(Update-2D) `progress.py` also reports `_diff` coverage, so `strings_diff.jsonl` must be dumped
+the same way (`python wwm_locmap.py dump translate_words_map_en_diff strings_diff.jsonl`).
 
 ## Scratch and temporary files
 
@@ -52,8 +57,7 @@ python tools/expand_locale.py [--strings X.jsonl] [--out Y.jsonl]
 python tools/rebuild_unique_strings.py [--dry-run]    # after a game update: append newly-seen strings to
                                                        # unique_strings.jsonl WITHOUT touching existing idx
                                                        # (keeps locale/phase*.jsonl valid), scanning
-                                                       # strings.jsonl + strings_diff.jsonl + strings_small.jsonl +
-                                                       # strings_small_diff.jsonl
+                                                       # strings.jsonl + strings_diff.jsonl
 
 python tools/progress.py [--write | --check]          # compute overall/per-phase translation progress;
                                                        # --write regenerates the block in Current-Status.md,
@@ -61,10 +65,67 @@ python tools/progress.py [--write | --check]          # compute overall/per-phas
 
 python tools/patch_all.py [--outdir patched] [--level N]
                                                        # apply the translation dictionary to every
-                                                       # translate_words_map_* variant (base, _diff, __small,
-                                                       # __small_diff, _mobile) at once, writing
+                                                       # translate_words_map_* variant (base, _diff, _mobile)
+                                                       # at once, writing
                                                        # repacked copies under --outdir
 ```
+
+### WWM China (`--profile cn`)
+
+Every tool above takes `--profile {global,cn}` (default `global`, behaviour unchanged); paths,
+variants, dumps and phases per profile live in `tools/profiles.py`. The `cn` profile is the
+Indonesian translation of **WWM China (燕云十六声)**, sourced from Mandarin:
+
+```bash
+# once per machine: dictionary keystream -> cn/work/keystream_v2.bin (gitignored). Either decrypt the
+# committed copy (passphrase = repo secret CN_KEYSTREAM_PASSPHRASE; the owner also keeps it in
+# cn/work/keystream_passphrase.txt) ...
+gpg --batch --pinentry-mode loopback --passphrase-file cn/work/keystream_passphrase.txt -o cn/work/keystream_v2.bin -d cn/keystream_v2.bin.gpg
+# ... or recover it from the running client (login screen, ADMIN terminal)
+python cn/tools/find_dict_in_dump.py --pid <yysls.exe PID> --v2-dir "D:\yysls\yysls_fast\LocalData\Patch\HD\v2"
+python wwm_locmap.py dump cn/translate_words_map_zh_cn cn/work/strings_zh_cn.jsonl
+python wwm_locmap.py dump cn/translate_words_map_zh_cn__small cn/work/strings_zh_cn__small.jsonl
+# (+ the global strings.jsonl / strings_diff.jsonl dumps — the bridge needs them)
+
+python tools/rebuild_unique_strings.py --profile cn   # find unique strings -> cn/translation_work/
+python tools/qa_check.py --profile cn --locale "cn/locale/*.jsonl"
+python tools/progress.py --profile cn --write         # -> Obsidian-Vault/cn/progress/CN-Current-Status.md
+python tools/expand_locale.py --profile cn            # -> cn/work/strings.translated.jsonl
+python tools/patch_all.py --profile cn                # -> cn/work/patched/translate_words_map_zh_cn*
+python cn/tools/term_lookup.py 止戈定音技 …            # how global translated a Mandarin term
+```
+
+- CN files are **container v2** (zstd dictionary encrypted with one keystream shared by every
+  file in the client; `Format-Spec.md` §8). `wwm_locmap.py` handles v1 and v2 transparently
+  (`read_container_ex`/`write_container_ex`); v2 needs `cn/work/keystream_v2.bin` (or
+  `WWM_KEYSTREAM`). Patching copies the encrypted dictionary verbatim — no re-encryption.
+- **Bridge** (`tools/bridge.py`): CN keyHashes are the same per-entry IDs as global. Each CN
+  entry gets the global translation of its key → else `cn/locale` (by Mandarin text) → else
+  the global translation of the same Mandarin text on a shared key. So
+  `cn/translation_work/unique_strings.jsonl` holds only the **difference** — 159,176 texts never
+  translated in global (Phases 1–6 of 30k). Its `freq` column drives the CN coverage row, so CI
+  checks CN without dumps or keystream. `cn/overrides.jsonl` (`{"h","src","v","note"}`) holds
+  per-key fixes that win over everything — for inherited global text that breaks a CN layout.
+  Never rebuild it from scratch once `cn/locale/` has rows
+  (same rule as `build_unique.py`); `rebuild_unique_strings.py --profile cn` only appends.
+- CN translation sessions follow `Obsidian-Vault/cn/` (`CN-Current-Status`, `CN-Resume-Procedure`,
+  `CN-Quick-Reference`, `CN-Phase-Roadmap`, logs in `cn/translation_logs/CN-Phase-N.md`) under the
+  same rules as global: end with `progress.py --profile cn --write` and update the phase log.
+  The Stop hook and `.githooks/pre-commit` cover `cn/` too.
+- **CI and releases are split per profile.** Global: `translation-qa.yml` + `release-patch.yml`
+  (rolling release, tag `latest`). CN: `translation-qa-cn.yml` (QA + progress check without
+  secrets; with the secret also decrypts and parses the CN binaries) + `release-patch-cn.yml`
+  (rolling release, tag `cn-latest`; decrypts `cn/keystream_v2.bin.gpg` with the
+  `CN_KEYSTREAM_PASSPHRASE` secret, dumps global + CN, runs `patch_all --profile cn`). A global
+  `locale/` change also rebuilds `cn-latest`, because CN reuses it through the bridge.
+- The CN binaries `cn/translate_words_map_zh_cn*` are tracked (like the global ones) so CI can
+  build them; the keystream is only ever committed encrypted. After a CN game update, re-encrypt
+  only if the keystream changed: `gpg --batch --pinentry-mode loopback --passphrase-file
+  cn/work/keystream_passphrase.txt --symmetric --cipher-algo AES256 -o cn/keystream_v2.bin.gpg
+  cn/work/keystream_v2.bin` (the passphrase file must have no trailing newline).
+- The CN client runs elevated and keeps its locale files in the patcher overlay
+  `LocalData\Patch\HD\v2\locale\`. Tested 2026-10-20: the client loads repacked files and the CN
+  launcher's `StageCheck` left them patched. Player install steps: README "PC — China Client".
 
 `translation_work/build_unique.py` is the one-time bootstrap that created `unique_strings.jsonl`.
 Never re-run it: it renumbers every idx and silently breaks all `locale/*.jsonl` progress (it now
@@ -135,10 +196,14 @@ context — only use one if the user explicitly asks for it by name.
   `locale/phase*.jsonl` progress never needs remapping.
 - `tools/patch_all.py` — imports `expand_locale`'s dictionary builder and applies it to all known
   `translate_words_map_*` files in one pass, in memory (no intermediate per-file JSONL needed).
+- `tools/profiles.py` — per-profile paths/variants/dumps/phases (`global`, `cn`); `--profile` on
+  every tool. `tools/bridge.py` — the global→CN keyHash/text bridge.
+- `cn/tools/find_dict_in_dump.py` (recover the v2 dictionary keystream from the running CN client),
+  `cn/tools/term_lookup.py` (Mandarin term → global English/Indonesian via shared keys).
 
 Pipeline: `translate_words_map_en` --dump--> `strings.jsonl` --(edit `v` field)--> validate with
 `qa_check.py` --patch--> new `translate_words_map_en`. For an update with several file variants
-(base + `_diff` + `__small` + `__small_diff`), the recommended path is `rebuild_unique_strings.py`
+(base + `_diff`; `__small` + `__small_diff` up to v2.2), the recommended path is `rebuild_unique_strings.py`
 once, then `patch_all.py` to apply the dictionary everywhere at once.
 
 `translate_words_map_en_diff` (the incremental file shipped between game updates) uses the exact
@@ -147,7 +212,11 @@ difference is purely semantic: most shards are sparse (only changed keys are pre
 removed since the base version is stored as a single `0xFF` byte instead of being absent — see
 `TOMBSTONE` in `wwm_locmap.py` and the `deleted` JSONL field below.
 
-### The `__small` / `__small_diff` variant
+### The `__small` / `__small_diff` variant (v2.2 and earlier only)
+
+**Game v2.3 (2026-10-15) no longer ships `__small` / `__small_diff`** (checked on Steam and the
+official launcher); they were removed from the repo, the global profile's `files` (`tools/profiles.py`) and the release. The
+notes below are kept in case NetEase reintroduces them.
 
 A game update introduced `translate_words_map_en__small` (and its own `__small_diff`) alongside
 the existing pair. **Same container/shard codec, zero format changes** — confirmed by a full
@@ -165,10 +234,10 @@ Because the translation dictionary (`unique_strings.jsonl` + `locale/phase*.json
 literal source text, not by file/block/slot/hash, applying it to a new variant needs no format
 work: dump the file, match its `v` text against the dictionary (`tools/expand_locale.py` or
 `tools/patch_all.py`), patch it back. Same recipe for `__small_diff`, main `_diff`, and any future
-variant NetEase adds — add its name to `FILES` in `tools/patch_all.py`.
+variant NetEase adds — add its name to the profile's `files` in `tools/profiles.py`.
 
 `translate_words_map_en_mobile` (2026-09-22) is byte-identical to `translate_words_map_en`; it is
-in `FILES` anyway so it keeps working if the two ever diverge.
+in the global profile's `files` anyway so it keeps working if the two ever diverge.
 
 ### Deployment gotcha: on the **Steam** client, the installed `_diff` file gets re-verified by the CDN patcher
 
@@ -205,7 +274,7 @@ Why the official launcher behaves differently hasn't been investigated (e.g. whe
 
 **Practical implication**:
 
-- **Official NetEase launcher**: all four files hold — base, `__small`, `__small_diff` and the
+- **Official NetEase launcher** (v2.3: base + `_diff` only): all files hold — base, (≤v2.2) `__small`, `__small_diff` and the
   `_diff` overlay in `LocalData\Patch\...`. The `_diff` layer (~213k entries in the 2026-09
   update, ~26% of total entries, representing text changed/added since the base package was last
   rebuilt) is therefore fully usable there, so translating `_diff`-only strings is worthwhile.
