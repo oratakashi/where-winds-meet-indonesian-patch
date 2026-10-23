@@ -32,6 +32,15 @@ Session history and terminology for `cn/locale/phase2.jsonl`. Consolidated rules
   shifts (44,558 and 44,674 lost a trailing digit, restored by hand). 梓匠居 in 47,009, 47,127,
   47,217 set to "Masterwood Hamlet" (global name). QA 48,002 entries, 0 findings. Next idx: **48,000**.
 
+- **2026-10-23 — batch 7, idx 52,000–55,999 (4,000 rows).** Translated directly in the main
+  session (no subagents), in eight 500-row chunks → `cn/locale/phase2.jsonl`. Each chunk was
+  checked against the source by comparing digit sequences per row; the first chunk drifted
+  (rows 52,025, 52,215 and 52,262 had been skipped, shifting everything after), caught that way
+  and rebuilt before merging. Final merge exact: 30,000–55,999, no gaps or duplicates. QA
+  first run 6 MARKUP findings (52,719 `#屋`, 52,857 `<石匠>`, 54,141 `{任意}`, 54,235 `#R`/plain
+  残红, 54,715 `#R`, 55,961 `#一`) fixed by hand; final QA 64,002 entries (includes the parallel
+  Phase 3 work), 0 findings. Next idx: **56,000**.
+
 ## Translation decisions — 2026-10-22
 
 - All freq-3 strings here are almost entirely internal editor labels (NPC / spawn / entity /
@@ -119,3 +128,30 @@ Session history and terminology for `cn/locale/phase2.jsonl`. Consolidated rules
   Juezhang"; 荧渊 "Yingyuan"; 寒渊玦 "Hanyuan Jue"; 左藏库 "Zuozang Ku"; 春蚕庄主 "Pemilik Ulat
   Sutra"; 求蜕护盾 "perisai Pelepasan Kulit"; 侠境 "Xiajing"; 冰心花 "Bunga Hati Es"; 金身 "Tubuh
   Emas"; 血祭 "Persembahan Darah"; 周元通宝 "Koin Zhouyuan"; 自选通宝 "Koin pilihan".
+
+## Batch 7 decisions (idx 52,000–55,999)
+
+- Editor labels again (Battle Pass reward rows, spawn/NPC ambience tables, 大秘境 and 流派塔 rows,
+  museum/achievement numbering, dev names). Pattern kept from Phase 3: `S7-战令奖励-付费95级` →
+  "S7-Hadiah Battle Pass-Berbayar Level 95", `…掉落世界等级N` → "Jatuhan … Level dunia N",
+  `博物条目N,M档奖励` → "Entri Museum N, hadiah Tier M", `成就编号N` → "Nomor pencapaian N".
+- Global names reused via `term_lookup.py`: 不见山 Hidden Mountain; 墨城 Mohist City; 万胜镇
+  Wansheng Town; 醉花阴 Velvet Shade; 樊楼 Revelry Hall; 鬼市子 Ghostlight Market; 缩骨功
+  Contortion; 太清楼 Purity Tower (menara kesucian in ID — kept English); 饮马隘 Steed's Pass;
+  天水集 Skybrim Market; 神仙渡 Heaven's Pier; 坎儿井 Karez Well; 晦谷 Mirkvale; 嗟叹崖 Gasping
+  Cliff; 凋朱颜 Fleeting Radiance; 绕梁之音 Resonating Melody; 长鸣玉 Echo Jade; 振玉 Oscillating
+  Jade; 月华通宝 Koin Cahaya Bulan; 律准石 Tuning Stone; 素裳染粉 Bubuk Pewarna Softweave; 周元通宝
+  Koin Zhou; 心法心得 Inner Way Notes; 武学心得 Martial Note; 奇术 Mystic Skills; 羽衣楼 Silken Veil
+  Society; 一叶平生 One Leaf, One Life; 蒹葭苍苍 Reeds and Rushes.
+- Resolved the earlier "Koin Zhouyuan"/"Koin pilihan" wording: 周元通宝 → "Koin Zhou"; 自选通宝
+  stays "Tongbao pilihan" (no global hit).
+- Markup lessons: Mandarin text glued to `#` (`#屋`, `#一`) or `<…>`/`{…}` placeholders (`<石匠>`,
+  `{任意}`) counts as a token and must stay verbatim; `#R…#E` colour code must be kept as `#R`, not
+  turned into `#Y`.
+- New CN-only names: 封龙书院 "Dragonbend Academy" (global; batch 6 used "Akademi Fenglong" — harmonize later); 武德司 "Wude Si" (Pengawal rendah Wude Si);
+  崇文院 "Akademi Chongwen"; 左藏库 "Gudang Zuozang"; 皇家军备区 "Area Perlengkapan Kerajaan";
+  慈心山院 "Cixin Mountain Academy"; 梓匠居 "Masterwood Hamlet" (global name); 觉障林 "Hutan Juezhang"; 乌鹭币 "Koin Wulu"; 墨守之心 "Hati
+  Penjaga Tinta"; 无忧帮 "Geng Wuyou"; 漕帮 "Caobang"; 玄元教 "Sekte
+  Xuanyuan"; 绣金楼 "Paviliun Xiujin"; 万事知 "Kisah-Kisah Pengembara"; 妙妙喵 "Meow Meow"; 偷师
+  "Pencurian Skill"; 九流门 "Nine Mortal Ways"; 佛爷寨 "Buddha Fort" (all global names, rewritten in a
+  final pass over idx 52,000–55,999).
