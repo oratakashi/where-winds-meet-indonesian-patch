@@ -5,6 +5,28 @@ Session history and terminology for `cn/locale/phase3.jsonl`. Rules:
 
 ## Batches
 
+- **2026-10-23 — Phase 3 batch 3, idx 66,000–67,999 (2,000 rows).** Mandarin → Indonesian
+  in three parallel ranges (66,000–66,666; 66,667–67,333; 67,334–67,999), appended to
+  `cn/locale/phase3.jsonl`. Exact contiguous range verified; previous 6,000 rows preserved
+  byte-for-byte. Full CN QA: **64,002 entries** including 2 overrides, **0 findings**.
+  Newline/tab counts and runtime markers preserved; numeric changes reviewed as Chinese
+  numeral conversion, date formatting or word order. Phase 3: **8,000 / 30,000 (26.67%)**;
+  next idx **68,000**. **Overall: 64,000 / 159,176 unique strings (40.21%); CN-only in-game
+  coverage 694,416 / 823,139 (84.36%).** Overall includes concurrently completed Phase 2
+  work. Generated with `python tools/progress.py --profile cn --write`; includes internal
+  editor labels, excludes the global bridge. Log: [[CN-Phase-3]].
+
+- **2026-10-23 — Phase 3 batch 2, idx 64,000–65,999 (2,000 rows).** Mandarin → Indonesian
+  in three parallel ranges (64,000–64,666; 64,667–65,333; 65,334–65,999), appended to
+  `cn/locale/phase3.jsonl`. Exact contiguous range verified; previous 4,000 rows preserved
+  byte-for-byte. Full CN QA: **58,002 entries** including 2 overrides, **0 findings**.
+  Source newline/tab counts and runtime markers preserved; digit differences reviewed as
+  Chinese-numeral conversions or word/date order changes. Phase 3: **6,000 / 30,000 (20.00%)**;
+  next idx **66,000**. **Overall: 58,000 / 159,176 unique strings (36.44%); CN-only in-game
+  coverage 682,416 / 823,139 (82.90%).** Generated with
+  `python tools/progress.py --profile cn --write`; includes internal editor labels,
+  excludes the global bridge. Log: [[CN-Phase-3]].
+
 - **2026-10-23 — batch 1, idx 60,000–63,999 (4,000 rows).** Mandarin → Indonesian,
   translated in three parallel ranges (60,000–61,333, 61,334–62,666,
   62,667–63,999). Output: `cn/locale/phase3.jsonl`. Next idx: **64,000**.
@@ -39,3 +61,50 @@ Session history and terminology for `cn/locale/phase3.jsonl`. Rules:
 - Bare hashtags with Chinese text (61799, 63116) use a space after `#` before the
   translated text, preventing an accidental `#S`/`#K` markup token. Existing actual
   tokens remain verbatim. An extra trailing newline at 60138 was removed after review.
+
+## Batch 2 decisions
+
+- Mostly internal reward/entity/spawn/editor labels, plus gameplay and lore text. Literal
+  concise labels; dialogue follows gue/lo. Full lore and repeated loading text retained.
+- Global lookup confirmed Ghostlight Market, Hidden Mountain, Divinecraft Dungeon,
+  Mercyheart Town, Jade Serpent Hall, Grand Imperial Temple, Cleardew Terrace, Steed's Pass,
+  Netherworld Crossing, Lion Barrow, Jadestream Valley, Blissful Retreat, Moonveil Mountain,
+  Ever-Normal Granary, Thousand-Buddha Village, Mount Tai Blizzard, Heaven's Pier,
+  Gleaming Abyss, Mirkvale, Mistveil City, Masterwood Hamlet, Moteheart Haven,
+  Qingshou Hall, Kaifeng Imperial Palace and Pipa Chasm.
+- Shared labels follow lookup: 万事知 → Kisah-Kisah Pengembara; 妙妙喵 → Meow Meow;
+  柳岸 → Tepi Dahan Willow; 凉州曲 → Melodi Liangzhou. Equipment families use
+  Stonesplit - Strength/Might, Bellstrike - Umbra/Splendor, Silkbind - Jade/Wings/Deluge,
+  Bamboocut - Draught/Dust/Wind. Resources include Echo Jade, Oscillating Jade, Ebon Iron.
+- Harmonized 高级礼包 → paket istimewa, chest 品 → Grade, 南塔寺 → Nanta Temple,
+  北塔寺 → Beita Temple across ranges.
+- Provisional CN-only forms: 归燕 → Kembalinya Walet; 月明渡 → Yueming Ferry;
+  云栖竹境 → Yunqi Zhujing; 风禾村 → Fenghe Cun; 紫玉苑 → Ziyu Yuan;
+  山倾 → Gunung Runtuh; 霜结 → Beku Embun; 左藏库 → Zuocang Treasury;
+  丰收祠 → Fengshou Shrine; 古寺 → Gusi; 玄月教 → Xuanyue; 武元 → Wuyuan.
+  Revisit these when an official global counterpart appears.
+- Bare hashtag at idx 65226 uses a space before translated text to avoid introducing a
+  formatting token. At idx 65581, Dark Iron's source level 5 and quantity 5 are both retained
+  with the official name Ebon Iron. No gaps, duplicate idx, or untranslated Han text in batch.
+
+## Batch 3 decisions
+
+- Full dialogue/lore and internal labels translated; repeated loading text preserved with
+  the same repeat count. Removed extra trailing newlines at 66312, 66397, 66458, 66494,
+  66573 before merging. Placeholder Han at 66837 is preserved verbatim inside braces.
+- Lookup confirmed Jiangnan State, Nine Mortal Ways, Daoist yang Tidur, Inti Harmonis,
+  Tuning Stone, Moonflare, Diving Bell, Guild War, Blade Momentum, Inner Power,
+  Cloud Sea Starfall, Inky Plum, Re-attunement Stone, Cry Coin, Crownleek Village,
+  Imperial Artisan Court, Strategic Sword, Tally Mohist, Koin Zhou, Wandering Ark,
+  Whitecrown Fortress, Coolshade Hall, Dreamfall Cliff, Hawkwing and Ikan Giok.
+- Perception Forest ranks follow shared-key Indonesian lookup: 断水 Ahli, 仗剑 Pemula,
+  开山 Mahir, 斩风 Veteran, 流云 Master, 飞花 Legenda, 无我 Mythic.
+- Composite equipment labels at 67654 use Bronze Skyfall: Master-Tempered and
+  Serpent's Hidden Core: Master-Tempered; 百淬 uses Master-Tempered.
+- Provisional CN-only names: 啸风峙玉 Angin Menderu Giok Menjulang; 破风·竹 Pemecah
+  Angin - Bambu; 小兰澳 Xiao Lan'ao; 汴梁南村 Bianliang South Village; 幽篁里 Youhuangli;
+  武城王庙 Wucheng King Temple; 鸟雀呼晴 Burung Memanggil Cerah; 淬锋玉 Tempering Jade;
+  天工造物 Kreasi Tiangong; 佛光顶 Foguang Peak; 铁壁谷 Tiebi Valley; 丧魂林 Sanghun Forest;
+  青瓶居士 Qingping Jushi. Revisit when official global counterparts appear.
+- 小柳青衣 at 66557 has no direct lookup; Liu Qingyi kecil follows the verified base name
+  柳青衣. This internal label remains provisional due to limited context.
