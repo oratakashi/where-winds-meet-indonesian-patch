@@ -41,6 +41,14 @@ Session history and terminology for `cn/locale/phase2.jsonl`. Consolidated rules
   残红, 54,715 `#R`, 55,961 `#一`) fixed by hand; final QA 64,002 entries (includes the parallel
   Phase 3 work), 0 findings. Next idx: **56,000**.
 
+- **2026-10-23 — batch 8, idx 56,000–59,999 (4,000 rows), phase complete.** Translated directly
+  in the main session (no subagents), in eight 500-row chunks → `cn/locale/phase2.jsonl`. Each
+  chunk was verified before merging (idx continuity, per-row digit sequences and newline counts);
+  no drift this time. Final merge exact: 30,000–59,999, no gaps or duplicates. QA first run 2
+  MARKUP findings (56,010 `<画师>`, 56,397 `{任意染色}`: Mandarin inside `<…>`/`{…}` stays
+  verbatim), fixed by hand; final QA 68,002 entries (includes the parallel Phase 3 work), 0
+  findings. Phase 2 is **30,000 / 30,000**. Next idx: Phase 3 at **68,000**.
+
 ## Translation decisions — 2026-10-22
 
 - All freq-3 strings here are almost entirely internal editor labels (NPC / spawn / entity /
@@ -155,3 +163,27 @@ Session history and terminology for `cn/locale/phase2.jsonl`. Consolidated rules
   Xuanyuan"; 绣金楼 "Paviliun Xiujin"; 万事知 "Kisah-Kisah Pengembara"; 妙妙喵 "Meow Meow"; 偷师
   "Pencurian Skill"; 九流门 "Nine Mortal Ways"; 佛爷寨 "Buddha Fort" (all global names, rewritten in a
   final pass over idx 52,000–55,999).
+
+## Batch 8 decisions (idx 56,000–59,999)
+
+- Editor labels again (Battle Pass / check-in / museum / achievement rows, spawn and NPC ambience
+  tables, 大秘境 and 流派塔 rows, dev names). Patterns kept from batch 7: `S12-战令奖励-付费34级` →
+  "S12-Hadiah Battle Pass-Berbayar Level 34"; `…掉落世界等级N` → "Jatuhan … level dunia N";
+  `博物条目N,M档奖励` → "Entri Museum N, hadiah Tier M"; `成就编号N` → "Nomor pencapaian N";
+  `XXXX年M月D日签到` → "Absen D Bulan XXXX"; `大秘境…第N层` → "Rahasia Besar … Lantai N".
+- Global names reused via `term_lookup.py`: Luancheng; Charnel Rise 乱葬岗; Palace of Supreme Oneness
+  太一宫; Yuchen Hall 玉宸殿; Wandering Ark 迷驿舟; Jade Gate Pass 玉门关; Mistveil City 隐雾之城 /
+  Mistveil Prison 隐雾之狱; Sweetwine Tower 酒香塔; Heroic Chronicles 侠影录; Mohist Hill 墨山道;
+  Jiangnan State 江南; Jadewood Court 琼林苑; Divinecraft Corridor 天工回廊; Granary of Plenty 太仓粟;
+  Lady White 白娘子; Candlestick → "Kaki lilin"; Madiao Cards 叶子戏; Meow Meow 妙妙喵; Imperial Garden
+  → "Taman Istana"; Purity Tower 太清楼; Revelry Hall 樊楼; Velvet Shade 醉花阴; Ghostlight Market 鬼市子.
+- Decimal separator: dot (`1.68%`), matching the existing corpus (95 dot vs. a handful of comma uses,
+  normalized).
+- Idx 59,403 is a pasted Lua script (`hexm.client…`): code kept byte-for-byte (it contains
+  `%s`/`%d` format tokens), only the five Chinese `--` comments were translated.
+- `#946433…#E` and `#ffc89c2222#E` colour tokens kept exactly; `#R临时#E` → `#RSementara#E`.
+- New CN-only names (reuse later): 肉鸽 "Roguelike"; 团圆堡 "Benteng Reuni"; 灵隐寺 "Kuil Lingyin";
+  孤山寺 "Kuil Gushan"; 大相国寺 "Kuil Xiangguo Besar"; 建隆观 "Kuil Jianlong"; 白雀经阁 "Paviliun
+  Sutra Burung Putih"; 福宁殿 "Aula Funing"; 庆寿殿 "Aula Qingshou"; 坤宁殿 "Aula Kunning"; 宜圣殿
+  "Aula Yisheng"; 崇元殿 "Aula Chongyuan"; 升平楼 "Menara Shengping"; 稷下学宫 "Akademi Jixia";
+  愁铃客 "Penjaga Lonceng Duka"; 怒虎无双 "Harimau Murka Tiada Tara"; 嗜血 "Haus Darah".
