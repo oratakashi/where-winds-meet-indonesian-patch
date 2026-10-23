@@ -1,6 +1,6 @@
 # CN Current Status
 
-**Last updated: 2026-10-23 — CN Phase 3 batch 1 translated idx 60,000–63,999 (Phase 3 4,000 / 30,000). Resume Phase 3 at idx 64,000. Phase 2 remains at idx 48,000.**
+**Last updated: 2026-10-23 — CN Phase 3 batch 1 translated idx 60,000–63,999 (Phase 3 4,000 / 30,000). Resume Phase 3 at idx 64,000. Phase 2 batch 6 translated idx 48,000–51,999 (Phase 2 22,000 / 30,000); resume Phase 2 at idx 52,000.**
 Single source of truth for the **WWM China (燕云十六声)** translation — overwritten each
 session. Phase plan: [[CN-Phase-Roadmap]]; resume checklist: [[CN-Resume-Procedure]];
 rules: [[CN-Quick-Reference]]. The global translation has its own [[Current-Status]].
@@ -20,9 +20,9 @@ never edit them by hand. CI fails a PR whose block is stale (`--profile cn --che
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **52,000** | **159,176** | **32.67%** |
-| ↳ CN-only corpus (Phases 1–6) | 52,000 | 159,176 | 32.67% |
-| **In-game text coverage** — CN-only `translate_words_map_zh_cn` entries (`freq` in `unique_strings.jsonl`; keys shared with global come via the bridge) | **670,416** | **823,139** | **81.45%** |
+| **Unique strings translated (all)** | **56,000** | **159,176** | **35.18%** |
+| ↳ CN-only corpus (Phases 1–6) | 56,000 | 159,176 | 35.18% |
+| **In-game text coverage** — CN-only `translate_words_map_zh_cn` entries (`freq` in `unique_strings.jsonl`; keys shared with global come via the bridge) | **678,416** | **823,139** | **82.42%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -31,7 +31,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale
 | Phase | Range | Status | Next idx | Done / total | % |
 | --- | --- | --- | --- | ---: | ---: |
 | 1 | 0–29,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 2 | 30,000–59,999 | **active** | 48,000 | 18,000 / 30,000 | 60.00% |
+| 2 | 30,000–59,999 | **active** | 52,000 | 22,000 / 30,000 | 73.33% |
 | 3 | 60,000–89,999 | **active** | 64,000 | 4,000 / 30,000 | 13.33% |
 | 4 | 90,000–119,999 | not started | 90,000 | 0 / 30,000 | 0.00% |
 | 5 | 120,000–149,999 | not started | 120,000 | 0 / 30,000 | 0.00% |

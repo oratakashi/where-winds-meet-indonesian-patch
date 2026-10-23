@@ -55,6 +55,12 @@ Session history and terminology for `cn/locale/phase2.jsonl`. Consolidated rules
 - Guesses: 镜菱花 "Bunga Cermin Water Caltrop" (32703), 会伤率 / 纳气 / 行会任务 (chunk 2a rows
   155, 189), items at 33506 and 33814.
 
+- **2026-10-23 — batch 6, idx 48,000–51,999 (4,000 rows).** Sixteen subagents, 250 rows each
+  (48,000–48,249 … 51,750–51,999). The first run hit the account usage limit; 15 of 16 agents
+  were resumed after the reset and finished. Merge check (digit sequences src vs. translation)
+  caught a swapped pair at 50,322/50,323 (fixed) and dropped digits at 51,102 and 51,918 (fixed);
+  other digit differences are dates/Chinese numerals. QA 0 findings. Next idx: **52,000**.
+
 ## Batch 2 decisions (idx 34,000–35,999)
 
 - Mostly editor labels again. Subagents did not all run `term_lookup`, so names are unharmonized:
@@ -102,3 +108,14 @@ Session history and terminology for `cn/locale/phase2.jsonl`. Consolidated rules
   大秘境 "Rahasia Besar"; 乌鹭币 "koin Wulu"; 律石 "Batu Irama"; 鼓司 "Biro Genderang";
   九流门 "Sekte Sembilan Aliran"; 漱云笙 "Sheng Pembasuh Awan"; 左藏库 "Zuozang" (Gudang Zuozang).
 - Tower sets with no global match translated literally (尘 Debu, 鸢 Elang, 虹 Pelangi, 玉塔 Menara Giok).
+
+## Batch 6 decisions (idx 48,000–51,999)
+
+- Editor labels again (check-in/gift tables, NPC gift packs, 大秘境 and 流派塔 spawn tables, dev
+  names). Dates rendered Indonesian ("8 November 2025"); 签到 → "Absen"/"Check-in" (agents mixed
+  both — harmonize later).
+- New CN-only names: 武德司 "Wude Si"; 归义军 "Guiyi"; 玄元教 "Xuanyuan"; 绣金楼 "Paviliun Xiujin"
+  (batch 5 used "Paviliun Sulam Emas" — harmonize); 封龙书院 "Akademi Fenglong"; 觉障林 "Hutan
+  Juezhang"; 荧渊 "Yingyuan"; 寒渊玦 "Hanyuan Jue"; 左藏库 "Zuozang Ku"; 春蚕庄主 "Pemilik Ulat
+  Sutra"; 求蜕护盾 "perisai Pelepasan Kulit"; 侠境 "Xiajing"; 冰心花 "Bunga Hati Es"; 金身 "Tubuh
+  Emas"; 血祭 "Persembahan Darah"; 周元通宝 "Koin Zhouyuan"; 自选通宝 "Koin pilihan".
