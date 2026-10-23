@@ -27,6 +27,10 @@ Session history and terminology for `cn/locale/phase2.jsonl`. Consolidated rules
   Merge verified idx-exact (no gaps/shifts). QA first run: 4 MARKUP findings (40,135 and 42,437
   `<…>` content, 41,003 `《…》` turned into `<…>`, 42,395 `#…` hashtag) fixed by hand; final QA
   30,002 entries, 0 findings. Next idx: **44,000**.
+- **2026-10-23 — batch 5, idx 44,000–47,999 (4,000 rows).** Sixteen subagents, 250 rows each
+  (44,000–44,249 … 47,750–47,999). Merge verified idx-exact; digit-sequence comparison showed no
+  shifts (44,558 and 44,674 lost a trailing digit, restored by hand). 梓匠居 in 47,009, 47,127,
+  47,217 set to "Masterwood Hamlet" (global name). QA 48,002 entries, 0 findings. Next idx: **48,000**.
 
 ## Translation decisions — 2026-10-22
 
@@ -89,3 +93,12 @@ Session history and terminology for `cn/locale/phase2.jsonl`. Consolidated rules
 - New CN-only names seen: 常平堡 "Changping Fort"; 无忧洞 "Gua Wuyou" / 无忧帮 "Geng Wuyou"
   (vs. earlier "Geng Unbound Cavern" — editor label, harmonize later); 文津馆 "Wenjin Guan";
   中渡桥 "Jembatan Zhongdu"; 丰和村 "Desa Fenghe"; 花船集 "Pasar Perahu Bunga".
+
+## Batch 5 decisions (idx 44,000–47,999)
+
+- Still editor labels (NPC ambience/patrol, reward, activity tables). Dev/NPC names in Pinyin.
+- New CN-only names: 铁壁谷 "Lembah Tiebi"; 漕帮 "Caobang"; 墨门 "Perguruan Mo"; 贺刀寨 "Benteng Hedao";
+  佛爷寨 "Benteng Foye" (46,000 chunk has "Fo Ye Zhai" in 大秘境 labels — harmonize later);
+  大秘境 "Rahasia Besar"; 乌鹭币 "koin Wulu"; 律石 "Batu Irama"; 鼓司 "Biro Genderang";
+  九流门 "Sekte Sembilan Aliran"; 漱云笙 "Sheng Pembasuh Awan"; 左藏库 "Zuozang" (Gudang Zuozang).
+- Tower sets with no global match translated literally (尘 Debu, 鸢 Elang, 虹 Pelangi, 玉塔 Menara Giok).
