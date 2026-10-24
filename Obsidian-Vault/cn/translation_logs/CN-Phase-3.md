@@ -5,6 +5,19 @@ Session history and terminology for `cn/locale/phase3.jsonl`. Rules:
 
 ## Batches
 
+- **2026-10-24 — Phase 3 batch 7 (idx 78,000–81,999, 4,000 rows).** Mandarin → Indonesian
+  in three parallel ranges (78,000–79,333; 79,334–80,666; 80,667–81,999), appended to
+  `cn/locale/phase3.jsonl`. Exact range 60,000–81,999 verified without gaps or duplicates;
+  previous 18,000 rows preserved byte-for-byte. Full CN QA: **93,578 entries**, including
+  2 overrides, **0 findings**. Tokens and newline/tab counts match; Han remains only in
+  protected tokens. Numeric differences reviewed as Chinese numerals, dates and month names;
+  loading text at 79,215 retains all 25 repetitions. Phase 3: **22,000 / 30,000 (73.33%)**;
+  next idx **82,000**. **Overall: 93,576 / 159,176 unique strings (58.79%); CN-only in-game
+  coverage 741,992 / 823,139 (90.14%).** Generated with
+  `python tools/progress.py --profile cn --write`; includes 2,400 Phase 5 rows present from
+  separate work at validation time. Coverage includes internal labels and excludes the global
+  bridge. Terminology: [[CN-Phase-3]].
+
 - **2026-10-24 — Phase 3 batch 6 (idx 74,000–77,999, 4,000 rows).** Direct translation in the
   main session (eight 500-row chunks) appended to `cn/locale/phase3.jsonl`; exact range
   60,000–77,999 contiguous, previous 14,000 rows preserved. Nearly all internal editor labels
@@ -226,3 +239,37 @@ Session history and terminology for `cn/locale/phase3.jsonl`. Rules:
   么玉 Meyu, 律准石 Batu Standar, 乌金铁 Besi Emas Hitam, 心力 Tenaga Hati, 侠痕 Jejak Pendekar.
 - Date strings convert to Indonesian order (2025年12月19日 → 19 Desember 2025); the digit-drift
   audit's remaining differences were all dates, Chinese numerals, or `第N` ordinals.
+
+## Batch 7 decisions
+
+- Internal NPC/entity, spawn, reward, Battle Pass, sign-in and equipment labels remain literal
+  and short; dialogue uses gue/lo. Lore and other prose translated in full. Three parallel
+  ranges were checked separately before merging. Temporary sandbox drafts were recovered
+  from tool history into a stable system Temp location before validation; no scratch outputs
+  were added to the repo.
+- Prefer verified global lookup forms over conflicting provisional material terms in earlier
+  batches: Echo Jade, Ebon Iron, Oscillating Jade, Manik Gema, Affix. Other verified forms:
+  Unbound Cavern, Jadestream Valley, Well of Heaven, Silver Needle, Sealed Treasury,
+  Harvestfall Village, Mirkvale, Skyward City Ruins, Teras Skyreach, Granary of Plenty,
+  Kilau dari Selatan, Jurang, Moongazing Maiden, Tide of Vipers, Fieryheart Titans,
+  Rhapsody Gauntlets, Mistwillow, Confinement Tower, Heaven's Pier, Blissful Retreat,
+  Midnight Blades, Peace Bell Tower, Mulberry Village, Finesteed Hamlet, New Lingyin Temple,
+  Thousand-Buddha Vale, Harborlink Crossing, South Hutuo Bank, Ivorybloom, Ebonward,
+  Honorbound, Rainwhisper, Starweave, Eaglerise, Cleftpeak, Etherwrath, Shanyuan,
+  Jianghu Tactics, Perintah Terikat Tinta, Melodi Beresonansi, Melodi yang Membekas,
+  Koin Cahaya Bulan, Hutan Bunga Persik and Pulau Danau. Existing rows were left untouched.
+- Protected Han tokens kept verbatim: `{任意染色}` (78055, 78177), `<皇宫内侍>` (80241),
+  `{动物名}` (81220), `{午清风}` and `{搭配}` (81312), `{玩家名}` (81972).
+  No Han outside protected tokens. Newline/tab counts match every new source row.
+- Provisional CN-only labels/items: 不知 equipment → Tak Tahu (78872; the bare generic
+  lookup Bodoh is not an equipment match); 婵媛花 → Bunga Chanyuan;
+  通天金花贴 → Stiker Bunga Emas Menembus Langit; 惊秋阑 → Jingqiulan;
+  余息化影·逢凶化叽 → Bayang Sisa Napas·Mengubah Sial Menjadi Ciapan;
+  长鸣铢 → Manik Longming (distinct from 长鸣珠); 急风 → Angin Kencang;
+  化煞帖 → jimat penawar petaka. Revisit when official counterparts are found.
+- CN-only names retain provisional Pinyin: Pomen Village, Yuhu Garden, Guanqian Pass,
+  Xuankong Fort, Huzi Golden Dike, Juezhang Ridge, Wangu Yiren Hall, Yuchi Heju,
+  Zubing Ferry and Hutuo.
+- Numeric audit corrected an inherited decimal format at 78447, area3 at 79871 and year25
+  at 80022 before merging. Remaining numeric differences are Chinese numeral conversion,
+  Indonesian date order or month names. Loading text at 79215 repeats exactly 25 times.
