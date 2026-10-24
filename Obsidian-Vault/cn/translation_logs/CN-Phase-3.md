@@ -5,6 +5,32 @@ Session history and terminology for `cn/locale/phase3.jsonl`. Rules:
 
 ## Batches
 
+- **2026-10-24 — Phase 3 batch 9 (idx 86,000–89,999, 4,000 rows), phase complete.**
+  Mandarin → Indonesian in three parallel ranges (86,000–87,333; 87,334–88,666;
+  88,667–89,999), appended to `cn/locale/phase3.jsonl`. Full phase range 60,000–89,999
+  verified contiguous: **30,000 rows**, no gaps or duplicates; prior 26,000 rows preserved
+  byte-for-byte. Full CN QA: **124,478 entries** including 2 overrides, **0 findings**.
+  Tokens and newline/tab counts match; no Han outside protected tokens. Numeric differences
+  reviewed as Chinese numerals, dates, month names or ordinal wording. Idx 89,289 retains
+  exactly 113 loading repetitions. Phase 3: **30,000 / 30,000 (100.00%)**.
+  **Overall: 124,476 / 159,176 unique strings (78.20%); CN-only in-game coverage
+  780,892 / 823,139 (94.87%).** Generated with `python tools/progress.py --profile cn --write`;
+  includes 25,300 Phase 5 rows from separate work. Coverage includes internal editor labels
+  and excludes the global bridge. Next sequential phase: **Phase 4, idx 90,000**.
+  Decisions: [[CN-Phase-3]].
+
+- **2026-10-24 — Phase 3 batch 8 (idx 82,000–85,999, 4,000 rows).** Mandarin → Indonesian
+  in three parallel ranges (82,000–83,333; 83,334–84,666; 84,667–85,999), appended to
+  `cn/locale/phase3.jsonl`. Exact range 60,000–85,999 verified without gaps or duplicates;
+  previous 22,000 rows preserved byte-for-byte. Full CN QA: **120,478 entries** including
+  2 overrides, **0 findings**. Tokens, newlines and tabs match; Han occurs only in protected
+  tokens. Numeric drift reviewed; 180 loading repetitions at 83,310 and 11 Event repetitions
+  at 84,164 preserved. Phase 3: **26,000 / 30,000 (86.67%)**; next idx **86,000**.
+  **Overall: 120,476 / 159,176 unique strings (75.69%); CN-only in-game coverage
+  772,892 / 823,139 (93.90%).** Generated with `python tools/progress.py --profile cn --write`;
+  includes 25,300 Phase 5 rows present from separate work at validation time. Coverage includes
+  internal editor labels and excludes the global bridge. Decisions: [[CN-Phase-3]].
+
 - **2026-10-24 — Phase 3 batch 7 (idx 78,000–81,999, 4,000 rows).** Mandarin → Indonesian
   in three parallel ranges (78,000–79,333; 79,334–80,666; 80,667–81,999), appended to
   `cn/locale/phase3.jsonl`. Exact range 60,000–81,999 verified without gaps or duplicates;
@@ -273,3 +299,80 @@ Session history and terminology for `cn/locale/phase3.jsonl`. Rules:
 - Numeric audit corrected an inherited decimal format at 78447, area3 at 79871 and year25
   at 80022 before merging. Remaining numeric differences are Chinese numeral conversion,
   Indonesian date order or month names. Loading text at 79215 repeats exactly 25 times.
+
+## Batch 8 decisions
+
+- Same internal-label, dialogue and terminology rules as batch 7. Templates were reused only
+  where the source text differed solely in numbers; inherited decimal formatting was corrected
+  at 82056, 82297 and 83329. Echo Jade applied at 82792. Source loading repetitions at 83310
+  retained exactly 180 times; repeated Event text at 84164 exactly 11 times. Long lore and
+  item lists translated in full, including unfinished source endings.
+- Newly verified lookup forms: Dao Lord, Peaceward Camp, Iblis Kekeringan, Reflection Temple,
+  Moonflare, Beyond the Chill, Tetua Will of Heaven, White-browed Goose, Guqin Saints,
+  Penyair Mabuk, Sundara Land, Petalfall Crossing, Yongfu Temple, Mortalbound,
+  Cahaya Bulan yang Menari, Cleansing Ripples, Dreams of Han Palace, Suara-Suara di Udara,
+  Buta akan Dunia, Pemakan Kepahitan, Fieryheart, Metamorfosis, Perkumpulan Berpengaruh,
+  Ombak Penyaring Pasir, Aureate Pavilion, Unbound Cavern, Flawless Guardian, Affix,
+  Salep Luka, Ikan Isi Ilahi, Thundercry Blade, Inkwell Fan, Moonveil Mountain,
+  Skybrim Market, Kisah-Kisah Pengembara, Dewa Ketamakan, Jurang, Ghost Master,
+  Penjinak Kuda, Imperial Artisan Court, Shi Malou, Golden Toad Manor, Hollow Vale,
+  Bintang sebagai Jubah, Ambang Menuju Luapan, Latihan Aktivasi Meridian, Calmwaters,
+  Kabut Membutakan, Kabut yang Bangkit, Formbend, Jadeware, Silver River Clouds,
+  Bijih Pelat Hancur and Snow in Flight. Prior phase rows unchanged.
+- Protected Han tokens retained verbatim: `<守势·绝>` (84307), `{任意}` (84850, 85120),
+  `<大宋官兵>` (85112), `<监工>` (85956). No Han outside protected tokens;
+  exact newline/tab counts for all 4,000 rows.
+- Provisional CN-only names: 雾隐林 Wuyin Forest; 慈心山院 Cixin Mountain Court;
+  鹿食岭 Lushi Ridge; 南宫郎君 Nangong Langjun; 黄大仙 Huang Daxian;
+  薄雾谷 Bowu Valley; 悬河之墟 Xuanhe Ruins; 不见渡 Bujian Ferry.
+- Provisional labels/items: 音窍 Inti Nada; 蛰龙弓 Busur Naga Terpendam;
+  天阙游龙 Naga Mengembara di Istana Langit; 破风·竹 Pemecah Angin·Bambu
+  (not assumed to be Bamboocut); 无归断穴 Titik Tanpa Kembali;
+  醉鹤煮好友 Bangau Mabuk Memasak Teman; 缩骨功 Skill Pengecil Tulang;
+  金桂清晖 Cahaya Jernih Osmanthus Emas; 断念忘执 Lepaskan Hasrat dan Kemelekatan;
+  杯中春 Musim Semi dalam Cangkir; 遥思汉阙 Merindukan Istana Han;
+  火晶柿子 kesemek kristal api; 漱云笙 Seruling Awan. Revisit when global counterparts appear.
+- Numeric audit differences are Chinese numeral conversions, date/month names, ordinals,
+  full-width digits, or discount wording. 9折 preserves nine-tenths of the price;
+  8折 correctly becomes a 20% discount. No numeric drift left unexplained.
+
+## Batch 9 decisions — phase complete
+
+- Final 4,000 rows complete CN Phase 3. Internal editor labels stay literal and short;
+  lore, poetry and descriptions translated in full. Source 86562 and poems 88747, 89064,
+  89198 plus lore 89700 translated without shortening; 86705 keeps its unfinished ending.
+  Loading text 86176 retains two incomplete and four complete fragments; 89289 retains
+  exactly 113 complete repetitions. Newline/tab counts match all new rows; no Han remains
+  outside protected tokens. No changes to the previous 26,000 rows.
+- Verified material/resource corrections applied only to new rows: Oscillating Jade (86053),
+  Shanyuan (86182), Manik Gema (86416, 金铤 shared-key Echo Bead match), Ikan Giok (86617),
+  Token Harta (宝铢; supersedes provisional Baozhu). Other verified lookup forms:
+  Heavenwill Gauntlets, Zenith Box, Pewarna Rambut Tingkat Lanjut, Mistveil City, Es Krim
+  Sushan, Utuk, Meridian Touch, Hotpot, Pedang Berpasangan, Menyeberangi Padang Rumput,
+  Snowy River, Bejana Batu Uji, Langit Tanpa Dermaga, Kuda Meringkik di Hutan, Boreal Sweep,
+  Rubah Sutra, Salep Yin-Yang, Pawai Sendirian, Busur Enam Bahan, Dreamfall Cliff,
+  Celestial Ferry Crossing, Requiem Bunga Prem Salju, Inkpincer Scorpion, Lion's Roar,
+  Elang Kayu, Harmoni yang Cacat, Keburukan yang Tersembunyi, Ikatan Arwah, Deer-Hidden
+  Chasm, Sup Daging Rusa, Silkbind - Wings, Calmwaters, Jadeware, Hawkwing,
+  Aroma Anggrek yang Bertahan, Wind Sense, Lucky Seventeen, Evercloud Ring, Stasiun Unta,
+  Pillow Pill, Puncak Pendakian, Crimson Cliff Peak, Derndale, Pawcket Money, Poin Panduan,
+  Mabuk di Penglai, Keanggunan Bertopeng, Jadewood Court, Clearsky Tower,
+  Kapal Perang Quintadent, Koin Song and Xuanyuan Cult.
+- Provisional CN-only labels/items: Jimat Kelancaran Jodoh, Ukiran Kayu Bertali Sutra,
+  DMG Bendera Jatuh, Sapuan, Pagoda Seribu Pejabat, Menyibak Salju Mencari Musim Semi,
+  Ilusi Berlumur Darah, Mengorbankan Diri pada Bilah, Gelombang Darah Mencekik,
+  Semangat Pendekar (侠气 resource), Formasi Angsa Kembali;
+  续命护心丸 Pil Pelindung Jantung Penyambung Nyawa; 振奋香 Dupa Penyemangat;
+  押品茶碗 Cawan Teh Gadaian; 瞬雷 Petir Sekejap; 兰烬落 Sisa Anggrek Gugur;
+  破魂剑 Pedang Pemecah Jiwa; 星桥鹊语 Starbridge Magpie;
+  九曲断魂枪 Tombak Sembilan Kelok Pemutus Jiwa; 复影砚·简 Batu Tinta Bayangan Ganda·Sederhana;
+  狂锋 Bilah Mengamuk; 锋音纹符 Glyph Nada Bilah; 奔狼追野 Mengejar Serigala Liar;
+  千机万和 Seribu Mekanisme Sepuluh Ribu Harmoni; 天雷辟易 Penangkal Petir Langit;
+  玄金甲 Zirah Emas Hitam (prior precedent); 净尘义士 Pendekar Pembersih Debu;
+  浊浪冠胄 pelindung kepala Gelombang Keruh. Revisit when official counterparts appear.
+- Provisional CN-only places/people: Yinwu Forest, Jun Kiln, Jue'an, Nyonya Weng,
+  Biquan Mountain, Cangfo Mountain, Jiunyu Peak, Peach Blossom Valley, South Heaven Gate,
+  Yunqi Bamboo Path (existing style), Tengwang Village and Wang'an Garrison.
+- A trailing newline added accidentally at 87778 was removed before merging. Remaining
+  numeric differences are Chinese numeral conversion, date/month names and ordinals
+  (including 89283); no unexplained numeric drift remains.
