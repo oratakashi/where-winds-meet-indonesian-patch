@@ -1,6 +1,6 @@
 # CN Current Status
 
-**Last updated: 2026-10-24 — CN Phase 6 batch 1 translated idx 150,000–153,999 (Phase 6 4,000 / 9,176; resume at idx 154,000); Phase 3 14,000 / 30,000 (resume at idx 74,000). Phases 1 and 2 are complete.**
+**Last updated: 2026-10-24 — CN Phase 6 complete (idx 150,000–159,175, 9,176 / 9,176); Phase 3 18,000 / 30,000 (resume at idx 78,000); Phases 4–5 not started. Phases 1, 2 and 6 are complete.**
 Single source of truth for the **WWM China (燕云十六声)** translation — overwritten each
 session. Phase plan: [[CN-Phase-Roadmap]]; resume checklist: [[CN-Resume-Procedure]];
 rules: [[CN-Quick-Reference]]. The global translation has its own [[Current-Status]].
@@ -20,9 +20,9 @@ never edit them by hand. CI fails a PR whose block is stale (`--profile cn --che
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **78,000** | **159,176** | **49.00%** |
-| ↳ CN-only corpus (Phases 1–6) | 78,000 | 159,176 | 49.00% |
-| **In-game text coverage** — CN-only `translate_words_map_zh_cn` entries (`freq` in `unique_strings.jsonl`; keys shared with global come via the bridge) | **718,416** | **823,139** | **87.28%** |
+| **Unique strings translated (all)** | **87,176** | **159,176** | **54.77%** |
+| ↳ CN-only corpus (Phases 1–6) | 87,176 | 159,176 | 54.77% |
+| **In-game text coverage** — CN-only `translate_words_map_zh_cn` entries (`freq` in `unique_strings.jsonl`; keys shared with global come via the bridge) | **731,592** | **823,139** | **88.88%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -32,14 +32,44 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale
 | --- | --- | --- | --- | ---: | ---: |
 | 1 | 0–29,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 2 | 30,000–59,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 3 | 60,000–89,999 | **active** | 74,000 | 14,000 / 30,000 | 46.67% |
+| 3 | 60,000–89,999 | **active** | 78,000 | 18,000 / 30,000 | 60.00% |
 | 4 | 90,000–119,999 | not started | 90,000 | 0 / 30,000 | 0.00% |
 | 5 | 120,000–149,999 | not started | 120,000 | 0 / 30,000 | 0.00% |
-| 6 | 150,000–159,175 | **active** | 154,000 | 4,000 / 9,176 | 43.59% |
+| 6 | 150,000–159,175 | done | — | 9,176 / 9,176 | 100.00% |
 
 <!-- progress:end -->
 
 ## Session log
+
+- **2026-10-24 — Phase 3 batch 6 (idx 74,000–77,999, 4,000 rows).** Requested as "Phase 6",
+  but Phase 6 was already complete (9,176 / 9,176), so work continued in the active Phase 3.
+  Translated directly in the main session (no subagents) as eight 500-row chunks, each checked
+  by idx continuity, newline/tab counts, Han leftovers and a digit-sequence drift check before
+  appending to `cn/locale/phase3.jsonl`; two skipped source lines (74353, 76959) were caught by
+  the drift check and realigned before merging. Previous 14,000 rows untouched (+4,000 lines
+  only). QA first run: 6 MARKUP findings (a `#` before a Latin letter creating a fake `#X`
+  token in 74391/77091/77307/77713, a missing `#E` in 76541, `{任意}` kept verbatim in 77919) —
+  fixed; final full CN QA: **87,178 entries**, **0 findings**. Phase 3: **18,000 / 30,000
+  (60.00%)**; next idx **78,000**. **Overall: 87,176 / 159,176 unique strings (54.77%);
+  CN-only in-game coverage 731,592 / 823,139 (88.88%).** Generated with
+  `python tools/progress.py --profile cn --write`. Log: [[CN-Phase-3]].
+
+- **2026-10-24 — Phase 6 batches 2–14 (idx 154,000–159,175, 5,176 rows), phase complete.**
+  Continued on the owner's request to finish Phase 6. Translated directly in the main session
+  (no subagents) as thirteen chunks (twelve of 400 rows, one of 376) → appended to
+  `cn/locale/phase6.jsonl`. Each chunk was checked by idx continuity, newline/tab counts, Han
+  leftovers and a digit-sequence drift check against the source before merging; one swapped
+  pair (154291/154292) was caught and fixed, and a one-line skip in one chunk (155536) was
+  caught by the drift check and realigned before merging. Exact range 150,000–159,175 verified
+  contiguous (9,176 rows, no gaps or duplicates). QA first run: 7 MARKUP findings, all `<…>`
+  tags containing Han text that must stay verbatim (155893, 156087, 156898, 157573, 158204,
+  158421, 158537) — fixed; final full CN QA: **0 findings**. Global skill/set names found with
+  `term_lookup.py` replaced earlier Pinyin guesses (Strategic Sword, Everspring Umbrella,
+  Vernal Umbrella, Phalanxbane Blade, Thundercry Blade, Bellstrike, Stonesplit, Formbend,
+  Calmwaters, Jadeware, …; see [[CN-Phase-6]]). Phase 6: **9,176 / 9,176 (100.00%)**.
+  **Overall: 83,176 / 159,176 unique strings (52.25%); CN-only in-game coverage 723,592 /
+  823,139 (87.91%).** Generated with `python tools/progress.py --profile cn --write`.
+  Log: [[CN-Phase-6]]. Next: continue Phase 3 at idx 74,000, then Phases 4–5.
 
 - **2026-10-24 — Phase 6 batch 1 (idx 150,000–153,999, 4,000 rows).** Started on explicit
   request ("Phase 6", while Phases 3–5 are still open — phase files are independent).

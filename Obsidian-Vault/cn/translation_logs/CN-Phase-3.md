@@ -5,6 +5,13 @@ Session history and terminology for `cn/locale/phase3.jsonl`. Rules:
 
 ## Batches
 
+- **2026-10-24 — Phase 3 batch 6 (idx 74,000–77,999, 4,000 rows).** Direct translation in the
+  main session (eight 500-row chunks) appended to `cn/locale/phase3.jsonl`; exact range
+  60,000–77,999 contiguous, previous 14,000 rows preserved. Nearly all internal editor labels
+  (NPC/monster/placeholder/test names, Battle Pass and sign-in rewards, tower/dungeon drops),
+  plus some lore, Skill text and system strings. Final full CN QA: 87,178 entries, 0 findings.
+  Phase 3: 18,000 / 30,000 (60.00%); next idx 78,000. Decisions: see "Batch 6 decisions".
+
 - **2026-10-24 — Phase 3 batch 5 (idx 72,000–73,999, 2,000 rows).** Mandarin → Indonesian
   in three parallel ranges (72,000–72,666; 72,667–73,333; 73,334–73,999), appended to
   `cn/locale/phase3.jsonl`. Exact range 60,000–73,999 verified without gaps or duplicates;
@@ -202,3 +209,20 @@ Session history and terminology for `cn/locale/phase3.jsonl`. Rules:
 - Numeric audit: Chinese Grade/Level words become digits; month numbers become Indonesian
   month names; 第3次 becomes "ketiga"; date order follows Indonesian convention.
   These explain all numeric-multiset differences. Newline/tab counts match for every new row.
+
+## Batch 6 decisions
+
+- Followed the batch 1–5 conventions: internal labels literal and short; known global names kept
+  in English (Hidden Mountain, Kaifeng Prefecture, Imperial Palace, Buddha Fort, Aureate Pavilion,
+  Hexi, Qingzhou, Perception Forest, Stonesplit/Bellstrike/Bamboocut/Silkbind tower sets, Five Tones).
+- Recurring label patterns now fixed: `S#-战令奖励-免费/付费N级` → "S#-hadiah Battle Pass-gratis/berbayar levelN";
+  `微信小程序签到` → "Login harian mini program WeChat"; `回流奖励` → "hadiah kembali";
+  `世界等级` → "World Level"; `小怪掉落` → "drop monster kecil"; `氛围` → "suasana".
+- Markup: a literal `#` followed by Han text must become `# ` + Latin (the space avoids creating a
+  false `#X` token for QA); `{任意}`-style braces containing Han and `<…>` tags are kept verbatim.
+- Provisional CN-only names (Pinyin): Zhuye Gule, Qiu Jieran, Fu Fendian, Mu Wenying, Yuan Xianxian,
+  Yuan Tiantian, Xie Yao, Chai Rong, Li Yu (kept), Pei Hang (kept), Xiao Han, Zhang Yichao (kept).
+  Provisional items: 宝铢 Baozhu, 振玉 Zhenyu, 长鸣玉 Giok Longming, 通宝 Tongbao,
+  么玉 Meyu, 律准石 Batu Standar, 乌金铁 Besi Emas Hitam, 心力 Tenaga Hati, 侠痕 Jejak Pendekar.
+- Date strings convert to Indonesian order (2025年12月19日 → 19 Desember 2025); the digit-drift
+  audit's remaining differences were all dates, Chinese numerals, or `第N` ordinals.

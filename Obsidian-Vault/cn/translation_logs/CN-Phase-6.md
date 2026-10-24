@@ -9,6 +9,20 @@ mostly internal editor/spawn labels (`…-战利品刷新点N`, `S14-战令奖�
 
 ## Batches
 
+- **2026-10-24 — Phase 6 batches 2–14 (idx 154,000–159,175, 5,176 rows), phase complete.**
+  Continued on the owner's request to finish the phase. Translated directly in the main
+  session (no subagents) as thirteen chunks (154,000–154,399 … 158,800–159,175; twelve of
+  400 rows, the last of 376), merged into `cn/locale/phase6.jsonl`. Every chunk was checked
+  before merging: idx continuity, newline/tab counts against the source, no Han leftovers, and
+  a digit-sequence drift check that flags rows whose numbers differ from the source (caught
+  a swapped pair, 154291/154292, and a one-row skip at 155536 — both fixed before QA). Exact
+  contiguous range 150,000–159,175 (9,176 rows, no gaps or duplicates). QA first run: 7 MARKUP
+  findings (155893, 156087, 156898, 157573, 158204, 158421, 158537 — `<…>` tags containing Han
+  text restored verbatim); final full CN QA **0 findings**. Phase 6: **9,176 / 9,176
+  (100.00%)**. **Overall: 83,176 / 159,176 unique strings (52.25%); CN-only in-game coverage
+  723,592 / 823,139 (87.91%).** Generated with `python tools/progress.py --profile cn --write`.
+  Decisions: see "Batches 2–14 decisions" below.
+
 - **2026-10-24 — Phase 6 batch 1 (idx 150,000–153,999, 4,000 rows).** Started on the owner's
   explicit request ("Phase 6"), although Phases 3–5 are still open — the phase files are
   independent, so order does not matter for the patch. Translated directly in the main session
@@ -56,3 +70,46 @@ Choices made here (no global match, provisional):
   "Memuat data" × 80 + "Memu".
 - Numbers: 万 → juta/ribu (1000万 → "10 juta", 5万 → "50 ribu"); dates written in Indonesian
   order; lunar month words (闰十一月初八) → "Tanggal delapan bulan sebelas kabisat".
+
+## Batches 2–14 decisions (idx 154,000–159,175)
+
+Content: still mostly internal editor/spawn/reward labels (`…-战利品刷新点N`, `S9–S15-战令奖励-免费/付费N级`,
+`…对应普通装备宝箱`, `第N期总星级达到N星奖励`, `任意流派塔全3星通关-第N期`), plus NPC dialogue, Skill/gear
+affix descriptions, ancient-text items (157011 Qin-slip *Rishu*, translated plainly) and lore.
+
+Global names found with `term_lookup.py` (use these, not Pinyin):
+- Gear sets: 倾觞 Tiltrim, 烟柳 Yanliu (no global hit, kept), 不知寒 Beyond the Chill, 浣花 Ivorybloom,
+  梨雪 Whirlsnow, 桂月 Moonflare, 时雨 Rainwhisper, 玄甲 Ebonward, 飞隼 Hawkwing, 鹰扬 Eaglerise,
+  易相 Formbend, 江凝 Calmwaters, 玉斗 Jadeware, 连星 Starweave, 抱玉 Jadeclasp, 燕归 Swallowcall,
+  盈盏 Brimflow, 鸣珂 Reinchime, 尚义 Honorbound, 御无缺 Flawless Guardian; no hit (kept Pinyin):
+  山倾 Shanqing, 急风 Jifeng, 啸玉 Xiaoyu, 破风·竹 Pofeng, 撼天 Hantian, 凌波步 Langkah Gelombang.
+- Weapon skills: 积矩九剑 Strategic Sword, 醉梦游春 / 九重春色 Everspring / Vernal Umbrella,
+  十方破阵 Phalanxbane Blade, 嗟夫刀法 Thundercry Blade, 无名枪法 / 乾坤定 Nameless Spear / Qiankun's Lock,
+  骑龙回马 Soaring Spin, 衍九矢 Ledakan Sembilan, 无相金身 Tubuh Emas, 摄星拿月 Celestial Seize,
+  千军万马 Ribuan Pasukan, 惊涛掌 Palm Strike Master, 聚宝盆 Baskom Harta Karun.
+- Streams: 鸣金 Bellstrike, 裂石 Stonesplit, 破竹 Bamboocut, 牵丝 Silkbind (unchanged from earlier phases).
+- 侠痕 → **Affix** (Phase 3 rule; 侠迹 stays "Jejak Pendekar"), 侠名 → Hero Title, 狂澜 Raging Tides,
+  守律值 Nilai Precept, 短陌钱 Koin Commerce, 天地万籁 Universal Harmony, 四海笺 Adventure Slip,
+  八音窍 Harmonic Core, 百业 Guild, 武林录 Jurnal, 博物志 Kompendium, 悬壶 Healer, 打铁花 Sparksmith,
+  又一楼 Kedai Lain, 战令 Battle Pass.
+- Places (global form): Blissful Retreat (不羡仙), Crimson Cliff (丹崖), Bamboo Abode (竹林旧居),
+  Buddha Fort, Mercyheart Monastery, Sage's Knoll, Gleaming Abyss, Lingyin Temple, Wansheng Town,
+  Confinement Tower, Bodhi Sea, Moteheart Haven, Velvet Shade, West Lake, Sunken City Lake,
+  Dragon Gate Inn, Millennium Crossing. Pinyin kept for CN-only places: Desa Fenghe (丰和村),
+  Gunung Biquan (壁泉山), Jalan Bambu Yunqi, Fumazhuang, Bolangsha, Luancheng, Huotuo.
+
+Choices (provisional, no global match):
+- 战利品刷新点 → "titik respawn jarahan"; 战令奖励-免费/付费N级 → "hadiah Battle Pass-gratis/berbayar level N";
+  回溯 → "Penelusuran"; 万事知 stays "Wandering Tales"; 搜打撤 → "Cari-Tembak-Mundur";
+  弈子 → "bidak", 小弈侠 → "Pendekar Catur Kecil", 乌鹭币 → "koin Wulu", 棋珍 → "Permata Catur";
+  金拱门 (McDonald's collab) → "Golden Arches"; 金蟾 → "katak emas"; 复影砚 → "Tinta Bayangan Ganda".
+- Date variants like `#R政和三年腊月初八1#E;…` (name/date typo tests): translated to the same
+  Indonesian form three times; `…年…月…日` dates in Indonesian order; 闰N月 → "bulan N kabisat".
+- 万 → ribu/juta (15万 → "150 ribu", 5w → "50 ribu", 100万 → "1 juta"); 9折 → "diskon 10%".
+- 157971 (loading placeholder, truncated mid-phrase) → "Memuat data" × 9 with one "Memuat".
+- Protected tokens kept verbatim: all `<…>` tags with Han text (155893, 156087, 156898, 157573,
+  158204, 158421, 158537), `$T(5211)`/`$T(5224)`/`$T(2001)`, `{param_1}`, `{-1}`/`{-2}`/`{1}`, `%s`, `%d`.
+
+Follow-ups noticed (not done here): batch 1 (150,000–153,999) and `phase2.jsonl` still contain a few
+Pinyin/guessed forms for terms that have global names (e.g. "Mingjin" for 鸣金 in 16 Phase 2 rows,
+"Shifang Zhenzhen" for 十方破阵 in batch 1) — harmonize in a later pass if wanted.
