@@ -5,6 +5,18 @@ Session history and terminology for `cn/locale/phase3.jsonl`. Rules:
 
 ## Batches
 
+- **2026-10-24 — Phase 3 batch 4, idx 68,000–71,999 (4,000 rows).** Mandarin → Indonesian,
+  translated directly in the main session (no subagents) as eight 500-row chunks, each merged
+  with an idx-continuity and newline-count check against the source, appended to
+  `cn/locale/phase3.jsonl`. Exact contiguous range 60,000–71,999 verified (12,000 rows, no
+  gaps or duplicates); previous 8,000 rows untouched (diff = +4,000 lines). QA first runs
+  flagged 2 MARKUP findings (68396 `<石匠>` tag, 70485 missing `#E` typo) fixed by hand; final
+  full CN QA: **72,002 entries** including 2 overrides, **0 findings**. Phase 3:
+  **12,000 / 30,000 (40.00%)**; next idx **72,000**. **Overall: 72,000 / 159,176 unique strings
+  (45.23%); CN-only in-game coverage 710,416 / 823,139 (86.31%).** Generated with
+  `python tools/progress.py --profile cn --write`; includes internal editor labels, excludes
+  the global bridge.
+
 - **2026-10-23 — Phase 3 batch 3, idx 66,000–67,999 (2,000 rows).** Mandarin → Indonesian
   in three parallel ranges (66,000–66,666; 66,667–67,333; 67,334–67,999), appended to
   `cn/locale/phase3.jsonl`. Exact contiguous range verified; previous 6,000 rows preserved
@@ -108,3 +120,29 @@ Session history and terminology for `cn/locale/phase3.jsonl`. Rules:
   青瓶居士 Qingping Jushi. Revisit when official global counterparts appear.
 - 小柳青衣 at 66557 has no direct lookup; Liu Qingyi kecil follows the verified base name
   柳青衣. This internal label remains provisional due to limited context.
+
+## Batch 4 decisions
+
+- Batch is ~95% internal editor labels (NPC/entity/spawn names, Battle Pass tiers, achievement
+  numbers, sign-in dates, reward tables); translated literally and short per
+  [[CN-Quick-Reference]] §4. Repeated formulas fixed across all chunks: `S7-战令奖励-免费89级`
+  → "S7-hadiah Battle Pass-gratis Level 89" (付费 → berbayar); `NN阶X·部位·回流奖励` →
+  "TierNN X·Zirah Dada/Liontin/Cincin/Pelindung Lengan/Pelindung Tulang Kering·hadiah kembali";
+  `…回流装备自选匣` → "Kotak pilihan perlengkapan kembali TierNN·…"; `…掉落世界等级N` →
+  "Drop … World Level N"; `…单人模式等级N装备掉落` → "… mode solo drop perlengkapan levelN";
+  `YYYY年M月D日签到` → "Login harian D Bulan YYYY"; `成就编号N` → "Nomor pencapaianN".
+- Equipment families from lookup, kept English: 抱玉 Jadeclasp, 燕归 Swallowcall, 梨雪
+  Whirlsnow, 飞隼 Hawkwing, 破竹 Bamboocut, 牵丝 Silkbind, 裂石 Stonesplit, 鸣金 Bellstrike;
+  Echo Jade (长鸣玉), Echo Bead → "Manik Gema" (长鸣珠), Oscillating Jade (振玉),
+  Ebon Iron (乌金铁), Wandering Tales → "Kisah-Kisah Pengembara" (万事知), Journal (武林录
+  in later rows; earlier rows' "Catatan Bela Diri" kept as is).
+- Perception Forest ranks (as in batch 3): 断水 Ahli, 仗剑 Pemula, 开山 Mahir, 斩风 Veteran,
+  流云 Master, 飞花 Legenda, 无我 Mythic.
+- Tokens kept verbatim because the QA brace/angle-tag check compares them: `<石匠>` (68396),
+  `{任意}` (69427), `{任意染色}` (69981), `{当前：#Y{1}次#E}` (70984).
+- Long repeated placeholder strings ("数据加载中" ×24 at 68899, ×90 at 70446) kept with the exact
+  repeat count as "Data sedang dimuat" ×N. Idx 69135 (Song-dynasty essay on strategy) and
+  71049 (nine linked rings) translated in full.
+- Provisional CN-only names (revisit when a global counterpart appears): 啸风峙玉 Angin Menderu
+  Giok Menjulang (kept from batch 3); 不肝 → "Tanpa Grind" (71860); 惊才/绝艳 → "Bakat
+  Mengejutkan"/"Anggun Mutlak" (twin-dancer boss skills); 云家岙 Yunjia'ao; 水碓 → "penumbuk air".
