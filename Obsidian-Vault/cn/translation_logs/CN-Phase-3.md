@@ -5,6 +5,17 @@ Session history and terminology for `cn/locale/phase3.jsonl`. Rules:
 
 ## Batches
 
+- **2026-10-24 — Phase 3 batch 5 (idx 72,000–73,999, 2,000 rows).** Mandarin → Indonesian
+  in three parallel ranges (72,000–72,666; 72,667–73,333; 73,334–73,999), appended to
+  `cn/locale/phase3.jsonl`. Exact range 60,000–73,999 verified without gaps or duplicates;
+  previous 12,000 rows preserved byte-for-byte. Newline/tab counts match the source; numeric
+  differences reviewed as Chinese numeral conversion, dates/months or ordinal wording.
+  Final full CN QA: **74,002 entries** including 2 overrides, **0 findings**. Phase 3:
+  **14,000 / 30,000 (46.67%)**; next idx **74,000**. **Overall: 74,000 / 159,176 unique
+  strings (46.49%); CN-only in-game coverage 714,416 / 823,139 (86.79%).** Generated with
+  `python tools/progress.py --profile cn --write`. Includes internal editor labels, excludes
+  the global bridge. Terminology and provisional CN-only names: [[CN-Phase-3]].
+
 - **2026-10-24 — Phase 3 batch 4, idx 68,000–71,999 (4,000 rows).** Mandarin → Indonesian,
   translated directly in the main session (no subagents) as eight 500-row chunks, each merged
   with an idx-continuity and newline-count check against the source, appended to
@@ -146,3 +157,48 @@ Session history and terminology for `cn/locale/phase3.jsonl`. Rules:
 - Provisional CN-only names (revisit when a global counterpart appears): 啸风峙玉 Angin Menderu
   Giok Menjulang (kept from batch 3); 不肝 → "Tanpa Grind" (71860); 惊才/绝艳 → "Bakat
   Mengejutkan"/"Anggun Mutlak" (twin-dancer boss skills); 云家岙 Yunjia'ao; 水碓 → "penumbuk air".
+
+## Batch 5 decisions
+
+- Mostly internal reward/entity/spawn labels, with dialogue, UI, a face-synthesis consent
+  notice (72721), full poetry (73614), lore (73320, 73888), and talent instructions (73763).
+  Long text translated in full; 73320 retains its unfinished source ending. Earlier batch
+  formulas retained. Three accidental trailing newlines removed before merging.
+- Shared-key lookup supersedes provisional forms where found: 封龙书院 → Dragonbend Academy
+  (earlier Fenglong Academy); 白马驿 → Stasiun Baima; 侠痕 → Affix; 侠境 → Hero's Realm;
+  破竹·鸢 → Bamboocut - Kite; 裂石·钧 → Stonesplit - Strength; 裂石·威 → Stonesplit - Might.
+  愁铃客 → Weeping Reaper follows contextual `--contains` examples (bare lookup returned
+  an unhelpful Unknown). These findings apply to this batch; older rows were left untouched.
+- Other confirmed forms: Harmoni Semesta, Satu Daun, Satu Kehidupan, Unfated Tian,
+  Ghostlight Market, Imperial Medical Academy, Ever-Normal Granary, Spiritroost Crag,
+  Skyward City Ruins, Karez Well, Sunken City Lake, Imperial Service, The Palace Guard Office,
+  Roaring Sands, Wellspring Town, Willowshade Village, Wansheng Town, Plainfield,
+  Teras Skyreach, Clearsky Tower, Tebing yang Terengah, Biksu Tranquillus,
+  Tuan Ikan Mas Merah, Ivorybloom, Calmwaters, Formbend, Rainwhisper, Finesteed Hamlet,
+  Raging Tides, Moteheart Haven, Fishwood River, Doa yang Sia-Sia, Mata Merah Wabah,
+  Heavenfall, Ghost Revelry Hall, Ikan Giok, Inti Harmonis, Danau Moxin, Dermaga Tianjing,
+  Vernal Umbrella, Nektar Bulan, Legendary Melodic Stone: Vanguard, Feathergrass,
+  Busur Sieger: Rapidfire, Evercloud Bow: Longshot, Heavenquaker Spear.
+- Existing CN-only precedents retained: Fenghe Cun (风禾村), Yueming Ferry,
+  Wucheng King Temple, Zuocang Treasury, Yuegui Forest, Qiniaoyan.
+- Provisional CN-only places/organizations: 夜雨林 Yeyu Forest; 灵隐集 Lingyin Bazaar;
+  临江渡口 Linjiang Crossing; 宜圣殿 Yisheng Hall; 法华禅院 Fahua Monastery;
+  丰和村 Fenghe Village (distinct spelling from 风禾村); 决胜都 Jueshengdu;
+  中山遗址 Zhongshan Ruins; 蛟吞院 Jiaotun Court; 燕云别馆 Yanyun Annex; 五熟行 Wushu Guild.
+- Provisional people: 王守 Wang Shou; 屠余 Tu Yu; 蒲景庐 Pu Jinglu; 罗参 Luo Shen;
+  张存秀 Zhang Cunxiu; 董乃信 Dong Naixin; 罗晴妍 Luo Qingyan; 秦细 Qin Xi;
+  孟秀兰 Meng Xiulan; 简行之 Jian Xingzhi; 霏斐 Feifei; 单白 Shan Bai; 乔杰冬 Qiao Jiedong;
+  金络 Jinluo; 松苓 Songling; 珍凝 Zhenning. Other Pinyin forms in this range:
+  Bu Xin, Lin Jingxing, You Sheji, Cheng Qiaoqiao, Zheng Zonglin, Zheng Wenyu.
+- Provisional labels/items: 红妆·丹煞 Riasan Merah - Petaka Merah; 百目莲 Teratai Seratus Mata;
+  金拱门 Lengkung Emas; 飞去来器 Senjata Bumerang; 戍铠 Zirah Penjaga;
+  藏锋初试 Ujian Awal Pedang Tersarung; 乌鹭币 Koin Wulu; 讨北盟檄 Maklumat Melawan Aliansi Utara;
+  坠火 Api Jatuh; 两心同 Dua Hati Bersatu; 装藏轮 Zangzang Wheel;
+  婵娟泪 Air Mata Rembulan; 月照欢颜 Rembulan Menyinari Senyum;
+  寸拳·不屈 Pukulan Satu Inci·Pantang Menyerah; 蓑隐 Tersembunyi Berjas Jerami;
+  神龙·爆燃 Naga Ilahi·Ledakan Api. Revisit provisional forms when a global match appears.
+- Protected Han tokens kept verbatim: `<出殡百姓>` (72142), `{午清风·时装}{染色}` (72808),
+  `<醉劲>` (73153), `<心通百兽>` (73198). Remaining text has no Han leftovers.
+- Numeric audit: Chinese Grade/Level words become digits; month numbers become Indonesian
+  month names; 第3次 becomes "ketiga"; date order follows Indonesian convention.
+  These explain all numeric-multiset differences. Newline/tab counts match for every new row.
