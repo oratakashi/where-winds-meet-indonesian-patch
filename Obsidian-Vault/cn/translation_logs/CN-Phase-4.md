@@ -10,6 +10,19 @@ rewards, NPC lines and lore. Labels stay literal and short; prose is translated 
 
 ## Batches
 
+- **2026-10-25 — Batch 2 (idx 94,000–97,999, 4,000 rows).** Mandarin → Indonesian in
+  three parallel ranges (94,000–95,333; 95,334–96,666; 96,667–97,999), appended to
+  `cn/locale/phase4.jsonl`. Exact phase range 90,000–97,999 verified contiguous; previous
+  4,000 rows preserved byte-for-byte. Newline/tab counts match; numeric differences reviewed
+  as Chinese numeral conversions, dates/month names, rank formatting or word order.
+  Global names checked with `term_lookup.py` and `name_check.py` (automatic corrections on
+  temporary batches, then manual proper-name review; generic/contextual false positives
+  rejected). Full CN QA: **137,178 entries including 2 overrides, 0 findings**.
+  Phase 4: **8,000 / 30,000 (26.67%)**; next idx **98,000**.
+  **Overall: 137,176 / 159,176 unique strings (86.18%); CN-only in-game coverage
+  801,139 / 823,139 (97.33%).** Generated with `python tools/progress.py --profile cn --write`.
+  Coverage is frequency-weighted, includes internal editor labels and excludes the global bridge.
+
 - **2026-10-25 — Batch 1 (idx 90,000–93,999, 4,000 rows).** Translated directly in the main
   session (no subagents) as ten 400-row chunks, merged into `cn/locale/phase4.jsonl`. Every chunk
   was checked before merging: idx continuity, newline/tab counts against the source, no Han
@@ -65,3 +78,33 @@ name, curated `_LITERAL`/`_SUFFIX` tables); idx unchanged, no new rows. Names li
 this log in an Indonesian or Pinyin form are superseded by the global form. CN-only names now
 stay Pinyin (never Indonesian). Remaining mismatches: `python cn/tools/name_check.py --idx <range>`.
 
+
+## Batch 2 terminology and preservation notes (2026-10-25)
+
+Global names used include Divinecraft Dungeon, Steed's Pass, Spiritroost Crag, Stellabed Rocks,
+Frostcliff Heart, Mistveil City, Jadestream Valley, Brightlore Hall, Chancellery, Masked Troupe,
+Mercyheart Monastery, Aureate Pavilion, Lion Barrow, Meridian Touch, Sealed Treasury,
+Skyward City Ruins, Skyreach Terrace, Jiuquan, Bamboocut - Dust/Draught, Still Shore,
+Gasping Cliff, Reserve Archives, Sandstorm Tavern, Peace Bell Tower, Halo Peak,
+Flute of the Tides and The Void King. 袅袅之音 follows the global translation
+**Melodi yang Membekas** (97,646). Perception Forest rank labels use
+Veteran/Mythic/Legend/Master/Adept/Beginner and Roman numerals.
+
+CN-only provisional Pinyin: Qinglin Fuyu, Shanqing (山倾; supersedes the earlier Mountainfall
+rendering for new rows), Pisha Songwen, Jiuxiang Cao, Baiyu Gu (白玉骨), Xueji Hongzhuang
+(血祭红妆), Yuguizhi (玉桂枝), Zhulie (逐猎), Fusha (伏杀) and the dog Xiuxiu (嗅嗅).
+雪覆千山 / 血覆千山 have no global lookup hit and share the reading Xuefu Qianshan;
+labels distinguish them as **Xuefu Qianshan (salju)** / **Xuefu Qianshan (darah)**.
+
+Long prose translated in full includes the West Lake passage (94,246), monk's account
+(94,385), Qingcang (94,776), wandering priest's letter (94,984), folk coin lore (95,511),
+fermentation methods (96,396), Xiuxiu's three-paragraph story (97,681) and Guangling San
+(97,904). No shortening.
+
+Preservation exceptions: idx **95,120** is the code-like shop identifier
+`shop_chouka_鸾倚九霄_622160`, kept exactly (the sole Han outside protected tokens in this
+batch). At **97,842**, the source `<=` comparator is consumed by the existing `TOKEN` regex
+through the next closed angle tag; that entire protected span, including Mandarin text,
+remains verbatim under the current markup rule. Text outside it is translated. Two stray
+`#` markers in the middle range initially created false format tokens and were separated
+from following Latin letters before final QA.
