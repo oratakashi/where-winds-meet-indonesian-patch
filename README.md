@@ -290,10 +290,19 @@ so some text stays in Chinese.
 
 > [!NOTE]
 > Tested 2026-10-20: the CN launcher checks its files on start but did not restore the patched ones.
-> A CN game update that changes these files replaces them — restore your backup or wait for the next
-> `cn-latest` build instead of re-copying an old patch over the new version. The main-menu
-> "退出游戏" button (artwork) and the NetEase account login dialog are not part of these files and
-> stay in Chinese.
+> A CN game update replaces them, even when their content didn't change (seen 2026-10-25). After an
+> update, re-install the latest `cn-latest` build. Don't copy an old patch over a newer game version.
+> The main-menu "退出游戏" button (artwork) and the NetEase account login dialog are not part of
+> these files and stay in Chinese.
+
+> [!IMPORTANT]
+> **Story and cutscene subtitles stay in Chinese on the CN client.** The patch covers the UI,
+> quests, items and other in-game text, but the CN client reads cutscene and story subtitles from
+> a copy of the Mandarin text built into its data packages. It does not read them from the
+> translation files. The launcher verifies those packages on every start and re-downloads any
+> modified one, so they can't be patched without tampering with NetEase's integrity check. That
+> could put your account at risk, and this project doesn't do it. For a translated story, play the
+> global client with the global patch. Technical details: [`Format-Spec.md` §9](Obsidian-Vault/knowladge/Format-Spec.md).
 
 ### Reverting to English / Handling Game Updates
 

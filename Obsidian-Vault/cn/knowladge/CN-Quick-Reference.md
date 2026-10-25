@@ -92,6 +92,15 @@ First rows (2026-10-20, login screen): `017804555d77cc34` health notice (3 fixed
 global line 3 wrapped onto the ISBN block) and `d87da9c4e15aec8a` approval/ISBN/ICP line (kept
 on one line; Chinese registration numbers left verbatim, they are legal identifiers).
 
+## 5a. What the patch can't reach on CN: story/cutscene subtitles
+
+Cutscene and story subtitles on the CN PC client show the Mandarin `formatted_text` baked
+into the integrity-checked data packs, not `translate_words_map` ([[Format-Spec]] §9). Their
+keys are still translated (the bridge fills them), so the work isn't wasted: it becomes visible
+if NetEase ever routes CN subtitles through the map, or on a client that does. Don't spend
+extra effort polishing CN-only story lines for the CN PC client until then. When a player
+reports "story still Mandarin", that is §9, not a missing translation.
+
 ## 6. Workflow
 
 See [[CN-Resume-Procedure]]. One phase = `cn/locale/phaseN.jsonl`, rows

@@ -326,3 +326,56 @@ blocks                 # u8 codec | u32 cs | u32 us | payload — codec 5 = zstd
   the CN client loads repacked v2 files (Latin text renders fine) and the CN launcher's
   `StageCheck` (4,852 files passed) did not revert them. Main-menu `退出游戏` is artwork, and
   the account login dialog is the NetEase SDK UI — neither comes from these files.
+- **Game updates rewrite them anyway** (2026-10-25, client `20261025072716`): the update left the
+  locale files' content unchanged (byte-identical to the previous version) but rewrote
+  `zh_cn` and `__small` with the originals, which removed the installed patch. After every CN
+  update, hash the client files against `cn/*.before`. If they're identical, just rebuild
+  (`patch_all.py --profile cn`) and reinstall. No migration is needed.
+
+## 9. WWM China: story/cutscene subtitles don't use `translate_words_map` (found 2026-10-25)
+
+On the CN client (PC, `language = zh_cn`, no language option in game), the patch translates
+the UI, but **story and cutscene subtitles stay in Mandarin**. This is not a translation gap:
+the subtitle `怎么睡着了呀` occurs on 7 keys of `translate_words_map_zh_cn`, and all 7 are
+translated in the installed patch.
+
+**Where the displayed text comes from.** The data packs `LocalData\Patch\HD\v2\index*` /
+`data*` are the same v2 container, **mode 6**, with the same keystream as the locale files
+(§8). `wwm_locmap.read_container_ex` decodes all 46 of them (~4.5 GB raw). A cutscene timeline
+entry (`EntityTextSpan`, e.g. `data205` block 1934) stores, in a tagged serialization
+(`u16 nameLen | name | u8 type | value`):
+
+```
+text           04 <u64 LE keyHash>          e.g. 0x647cdf16558b6253 — the translate_words_map key
+formatted_text 08 <u16 len> <UTF-8>        "快点起来，快点起来！怎么睡着了呀！" (pre-baked Mandarin)
+format_result  08 ... "GoodFormat"
+```
+
+The global client (`HD\oversea`, container v1) carries the **same Mandarin `formatted_text`**
+and translates through the `text` key. The CN client shows `formatted_text` directly, which
+makes sense because Mandarin is its source language. `data3` also holds voice-over tables
+(`vo_*`, `Event/Chinese/*.bnk`, inline text as `20 <u16 len> <UTF-8>`, no key). The manifest
+(`HD\v2\MANIFEST`, mode 4, one block) names the related tables:
+`cutscene_localization.{text_2_text_no, md5_2_text_no, ukey_2_tid}`, `dialog_timelines.*`,
+`video_locale`, `entry_collect_movie_subtitle_data`.
+
+**Why it can't be patched (dead end, unless NetEase changes it).** The launcher verifies the
+**content** of every `HD\v2` data/index pack on every launch, *before* the game starts:
+
+```
+StageLoadMpk:verify_2 res=fail filename=HD/v2/data205
+Patcher:clear_local_patchmd5_and_list reason=corrupt_non_mpk_files   -> deleted + re-downloaded
+```
+
+Two PoCs failed this way: one with a 1-block change (+17 bytes), and one with the same size and
+mtime and a single block (768 bytes) recompressed to its exact original length. The reference
+lists (`essential.txt`, `patchmd5_*.txt`, `patchlist_*.txt`) are encrypted (`HEX_` + base64).
+`.mpk` files are checked as well, per 2 MB chunk against the `pak` table of `Patch.mpkdb`
+(`v0` path id, `v1` chunk no., `v2` chunk size, `v3` 64-bit checksum; not xxh64/xxh3/city/
+farm/murmur3/md5/sha1). Getting past this means forging NetEase's integrity data on an online
+game with anti-cheat. That puts accounts at risk, so it was not pursued. The locale folder is
+**not** part of this check, which is why the UI patch holds.
+
+**Open:** whether the Android CN client stores and verifies subtitles the same way (the owner is
+checking, 2026-10-25). Players who want translated story should use the global client, where
+subtitles go through the key.
