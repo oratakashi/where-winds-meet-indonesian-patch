@@ -52,3 +52,16 @@ Mountainfall (山倾 set), Swallow's Return (归燕), Pofeng·Bambu/Layang-layan
 Aula Satu-satunya Sepanjang Masa (万古一人殿), Lembah Tembok Besi (铁壁谷),
 Gua Bawah Tanah Karya Langit (天工地窟), Lima Nada (五音, loot-tier label), Seratus Profesi (百业),
 Jodoh Baik (善缘, idle-game resource), Semangat Pendekar (侠气 resource), Jejak Pendekar (侠迹).
+
+## Name consistency pass (2026-10-25)
+
+875 rows of this phase rewritten so names match global ([[CN-Quick-Reference]] §1–2a, rule
+locked the same day): places, NPCs, sects, Path names and Inner Ways were often written as
+Pinyin ("Gunung Bujian", "Lembah Hui"), half-translated or translated literally ("Gunung Tak
+Terlihat", "Persimpangan Milenium", "Bellstrike·Bayangan", "Teknik Batin") instead of the global
+English name (Hidden Mountain, Mirkvale, Millennium Crossing, Bellstrike - Umbra, Inner Way).
+Done with `python cn/tools/name_check.py --fix` (Pinyin variants, label segments that are exactly a
+name, curated `_LITERAL`/`_SUFFIX` tables); idx unchanged, no new rows. Names listed earlier in
+this log in an Indonesian or Pinyin form are superseded by the global form. CN-only names now
+stay Pinyin (never Indonesian). Remaining mismatches: `python cn/tools/name_check.py --idx <range>`.
+

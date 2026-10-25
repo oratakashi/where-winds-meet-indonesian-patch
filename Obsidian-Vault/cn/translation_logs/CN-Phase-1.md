@@ -876,3 +876,16 @@ Chouling Ke remains Pinyin at 28347: shared exact lookup only yields generic Unk
 - Opaque Mandarin tokens preserved exactly: <富商> at 29187, {目标积分值} at 29237, <青蛟堂师爷> at 29832. Do not translate inside these tokens.
 - idx29395 begins a literal # followed by Chinese in source. Output uses '# Titik...' to preserve # without accidentally introducing a #T markup token. Initial MARKUP finding fixed.
 - Loading sequences at 29355 and 29713 preserve all full repetitions and the final partial fragment, where present. Source tabs at 29095 retained; all per-row newline/tab counts verified.
+
+## Name consistency pass (2026-10-25)
+
+4,313 rows of this phase rewritten so names match global ([[CN-Quick-Reference]] §1–2a, rule
+locked the same day): places, NPCs, sects, Path names and Inner Ways were often written as
+Pinyin ("Gunung Bujian", "Lembah Hui"), half-translated or translated literally ("Gunung Tak
+Terlihat", "Persimpangan Milenium", "Bellstrike·Bayangan", "Teknik Batin") instead of the global
+English name (Hidden Mountain, Mirkvale, Millennium Crossing, Bellstrike - Umbra, Inner Way).
+Done with `python cn/tools/name_check.py --fix` (Pinyin variants, label segments that are exactly a
+name, curated `_LITERAL`/`_SUFFIX` tables); idx unchanged, no new rows. Names listed earlier in
+this log in an Indonesian or Pinyin form are superseded by the global form. CN-only names now
+stay Pinyin (never Indonesian). Remaining mismatches: `python cn/tools/name_check.py --idx <range>`.
+

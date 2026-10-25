@@ -20,17 +20,45 @@ It prints how the same Mandarin text was rendered in global (English) and in the
 translation. Use the Indonesian form (e.g. `止戈定音技` → "Skill Truce Attunement",
 `开封府` → "Kaifeng Prefecture", `宝箱` → "Peti Harta").
 
-## 2. CN-only names (no hit in `term_lookup`) — default, not yet locked
+**A name found here is copied exactly, everywhere in the line** — not only when the whole
+line is the name. `不见山主线-机关仓库` → "Alur utama Hidden Mountain-Mechanism Warehouse",
+never "Gunung Bujian", "Bujianshan" or "Gunung Tak Terlihat". Same for Path names
+(`鸣金·影` → "Bellstrike - Umbra", not "Bellstrike·Bayangan"), Inner Ways (`心法` →
+"Inner Way", never "Teknik Batin"; `飞仙醉言` → "Skyspeak") and NPCs.
 
-Global keeps names in their official English form. CN-only names have none, so until the
-owner decides otherwise:
-- **People, places, sects**: Pinyin without tone marks, each word capitalized, syllables of a
-  given name joined (`陈嘉铮` → "Chen Jiazheng"). For a compound like a sect or district, take
-  the pattern of its siblings from `term_lookup --contains <last character>`.
-- **Skills, items, gear, titles**: translate the meaning into Indonesian, following the
-  global label formats ([[Quick-Reference]] §2) — but if a sibling term from the same set
-  exists in global (`term_lookup --contains`), copy its pattern instead.
+**If the ID column is an Indonesian rendering of a place/NPC/Inner Way name while the EN
+column is the name** (e.g. EN "Millennium Crossing", ID "Persimpangan Milenium"), the ID is
+an old global mistake: use the EN form and fix the global row too (2026-10-25 fixed 22 such
+rows — [[Place-Names-Wiki]]). Global rule [[Quick-Reference]] §1 wins.
+
+## 2. CN-only names (no hit in `term_lookup`) — locked 2026-10-25
+
+Same rule as global: **a name is never translated into Indonesian.** CN-only names have no
+official English, so:
+- **People, places, sects, Inner Ways, named skills/moves, named items/gear sets/talismans,
+  titles**: Pinyin without tone marks, each word capitalized, syllables of a given name joined
+  (`陈嘉铮` → "Chen Jiazheng", `行藏帖` → "Xingcang Tie", `牵丝·韵` → "Silkbind - Yun"). Only the
+  generic word around it is Indonesian ("Peti", "Desa", "Gua", "lantai").
+- Part of the compound has a global name → keep that part ("五音启天平" → "Five Tones
+  Qitianping"); a sibling from the same set exists (`term_lookup --contains`) → copy its pattern.
+- Ordinary descriptive labels and item descriptions (not names) are still translated.
 - Record every new CN-only name in the phase log so later batches reuse it.
+
+## 2a. Check names before ending a batch — `name_check.py`
+
+```bash
+python cn/tools/name_check.py --idx 94000-97999          # rows in the batch that miss a global name
+python cn/tools/name_check.py --fix                       # replace Pinyin/known variants automatically
+python cn/tools/name_check.py --report names.jsonl        # full list (src, v, expected names)
+```
+
+It flags every row whose source contains a Mandarin term that global keeps as an English name
+(e.g. `晦谷` → "Mirkvale") but whose translation lacks it. `--fix` replaces Pinyin spellings
+("Lembah Hui", "Huigu"), label segments that are exactly a name, and the curated variants in
+its `_LITERAL`/`_SUFFIX` tables; literal translations it doesn't know stay in the report — fix
+those by hand (and add a frequent one to `_LITERAL`). Many remaining hits are loanword labels
+(Quest, Event, Boss, Gear, Solo Mode…) in internal editor labels — low priority, but follow
+global there too in new batches.
 
 ## 3. Markup
 

@@ -30,7 +30,9 @@ Translating and validating only needs `cn/translation_work/unique_strings.jsonl`
 2. Read the next batch from `cn/translation_work/unique_strings.jsonl` (idx order).
 3. Look up every proper noun with `python cn/tools/term_lookup.py …` (many terms per call).
 4. Append the translations to `cn/locale/phaseN.jsonl` (`{"idx": N, "v": "…"}`, no gaps).
-5. Validate: `python tools/qa_check.py --profile cn --locale "cn/locale/*.jsonl"` → 0 findings.
+5. Validate: `python tools/qa_check.py --profile cn --locale "cn/locale/*.jsonl"` → 0 findings,
+   then `python cn/tools/name_check.py --fix` and `python cn/tools/name_check.py --idx <batch range>`
+   — fix by hand every place/NPC/Inner Way name it still lists ([[CN-Quick-Reference]] §2a).
 6. Update the phase log `Obsidian-Vault/cn/translation_logs/CN-Phase-N.md` (create it on first
    use: range, output file, `## Batches` entry with idx range + date, new CN-only names).
 7. `python tools/progress.py --profile cn --write` and quote its overall line in the session

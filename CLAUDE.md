@@ -80,6 +80,8 @@ python tools/progress.py --profile cn --write         # -> Obsidian-Vault/cn/pro
 python tools/expand_locale.py --profile cn            # -> cn/work/strings.translated.jsonl
 python tools/patch_all.py --profile cn                # -> cn/work/patched/translate_words_map_zh_cn*
 python cn/tools/term_lookup.py 止戈定音技 …            # how global translated a Mandarin term
+python cn/tools/name_check.py [--idx A-B] [--fix]     # CN rows missing a global name (place/NPC/Inner Way);
+                                                       # --fix rewrites Pinyin/known variants in cn/locale
 ```
 
 - CN files are **container v2** (zstd dictionary encrypted with one keystream shared by every
@@ -186,7 +188,9 @@ context — only use one if the user explicitly asks for it by name.
 - `tools/profiles.py` — per-profile paths/variants/dumps/phases (`global`, `cn`); `--profile` on
   every tool. `tools/bridge.py` — the global→CN keyHash/text bridge.
 - `cn/tools/find_dict_in_dump.py` (recover the v2 dictionary keystream from the running CN client),
-  `cn/tools/term_lookup.py` (Mandarin term → global English/Indonesian via shared keys).
+  `cn/tools/term_lookup.py` (Mandarin term → global English/Indonesian via shared keys),
+  `cn/tools/name_check.py` (flags/fixes CN rows that don't use the global name of a place/NPC/
+  Inner Way found in their source).
 
 Pipeline: `translate_words_map_en` --dump--> `strings.jsonl` --(edit `v` field)--> validate with
 `qa_check.py` --patch--> new `translate_words_map_en`. For an update with several file variants

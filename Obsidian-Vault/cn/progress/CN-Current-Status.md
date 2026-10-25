@@ -41,6 +41,18 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale
 
 ## Session log
 
+- **2026-10-25 — Name consistency pass (all phases), CN name rule locked.** Places, NPCs, sects,
+  Path names and Inner Ways had been written as Pinyin, half-translated or literally translated
+  instead of the global English name. New `cn/tools/name_check.py` (check + `--fix`) rewrote
+  **29,194 CN rows** (P1 4,313 · P2 8,708 · P3 5,506 · P4 875 · P5 7,899 · P6 1,893) plus 7 rows by
+  hand (Inner Way names in 50269, 60887, 61717, 69759, 74768, 127954, 159010). 45 global rows fixed
+  at the source (22 bare place names rendered in Indonesian, e.g. "Persimpangan Milenium" →
+  Millennium Crossing — [[Update-2D]]). Rule: [[CN-Quick-Reference]] §1–2a — names are never
+  translated; CN-only names stay Pinyin. Rows still missing a global name after the pass:
+  33,479 (mostly loanword labels such as Quest/Gear/Boss in internal editor rows; literal place
+  renderings like plain "Istana" for 皇宫 remain) — work list via `name_check.py --report`. CN QA:
+  0 findings. Progress counts unchanged (no rows added).
+
 - **2026-10-25 — Phase 4 batch 1 (idx 90,000–93,999, 4,000 rows), phase started.**
   Mandarin → Indonesian translated directly in the main session (no subagents) as ten 400-row
   chunks, merged into new `cn/locale/phase4.jsonl`. Each chunk checked for idx continuity,

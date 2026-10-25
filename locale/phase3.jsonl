@@ -547,7 +547,7 @@
 {"idx": 5546, "v": "Spike Damage"}
 {"idx": 5547, "v": "Bulan jatuh ke dalam cermin—tanpa awal, tanpa akhir."}
 {"idx": 5548, "v": "Mengenai unit dengan Qi di bawah 30% dengan <Martial Art Skill: Soul Sweep> membuat mereka tidak bisa sprint atau melompat selama 5 detik."}
-{"idx": 5549, "v": "Persimpangan Milenium"}
+{"idx": 5549, "v": "Millennium Crossing"}
 {"idx": 5550, "v": "Kamera Bebas"}
 {"idx": 5551, "v": "Surat Keluarga"}
 {"idx": 5552, "v": "Olahraga kuno Tiongkok di mana dua peserta bersaing dalam kekuatan dan keterampilan, dengan unsur bela diri. Awalnya disebut Juedi (\"adu tanduk\"), dan kemudian diganti namanya menjadi Xiangpu (\"gulat\"), olahraga ini mencapai puncak popularitasnya pada Dinasti Song."}
@@ -596,7 +596,7 @@
 {"idx": 5595, "v": "Tulang putih bertumpuk bagai gunung, hanya untuk dibakar jadi abu dan lenyap dari pandangan."}
 {"idx": 5596, "v": "Pasir Merah Tua"}
 {"idx": 5597, "v": "Attack Reduction"}
-{"idx": 5598, "v": "Kuil Meow Meow"}
+{"idx": 5598, "v": "Meow Meow Temple"}
 {"idx": 5599, "v": "Gracetown"}
 {"idx": 5600, "v": "Kasih sedikit koin."}
 {"idx": 5601, "v": "Di sebelah timur Bodhi Sea milik Qinghe, kau melihat seorang biksu dalam kesulitan. Dia tampak kebingungan soal bandit yang terjatuh yang nasibnya masih belum jelas. Kau memutuskan untuk mendekat dan menawarkan bantuan."}
@@ -866,7 +866,7 @@
 {"idx": 5865, "v": "Undangan terkirim. Menunggu bantuan dari pemain lain."}
 {"idx": 5866, "v": "Saat musim semi menghembuskan kehidupan ke alam liar, kau menemukan Tang Yiduo kewalahan oleh hewan-hewan gelisah yang bangun dari tidur panjangnya. [#Y(Hanya Musim Semi)#E]"}
 {"idx": 5867, "v": "Temui Swallow sesuai rencana dan menuju ke tempat Black Gold berada."}
-{"idx": 5868, "v": "Tebing yang Terengah"}
+{"idx": 5868, "v": "Gasping Cliff"}
 {"idx": 5869, "v": "Mereka..."}
 {"idx": 5870, "v": "Panah Kayu"}
 {"idx": 5871, "v": "Tantangan Duel"}
@@ -2532,7 +2532,7 @@
 {"idx": 7531, "v": "Nak, aku tahu apa yang kau pikirkan. Kematian itu enggak menyeramkan. Kita semua bakal jadi tanah pada akhirnya."}
 {"idx": 7532, "v": "Setiap kali [Martial Arts Skill: Ignorance] mengenai unit dengan Qi di bawah 30%, Execution Skill berikutnya memberikan 3% lebih banyak damage, hingga 10 stack."}
 {"idx": 7533, "v": "Masih ada waktu buat berbalik."}
-{"idx": 7534, "v": "Menara Nimbus"}
+{"idx": 7534, "v": "Nimbus Tower"}
 {"idx": 7535, "v": "Huang Feiyu"}
 {"idx": 7536, "v": "Sebanyak itu?"}
 {"idx": 7537, "v": "Ilmu andalan Ketua Sekte Raging Tides, Shi Jiuge, tombak ini terkenal akan kekuatannya yang mengagumkan.\nSetiap tusukannya dikatakan mengguncang langit—tak terbendung, membanjiri, dan tak menyisakan ruang untuk mundur. Sabetannya yang menyapu jatuh dengan kekuatan badai, membawa momentum gagah berani yang menghancurkan segala di hadapannya, karena itulah ia dinamai Heavenquaker Spear."}
@@ -3140,7 +3140,7 @@
 {"idx": 8139, "v": "Buff Kosong"}
 {"idx": 8140, "v": "Affinity Rate #G+2%#E."}
 {"idx": 8141, "v": "Shu Qi"}
-{"idx": 8142, "v": "Gunung Dragonbend"}
+{"idx": 8142, "v": "Dragonbend Mountain"}
 {"idx": 8143, "v": "Baojin Tower di taman utara sedang mengadakan perjamuan untuk menyaksikan latihan angkatan laut. Carilah cara untuk menyusup ke area yang dijaga ketat."}
 {"idx": 8144, "v": "Kakak Kedua Hao"}
 {"idx": 8145, "v": "[Konstruksi]"}
@@ -3394,7 +3394,7 @@
 {"idx": 8393, "v": "Keberanian"}
 {"idx": 8394, "v": "Buka Peta"}
 {"idx": 8395, "v": "Bonus Sumber Daya"}
-{"idx": 8396, "v": "Toko Kuil Meow Meow"}
+{"idx": 8396, "v": "Toko Meow Meow Temple"}
 {"idx": 8397, "v": "Miringkan cawan giok, meneguk awan berarak laksana anggur.\nMenjelma menjadi sisik naga, membubung melampaui awan menuju langit tertinggi."}
 {"idx": 8398, "v": "Jubah Luar"}
 {"idx": 8399, "v": "Shadowfin"}
@@ -3402,7 +3402,7 @@
 {"idx": 8401, "v": "Tanggapi"}
 {"idx": 8402, "v": "Kelincahan Swallow"}
 {"idx": 8403, "v": "Kuesioner"}
-{"idx": 8404, "v": "Rentang Selaras"}
+{"idx": 8404, "v": "Harmonic Span"}
 {"idx": 8405, "v": "Api Melawan Kabut"}
 {"idx": 8406, "v": "Kau dan rekan-rekan pendekarmu bertarung hingga seluruh tenaga terkuras habis.\nMeski beberapa takdir tetap tak terelakkan, andai saja satu bidak dapat bertahan di papan catur ini..."}
 {"idx": 8407, "v": "Trait Awal Tingkat Lanjut"}
@@ -4509,7 +4509,7 @@
 {"idx": 9508, "v": "Thousand-Buddha Village"}
 {"idx": 9509, "v": "Tingkatkan peluang Rebuttal, menumpuk hingga 6 kali."}
 {"idx": 9510, "v": "Bicara dengan Xiaojin"}
-{"idx": 9511, "v": "Stasiun Baima"}
+{"idx": 9511, "v": "Baima Station"}
 {"idx": 9512, "v": "Terjebak dalam Dilema"}
 {"idx": 9513, "v": "Balada Pasir"}
 {"idx": 9514, "v": "Pendekar Sinan"}
@@ -4795,7 +4795,7 @@
 {"idx": 9794, "v": "Sebuah catatan yang penuh dengan gosip."}
 {"idx": 9795, "v": "Pada awal Song Utara, penjaga imperial, dari pangkat Dragon Guard ke bawah, tidak hanya melindungi ibu kota, tetapi juga bergilir melalui pos-pos regional dan garnisun. Saat ini, beberapa kamp rotasi di selatan Kaifeng sedang mempersiapkan diri untuk dikerahkan ke seluruh negeri. "}
 {"idx": 9796, "v": "Imperial Rope Dart - Dodge Kanan"}
-{"idx": 9797, "v": "Puncak Pendakian"}
+{"idx": 9797, "v": "Ascendant Peak"}
 {"idx": 9798, "v": "Damage yang diterima berkurang 28% saat sedang dipukul atau dikendalikan."}
 {"idx": 9799, "v": "Ketika Seratus Burung Berkicau"}
 {"idx": 9800, "v": "Mendukung hingga 2 pemain"}

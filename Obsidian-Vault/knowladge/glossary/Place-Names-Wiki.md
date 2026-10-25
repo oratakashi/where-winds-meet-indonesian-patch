@@ -111,3 +111,8 @@ names that do appear in game text.
 For each deviating string, restore the wiki-spelled name inside the existing Indonesian
 translation (idx unchanged; edit `v` in the owning `locale/*.jsonl`), then run
 `python tools/qa_check.py --locale "locale/*.jsonl"` and `python tools/progress.py --write`.
+
+The same rule covers places **not** on the wiki list: on 2026-10-25 22 bare-name rows
+(Millennium Crossing "Persimpangan Milenium", Nimbus Tower, Dragonbend Mountain, Willow Bank,
+Tianjing Dock, …) were restored to English — list in [[Update-2D]]. These matter twice: WWM China
+reuses global's Indonesian through the bridge and `term_lookup.py` ([[CN-Quick-Reference]]).

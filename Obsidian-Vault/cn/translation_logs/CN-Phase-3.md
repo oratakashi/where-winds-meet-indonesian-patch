@@ -376,3 +376,16 @@ Session history and terminology for `cn/locale/phase3.jsonl`. Rules:
 - A trailing newline added accidentally at 87778 was removed before merging. Remaining
   numeric differences are Chinese numeral conversion, date/month names and ordinals
   (including 89283); no unexplained numeric drift remains.
+
+## Name consistency pass (2026-10-25)
+
+5,506 rows of this phase rewritten so names match global ([[CN-Quick-Reference]] §1–2a, rule
+locked the same day): places, NPCs, sects, Path names and Inner Ways were often written as
+Pinyin ("Gunung Bujian", "Lembah Hui"), half-translated or translated literally ("Gunung Tak
+Terlihat", "Persimpangan Milenium", "Bellstrike·Bayangan", "Teknik Batin") instead of the global
+English name (Hidden Mountain, Mirkvale, Millennium Crossing, Bellstrike - Umbra, Inner Way).
+Done with `python cn/tools/name_check.py --fix` (Pinyin variants, label segments that are exactly a
+name, curated `_LITERAL`/`_SUFFIX` tables); idx unchanged, no new rows. Names listed earlier in
+this log in an Indonesian or Pinyin form are superseded by the global form. CN-only names now
+stay Pinyin (never Indonesian). Remaining mismatches: `python cn/tools/name_check.py --idx <range>`.
+

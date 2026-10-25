@@ -187,3 +187,16 @@ Session history and terminology for `cn/locale/phase2.jsonl`. Consolidated rules
   Sutra Burung Putih"; 福宁殿 "Aula Funing"; 庆寿殿 "Aula Qingshou"; 坤宁殿 "Aula Kunning"; 宜圣殿
   "Aula Yisheng"; 崇元殿 "Aula Chongyuan"; 升平楼 "Menara Shengping"; 稷下学宫 "Akademi Jixia";
   愁铃客 "Penjaga Lonceng Duka"; 怒虎无双 "Harimau Murka Tiada Tara"; 嗜血 "Haus Darah".
+
+## Name consistency pass (2026-10-25)
+
+8,708 rows of this phase rewritten so names match global ([[CN-Quick-Reference]] §1–2a, rule
+locked the same day): places, NPCs, sects, Path names and Inner Ways were often written as
+Pinyin ("Gunung Bujian", "Lembah Hui"), half-translated or translated literally ("Gunung Tak
+Terlihat", "Persimpangan Milenium", "Bellstrike·Bayangan", "Teknik Batin") instead of the global
+English name (Hidden Mountain, Mirkvale, Millennium Crossing, Bellstrike - Umbra, Inner Way).
+Done with `python cn/tools/name_check.py --fix` (Pinyin variants, label segments that are exactly a
+name, curated `_LITERAL`/`_SUFFIX` tables); idx unchanged, no new rows. Names listed earlier in
+this log in an Indonesian or Pinyin form are superseded by the global form. CN-only names now
+stay Pinyin (never Indonesian). Remaining mismatches: `python cn/tools/name_check.py --idx <range>`.
+
