@@ -13,6 +13,15 @@ Those existing translations are preserved byte-for-byte in this session.
 
 ## Batches
 
+- **2026-10-25 — final batch, idx 149,300–149,999, 700 rows; phase complete.**
+  Two parallel 350-row ranges appended after QA. Full range **120,000–149,999** is
+  contiguous, **30,000 / 30,000 (100%)**; original 29,300 rows preserved byte-for-byte.
+  Full CN QA: **133,178 entries including 2 overrides, 0 findings**. Newline/tab counts
+  match; 26 digit-sequence differences reviewed as numeral conversion, date formatting
+  or word order. **Overall: 133,176 / 159,176 unique strings (83.67%); CN-only in-game
+  coverage 793,592 / 823,139 (96.41%).** Generated with
+  `python tools/progress.py --profile cn --write`. No commit created. Next: Phase 4, idx 94,000.
+
 - **2026-10-25 — idx 145,300–149,299, 4,000 rows.** Three parallel ranges
   (145,300–146,633; 146,634–147,966; 147,967–149,299), merged into the phase file.
   Phase 5: **29,300 / 30,000 (97.67%)**; next idx **149,300**, 700 rows remain.
@@ -63,4 +72,29 @@ Done with `python cn/tools/name_check.py --fix` (Pinyin variants, label segments
 name, curated `_LITERAL`/`_SUFFIX` tables); idx unchanged, no new rows. Names listed earlier in
 this log in an Indonesian or Pinyin form are superseded by the global form. CN-only names now
 stay Pinyin (never Indonesian). Remaining mismatches: `python cn/tools/name_check.py --idx <range>`.
+
+## Final batch decisions — 2026-10-25
+
+- Updated CN-only-name rule applied: named items/skills without a shared-key counterpart
+  use Pinyin, while generic descriptions remain Indonesian. Examples: Hehua Jiu,
+  Juekuan Shouji, Cangrui Shouzhuo, Tianmo Huanhua Tang, Sishen Zhisuo, Guiyan,
+  Feishuang Lueying, Chongju Yin, Bianjing Xing, Yunzhong Yin, Tianye Jiansi,
+  Pofeng - Zhu, Zuijin, Fengyin and Xuanjin Jia.
+- Global name checker run with `--fix` on the temporary batch, followed by manual
+  review. Proper-name corrections include Divinecraft Dungeon, Old Mohist City,
+  Masked Troupe, The Rogue Order, Dreamfall Cliff, South Hutuo Bank, Buddha Statue Site,
+  Swallow's Bond, Happy Fizz, New Lingyin Temple, Spiritroost Crag, Perception Forest,
+  Jadestream Valley, Vigilance Pavilion, Mount Tai Blizzard, Halo Peak and Gracetown.
+  Perception Forest labels follow global: 无我 Mythic, 流云 Master, 断水 Expert.
+- Contextual substring matches are not names: 长乐 in Changlelao must not become
+  Yunzhou; the song title Yi Jiangnan must not become Yi Jiangnan State. Ordinary
+  grammar such as 第一, 一一, 小小, 于近 and 左言 is translated normally. Remaining
+  checker hits for common labels and incidental substrings were reviewed in context.
+- CN-only characters include Jiaxing, Qi Qiaoqiao, Ziche Dong, Chu Jie, Shi Yimo,
+  Zhou Xinyuan, Jiang Fengxing, Shuanshuan, Guan Dagang, Guan Xiaohe, Xu Yuan,
+  Xu Qingjia, Chen Jiuyao and Mo Dingding; Huagang remains Pinyin without a lookup hit.
+- Long lore at 149457 (Shuanshuan), 149486 (Guan Dagang), 149594 (Huagang), 149900
+  (all three fish-theft anecdotes, 43 logical lines) and 149934 (Drunken Poet origin)
+  translated in full. Protected `<叶龙骧首>` at 149553 retained verbatim, while its
+  unprotected display name uses Dragon Head. All source newlines and tabs retained.
 
