@@ -10,6 +10,19 @@ rewards, NPC lines and lore. Labels stay literal and short; prose is translated 
 
 ## Batches
 
+- **2026-10-25 — Batch 3 (idx 98,000–101,999, 4,000 rows).** Translated directly in the main
+  session (no subagents) as ten 400-row chunks. Every chunk was checked before merging: idx
+  continuity, newline/tab counts against the source, no Han leftovers outside protected tokens,
+  and a digit-sequence drift check (hits were only dates, Chinese numerals, lunar-month names
+  and word order). Appended to `cn/locale/phase4.jsonl`; exact range 90,000–101,999 contiguous,
+  previous 8,000 rows untouched. `name_check.py --fix` was run and its changes kept only for the
+  new rows (it also rewrote 7 older Phase 4 rows and 1 Phase 5 row, e.g. "Scented Wine Cao" for
+  94,009 — reverted, left for a dedicated name pass). Full CN QA: **141,178 entries including 2
+  overrides, 0 findings**. Phase 4: **12,000 / 30,000 (40.00%)**; next idx **102,000**.
+  **Overall: 141,176 / 159,176 unique strings (88.69%); CN-only in-game coverage
+  805,139 / 823,139 (97.81%).** Generated with `python tools/progress.py --profile cn --write`.
+  Coverage is frequency-weighted, includes internal editor labels and excludes the global bridge.
+
 - **2026-10-25 — Batch 2 (idx 94,000–97,999, 4,000 rows).** Mandarin → Indonesian in
   three parallel ranges (94,000–95,333; 95,334–96,666; 96,667–97,999), appended to
   `cn/locale/phase4.jsonl`. Exact phase range 90,000–97,999 verified contiguous; previous
@@ -108,3 +121,41 @@ through the next closed angle tag; that entire protected span, including Mandari
 remains verbatim under the current markup rule. Text outside it is translated. Two stray
 `#` markers in the middle range initially created false format tokens and were separated
 from following Latin letters before final QA.
+
+## Batch 3 terminology and preservation notes (2026-10-25)
+
+Global names used as-is (found with `term_lookup.py`): Perception Forest ranks — Beginner (出鞘),
+Novice (仗剑), Veteran (斩风), Adept (开山), Expert (断水), Master (流云), Legend (飞花), Mythic
+(无我) with Roman numerals (supersedes the Indonesian "Awan Mengalir / Bunga Terbang …" renderings
+in batch 1; those older rows are still to be harmonized). Places and things: Granary of Plenty
+(太仓粟), Masterwood Hamlet (梓匠居), Jadewood Court (琼林苑), Lotus Courtyard (曲院风荷), Hollow Vale
+(无心谷), Eternal Solitude Hall (万古一人殿), Skyreach Terrace (太岳台), Skymirror Tower (飞镜阁),
+Heaven Below (洞天福地), Floral Expanse Beyond (来生岸), Lion Barrow (狮子坟), Peachgrove Pass
+(桃林塞), Sunward Hill (向阳坡), Rockspire Street (景岩街), Dragon Gate Inn (龙门客栈), Crosswind
+Bazaar (长兴集), Greenshade Village (青葱里), Everbloom Bazaar (常盛集), Another Tavern (又一楼),
+Jade Gate Pass (玉门关), Wandering Ark (迷驿舟), Sky Shuttle (云槎), Palace of Annals (春秋别馆),
+Silken Veil Society (羽衣楼), Imperial Palace's Peak (紫禁之巅), Gallery (万相集).
+Things and skills: Meridian Touch (金玉手), Journal (武林录), Pitch Pot (投壶), Jianghu Tactics
+(江湖弈), Battleboard Game (打马棋), Madiao Cards (叶子戏), Gold-Making Vessel (生金瓯), Clay Doll
+(磨喝乐), Oddity (蹊跷, "Keanehan"), Stamina / Prep Step / Conversion / Heavy Stagger, Inner Passion
+(热血难凉), Snowbreak Spring (拨雪寻春), Wolflike Frenzy (狗嘴夺食), Talon Strike (鹰爪连凿), Yaksha
+Rush (药叉破魔), Dragon's Breath (神龙吐火), Skyward Raiment (霓裳徊天), Everspring Umbrella
+(醉梦游春), Strategic Sword (积矩九剑), Phalanxbane Blade (十方破阵), Thundercry Blade (嗟夫刀法),
+Silkbind - Jade/Deluge/Wings, Bamboocut - Draught/Kite/Wind, Stonesplit - Might/Strength,
+Bellstrike - Umbra/Splendor, Tiltrim (倾觞 set), Swift Gale (急风), Rainwhisper (时雨), Desert Wail
+(西凉鬼啸), Divinecraft (天工开物), Nine-colored Deer (九色鹿), Lucky Seventeen (小十七), Inkpincer
+Scorpion (笃墨蝎), Wicker Ray (竹文鳐), Jadesong Cicada (玉鸣蝉), Terracotta Boar (当康陶).
+
+CN-only provisional Pinyin: Chouling Ke (愁铃客, the assassin — 98,319 letter and later), Poguan Jin,
+Ayinu → name_check now writes **Aynur**, Hongzhuang (红妆 Path), Yuxi Huaying (余息化影), Mofa
+Randeng / Jienan Duzhong (moves at 98,714), Baopu Lu with Ziyun and Jingu caves (98,574), Xiaofeng
+Zhiyu, Zhouliu Xinghan, Fanyue Xingchuan, Tafei Yan, Tongjian Wenpu, Xuedeng Cangxing, Heipi,
+Baishou Tongzhou, Cuijian Podi, Shengcai Youdao.
+
+Preservation exceptions: tags containing Han text kept verbatim (see [[CN-Current-Status]]);
+99,521 renders the quoted character 日 as "Ri (matahari)" so no Han remains; the conlang table at
+99,862 is transliterated to Pinyin with the same 21 lines; the repeated placeholder at 100,033 is
+kept as repeated "Penjelasan acara". Long prose translated in full: Chouling Ke's letter (98,319),
+Baopu Lu diary (98,574), the card-game rules (98,952), the political essay "Bagian Kelima"
+(101,483), the two-friend swordsman tale (100,952), the Lingyin travelogue (101,757) and the
+shrine ledger (101,165).
