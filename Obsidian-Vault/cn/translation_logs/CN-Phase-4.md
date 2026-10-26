@@ -10,6 +10,14 @@ rewards, NPC lines and lore. Labels stay literal and short; prose is translated 
 
 ## Batches
 
+- **2026-10-26 — Batch 6 (idx 110,000–113,999, 4,000 rows).** Translated directly in the main
+  session (no subagents) as ten 400-row chunks; same per-chunk checks as batch 5 (idx continuity,
+  newline/tab counts, token multiset, Han leftovers, digit drift). Appended to
+  `cn/locale/phase4.jsonl`; exact range 90,000–113,999 contiguous, previous 20,000 rows untouched.
+  `name_check.py --fix` kept only for the new rows (386 edits). First QA run was clean after
+  restoring the Han-bearing token `{疾病名}` (113,176); final full CN QA: **153,178 entries including
+  2 overrides, 0 findings**. Phase 4: **24,000 / 30,000 (80.00%)**; next idx **114,000**.
+
 - **2026-10-26 — Batch 5 (idx 106,000–109,999, 4,000 rows).** Translated directly in the main
   session (no subagents) as ten 400-row chunks; same per-chunk checks as batch 4 (idx continuity,
   newline/tab counts, token multiset, Han leftovers, digit drift). Appended to
@@ -237,3 +245,39 @@ chess story (106,282), Mingshan the Shuanglu novice (107,057, 108,200), the Mohi
 (107,259), Leng San's rules (107,284), A'jin's story (109,118), the Mohist letter to a friend
 (109,247) and the Suanshi tea passage (109,756). Remaining name_check hits (about 1,000 rows)
 are loanword labels (Gear, Quest, Season, Outpost …) in internal editor rows — low priority.
+
+
+## Batch 6 terminology and preservation notes (2026-10-26)
+
+Global names used as-is (found with `term_lookup.py`): Heavenquaker Spear (九曲惊神枪), Wraith Village (荒魂村),
+Yuchen Hall (玉宸殿), Tianyi Tower (天一楼), Foreigner Street (洋人街), Coolshade Hall (西凉殿), Whitecrown
+Fortress (白头城), Goldflow Slope (流金坡), Sweetwine Tower (酒香塔), Squarewall Hold (方盘城), Hero's Tomb
+(侠之冢), Brightlore Hall (昭文馆), Sentinel Howlion (镇关吼), Scholars' Hearth (红炉雅集), Jianlong Monastery
+(建龙观), Springwave Pavilion (春水阁), Evergreen Grove (拥翠林), Stonewash Strand (浣石浦), Nine-Spire Peaks
+(三峰九仞), Drought Demon (旱魃), Yu Hao (喻皓), Plowing Hill (耘丘, not Pinyin), Lady White (白娘子), Echo (聆音),
+Hundred Delicacies (珍馐百味), Temporal Pavilion (时楼), Verdant Spire (耸翠楼), Qingshou Hall (庆寿殿), Wolf
+Maiden (白狼主), Baima Station (白马驿), Leifeng Pagoda (雷峰塔), Cleardew Terrace (玉露台), Cloud Terrace (凌云台),
+Ascendant Peak (扶摇峰), Peltwing Squirrel (飞夷由), Revival Hall (回春堂), Bloodscale Hall (赤龙堂), The Furr-vorite
+Child (狸猫太子), A Hero's Bane (英雄剑), Venison Broth (见鹿羹), Lodestar Swordmaster (司南剑客), Prime Essence
+(乾元), Jiazhong Melody (夹钟奏雅), Huangzhong Resonance (黄钟正响), Brimflow (盈盏), Qiantang Dream Journal
+(钱塘梦行记), Wildtrail (寻野值), Dasan Pass (大散关), Hayagriva Temple (马明王庙), Stellabed Rocks (卧星岩), Beast
+Reverie (鱼龙蔓延), Gourd of No Return (一葫不归), Sky Lantern (孔明灯), Lightning Speed (风驰电掣), Wind Sense
+(听风辨位), Fire Breathing / Taibai (吐火 / 太白), Wind-kov (燕科夫), Engagement (不肝), Advanced Dye (云霞染),
+Tongming / Clever Gambit (Battleboard ranks), Grandmaster (藏锋, Jianghu Tactics rank), Hetu Fragment, Shadow Puppet.
+`name_check --fix` additionally normalised Jiangnan State, General's Shrine, Petalfall Crossing, Forsaken Quarter,
+Dragonbend Mountain, The Rust-Scented Moon and Oddity (蹊跷) in label rows.
+
+CN-only provisional Pinyin: Chouling Ke's bamboo-forest story (112,237) names the traitor Banzhu (斑竹);
+Mo Kongjun (莫箜君, wine), Hu Mengji (虎孟极), Qingping Jushi (青瓶居士), Leiyin (雷音 Chivalrous Mark), Wujin Tie
+(乌金铁, crafting material), Jiuming (九命, the cat), Yunxia Ran (云霞染 as a historical poem name),
+Jiuchong Chunse (九重春色), Pofeng·Bambu (破风·竹, carried over), mount names in 113,465 (Diaojing Baie Da'e,
+Hashiqi, Jizhui Bao, Shuangfeng Tuo, Rendao Lü, Lishan Lie, Xueli'er, Anxiang, Chanyi Weilai, Nanjiang Miyu, Mochen
+Danzhu, Ranjin Ming, Penglai Ling, Qingyin Xiao, Ziwei Que), Kanerzi Village (坎尔孜村), Louwailou (楼外楼),
+Wubi Inn (无比客店). 丰和村 treated as a variant of Harvestfall Village (丰禾村).
+
+Preservation exceptions: Han-bearing token `{疾病名}` kept verbatim at 113,176; `$T(5149)` / `$T(5227)` name
+variables kept; Rank labels of Jianghu Tactics written with Roman numerals (Adept II, Legend III, Grandmaster I).
+Long prose translated in full: the "Catatan Cangfeng" opponent blurbs (110,020 / 111,553 / 112,084 / 112,130 /
+112,497 / 113,765), Chouling Ke's story (112,237), Jiuming the cat (112,594), Qiancui Village (112,318), the
+black-snake sisters (113,122), the Hexi-Liangzhou Qiantang passage (111,175) and the ledger of 113,276.
+Remaining name_check hits are loanword labels (Gear, Quest, Season, Outpost …) in internal editor rows — low priority.
