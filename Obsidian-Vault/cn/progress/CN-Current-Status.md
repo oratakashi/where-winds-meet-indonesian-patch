@@ -1,6 +1,6 @@
 # CN Current Status
 
-**Last updated: 2026-10-26 — CN Phase 4 batch 4 complete: added 4,000 rows at idx 102,000–105,999. Phase 4: 16,000 / 30,000 (53.33%); resume at idx 106,000. Phases 1, 2, 3, 5 and 6 complete.**
+**Last updated: 2026-10-26 — CN Phase 4 batch 5 complete: added 4,000 rows at idx 106,000–109,999. Phase 4: 20,000 / 30,000 (66.67%); resume at idx 110,000. Phases 1, 2, 3, 5 and 6 complete.**
 Single source of truth for the **WWM China (燕云十六声)** translation — overwritten each
 session. Phase plan: [[CN-Phase-Roadmap]]; resume checklist: [[CN-Resume-Procedure]];
 rules: [[CN-Quick-Reference]]. The global translation has its own [[Current-Status]].
@@ -20,9 +20,9 @@ never edit them by hand. CI fails a PR whose block is stale (`--profile cn --che
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **145,176** | **159,176** | **91.20%** |
-| ↳ CN-only corpus (Phases 1–6) | 145,176 | 159,176 | 91.20% |
-| **In-game text coverage** — CN-only `translate_words_map_zh_cn` entries (`freq` in `unique_strings.jsonl`; keys shared with global come via the bridge) | **809,139** | **823,139** | **98.30%** |
+| **Unique strings translated (all)** | **149,176** | **159,176** | **93.72%** |
+| ↳ CN-only corpus (Phases 1–6) | 149,176 | 159,176 | 93.72% |
+| **In-game text coverage** — CN-only `translate_words_map_zh_cn` entries (`freq` in `unique_strings.jsonl`; keys shared with global come via the bridge) | **813,139** | **823,139** | **98.79%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -33,13 +33,27 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `cn/locale
 | 1 | 0–29,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 2 | 30,000–59,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 3 | 60,000–89,999 | done | — | 30,000 / 30,000 | 100.00% |
-| 4 | 90,000–119,999 | **active** | 106,000 | 16,000 / 30,000 | 53.33% |
+| 4 | 90,000–119,999 | **active** | 110,000 | 20,000 / 30,000 | 66.67% |
 | 5 | 120,000–149,999 | done | — | 30,000 / 30,000 | 100.00% |
 | 6 | 150,000–159,175 | done | — | 9,176 / 9,176 | 100.00% |
 
 <!-- progress:end -->
 
 ## Session log
+
+- **2026-10-26 — Phase 4 batch 5, idx 106,000–109,999 (4,000 rows).** Mandarin → Indonesian
+  translated directly in the main session (no subagents) as ten 400-row chunks, each checked
+  before merging by idx continuity, newline/tab counts, `qa_check` token multiset and Han
+  leftovers (digit drift reviewed: only dates, Chinese numerals, lunar months and word order).
+  Merged into `cn/locale/phase4.jsonl`; exact phase range 90,000–109,999 verified contiguous
+  (20,000 rows) and the previous 16,000 rows left byte-for-byte as committed. `name_check.py
+  --fix` applied, kept only for the new rows (498 edits; its edits to older rows and to
+  `phase5.jsonl` reverted). Han-bearing tags kept verbatim (`<金蟾腾跃>` 106,508, `<暂离>` 109,905);
+  the repeated placeholder at 109,234 kept as 96 × "Penjelasan acara". Full CN QA: **149,178
+  entries including 2 overrides, 0 findings**. **Overall: 149,176 / 159,176 unique strings
+  (93.72%); CN-only in-game coverage 813,139 / 823,139 (98.79%).** Generated with
+  `python tools/progress.py --profile cn --write`. Phase 4: **20,000 / 30,000 (66.67%)**; next
+  idx **110,000**. Terminology: [[CN-Phase-4]].
 
 - **2026-10-26 — Phase 4 batch 4, idx 102,000–105,999 (4,000 rows).** Mandarin → Indonesian
   translated directly in the main session (no subagents) as ten 400-row chunks, each checked

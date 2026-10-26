@@ -10,6 +10,15 @@ rewards, NPC lines and lore. Labels stay literal and short; prose is translated 
 
 ## Batches
 
+- **2026-10-26 — Batch 5 (idx 106,000–109,999, 4,000 rows).** Translated directly in the main
+  session (no subagents) as ten 400-row chunks; same per-chunk checks as batch 4 (idx continuity,
+  newline/tab counts, token multiset, Han leftovers, digit drift). Appended to
+  `cn/locale/phase4.jsonl`; exact range 90,000–109,999 contiguous, previous 16,000 rows untouched.
+  `name_check.py --fix` kept only for the new rows (498 edits). QA first run was clean after
+  restoring `#G5%#E` (107,014) and the `<金蟾腾跃>` tag (106,508); final full CN QA: **149,178
+  entries including 2 overrides, 0 findings**. Phase 4: **20,000 / 30,000 (66.67%)**; next idx
+  **110,000**.
+
 - **2026-10-26 — Batch 4 (idx 102,000–105,999, 4,000 rows).** Translated directly in the main
   session (no subagents) as ten 400-row chunks; same per-chunk checks as batch 3 (idx continuity,
   newline/tab counts, Han leftovers, digit drift). Appended to `cn/locale/phase4.jsonl`; exact range
@@ -201,3 +210,30 @@ students' confessions (104,250), the Changle-lao story (104,404) and the Mohist 
 Remaining name_check hits (about 1,000 rows) are loanword labels (Gear, Quest, Normal, Outpost …) in internal
 editor rows — low priority.
 
+
+## Batch 5 terminology and preservation notes (2026-10-26)
+
+Global names used as-is (found with `term_lookup.py`): Sealed Treasury (封桩库), Bamboo Abode (竹林旧居),
+Jadebrook Mountain (璧泉山), Palace of Annals (春秋别馆), Blissful Retreat (不羡仙), Imperial Artisan Court
+(百工坊), Lingyin Temple (灵隐寺), Chongyuan Hall (崇元殿), Kunning Hall (坤宁殿), Xuanyuan Cult (玄元教),
+Hexi (河西), Steed's Pass (饮马隘), Velvet Shade (醉花阴), Penglai's Peaks (蓬山万重), Veil of Lotus
+(莲渡幽罗), Lingering Melody (袅袅之音), Resonating Melody (绕梁之音), Attunement Stone (定音石), Floral
+Weave (花蕊织), Perception Forest (觉障林), Parting Tears (离人泪), Skyreach Terrace (太岳台), Martial
+Temple (武庙), Battle Pass (战令), Wandering Tales (万事知), Skill Theft (偷师), Hutuo (滹沱), Meow Meow
+(妙妙喵), Execution/Conversion (处决/易武). `name_check --fix` additionally normalised Jiangnan State,
+Well of Heaven (天泉), Hall of State (官署), Contraption House (机关屋), South Gate Avenue (南门大街),
+Mercyheart Town (慈心镇), Dao Lord (道主), Path Tower (流派塔), Guild (百业), Outpost, Formbend (易相).
+
+CN-only provisional Pinyin: Zeng Xian, Zheng Ran, Zhao Yan, Chen Zixi, Feng Cheng, Qin Bo, Wu Er,
+Yan Ping, Cai Yin, He Hupo, Yu Dinghui, Leng San, Wang Qing (Mohist diary 107,259), Mingshan
+(明善, the Lingyin novice, 107,057 / 108,200), Yanshou (延寿), Zhang Wanshi (墨守之心), Shen Haohao /
+Shen Tuotuo, Xun Cuiying, Tao Yuxia. Era names kept as Pinyin ("Tahun pertama Longde / Tianfu /
+Longxing / Tianxi") in the OCR-variant puzzle rows (106,420 / 106,522 / 107,860).
+
+Preservation exceptions: Han-bearing tags kept verbatim (`<金蟾腾跃>` 106,508, `<暂离>` 109,905);
+`$T(30)` / `$T(2005)` name variables kept; the repeated placeholder at 109,234 is exactly 96 ×
+"Penjelasan acara" (space-separated, as in 100,033). Long prose translated in full: the garden
+chess story (106,282), Mingshan the Shuanglu novice (107,057, 108,200), the Mohist diary
+(107,259), Leng San's rules (107,284), A'jin's story (109,118), the Mohist letter to a friend
+(109,247) and the Suanshi tea passage (109,756). Remaining name_check hits (about 1,000 rows)
+are loanword labels (Gear, Quest, Season, Outpost …) in internal editor rows — low priority.
