@@ -10,6 +10,14 @@ rewards, NPC lines and lore. Labels stay literal and short; prose is translated 
 
 ## Batches
 
+- **2026-10-26 — Batch 4 (idx 102,000–105,999, 4,000 rows).** Translated directly in the main
+  session (no subagents) as ten 400-row chunks; same per-chunk checks as batch 3 (idx continuity,
+  newline/tab counts, Han leftovers, digit drift). Appended to `cn/locale/phase4.jsonl`; exact range
+  90,000–105,999 contiguous, previous 12,000 rows untouched. `name_check.py --fix` kept only for
+  the new rows. Full CN QA: **145,178 entries including 2 overrides, 0 findings** (first run: 6
+  MARKUP findings — five Han-bearing `<…>` tags and the dict at 105,396 — restored verbatim).
+  Phase 4: **16,000 / 30,000 (53.33%)**; next idx **106,000**.
+
 - **2026-10-25 — Batch 3 (idx 98,000–101,999, 4,000 rows).** Translated directly in the main
   session (no subagents) as ten 400-row chunks. Every chunk was checked before merging: idx
   continuity, newline/tab counts against the source, no Han leftovers outside protected tokens,
@@ -159,3 +167,37 @@ kept as repeated "Penjelasan acara". Long prose translated in full: Chouling Ke'
 Baopu Lu diary (98,574), the card-game rules (98,952), the political essay "Bagian Kelima"
 (101,483), the two-friend swordsman tale (100,952), the Lingyin travelogue (101,757) and the
 shrine ledger (101,165).
+
+## Batch 4 terminology and preservation notes (2026-10-26)
+
+Global names used as-is (found with `term_lookup.py`): Crimson Cliff (丹崖), Witherwilds (荒蚀林),
+Peace Bell Tower (太平钟楼), Sage's Knoll (藏贤岗), Kilnfire Ridge (烧瓷岭), Heaven's Pier (神仙渡),
+Battlecrest Slope (七伐坡), Bodhi Sea (菩提苦海), Gasping Cliff (嗟叹崖), Ghostlight Market (鬼市子),
+Ever-Normal Granary (常平仓), Inkbound Order (文津馆), Karez Well (坎儿井), Finesteed Hamlet (伏马庄),
+Zhongdu Bridge (中渡桥), Thousand-Buddha Village (千佛村), Zenith Box (同天匣), Evershift Labyrinth
+(大衍迷阵), Unbound Cavern (无忧洞), Mohist Hill (墨山道), Mercyheart Monastery (慈心山院), Halo Peak
+(佛光顶), Aureate Pavilion (绣金楼), Wildmane Ranch (不伏马场), Seedling Temple (早悟寺), Buddha Fort
+(佛爷寨), Floral Expanse Beyond (来生岸), Lion Barrow (狮子坟), Moonveil Mountain (隐月山), Jinming Pool
+(金明池), Dragonbend Academy (封龙书院), Revelry Hall (樊楼), Nimbus Tower (云华楼), Funing Hall (福宁殿),
+Purity Tower (太清楼), The Palace Guard Office (殿前司), Dreamfall Cliff (望淮南崖), Hangrock Hamlet
+(悬空寨), Yunjia Cove (云家岙), Skyward City Ruins (飞天残垣), Divinecraft Dungeon (天工地窟), Eight
+Immortals (八仙过海), Jianghu Legacy (侠迹), Windtail (燕叽), Echo Jade (长鸣玉), Skytouch Rail (凌云轨),
+Oscillating Jade (振玉), Softweave Dye Powder (素裳染粉), Inscription (题跋), Inner Way Notes (心法心得),
+Precept Value (守律值), Mystic Skills (奇术), Chivalrous Mark (侠痕), Thundercry Blade (嗟夫刀法), Nameless
+Sword (无名剑), Phalanxbane Blade (十方破阵), Everspring Umbrella (醉梦游春), Strategic Sword (积矩九剑),
+Stonesplit - Might (裂石威), Bellstrike - Hong/Umbra, Silkbind - Jade/Yi/Lin/Yun, Pozhu - Kite/Dust/Cawan.
+Status words: Vulnerable → "Rentan", Exhausted → "Kelelahan", Deflection, Paralysis → "Kelumpuhan".
+
+CN-only provisional Pinyin: Shihou Zhengsheng (狮吼正声), Cunquan (寸拳), Juying (绝影 Chivalrous
+Mark), Jiuchong Chunse (九重春色, Musim Semi Sembilan Lapis in two early rows), Chili Gong (赤鲤公),
+Wangyue Chanyuan (望月婵媛), Chouling Ke, Lengzhu (冷烛), Li Si, Tang Xinci, Zhuge Feifei, Lu Yinge,
+Luo Qinghan, Lan Qilu, Yuan Xingpei, He Youqu, Shen Yilun, Xin Wangshu, Qingping Jushi, Shanzao
+(山臊, kept as a name).
+
+Preservation exceptions: Han-bearing tags kept verbatim (see [[CN-Current-Status]]); the Lua-style dict at
+105,396 is kept verbatim including its Chinese comments. Long prose translated in full: the Mohist
+Sky Shuttle travelogue (105,624), Nenek Bao's Seven-Treasure tea origin (105,078), the three
+students' confessions (104,250), the Changle-lao story (104,404) and the Mohist monkey legend (104,217).
+Remaining name_check hits (about 1,000 rows) are loanword labels (Gear, Quest, Normal, Outpost …) in internal
+editor rows — low priority.
+
