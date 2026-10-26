@@ -10,6 +10,31 @@ rewards, NPC lines and lore. Labels stay literal and short; prose is translated 
 
 ## Batches
 
+- **2026-10-26 — Batch 8 (idx 118,000–119,999, 2,000 rows), phase complete.** Three parallel
+  ranges (118,000–118,666; 118,667–119,333; 119,334–119,999), merged after QA and individual
+  review of automatic name changes (39 / 76 / 25). Exact full range 90,000–119,999 contiguous,
+  30,000 rows; previous 28,000 rows preserved byte-for-byte. Newline/tab counts match source;
+  no Han outside protected tokens. Numeric differences reviewed as dates, Chinese numerals
+  and word order. Full CN QA: **159,178 entries including 2 overrides, 0 findings**.
+  Phase 4: **30,000 / 30,000 (100.00%)**; all six CN phases now complete, no unfinished idx.
+  **Overall: 159,176 / 159,176 unique strings (100.00%); CN-only in-game coverage
+  823,139 / 823,139 (100.00%).** Generated with `python tools/progress.py --profile cn --write`.
+  Coverage includes internal editor labels and excludes the separate global bridge.
+
+- **2026-10-26 — Batch 7 (idx 114,000–117,999, 4,000 rows).** Three parallel ranges
+  (114,000–115,333; 115,334–116,666; 116,667–117,999), merged after per-range QA and
+  proper-name review. Exact range 90,000–117,999 contiguous; previous 24,000 rows preserved
+  byte-for-byte. Newline/tab counts match source; no Han outside protected tokens. Numeric
+  differences reviewed as dates, Chinese numerals and word order. Name checker applied to
+  temporary batches (176 / 193 / 166 automatic edits), followed by manual review and reversal
+  of harmful substring matches. Full CN QA: **157,178 entries including 2 overrides, 0 findings**.
+  Phase 4: **28,000 / 30,000 (93.33%)**; next idx **118,000**, 2,000 rows remain.
+  **Overall: 157,176 / 159,176 unique strings (98.74%); CN-only in-game coverage
+  821,139 / 823,139 (99.76%).** Generated with `python tools/progress.py --profile cn --write`.
+  Coverage includes internal labels and excludes the global bridge. Temporary chunks were
+  recovered from authored session tool inputs after per-command sandbox TEMP directories
+  disappeared; final merge used a stable system temporary directory outside the repository.
+
 - **2026-10-26 — Batch 6 (idx 110,000–113,999, 4,000 rows).** Translated directly in the main
   session (no subagents) as ten 400-row chunks; same per-chunk checks as batch 5 (idx continuity,
   newline/tab counts, token multiset, Han leftovers, digit drift). Appended to
@@ -281,3 +306,72 @@ Long prose translated in full: the "Catatan Cangfeng" opponent blurbs (110,020 /
 112,497 / 113,765), Chouling Ke's story (112,237), Jiuming the cat (112,594), Qiancui Village (112,318), the
 black-snake sisters (113,122), the Hexi-Liangzhou Qiantang passage (111,175) and the ledger of 113,276.
 Remaining name_check hits are loanword labels (Gear, Quest, Season, Outpost …) in internal editor rows — low priority.
+
+## Batch 7 terminology and preservation notes (2026-10-26)
+
+Global names used as-is: Gourmand's Grove (酒肉山林), Heaven's Pier (神仙渡), Spiritroost Crag
+(栖鸟岩, not Stellabed Rocks), Halo Peak (佛光顶), Aureate Pavilion (绣金楼), Ever-Normal Granary
+(常平仓), Roaring Sands (博浪沙), Faded Fragrance Shop (故香居), Vernal Umbrella (九重春色),
+Midnight Blades, Calmwaters, Finesteed Hamlet, Reflection Temple, Zenith Box, Sun Bead,
+Reserve Archives, Jadestream Valley, Starweave, Jadeclasp, Cloudshear, Osmanthus Branch,
+Blackiron Pangolin, Oddity Lotus, Cleftpeak, Rainwhisper, Moonflare, Hawkwing, Eaglerise,
+Swallowcall, Masterwood Hamlet and Meridian Touch. The whole feature 和鸣 is **Draw**
+(30 lookup hits), not Harmony or the substring match Resonating Melody.
+
+CN-only provisional Pinyin: Na Shiyu (那时雨), Tiexin Cuidu (铁心淬毒), Benlang (奔狼), Yunqi Zhujing (云栖竹径), Shihun Lindong (狮魂凛动),
+Jingying Yaoyue (静影摇月), Youyun Zhi (幽云志), Tianwen Tai, Tiebi Valley, Citian Zhenyu,
+Hanren Shoushi, Mofa Randeng, Jienan Duzhong, Yunhai Liuxing, Feirong Qingxiang, Dongjing Xiaofu,
+Baopu Lu, Huiri Yongming Yuan, Lingjiu Peak, Qianji Zhi Xia, Dalang Taosha, Jinguo Zhi Shi,
+Jushang Daimian and Shaying Qijie. Accessory promotion at 115,897 retains Fenghua Xianying,
+Xueyue Ningguang, Feiyun Gongying, Jiaoyue Tonghui, Gongci Qinghui, Bingdeng Wenyue,
+Zhiguang and Changxiang Yi as names.
+
+Automatic name replacements need context: Changle-lao, Danxin Ling and Zheng Ruan must not
+be changed by substring matches to Yunzhou-lao, Fieryheart Ling and Zheng the Frostbloom.
+Generic 山鸭 remains an animal description, not the NPC Shan Ya. These automatic changes
+were reverted in the temporary batch; do not reapply them blindly. Final review also restored
+Na Shiyu (114,609) and Tiexin Cuidu (114,990) from partial matches to Rainwhisper and Forged Spirit.
+
+Protected Han-bearing tokens remain verbatim at 114,663, 116,513 (`<特别签>`), 117,442
+(entire angle-bracket narration), 117,571 (`<叶龙骧首>`), 117,680 (two Skill tags) and
+117,761 (LINK attribute `url=' 网易游戏'`). Full prose retained: balance changes at 114,356,
+the repentant bandit's diary at 114,838, the consolation draft at 114,996, Mohist lore at
+114,999, the wine ledger at 115,482 (18 newlines), accessory promotion at 115,897,
+the Boss modifiers at 116,180 and the animation at 117,248 (8 newlines). Repeated loading
+text at 116,039 retains the source repetition count. Customer-service number 95163988
+and LINK markup at 117,761 preserved. Editor labels use Tier for chest quality.
+
+## Batch 8 terminology and preservation notes (2026-10-26)
+
+Global names and labels: Melodic Stone (妙音石), Modulating Stone (传律石), Sundara Land,
+Honorbound, Jianlong Temple, Palace of Supreme Oneness, Skygrasp Rope Dart, Yaksha Rush,
+Evercare Clinic, Swaying Heights, Armillary Sphere, Destined Encounter, Ivorybloom,
+Lone Cloud (孤云), Inkbound Order (文津馆), Tiltrim (倾觞), Phantom-veil (鬼不鬼),
+God of Avarice (黑财神), Fan Glider (玉扇游山), Echoes of Creation (天地兼鸣), Skyward Bond,
+Talon Strike, Black-clad Thief, Scholar's Repose, Veridian Envoy (青羽逐云), Four Seasons
+Residence, Blade's Will, Auric Lotus, Blessings Abound, Wind's Promise and Eternal Zenith.
+Melodic Stone - Ultimate at 118,202 follows the prior CN idx 4,583 suffix for 极.
+
+Lone Cloud rank passage (119,158): 谒者 → Outer Disciple, 灵台 → Inner Disciple,
+明堂 → Core Disciple, 天枢 → Dubhe, 天渊 → Chief Elder. The alternative path 归隐 has no
+lookup hit and stays Guiyin. All repeated occurrences use the same rank name.
+
+CN-only provisional names: Duanchang Chouling, Shenheng Yueluo, Fenghuo Yiyi, Jinglei Yuan,
+Tengshe Chengwu, Zhongyou Liming, Hulu Zhang, Longhu Ling, Xixing Dafa, Shuangren Jian,
+Bailu Ta, Wuyin Valley, Jinglei Yaji, Gaotian Guan, Liuyun Guan, Manyue Jue, Fuying Yan-Cai,
+Cuifeng Yu, Chongju Yin, Yanliu, Nangaofeng, Bailongwang Shrine, Yanxia Cave, Zui Daoren,
+He Zeng, Pozhen Zi, Chuanyun Zhishui, Longtou Foguang Yu, Zongjing Lu, Qigan Chichan,
+Shanqing, Lingyin Ji, Kunmang Chanlin, Shanhe Yonggu, Denghua Luo and Xuejin.
+侠气 follows the Phase 4 precedent Semangat Pendekar; 气海 remains Lautan Qi.
+
+Automatic substring replacements were reviewed and rejected for Changle-lao (118,179 /
+119,119), Du Gongbu (118,161), Jinglei Yuan (118,063), Jinglei Yaji (118,674), Qianji Bingqu
+(119,160), Liuyun Guan (119,333), Salamander, Pozhen Zi, Chuanyun Zhishui and Longtou Foguang Yu.
+Do not apply a shorter name found inside a different full name without checking context.
+
+Protected Han tags retained: `<尚宫>` at 118,742 and `<鹰爪连凿>` at 119,520. Zhang Wanshi's
+animation at 118,170 is complete with 12 newlines; literal `#` before stage directions is
+followed by a space to avoid creating false `#Z` / `#P` tokens. Long lore and instructions
+at 118,072, 118,096, 118,713, 118,879, 118,987, 119,158 and 119,562 are translated in full.
+Loading text at 119,297 keeps six complete repetitions plus its source typo/truncation;
+119,890 keeps 61 repetitions of "Memuat data" plus the trailing truncated 数 as "Data".

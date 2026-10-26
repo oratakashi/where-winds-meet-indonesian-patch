@@ -4,6 +4,10 @@ Plan for the **WWM China** translation ([[CN-Current-Status]]). Ranges are fixed
 `tools/profiles.py` (`CN_PHASES`); live numbers are in the generated block of
 [[CN-Current-Status]].
 
+**2026-10-26: all six phases complete.** The final Phase 4 batch finished the current
+159,176-string corpus. There is no unfinished idx; future game additions use append-only
+Update-N blocks as described below. See [[CN-Phase-4]] for the completion batch and QA.
+
 ## Where the corpus comes from
 
 `translate_words_map_zh_cn` (client of 2026-10-20) has 2,081,685 entries / 627,412 distinct
