@@ -1,714 +1,297 @@
-# Where Winds Meet — Localization Toolkit & Translation Pipeline
+<div align="center">
 
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
+# Where Winds Meet — Indonesian Patch
+
+**A community Indonesian translation for *Where Winds Meet*, plus the open-source toolkit that builds it.**
+
+[![Latest patch](https://img.shields.io/github/release-date/oratakashi/where-winds-meet-indonesian-patch?label=latest%20patch)](../../releases/tag/latest)
+[![Downloads](https://img.shields.io/github/downloads/oratakashi/where-winds-meet-indonesian-patch/total?label=downloads)](../../releases)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
-[![Engine: Messiah](https://img.shields.io/badge/Engine-NetEase%20Messiah-orange.svg)]()
-[![Codec: Zstandard](https://img.shields.io/badge/Codec-Zstandard%20(zstd)-green.svg)]()
-[![Round-Trip: Byte-Identical](https://img.shields.io/badge/Round--Trip-Byte--Identical-brightgreen.svg)]()
+[![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 
-A high-performance reverse-engineering toolkit, binary format specification, and localization pipeline for **Where Winds Meet** (NetEase / Everstone Studio, built on the Messiah Engine).
+[**⬇ Download — Global client**](../../releases/tag/latest) &nbsp;·&nbsp;
+[**⬇ Download — China client (燕云十六声)**](../../releases/tag/cn-latest) &nbsp;·&nbsp;
+[Installation guide](#player-installation-guide)
 
-This repository provides tools and documentation to unpack, inspect, translate, quality-check, and repack the game's binary localization containers (`translate_words_map_*`). It also hosts the tooling and dictionary database for the ongoing **Indonesian Community Translation Project**.
+</div>
 
 > [!NOTE]
-> This repository distributes **reverse-engineering tools and format specifications only**. It does not distribute copyrighted raw game assets or commercial packs. Review the [Legal & Anti-Tamper Notice](#legal--anti-tamper-notice) before using this toolkit.
+> This is an unofficial fan project, not affiliated with NetEase or Everstone Studio. It only
+> changes in-game text — no gameplay changes. On the global client the game language must stay on
+> **English** for the patch to show.
 
-```
-translate_words_map_en  ──dump──>  strings.jsonl  ──edit / translate──>  strings.jsonl
-                                                                               │
-translate_words_map_en  <──patch───────────────────────────────────────────────┘
-```
+## Contents
 
-NetEase frequently ships incremental updates via companion files (`_diff` for delta changes; game versions up to 2.2 also shipped `__small` / `__small_diff` isolated sub-tables, which were dropped in v2.3). All variants share the exact same binary container and shard codec. Refer to [Handling Game Updates & File Variants](#handling-game-updates--file-variants) to manage upstream updates without losing translation progress.
-
----
-
-## Table of Contents
-
-- [Project Status](#project-status)
+- [Translation Progress](#translation-progress)
 - [Player Installation Guide](#player-installation-guide)
-  - [PC — Steam](#pc--steam)
-  - [PC — Official WWM Launcher](#pc--official-wwm-launcher)
-  - [Android](#android)
-    - [Method A — File manager on the phone](#method-a--file-manager-on-the-phone-no-pc-needed)
-    - [Method B — ADB from a PC](#method-b--adb-from-a-pc-step-by-step-for-beginners)
-  - [PC — China Client (燕云十六声)](#pc--china-client-燕云十六声)
-  - [Reverting to English / Handling Game Updates](#reverting-to-english--handling-game-updates)
-- [Prerequisites & Installation](#prerequisites--installation)
-- [Quickstart Guide](#quickstart-guide)
-  - [1. Locate Game Files](#1-locate-game-files)
-  - [2. Inspect Binary Header](#2-inspect-binary-header)
-  - [3. Dump to JSON Lines](#3-dump-to-json-lines)
-  - [4. Translate & Edit](#4-translate--edit)
-  - [5. Automated QA Verification](#5-automated-qa-verification)
-  - [6. Repack into Binary](#6-repack-into-binary)
-- [Daily Translation Workflow (Cheat Sheet)](#daily-translation-workflow-cheat-sheet)
-- [Handling Game Updates & File Variants](#handling-game-updates--file-variants)
-- [Technical Architecture & Binary Format](#technical-architecture--binary-format)
-  - [Why Runtime Requires English Language](#why-runtime-requires-english-language)
-  - [In-Place Mutation Without Hash Reversal](#in-place-mutation-without-hash-reversal)
-  - [Binary Format Summary](#binary-format-summary)
-  - [Critical Gotcha: Relative Pointer Arithmetic](#critical-gotcha-relative-pointer-arithmetic)
-- [Translation Guidelines & Engine Syntax](#translation-guidelines--engine-syntax)
-  - [Messiah Engine Format Tokens](#messiah-engine-format-tokens)
-  - [Proper Nouns & Pinyin Retention](#proper-nouns--pinyin-retention)
-  - [Machine Translation & LLM Quality Control](#machine-translation--llm-quality-control)
-  - [Oversized Lore Entries](#oversized-lore-entries)
-- [Known Limitations & Deployment Gotchas](#known-limitations--deployment-gotchas)
-- [Legal & Anti-Tamper Notice](#legal--anti-tamper-notice)
-- [Repository Structure](#repository-structure)
-- [Contributing](#contributing)
-- [License](#license)
+- [Updating & Uninstalling](#updating--uninstalling)
+- [FAQ](#faq)
+- [Support the Project](#support-the-project)
+- [For Contributors & Developers](#for-contributors--developers)
+- [Disclaimer](#disclaimer) · [License](#license)
 
 ---
 
-## Project Status
+## Translation Progress
 
-| Capability | Status | Notes |
-|---|---|---|
-| **Binary Format Specification** | Complete | Fully reverse-engineered; see [`Format-Spec.md`](Obsidian-Vault/knowladge/Format-Spec.md) |
-| **Round-Trip Integrity** | Verified | Byte-identical verification across base, `_diff`, and `__small` variants |
-| **Container Decoding** | Supported | Decompresses zstd payloads and parses SwissTable shards into JSONL |
-| **Container Encoding** | Supported | Rebuilds shards and zstd blocks with configurable compression levels |
-| **In-Place Value Editing** | Supported | Preserves control bytes, slot indices, and hash structures |
-| **Arbitrary Key Insertion** | Unsupported | Requires reversing the proprietary 64-bit hash derivation |
+Translation is ongoing, so some text may still appear in English (or Chinese on the China client).
+New releases are built automatically whenever translations are added.
 
-**Snapshot Reference**: Tested against global game builds (NetEase Messiah Engine). Localization entry counts vary per game update as keys and shards fluctuate. The current target, **game v2.3 hotfix** (October 2026), has **1,122,784 entries across 4,387 blocks** in the primary map (unchanged from v2.3) plus a sparse `_diff` (12,934 entries, 1,919 tombstones; v2.3: 8,422 / 1,647), and no `__small` tables. For reference, the September 2026 (v2.2) global release snapshot contains **826,388 entries across 3,230 blocks** in the primary map, accompanied by a sparse `_diff` file (212,117 active entries) and an isolated `__small` table (4,009 entries; see [§4.6 of Format-Spec.md](Obsidian-Vault/knowladge/Format-Spec.md#46-the-__small--__small_diff-variant-a-separate-table-not-part-of-_diff)).
+- **Global client:** [`Current-Status.md`](Obsidian-Vault/progress/Current-Status.md)
+- **China client:** [`CN-Current-Status.md`](Obsidian-Vault/cn/progress/CN-Current-Status.md)
 
 ---
 
 ## Player Installation Guide
 
-This section is for players who just want **to install the patch**, without running any Python
-tooling. The translated files are rebuilt automatically by CI on every change to `locale/` and
-published as a single rolling GitHub Release (tag `latest`):
+No Python or tools needed — just copy two files into the game folder.
 
-**[⬇ Download the Latest Patch (`wwm-indonesian-patch.zip`)](../../releases/tag/latest)**
-
-> [!TIP]
-> Playing the **China client (燕云十六声)** instead? It has its own rolling release (tag `cn-latest`) —
-> see [PC — China Client](#pc--china-client-燕云十六声).
-
-> [!WARNING]
-> **Always back up the original files before overwriting anything.** Copy the original
-> `translate_words_map_en` and `translate_words_map_en_diff` to a separate folder first. If a game update breaks the
-> mod or causes crashes, restore these originals.
-
-> [!NOTE]
-> The current release targets **game v2.3 (hotfix)**, which only ships `translate_words_map_en` and
-> `translate_words_map_en_diff` — the `__small` / `__small_diff` files from v2.2 no longer exist,
-> so there is nothing to copy for them.
-
-> [!NOTE]
-> Translation progress is still ongoing (see [`Current-Status.md`](Obsidian-Vault/progress/Current-Status.md)
-> for current completion percentages) — some text may still appear in English or Chinese; this is expected.
-
-### PC — Steam
-
-1. Open Steam → right-click **Where Winds Meet** → **Manage → Browse Local Files**. This opens
-   the game's installation folder (typically
-   `<SteamLibrary>\steamapps\common\Where Winds Meet\`).
-2. Navigate to the `Package\HD\oversea\locale\` subfolder.
-3. Back up the existing files there (see warning above), then extract the contents of
-   `wwm-indonesian-patch.zip` into this folder, overwriting the files with matching names:
-   `translate_words_map_en` and `translate_words_map_en_diff`.
-4. Launch the game through Steam as usual.
-5. In-game: **Settings → Language → Game Language = English** (required — see
-   [Why Runtime Requires English Language](#why-runtime-requires-english-language)).
+1. Download the patch for your client:
+   - Global: **[`wwm-indonesian-patch.zip`](../../releases/tag/latest)** — current target: game v2.3 (hotfix)
+   - China: **[`wwm-cn-indonesian-patch.zip`](../../releases/tag/cn-latest)**
+2. Follow the steps for your platform below.
 
 > [!IMPORTANT]
-> **Steam only:** on the Steam client, NetEase's patcher **silently restores
-> `translate_words_map_en_diff` to its original version** on every game launch (the
-> `StagePatchList`/`StageCheck` process), so text that lives in the `_diff` layer stays in English.
-> This is outside this mod's control. The base `translate_words_map_en` file remains
-> permanent and is unaffected. The official WWM launcher does **not** do this — see
-> [Known Limitations & Deployment Gotchas](#known-limitations--deployment-gotchas).
+> **Before you start**
+> - **Back up the original files** to a folder **outside** the game folder. You'll need them to
+>   uninstall, and the Android patcher deletes extra files it finds in the game folder.
+> - **Reinstall the patch after every game update**, even small hotfixes — updates put the
+>   original files back.
+
+### Which platform works best?
+
+| Platform | Locale folder | Full patch (`_diff` text) | After a game update |
+|---|---|---|---|
+| [PC — Official launcher](#pc--official-wwm-launcher) | `<InstallDir>\<variant>\LocalData\Patch\HD\oversea\locale\` | ✅ Yes | Reinstall |
+| [Android](#android) | `Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/` | ✅ Yes | Reinstall |
+| [PC — Steam](#pc--steam) | `<SteamLibrary>\steamapps\common\Where Winds Meet\Package\HD\oversea\locale\` | ⚠️ Partial — `_diff` text stays English | Usually survives; reinstall after a Steam update |
+| [PC — China client](#pc--china-client-燕云十六声) | `<InstallDir>\yysls_fast\LocalData\Patch\HD\v2\locale\` | ✅ Yes (except cutscene subtitles) | Reinstall |
 
 ### PC — Official WWM Launcher
 
-1. Find the launcher's installation folder (right-click the launcher shortcut → **Open file
-   location** if you're unsure). Inside it, the game lives in a subfolder named after the
-   **variant you downloaded** — `wwm_lite` for the Lite download, or the matching standard folder
-   for the Standard download. Below, `<InstallDir>\<variant>` stands for that folder, e.g.
-   `<InstallDir>\wwm_lite`.
-2. Open the locale folder inside the variant folder:
-
-   ```
-   <InstallDir>\<variant>\LocalData\Patch\HD\oversea\locale\
-   ```
-
-   For example: `INSTALLATION_FOLDER\wwm_lite\LocalData\Patch\HD\oversea\locale\`.
-3. Back up the original `translate_words_map_*` files in that `locale\` folder.
-4. Extract the contents of `wwm-indonesian-patch.zip` into this `locale\` folder, overwriting
-   files with matching names (`translate_words_map_en_diff` and any other `translate_words_map_en*`
-   files that exist there).
-5. The base files also exist under `<InstallDir>\<variant>\Package\HD\oversea\locale\`. Back up
-   and overwrite `translate_words_map_en` (and `translate_words_map_en_diff`) there too, as in the
-   Steam steps above.
-6. Launch the game through the launcher as usual.
-7. Set **Settings → Language → Game Language = English** in-game.
-
-> [!TIP]
-> Unlike the Steam client, the official launcher does **not** restore the patched `_diff` file on
-> a normal launch (tested 2026-09-27), so both files — including the `_diff` layer — stay translated.
-> This is the most complete way to play with the patch on PC. See
-> [Known Limitations & Deployment Gotchas](#known-limitations--deployment-gotchas).
-
-> [!WARNING]
-> **Every game update — even a small hotfix — puts the original English files back.** When the
-> launcher installs an update it re-checks every file in the updated packages and re-downloads
-> anything that doesn't match, including the patched `translate_words_map_en` and
-> `translate_words_map_en_diff` (observed 2026-10-28). After each update, simply copy the patch
-> files in again. Keep your backups **outside** the game folder.
+1. Open the launcher's install folder (right-click the launcher shortcut → **Open file location**).
+   The game lives in a subfolder named after the variant you downloaded, e.g. `wwm_lite`.
+2. Open `<InstallDir>\<variant>\LocalData\Patch\HD\oversea\locale\`.
+3. Back up the `translate_words_map_en*` files, then extract the ZIP here and overwrite them.
+4. Do the same in `<InstallDir>\<variant>\Package\HD\oversea\locale\`.
+5. Start the game and set **Settings → Language → Game Language = English**.
 
 ### Android
 
-The Android build of Where Winds Meet stores its locale files under the shared
-`Android/data/<package>/` folder. **Root is not required** — `Android/data` is part of normal
-internal storage, not the app's private `/data/data` sandbox. The only catch is that newer Android
-versions hide this folder from ordinary file managers.
-
-The target folder is typically:
-
-```
-Internal Storage/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
-```
-
-(the exact package name and sub-path can vary by release region — look for the folder containing
-files named `translate_words_map_en*`.)
-
-> [!IMPORTANT]
-> **Why `Android/data` is tricky on Android 10 and newer:** scoped storage (introduced in
-> Android 10, enforced from Android 11) stops regular file-manager apps from seeing or writing inside
-> `Android/data`, and on Android 13+ even the system "allow access to this folder" prompt is blocked
-> for it. This is an OS restriction, not a need for root — pick one of the two methods below.
-> Behavior also differs between OEM skins (MIUI/HyperOS, One UI, ColorOS, etc.), so if one method is
-> blocked on your device, try the other.
+The locale folder is
+`Internal Storage/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/`
+(the package name may vary by region — look for the folder with `translate_words_map_en*` files).
+**No root needed**, but Android 11+ hides `Android/data` from most file managers.
 
 > [!TIP]
-> Quick thing to try first: connect the phone to a PC with a USB cable in **File Transfer (MTP)**
-> mode and open it in Windows Explorer. On many devices `Android/data` is still visible and writable
-> this way — if it is, just back up and copy the files there and skip the methods below.
+> Try the easy way first: connect the phone to a PC in **File Transfer (MTP)** mode. On many devices
+> `Android/data` is visible and writable from Windows Explorer — if so, just back up and copy.
 
-#### Method A — File manager on the phone (no PC needed)
+<details>
+<summary><b>Method A — File manager on the phone (no PC needed)</b></summary>
 
-The easiest route is a file manager that can open `Android/data` on its own, including on
-Android 13 and newer. **[Files by Marc apps & software](https://play.google.com/store/apps/details?id=com.marc.files)**
-(`com.marc.files`, free on the Play Store) has been tested to work for this — no root, no PC, and
-no extra helper apps needed.
+<br>
 
-1. Install **[Files](https://play.google.com/store/apps/details?id=com.marc.files)** from the Play
-   Store and open it. Grant the storage permission it asks for.
-2. Download `wwm-indonesian-patch.zip` on the phone and extract it (the app can open ZIP files, or
-   use any archive app). Note where the extracted `translate_words_map_en*` files are, e.g.
-   `Download/wwm-indonesian-patch/`.
-3. In the app, go to **Internal Storage → Android → data** and open the game's folder, then the
-   locale folder shown above. If the app shows a prompt asking for access to the folder, allow it.
-4. **Back up** the existing `translate_words_map_en*` files by copying them to another folder, e.g.
-   `Download/wwm-backup/`.
-5. Copy the extracted patch files into the locale folder, overwriting the files with matching names.
-6. Force-close the game, relaunch it, and set **Settings → Language → Game Language = English**.
+[**Files** by Marc apps & software](https://play.google.com/store/apps/details?id=com.marc.files)
+(free) can open `Android/data` even on Android 13+.
 
-If this doesn't work on your device (some OEM skins are stricter), use Method B below.
+1. Install **Files** and grant the storage permission it asks for.
+2. Download the patch ZIP on the phone and extract it (e.g. to `Download/wwm-indonesian-patch/`).
+3. In the app, go to **Internal Storage → Android → data** → the game's locale folder above. Allow
+   folder access if prompted.
+4. Back up the existing `translate_words_map_en*` files to another folder, e.g. `Download/wwm-backup/`.
+5. Copy the extracted files into the locale folder, overwriting the originals.
+6. Force-close the game, relaunch it and set **Game Language = English**.
 
-#### Method B — ADB from a PC (step by step, for beginners)
+Some OEM skins (MIUI/HyperOS, One UI, ColorOS…) are stricter — if this doesn't work, use Method B.
 
-ADB (Android Debug Bridge) is Google's official tool for sending files to a phone over USB. It
-sounds technical, but it's just a few copy-paste commands. The steps below are for Windows.
+</details>
+
+<details>
+<summary><b>Method B — ADB from a Windows PC (step by step)</b></summary>
+
+<br>
 
 **One-time setup on the PC**
 
-1. Download **SDK Platform-Tools for Windows** from Google's official page:
+1. Download **SDK Platform-Tools for Windows**:
    <https://developer.android.com/tools/releases/platform-tools>
-2. Extract the ZIP somewhere easy, e.g. `C:\platform-tools\`. Inside it you'll see `adb.exe`.
-3. Extract `wwm-indonesian-patch.zip` **into that same `C:\platform-tools\` folder**, so the
-   `translate_words_map_en*` files sit next to `adb.exe`. (This keeps the commands short.)
+2. Extract it somewhere easy, e.g. `C:\platform-tools\` (it contains `adb.exe`).
+3. Extract the patch ZIP **into that same folder**, so the `translate_words_map_en*` files sit next
+   to `adb.exe`.
 
 **One-time setup on the phone**
 
-4. Open **Settings → About phone** and tap **Build number** 7 times until it says
-   *"You are now a developer"*. (On Xiaomi it's **MIUI/OS version**; on Samsung it's under
-   **Software information**.)
-5. Go to **Settings → System → Developer options** (location varies by brand) and turn on
-   **USB debugging**.
+4. **Settings → About phone** → tap **Build number** 7 times until it says *"You are now a
+   developer"* (Xiaomi: **MIUI/OS version**; Samsung: under **Software information**).
+5. **Settings → System → Developer options** → turn on **USB debugging**.
 
 **Copying the files**
 
-6. Connect the phone to the PC with a USB cable (a data cable, not a charge-only one).
-7. Open the `C:\platform-tools\` folder in Windows Explorer, click the address bar, type `cmd`,
-   and press **Enter**. A black Command Prompt window opens already inside that folder.
-8. Type the following and press **Enter**:
+6. Connect the phone with a USB **data** cable.
+7. Open `C:\platform-tools\` in Explorer, type `cmd` in the address bar and press **Enter**.
+8. Run:
    ```bat
    adb devices
    ```
-   A prompt **"Allow USB debugging?"** appears on the phone — tick *Always allow* and tap
-   **Allow**. Run `adb devices` again; you should see a line ending in `device`. If it says
-   `unauthorized`, check the phone screen for the prompt. If nothing is listed, try another
-   cable/USB port or set the phone's USB mode to *File Transfer*.
-9. **Back up** the original files to the PC (this creates a `backup` folder next to `adb.exe`):
+   Tap **Allow** on the *"Allow USB debugging?"* prompt (tick *Always allow*). Run it again — you
+   should see a line ending in `device`. `unauthorized` → check the phone; nothing listed → try
+   another cable/port or set USB mode to *File Transfer*.
+9. Back up the originals to the PC:
    ```bat
    mkdir backup
    adb pull /sdcard/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/ backup
    ```
-10. Push the patched files to the phone — run one line per file (copy-paste each and press
-    **Enter**):
+10. Push the patched files (one line at a time):
     ```bat
     adb push translate_words_map_en /sdcard/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
     adb push translate_words_map_en_diff /sdcard/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/
     ```
-    Each line should report `1 file pushed`. If you get *"No such file or directory"*, the package
-    name or path differs on your device — run
-    `adb shell ls /sdcard/Android/data/ | findstr netease` to find the right package folder and
-    adjust the path.
-11. Force-close the game, relaunch it, and set **Settings → Language → Game Language = English**.
-12. (Optional) Turn **USB debugging** back off when you're done.
+    Each should report `1 file pushed`. On *"No such file or directory"*, find your package folder
+    with `adb shell ls /sdcard/Android/data/ | findstr netease` and adjust the path.
+11. Force-close the game, relaunch it and set **Game Language = English**.
+12. (Optional) Turn **USB debugging** off again.
 
-To restore the originals later, repeat step 10 using the files from the `backup` folder
-(`adb push backup\locale\translate_words_map_en ...` etc.).
+To restore the originals, repeat step 10 with the files from `backup\locale\`.
 
-> [!WARNING]
-> The patch stays in place on normal launches, but **every game update — even a small hotfix —
-> restores the original files** (observed 2026-10-28): the in-game patcher re-checks every file
-> of the updated packages and re-downloads the locale files. It also **deletes any extra files**
-> in that `locale/` folder, so don't keep backups (e.g. `*.ori`) there — keep them on your PC (ADB
-> method: step 9). After each update, copy the patched files in again (ADB method: step 10). See
-> [Known Limitations](#known-limitations--deployment-gotchas).
+</details>
+
+### PC — Steam
+
+1. In Steam, right-click **Where Winds Meet** → **Manage → Browse Local Files**.
+2. Open `Package\HD\oversea\locale\`.
+3. Back up `translate_words_map_en` and `translate_words_map_en_diff`, then extract the ZIP here
+   and overwrite them.
+4. Launch the game and set **Settings → Language → Game Language = English**.
+
+> [!NOTE]
+> On Steam, NetEase's patcher restores the `_diff` overlay file on every launch, so text from that
+> layer (mostly recently changed or added lines) stays in English. The base file stays patched.
+> This is outside the patch's control — the [official launcher](#pc--official-wwm-launcher)
+> doesn't do this.
 
 ### PC — China Client (燕云十六声)
 
-For the Chinese client only — it uses its own files and its own release (tag `cn-latest`), not the
-global ones above. Lines shared with the global game reuse the global translation; CN-only lines
-are still being translated (see [`CN-Current-Status.md`](Obsidian-Vault/cn/progress/CN-Current-Status.md)),
-so some text stays in Chinese.
-
-**[⬇ Download the CN Patch (`wwm-cn-indonesian-patch.zip`)](../../releases/tag/cn-latest)**
+The China client has its own patch and release. Lines shared with the global game use the global
+translation; CN-only lines are still being translated.
 
 1. Close the game **and** the launcher.
-2. Open the locale folder of your installation (`<InstallDir>` is where the client is installed,
-   e.g. `D:\yysls`):
-
-   ```
-   <InstallDir>\yysls_fast\LocalData\Patch\HD\v2\locale\
-   ```
-
-3. Back up the original `translate_words_map_zh_cn` and `translate_words_map_zh_cn__small` to a
-   separate folder.
-4. Extract the contents of `wwm-cn-indonesian-patch.zip` into this `locale\` folder, overwriting
-   both files. Leave the small `*_diff` files there untouched.
-5. Launch the game through the launcher as usual, keeping the game language on
-   **Chinese (简体中文)** — unlike the global client, the CN patch replaces the Chinese text itself.
+2. Open `<InstallDir>\yysls_fast\LocalData\Patch\HD\v2\locale\` (e.g. `D:\yysls\yysls_fast\...`).
+3. Back up `translate_words_map_zh_cn` and `translate_words_map_zh_cn__small`.
+4. Extract **[`wwm-cn-indonesian-patch.zip`](../../releases/tag/cn-latest)** here and overwrite
+   both files. Leave the small `*_diff` files untouched.
+5. Launch through the launcher, keeping the game language on **Chinese (简体中文)** — the CN patch
+   replaces the Chinese text itself.
 
 > [!NOTE]
-> Tested 2026-10-20: the CN launcher checks its files on start but did not restore the patched ones.
-> A CN game update replaces them, even when their content didn't change (seen 2026-10-25). After an
-> update, re-install the latest `cn-latest` build. Don't copy an old patch over a newer game version.
-> The main-menu "退出游戏" button (artwork) and the NetEase account login dialog are not part of
-> these files and stay in Chinese.
-
-> [!IMPORTANT]
-> **Story and cutscene subtitles stay in Chinese on the CN client.** The patch covers the UI,
-> quests, items and other in-game text, but the CN client reads cutscene and story subtitles from
-> a copy of the Mandarin text built into its data packages. It does not read them from the
-> translation files. The launcher verifies those packages on every start and re-downloads any
-> modified one, so they can't be patched without tampering with NetEase's integrity check. That
-> could put your account at risk, and this project doesn't do it. For a translated story, play the
-> global client with the global patch. Technical details: [`Format-Spec.md` §9](Obsidian-Vault/knowladge/Format-Spec.md).
-
-### Reverting to English / Handling Game Updates
-
-To revert to the original English text, simply overwrite the `translate_words_map_en*` files
-with the original backups you saved in step one of the relevant platform section above.
-
-After a game update, re-copy the patched files. On the **official launcher** and **Android**, every
-update — even a small hotfix whose text didn't change — restores the original locale files, so the
-patch has to be reinstalled each time. On **Steam**, NetEase's small hot-patches leave the base
-`translate_words_map_en` in `Package\` alone; only a Steam download of the game replaces it.
-If the update brought new text, the release may still be the previous version's patch: it still
-works, but new lines stay in English until the next release.
+> **Not translated on the China client:** story and cutscene subtitles (they come from data packs
+> the launcher verifies on every start, and modifying them could put your account at risk), the
+> main-menu "退出游戏" button artwork and the NetEase login dialog. For a fully translated story,
+> play the global client. Don't install an older patch over a newer game version.
 
 ---
 
-## Support & Donation
+## Updating & Uninstalling
 
-This Indonesian patch is, and will always remain, **free for everyone**. Keeping it accurate and playable, however, comes with real ongoing costs:
-
-- **AI translation costs** — Translating several hundred thousand strings with AI assistance consumes a substantial volume of tokens, and quality AI is not inexpensive.
-- **Mod maintenance** — Every NetEase update changes the locale files. Each release means re-extracting the data, translating new and changed text, running quality checks, and republishing the patch so it continues to work in-game.
-- **Time and dedication** — All of this work is carried out by a single maintainer.
-
-If this project has made Where Winds Meet more enjoyable for you, please consider supporting its development. Every contribution, regardless of size, goes directly toward AI costs and toward keeping the patch current after each game update. Your support is what keeps this project alive, and it is sincerely appreciated.
-
-Unable to donate? You can still make a meaningful difference by starring the repository, sharing it with fellow players, or reporting inaccurate translations through Issues.
-
-![QR](.donation/saweria.png)
-
-**Donate via Saweria:** [https://saweria.co/oratakashi](https://saweria.co/oratakashi)
+- **After a game update:** download the latest release and copy the files in again. If the update
+  added new text, the current release still works — the new lines just stay in English until the
+  next release.
+- **To uninstall:** copy your backed-up original files back over the patched ones.
 
 ---
 
-## Prerequisites & Installation
+## FAQ
 
-*The section below is for contributors/developers who want to run the toolkit itself
-(dump/patch/QA), not for players who just want to install the patch — see the
-[Player Installation Guide](#player-installation-guide) above for that.*
+<details>
+<summary><b>Why must the game language be English?</b></summary>
 
-- **Python 3.8+**
-- **pip**
+The game's translation files don't contain the original text — only a map from a hash of the
+English text to the displayed text. The patch replaces the displayed values, so the game only finds
+them while it looks up English. ([Technical details](docs/Technical-Overview.md#why-the-game-must-be-set-to-english))
+The China client is the exception: keep it on Chinese.
+</details>
 
-Clone the repository and install the single runtime dependency:
+<details>
+<summary><b>Some text is still in English (or Chinese). Is the patch broken?</b></summary>
 
-```bash
-git clone git@github.com:oratakashi/where-winds-meet-indonesian-patch.git
-cd where-winds-meet-indonesian-patch
-pip install -r requirements.txt
-```
+No. Translation is still in progress, new game updates add new text, and on Steam the `_diff`
+layer is restored on every launch. Check [Translation Progress](#translation-progress) and the
+platform table above.
+</details>
 
-*Note: The only third-party dependency is [`zstandard`](https://pypi.org/project/zstandard/).*
+<details>
+<summary><b>The patch disappeared after the game updated.</b></summary>
 
----
+Expected — every update (even hotfixes) restores the original files on the official launcher,
+Android and the China client. Reinstall the latest release.
+</details>
 
-## Quickstart Guide
+<details>
+<summary><b>I can't see the <code>Android/data</code> folder.</b></summary>
 
-### 1. Locate Game Files
+That's an Android 11+ restriction, not a root requirement. Use the
+[Files app (Method A)](#android) or [ADB (Method B)](#android).
+</details>
 
-Locate your game installation path:
+<details>
+<summary><b>Is this a cheat? Can I get banned?</b></summary>
 
-- **Steam Installation**:
-  ```
-  <SteamLibrary>\steamapps\common\Where Winds Meet\Package\HD\oversea\locale\translate_words_map_en
-  ```
-- **Official NetEase Launcher**:
-  ```
-  <InstallDir>\<variant>\Package\HD\oversea\locale\translate_words_map_en
-  <InstallDir>\<variant>\LocalData\Patch\HD\oversea\locale\
-  ```
-  (`<variant>` is the downloaded game variant folder, e.g. `wwm_lite`.)
+The patch only changes display text and gives no gameplay advantage. Still, modifying client files
+may conflict with the game's Terms of Service — see the [Disclaimer](#disclaimer) and use it at your
+own risk.
+</details>
 
-> [!WARNING]
-> **Always create a backup before modifying game files.** Keep an untouched copy of `translate_words_map_en` in a safe location. If you previously used GearUP Booster, their automatic backup files have a `.gubackup` extension in the same directory and preserve pristine original English text.
+<details>
+<summary><b>I found a bad translation.</b></summary>
 
-### 2. Inspect Binary Header
-
-Sanity-check the file and ensure parser compatibility:
-
-```bash
-python wwm_locmap.py info translate_words_map_en
-```
-
-Expected output:
-```text
-version        : 1
-blocks         : 3230 (1 index + 3229 shard)
-entries (index): 826388
-entries parsed : 826388
-```
-
-If `entries parsed` matches `entries (index)`, the container is valid. When opening incremental `*_diff` files, entry counts intentionally diverge due to sparse shards (see [§4.5 of Format-Spec.md](Obsidian-Vault/knowladge/Format-Spec.md#45-the-_diff-variant-incremental-file-between-game-updates)).
-
-### 3. Dump to JSON Lines
-
-Export all localization strings into a JSON Lines (`.jsonl`) file (~90 MB for ~826k entries):
-
-```bash
-python wwm_locmap.py dump translate_words_map_en strings.jsonl
-```
-
-Each line in `strings.jsonl` represents an atomic localization entry:
-
-```json
-{"b": 1, "s": 3, "h": "c5cadbb857eee8b4", "v": "The leaf?"}
-{"b": 1, "s": 4, "h": "b6b9b1230c20a990", "v": "Velvet Shade Guest"}
-```
-
-| Field | Type | Description |
-|---|---|---|
-| `b` | integer | Shard block index (1-based) |
-| `s` | integer | Slot index inside the shard |
-| `h` | string (hex) | 64-bit `keyHash` (reference only — **do not edit**) |
-| `v` | string | Display string rendered in-game |
-
-### 4. Translate & Edit
-
-Modify the text inside the `v` field. Review the [Translation Guidelines](#translation-guidelines--engine-syntax) to avoid breaking engine formatting tags.
-
-> [!TIP]
-> The composite key `(b, s)` uniquely identifies the slot address. **Sparse overlays are fully supported**: you can delete unchanged lines from your JSONL file. When executing `patch`, unmodified entries are retained directly from the source binary, making localized diffs lightweight.
-
-### 5. Automated QA Verification
-
-Before repacking, run the automated quality assurance suite to catch syntax defects:
-
-```bash
-python tools/qa_check.py strings_original.jsonl strings_translated.jsonl --report qa_report.jsonl
-```
-
-Example audit output:
-```text
-inspected   : 963050 entries
-PROMPT_LEAK :      0  (0.000%)
-MARKUP      :      0  (0.000%)
-EMPTY       :      0  (0.000%)
-```
-
-The script exits with code `1` if defects are detected, making it ideal for continuous integration (CI) or pre-commit hooks.
-
-### 6. Repack into Binary
-
-Overlay your modified strings onto the original binary container:
-
-```bash
-python wwm_locmap.py patch translate_words_map_en strings.jsonl translate_words_map_en.new
-```
-
-- Use `--level N` to set the Zstandard compression level (default is `19`). Use `10`–`12` for rapid development iterations; use `19` for distribution builds.
-- Rename or copy the repacked file to `translate_words_map_en` inside your game's `Package\HD\oversea\locale\` folder.
-- Launch the game with **Settings → Language → Game Language = English**.
+Please [open an issue](../../issues) with a screenshot and where it appears.
+</details>
 
 ---
 
-## Daily Translation Workflow (Cheat Sheet)
+## Support the Project
 
-When working with translation batches in `translation_work/unique_strings.jsonl` and `locale/phase*.jsonl`, execute these three commands to generate a clean, validated build:
+This patch is and will always be **free**. Keeping it up to date has real costs: AI translation of
+hundreds of thousands of lines, rebuilding the patch after every NetEase update, and the time of a
+single maintainer.
 
-```bash
-# 0. Validate the per-idx translation files themselves (tokens, empty values, idx gaps/duplicates)
-python tools/qa_check.py --locale "locale/*.jsonl"
+If the patch made the game more enjoyable for you, please consider a donation — every amount goes
+toward translation costs and keeping the patch current. Can't donate? Starring the repo, sharing
+it with other players or reporting bad translations helps too.
 
-# 1. Expand translation dictionary against the original dump
-python tools/expand_locale.py
-
-# 2. Run QA validation (prompt leaks, corrupted markup, empty values)
-python tools/qa_check.py strings.jsonl strings.translated.jsonl --report qa_report.jsonl
-
-# 3. If QA passes (exit code 0), repack into a distribution binary
-python wwm_locmap.py patch translate_words_map_en strings.translated.jsonl translate_words_map_en.id
-```
-
-Notes:
-- Step 1 expects `strings.jsonl` (generated via `wwm_locmap.py dump`) to be present in the workspace root.
-- If Step 2 fails with exit code `1`, inspect `qa_report.jsonl` and rectify the flagged strings before proceeding.
-- Copy `translate_words_map_en.id` to the game's locale directory as `translate_words_map_en`.
-- To patch all file variants (`base`, `_diff`, `_mobile`) at once, use `tools/patch_all.py`.
-- `wwm_locmap.py patch` refuses a JSONL whose `h` values don't match the target file (i.e. one dumped from a different game version) — re-dump after every game update.
+<p align="center">
+  <img src=".donation/saweria.png" alt="Saweria QR code" width="240"><br>
+  <b>Donate via Saweria:</b> <a href="https://saweria.co/oratakashi">saweria.co/oratakashi</a>
+</p>
 
 ---
 
-## Handling Game Updates & File Variants
+## For Contributors & Developers
 
-Upstream game patches frequently ship new or modified localization files alongside the primary table:
-- `translate_words_map_en_diff`: Sparse delta table between major releases.
-- `translate_words_map_en__small` / `__small_diff`: Separate isolated table (+ delta) for UI / system modules — shipped up to v2.2, **removed in v2.3**.
-- `translate_words_map_en_mobile`: Currently byte-identical to the base table; patched independently anyway.
+This repo also contains a reverse-engineering toolkit (`wwm_locmap.py` + `tools/`) to dump,
+translate, validate and repack the game's `translate_words_map_*` localization files.
 
-Because the underlying container and shard layout are identical, use the following sequence after a patch:
-
-```bash
-# Dump the updated files
-python wwm_locmap.py dump translate_words_map_en strings.jsonl
-python wwm_locmap.py dump translate_words_map_en_diff strings_diff.jsonl
-
-# Append new unique strings without breaking existing translation indices
-python tools/rebuild_unique_strings.py
-
-# Apply translations across all variants simultaneously
-python tools/patch_all.py --outdir patched
-```
-
-See [`Obsidian-Vault/knowladge/Format-Spec.md`](Obsidian-Vault/knowladge/Format-Spec.md) §4.6 for technical findings regarding `__small` tables and `CLAUDE.md` for helper script internals.
+| Guide | What's inside |
+|---|---|
+| [Developer Guide](docs/Developer-Guide.md) | Setup, dump → translate → QA → repack, daily workflow, game updates, China profile, repo layout |
+| [Technical Overview](docs/Technical-Overview.md) | Binary format, why English is required, known limitations |
+| [Translation Guidelines](docs/Translation-Guidelines.md) | Engine format tokens, proper nouns, LLM QA |
+| [Contributing](docs/Contributing.md) | Reporting issues, pull requests, open research areas |
+| [Format-Spec.md](Obsidian-Vault/knowladge/Format-Spec.md) | The full reverse-engineered file format specification |
 
 ---
 
-## Technical Architecture & Binary Format
+## Disclaimer
 
-### Why Runtime Requires English Language
-
-Localization files in Where Winds Meet **do not store source English strings**. The binary contains only a unidirectional map:
-
-$$\text{u64 keyHash} \longrightarrow \text{localized string}$$
-
-At runtime, the Messiah Engine reads the base English string from game code or data assets, computes its 64-bit hash, and performs a lookup in `translate_words_map_en`. 
-- If Game Language is set to English, the engine looks up hashes computed from English text.
-- If Game Language is changed to German or French, the engine computes hashes from German/French strings, misses every entry in this map, and falls back to raw strings.
-
-Setting **Game Language = English** is a fundamental architectural requirement dictated by the engine's lookup design.
-
-### In-Place Mutation Without Hash Reversal
-
-Because keys are not stored, replacing strings simply requires mutating the **values** linked to existing keys. The search architecture remains untouched:
-
-```text
-Preserve: Header + Control Bytes (ctrl) + Sentinel + Padding + Slot Array (keyHash)
-Rebuild:  New String Blob (UTF-8)
-Update:   relOffset + byteLen in each active slot
-```
-
-Hash table probing remains 100% valid. This eliminates the need to reverse-engineer the proprietary 64-bit hash function for translation purposes.
-
-### Binary Format Summary
-
-```text
-File Container:
-  u32 magic = 0xDEADBEEF
-  u32 version = 1
-  u32 blockCount
-  u32 reserved = 0
-  u32[blockCount] endOffset        <- Offsets relative to end of this table
-
-Payload Blocks:
-  u8  codec = 4 (zstd)
-  u32 compressedSize
-  u32 uncompressedSize
-  u8[compressedSize] payload
-
-Block Layout:
-  Block 0    = Index Block : u64 totalEntries, u64 dataBlockCount, u32[] ids
-  Block 1..n = Shard Blocks: Abseil SwissTable (absl::flat_hash_map)
-      u64 capacity | u64 size | u64 seed
-      u8[capacity] ctrl (0x80 = empty, <0x80 = occupied H2 hash byte)
-      u8 0xFF sentinel + u8[15] cloned ctrl + 8-byte alignment padding
-      slot[capacity] { u64 keyHash; u32 relOffset; u32 byteLen; }
-      <string blob UTF-8>
-
-Shard Routing:
-  shardIndex = (keyHash % dataBlockCount) + 1
-```
-
-### Critical Gotcha: Relative Pointer Arithmetic
-
-A critical pitfall in Messiah's SwissTable implementation is that `relOffset` is a **self-relative pointer**, calculated from the address of the `relOffset` field itself:
-
-$$\text{valueStart} = \text{address}(\text{slot}[i].\text{relOffset}) + \text{relOffset}$$
-
-$$\text{value} = \text{block}[\text{valueStart} : \text{valueStart} + \text{byteLen}]$$
-
-This C++ idiom enables memory-mapping (`mmap`) without pointer relocation. Assuming `relOffset` is an absolute offset from the block start or string blob start results in corrupted, overlapping string fragments.
-
-For the exhaustive specification, see [`Obsidian-Vault/knowladge/Format-Spec.md`](Obsidian-Vault/knowladge/Format-Spec.md).
-
----
-
-## Translation Guidelines & Engine Syntax
-
-### Messiah Engine Format Tokens
-
-Strings contain proprietary Messiah Engine formatting and color tags. Modifying, reordering, or dropping these tags can crash the UI or corrupt text rendering:
-
-| Token | Function | Rule |
-|---|---|---|
-| `#Y` `#N` `#R` `#J` `#G` `#H` | Format / color style opening | Keep unaltered |
-| `#aee5ae` | 6-character hexadecimal color tag | Keep unaltered |
-| `#E` | Format closing tag | **Must** pair exactly with opening tags |
-| `%s`, `%d` | Standard printf specifiers | Dynamic runtime values; keep order and count |
-| `{0}`, `{1}` | Indexed positional placeholders | Retain indices |
-| `\n` | Literal newline | Preserve line break flow |
-
-**Valid Example**:
-- **Source**: `Mystic Skill #YMeridian Touch#E`
-- **Target**: `Keterampilan Mistik #YSentuhan Meridian#E`
-
-*The text enclosed inside `#Y...#E` may be freely translated, but the tags `#Y` and `#E` must remain intact.*
-
-### Proper Nouns & Pinyin Retention
-
-Character names, martial arts sects, and historical locations are typically rendered in Pinyin (e.g., `Su Jiangyun`, `Gu Zhouyue`, `Zhang Tiemeng`). Retain original Pinyin names so that players can cross-reference guides, community wikis, and player chat. In the reference dataset, approximately 12.5% of strings intentionally leave proper nouns untranslated.
-
-### Machine Translation & LLM Quality Control
-
-When utilizing Machine Translation (MT) or Large Language Models (LLMs), strict output validation is mandatory. In an audit of a commercial translation pack, **1,817 entries (0.189%) were discovered where LLM system prompts leaked directly into the game text**:
-
-```text
-Formatting instructions:
-  (newline tags) and brackets [] must remain unchanged
-- Do not translate content inside {}
-- Several special characters must not be translated, such as: %d, %s, #G, #E...
-[Actual translated text followed here]
-```
-
-These errors typically affect long lore entries, breaking player immersion. `tools/qa_check.py` automatically prevents this by asserting:
-1. Zero occurrences of registered prompt leak signatures (`LEAK_SIGNATURES`).
-2. Exact matching multisets of engine markup tokens between source and translated entries.
-3. Absence of zero-length or whitespace-only values.
-
-### Oversized Lore Entries
-
-While the average string length is ~56 bytes, certain encyclopedia and narrative entries exceed **8 KB**. When integrating with translation APIs, implement robust payload chunking to prevent silent truncation.
-
----
-
-## Known Limitations & Deployment Gotchas
-
-### 1. The CDN Auto-Restore Mechanism (Steam `_diff` on every launch; every client on game updates)
-- **Base `translate_words_map_en` (and, up to v2.2, `__small`) is persistent and safe to patch** in `Package\HD\oversea\locale\` on every client.
-- The game maintains two separate copies of `translate_words_map_en_diff`:
-  - `Package\HD\oversea\locale\` (patched by this tool; safe, never re-verified).
-  - `LocalData\Patch\HD\oversea\locale\` (active runtime overlay).
-- **Steam client**: the `LocalData` copy is **checksum-verified against NetEase CDN manifests on every game launch** (`StagePatchList` / `StageCheck` / `StageDownload`). Modified files in `LocalData` are detected and restored to original bytes within minutes. DNS blocking of CDN endpoints fails because the client falls back to cached manifests and secondary hosts. The sparse `_diff` table (~213k entries in late 2026 builds) therefore displays in English on Steam until NetEase merges delta patches back into the base package during major game updates.
-- **Official WWM launcher**: this restore does **not** happen (tested 2026-09-27). A patched `_diff` in `LocalData\Patch\HD\oversea\locale\` (on the official launcher the full path is `<InstallDir>\<variant>\LocalData\Patch\HD\oversea\locale\`, where `<variant>` is e.g. `wwm_lite`) stays in place across launches, so the whole patch — including the `_diff` layer — is effective. Why the two clients differ has not been investigated.
-- Earlier versions of this README described the restore as affecting every PC client; that conclusion came from testing on Steam only.
-- **Game updates (official launcher and Android)**: when NetEase ships a new build, the patcher compares the new file lists with the old ones and hash-checks **every file of each changed package**. The locale files are in the English language package, so a patched `translate_words_map_en` and `_diff` are re-downloaded — even when their content didn't change (observed 2026-10-28, hotfix `20261026`). On Android the patcher also deleted extra files in the `locale/` folder (backups). Between updates, nothing is re-checked. The file lists are encoded, so there's no practical way around this: reinstall the patch after each update. `patch_version.json` in the `locale\` folder is unrelated.
-- **Steam and game updates**: the same hotfix only touched Steam's small `LocalData` overlay; the base `translate_words_map_en` in `Package\HD\oversea\locale\` is managed by Steam and stayed patched.
-
-### 2. Upstream Desynchronization
-New strings introduced in game patches default to English until extracted, translated, and patched. Use `tools/rebuild_unique_strings.py` to reconcile deltas.
-
-### 3. Key Insertion Constraint
-Creating brand-new keys requires deriving the proprietary 64-bit hashing function, which is currently unsolved.
-
-### 4. Codec Exclusivity
-Only `codec = 4` (Zstandard) is implemented. If NetEase introduces alternative codecs, the parser rejects the block with an explicit error rather than outputting corrupted data.
-
-### 5. Text-Only Scope
-This toolkit processes text containers. Audio files, voice-over assets, and UI bitmap fonts are governed by separate archive packages.
-
----
-
-## Legal & Anti-Tamper Notice
-
-Please review the following disclaimers before utilizing this toolkit:
-
-- **Affiliation**: This project is an independent research and translation effort. It is not affiliated with, endorsed by, or connected to NetEase Inc., Everstone Studio, or any related subsidiaries.
-- **Online Game Environment**: *Where Winds Meet* is an online title featuring server-side authority and multiplayer functionality. Modifying client files carries inherent risks under the game's Terms of Service (ToS) and may trigger anti-tamper or integrity-check heuristics.
-- **Usage Disclaimer**: This toolkit is provided for educational and community localization purposes. The authors accept no liability for account penalties, bans, or software instability resulting from file modification. Do not test experimental modifications on critical accounts.
-- **Scope**: This software modifies display text strings exclusively; it contains no gameplay cheats, exploits, or competitive advantages.
-
----
-
-## Repository Structure
-
-```text
-.
-├── wwm_locmap.py                    # Primary CLI: info / dump / patch container codec
-├── tools/
-│   ├── qa_check.py                  # QA validation: catches prompt leaks, broken tags, empty values
-│   ├── expand_locale.py             # Expands unique dictionary entries into a full patch JSONL
-│   ├── rebuild_unique_strings.py    # Merges upstream patch deltas without invalidating existing indices
-│   └── patch_all.py                 # In-memory batch patcher for all translate_words_map_* variants
-├── locale/                          # Phase-based translation batches (phase0..phase6, phase17, update1)
-├── translation_work/                # Master deduplicated index (unique_strings.jsonl)
-├── Obsidian-Vault/                  # Full project documentation & translation memory
-│   ├── knowladge/
-│   │   ├── Format-Spec.md           # Exhaustive reverse-engineered binary specification
-│   │   ├── Quick-Reference.md       # Condensed terminology and translation style guide
-│   │   └── Glossary.md              # Wuxia terms, titles, and proper noun references
-│   └── progress/                    # Project milestone tracking and session resumption guides
-├── requirements.txt                 # Python dependencies (zstandard)
-├── LICENSE                          # GNU GPL v3
-└── CLAUDE.md                        # Developer and AI agent workflow reference
-```
-
----
-
-## Contributing
-
-Contributions are welcomed. Primary research and development priorities include:
-
-1. **Hash Derivation Research**: Investigating the H1/H2 hash calculation derived from `keyHash` and `seed` (see [`Obsidian-Vault/knowladge/Format-Spec.md`](Obsidian-Vault/knowladge/Format-Spec.md) §4.4) to unlock arbitrary key insertion.
-2. **QA Signatures**: Reporting new LLM system prompt patterns for inclusion in `tools/qa_check.py` (`LEAK_SIGNATURES`).
-3. **Format Verification Across Locales**: Validating parser compatibility against non-English locale packages (`_de`, `_fr`, `_ja`, etc.).
-4. **Glossary & Translation Polish**: Refining Wuxia terminology and martial arts lore definitions in `Obsidian-Vault/knowladge/glossary/`.
-
----
+- This is an independent fan translation and research project, **not affiliated with or endorsed
+  by** NetEase Inc., Everstone Studio or their subsidiaries.
+- *Where Winds Meet* is an online game. Modifying client files may conflict with its Terms of
+  Service and could trigger integrity checks. The authors accept no liability for account
+  penalties or instability — use it at your own risk.
+- The patch changes **display text only**: no cheats, exploits or gameplay advantages.
+- This repository does not distribute the game itself or commercial translation packs.
 
 ## License
 
-This project is licensed under the [GNU General Public License v3.0](LICENSE). The license applies solely to the source code and documentation in this repository; it does not grant rights to any proprietary game content or assets.
+Licensed under the [GNU General Public License v3.0](LICENSE). The license covers the source code
+and documentation in this repository only; it grants no rights to the game's proprietary content.
