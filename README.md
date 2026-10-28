@@ -1,7 +1,7 @@
 # Where Winds Meet — Localization Toolkit & Translation Pipeline
 
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Engine: Messiah](https://img.shields.io/badge/Engine-NetEase%20Messiah-orange.svg)]()
 [![Codec: Zstandard](https://img.shields.io/badge/Codec-Zstandard%20(zstd)-green.svg)]()
 [![Round-Trip: Byte-Identical](https://img.shields.io/badge/Round--Trip-Byte--Identical-brightgreen.svg)]()
@@ -692,7 +692,7 @@ Please review the following disclaimers before utilizing this toolkit:
 │   │   └── Glossary.md              # Wuxia terms, titles, and proper noun references
 │   └── progress/                    # Project milestone tracking and session resumption guides
 ├── requirements.txt                 # Python dependencies (zstandard)
-├── LICENSE                          # MIT License
+├── LICENSE                          # GNU GPL v3
 └── CLAUDE.md                        # Developer and AI agent workflow reference
 ```
 
@@ -711,4 +711,4 @@ Contributions are welcomed. Primary research and development priorities include:
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE). The license applies solely to the source code and documentation in this repository; it does not grant rights to any proprietary game content or assets.
+This project is licensed under the [GNU General Public License v3.0](LICENSE). The license applies solely to the source code and documentation in this repository; it does not grant rights to any proprietary game content or assets.
