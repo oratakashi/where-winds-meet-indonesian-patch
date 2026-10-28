@@ -150,9 +150,16 @@ published as a single rolling GitHub Release (tag `latest`):
 
 > [!TIP]
 > Unlike the Steam client, the official launcher does **not** restore the patched `_diff` file on
-> launch (tested 2026-09-27), so both files — including the `_diff` layer — stay translated.
+> a normal launch (tested 2026-09-27), so both files — including the `_diff` layer — stay translated.
 > This is the most complete way to play with the patch on PC. See
 > [Known Limitations & Deployment Gotchas](#known-limitations--deployment-gotchas).
+
+> [!WARNING]
+> **Every game update — even a small hotfix — puts the original English files back.** When the
+> launcher installs an update it re-checks every file in the updated packages and re-downloads
+> anything that doesn't match, including the patched `translate_words_map_en` and
+> `translate_words_map_en_diff` (observed 2026-10-28). After each update, simply copy the patch
+> files in again. Keep your backups **outside** the game folder.
 
 ### Android
 
@@ -259,10 +266,13 @@ sounds technical, but it's just a few copy-paste commands. The steps below are f
 To restore the originals later, repeat step 10 using the files from the `backup` folder
 (`adb push backup\locale\translate_words_map_en ...` etc.).
 
-> [!NOTE]
-> The game's own patcher may re-verify and silently restore modified files on launch, similar to
-> the `_diff` behavior on the Steam PC client (see [Known Limitations](#known-limitations--deployment-gotchas)). If
-> the Indonesian text reverts to English after a launch or update, re-copy the patched files.
+> [!WARNING]
+> The patch stays in place on normal launches, but **every game update — even a small hotfix —
+> restores the original files** (observed 2026-10-28): the in-game patcher re-checks every file
+> of the updated packages and re-downloads the locale files. It also **deletes any extra files**
+> in that `locale/` folder, so don't keep backups (e.g. `*.ori`) there — keep them on your PC (ADB
+> method: step 9). After each update, copy the patched files in again (ADB method: step 10). See
+> [Known Limitations](#known-limitations--deployment-gotchas).
 
 ### PC — China Client (燕云十六声)
 
@@ -306,9 +316,15 @@ so some text stays in Chinese.
 
 ### Reverting to English / Handling Game Updates
 
-To revert to the original English text, or after a game update (which typically overwrites the
-locale files with new versions from NetEase), simply overwrite the `translate_words_map_en*` files
+To revert to the original English text, simply overwrite the `translate_words_map_en*` files
 with the original backups you saved in step one of the relevant platform section above.
+
+After a game update, re-copy the patched files. On the **official launcher** and **Android**, every
+update — even a small hotfix whose text didn't change — restores the original locale files, so the
+patch has to be reinstalled each time. On **Steam**, NetEase's small hot-patches leave the base
+`translate_words_map_en` in `Package\` alone; only a Steam download of the game replaces it.
+If the update brought new text, the release may still be the previous version's patch: it still
+works, but new lines stay in English until the next release.
 
 ---
 
@@ -621,7 +637,7 @@ While the average string length is ~56 bytes, certain encyclopedia and narrative
 
 ## Known Limitations & Deployment Gotchas
 
-### 1. The `_diff` CDN Auto-Restore Mechanism (Steam client only)
+### 1. The CDN Auto-Restore Mechanism (Steam `_diff` on every launch; every client on game updates)
 - **Base `translate_words_map_en` (and, up to v2.2, `__small`) is persistent and safe to patch** in `Package\HD\oversea\locale\` on every client.
 - The game maintains two separate copies of `translate_words_map_en_diff`:
   - `Package\HD\oversea\locale\` (patched by this tool; safe, never re-verified).
@@ -629,6 +645,8 @@ While the average string length is ~56 bytes, certain encyclopedia and narrative
 - **Steam client**: the `LocalData` copy is **checksum-verified against NetEase CDN manifests on every game launch** (`StagePatchList` / `StageCheck` / `StageDownload`). Modified files in `LocalData` are detected and restored to original bytes within minutes. DNS blocking of CDN endpoints fails because the client falls back to cached manifests and secondary hosts. The sparse `_diff` table (~213k entries in late 2026 builds) therefore displays in English on Steam until NetEase merges delta patches back into the base package during major game updates.
 - **Official WWM launcher**: this restore does **not** happen (tested 2026-09-27). A patched `_diff` in `LocalData\Patch\HD\oversea\locale\` (on the official launcher the full path is `<InstallDir>\<variant>\LocalData\Patch\HD\oversea\locale\`, where `<variant>` is e.g. `wwm_lite`) stays in place across launches, so the whole patch — including the `_diff` layer — is effective. Why the two clients differ has not been investigated.
 - Earlier versions of this README described the restore as affecting every PC client; that conclusion came from testing on Steam only.
+- **Game updates (official launcher and Android)**: when NetEase ships a new build, the patcher compares the new file lists with the old ones and hash-checks **every file of each changed package**. The locale files are in the English language package, so a patched `translate_words_map_en` and `_diff` are re-downloaded — even when their content didn't change (observed 2026-10-28, hotfix `20261026`). On Android the patcher also deleted extra files in the `locale/` folder (backups). Between updates, nothing is re-checked. The file lists are encoded, so there's no practical way around this: reinstall the patch after each update. `patch_version.json` in the `locale\` folder is unrelated.
+- **Steam and game updates**: the same hotfix only touched Steam's small `LocalData` overlay; the base `translate_words_map_en` in `Package\HD\oversea\locale\` is managed by Steam and stayed patched.
 
 ### 2. Upstream Desynchronization
 New strings introduced in game patches default to English until extracted, translated, and patched. Use `tools/rebuild_unique_strings.py` to reconcile deltas.

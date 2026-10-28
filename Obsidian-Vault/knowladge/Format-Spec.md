@@ -271,10 +271,33 @@ All earlier testing (before 2026-09-27) was done on Steam only, which is why
 this was first recorded as a limitation for every client. Why the two
 clients differ hasn't been investigated.
 
-So on the official launcher all patched files stick, `_diff` included
+So on the official launcher all patched files stick between updates, `_diff` included
 (212,117 entries in the 2026-09 update). On Steam only the base and
 `__small` patches stick; the `_diff` layer there becomes permanent only
 when NetEase folds it into the base package in a later update.
+
+**Game updates revert the patch on the official launcher and Android**
+(observed 2026-10-28, hotfix `20261026…`, locale files byte-identical to
+the previous build). On a new build the patcher fetches the new
+patchlists, diffs them against the local ones
+(`StagePatchList:collect_check_list diff=[…, pkg_English, …, pkg_en, …]`)
+and hash-checks every file of each changed package, re-fetching
+mismatches:
+
+| client | files checked | fetched | patched locale files |
+|---|---|---|---|
+| official launcher (`wwm_lite`) | 338,910 | 219 | base + `_diff` restored |
+| Android (`com.netease.yysls`) | 453,063 | 222 | base + `_diff` restored, `*.ori` backups in the folder deleted |
+| Steam (in-game patcher, `IsLauncher: false`) | 1,941 (`LocalData` overlay only) | 84 | `Package\` base untouched |
+
+On a normal launch there is no patchlist diff and the check runs from
+cache (`#fetch=0`), which is why the 2026-09-27 retest saw the patch
+hold. The patchlists are encoded (`HEXB_` + base64), so they can't be
+edited to accept patched hashes; `locale\patch_version.json` (a single
+number, not touched by updates) plays no part. On Steam, `Package\` is
+owned by the Steam depot (only a Steam update replaces it). Net effect:
+on the official launcher and Android the patch must be reinstalled after
+every update.
 
 ## 8. Container v2 — WWM China (燕云十六声), found 2026-10-20
 

@@ -230,7 +230,7 @@ variant NetEase adds — add its name to the profile's `files` in `tools/profile
 `translate_words_map_en_mobile` (2026-09-22) is byte-identical to `translate_words_map_en`; it is
 in the global profile's `files` anyway so it keeps working if the two ever diverge.
 
-### Deployment gotcha: on the **Steam** client, the installed `_diff` file gets re-verified by the CDN patcher
+### Deployment gotcha: NetEase's patcher re-verifies installed locale files (Steam `_diff` every launch, every client on updates)
 
 This is not a tool bug — it's a fact about the live game client that affects anyone trying to
 actually play with a patched file, so it's recorded here. **It depends on which client runs the
@@ -245,7 +245,8 @@ The game install has **two separate copies** of `translate_words_map_en_diff`:
   Patches here are **stable**: nothing in-game re-verifies or overwrites it.
 - `LocalData\Patch\HD\oversea\locale\translate_words_map_en_diff` — a **separate hot-patch overlay**
   copy that the running game actually loads for the `_diff` layer. `LocalData\Patch\...` only
-  contains `_diff` variants (no `en`/`__small`/`__small_diff`), mirroring the `Package` structure.
+  contains `_diff` variants (no `en`/`__small`/`__small_diff`) on Steam, mirroring the `Package`
+  structure; on the official launcher's `wwm_lite` it holds the base `translate_words_map_en` too.
 
 On the Steam client, every game launch runs NetEase's patcher (visible in
 `LocalData\patch_log\patch_log_*.txt`) through a `StagePatchList` → `StageCheck` → `StageDownload`
@@ -260,17 +261,41 @@ fetch also falls back to a locally cached copy (`fetch_patchlist res=ok from=cac
 CDN host is unreachable, and the actual file download appears to use a different host than the
 manifest-fetch host, so blocking a single CDN hostname does not stop the repair.
 
-Why the official launcher behaves differently hasn't been investigated (e.g. whether it skips the
-`StageCheck` pass, or only verifies on its own update step) — only the observed outcome is known.
+Why the official launcher behaves differently on a normal launch hasn't been investigated — only
+the observed outcome is known. **But every server update re-verifies it** (observed 2026-10-28):
+
+**Server updates revert the patch on the official launcher and on Android.** When NetEase pushes
+a new build (even a hotfix with byte-identical locale files — `20261017191021` →
+`20261026193908` on lite, `20261019214618` → `20261026194403` on Android), the patcher downloads
+the new patchlists, diffs them against the local ones
+(`StagePatchList:collect_check_list diff=[…, pkg_English, …, pkg_en, …]`) and hash-checks
+**every file of each changed package** (~339k files on lite, ~453k on Android), re-fetching any
+mismatch (`StageCheck:finish_check … #fetch=219` / `#fetch=222`). The locale files are in
+`pkg_en`, so a patched `translate_words_map_en` **and** `_diff` in `LocalData\Patch\...` come back
+pristine. On Android it also deleted unmanifested files in that folder (the owner's `.ori`
+backups), so never keep backups inside the game folder. On a normal launch there is no patchlist
+diff and the check runs from cache (`#fetch=0`), which is why the 2026-09-27 retest saw the patch
+hold. The patchlists are encoded (`HEXB_` + base64), so editing them is not a practical
+workaround. `locale\patch_version.json` (one number, untouched by updates) is unrelated.
+
+On **Steam** the same hotfix (`20261026193944`) arrived through the in-game patcher
+(`IsLauncher: false`), which only manages the small `LocalData` overlay (~1.9k files, 84
+fetched). `Package\HD\oversea\locale\translate_words_map_en` belongs to the Steam depot and
+survived; it is only replaced by a Steam depot update.
 
 **Practical implication**:
 
-- **Official NetEase launcher** (v2.3: base + `_diff` only): all files hold — base, (≤v2.2) `__small`, `__small_diff` and the
-  `_diff` overlay in `LocalData\Patch\...`. The `_diff` layer (~213k entries in the 2026-09
+- **Official NetEase launcher** (v2.3: base + `_diff` only; on `wwm_lite` both live in
+  `LocalData\Patch\HD\oversea\locale\`): all files hold between updates — base, (≤v2.2) `__small`,
+  `__small_diff` and the `_diff` overlay. The `_diff` layer (~213k entries in the 2026-09
   update, ~26% of total entries, representing text changed/added since the base package was last
   rebuilt) is therefore fully usable there, so translating `_diff`-only strings is worthwhile.
+  **After every game update (hotfixes included) the patch must be reinstalled.**
+- **Android** (`/sdcard/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/`):
+  same as the official launcher — holds between updates, reverted by every update.
 - **Steam**: only `Package\HD\oversea\locale\translate_words_map_en` (base) and
-  `translate_words_map_en__small` hold permanently; the `_diff` overlay cannot currently be made to
+  `translate_words_map_en__small` hold, and they survive NetEase hot-patches (only a Steam depot
+  update replaces them); the `_diff` overlay cannot currently be made to
   stick via a simple file replacement. If a future game update merges `_diff` content back into
   the base package (which NetEase does periodically), whatever fraction of it is already covered
   by the translation dictionary becomes permanent automatically at that point.
