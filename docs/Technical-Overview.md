@@ -132,7 +132,7 @@ The game keeps two copies of `translate_words_map_en_diff`:
 | **Steam** | `LocalData` `_diff` is hash-checked against NetEase's CDN manifest and re-downloaded (`StagePatchList` → `StageCheck` → `StageDownload`). The base file in `Package\` is untouched. | NetEase hot-patches only touch the small `LocalData` overlay; the base file in `Package\` is replaced only by a Steam depot update. |
 | **Official launcher** | Nothing is restored (tested 2026-09-27) — the whole patch, including `_diff`, works. | Every file of each changed package is hash-checked; patched locale files are re-downloaded (observed 2026-10-28). |
 | **Android** | Nothing is restored. | Same as the official launcher, and extra files in `locale/` (e.g. backups) are **deleted**. |
-| **China client** | Not restored (tested 2026-10-20). | A CN update replaces the locale files even when their content didn't change (2026-10-25). |
+| **China client** (no longer maintained) | Not restored (tested 2026-10-20). | A CN update replaces the locale files even when their content didn't change (2026-10-25). |
 
 Blocking the CDN hostname doesn't help on Steam: the client falls back to a cached manifest and
 downloads from other hosts. The patch lists are encoded (`HEXB_` + base64), so editing them isn't

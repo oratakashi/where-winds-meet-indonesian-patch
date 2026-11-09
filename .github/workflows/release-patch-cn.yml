@@ -7,20 +7,13 @@ name: release-patch-cn
 # A CN build depends on the global translation too: CN entries reuse it through the
 # keyHash/text bridge (tools/bridge.py), so global locale/ changes also trigger it.
 #
+# MAINTENANCE ENDED (2026-11): the CN patch is no longer maintained, so the push trigger
+# below was removed — the cn-latest release is frozen. The workflow stays manual
+# (workflow_dispatch) only, in case maintenance resumes.
+#
 # Needs the CN_KEYSTREAM_PASSPHRASE secret: the CN files' zstd dictionary is encrypted
 # (Format-Spec.md §8); the keystream is committed only as cn/keystream_v2.bin.gpg.
 on:
-  push:
-    branches: [main]
-    paths:
-      - "cn/**"
-      - "locale/**"
-      - "translation_work/**"
-      - "translate_words_map_en"
-      - "translate_words_map_en_diff"
-      - "tools/**"
-      - "wwm_locmap.py"
-      - ".github/workflows/release-patch-cn.yml"
   workflow_dispatch: {}
 
 # Several pushes in a row: only the newest build needs to finish.
@@ -90,11 +83,21 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: cn-latest
-          name: "Patch Terjemahan Indonesia — WWM China 燕云十六声 (build terbaru)"
+          name: "[TIDAK DIMAINTAIN LAGI] Patch Terjemahan Indonesia — WWM China 燕云十六声"
           prerelease: true
           make_latest: false
           target_commitish: ${{ github.sha }}
           body: |
+            > [!CAUTION]
+            > **Patch WWM China (燕云十六声) ini sudah TIDAK DIMAINTAIN LAGI.** Build ini adalah build
+            > terakhir dan tidak akan ada update terjemahan maupun penyesuaian ke versi game CN yang baru.
+            > Alasan:
+            > - Player Indonesia yang bermain WWM CN sedikit.
+            > - Scope terjemahan terbatas — subtitle cutscene/story tidak bisa diterjemahkan.
+            > - Update CN terlalu cepat sehingga phase terjemahan tidak bisa mengimbangi.
+            >
+            > Untuk pengalaman terjemahan penuh, gunakan **client global** (release [`latest`](https://github.com/oratakashi/where-winds-meet-indonesian-patch/releases/tag/latest)) yang tetap dimaintain.
+
             Build otomatis dari commit ${{ github.sha }} (${{ github.event.head_commit.timestamp }}).
 
             **Untuk client China Where Winds Meet (燕云十六声)** — bukan untuk versi global (versi
@@ -102,9 +105,8 @@ jobs:
             Berisi `translate_words_map_zh_cn` dan `translate_words_map_zh_cn__small`.
 
             Teks yang juga ada di versi global memakai terjemahan Indonesia versi global; teks khusus
-            versi China diterjemahkan langsung dari Mandarin dan masih berjalan, jadi sebagian teks
-            masih tampil dalam bahasa Mandarin. File di release ini selalu ter-overwrite tiap ada
-            perubahan yang di-push ke `main`.
+            versi China diterjemahkan langsung dari Mandarin, tetapi belum selesai dan tidak akan dilanjutkan, jadi sebagian teks
+            masih tampil dalam bahasa Mandarin. File di release ini tidak lagi diperbarui otomatis.
 
             ${{ steps.progress.outputs.line }}
 

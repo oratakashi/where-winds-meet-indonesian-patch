@@ -59,6 +59,14 @@ python tools/patch_all.py [--outdir patched] [--level N]
 
 ### WWM China (`--profile cn`)
 
+> [!WARNING]
+> **Maintenance ended (2026-11):** the China profile is no longer maintained — few Indonesian CN
+> players, limited scope (no cutscene subtitles) and CN updates too fast for the phases to keep
+> up. The `cn-latest` release is frozen and `release-patch-cn.yml` is manual-only. Don't start new
+> CN translation sessions or CN game-update migrations unless the owner says maintenance resumes.
+> The commands below are kept for reference only.
+
+
 Every tool above takes `--profile {global,cn}` (default `global`, behaviour unchanged); paths,
 variants, dumps and phases per profile live in `tools/profiles.py`. The `cn` profile is the
 Indonesian translation of **WWM China (燕云十六声)**, sourced from Mandarin:

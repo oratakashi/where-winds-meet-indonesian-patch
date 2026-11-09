@@ -10,7 +10,7 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 
 [**⬇ Download — Global client**](../../releases/tag/latest) &nbsp;·&nbsp;
-[**⬇ Download — China client (燕云十六声)**](../../releases/tag/cn-latest) &nbsp;·&nbsp;
+[⬇ China client (燕云十六声) — **no longer maintained**](../../releases/tag/cn-latest) &nbsp;·&nbsp;
 [Installation guide](#player-installation-guide)
 
 </div>
@@ -19,6 +19,16 @@
 > This is an unofficial fan project, not affiliated with NetEase or Everstone Studio. It only
 > changes in-game text — no gameplay changes. On the global client the game language must stay on
 > **English** for the patch to show.
+
+> [!WARNING]
+> **The China client (燕云十六声) patch is no longer maintained.** The last build stays online
+> as-is, but it will not receive new translations or updates for new CN game versions. Reasons:
+> - **Small Indonesian player base** on the China client.
+> - **Limited translation scope** — story and cutscene subtitles can't be translated (they come
+>   from integrity-checked data packs).
+> - **CN updates ship too fast** to keep up with the translation phases.
+>
+> For a complete Indonesian experience, play the **global client**, which stays fully supported.
 
 ## Contents
 
@@ -34,11 +44,11 @@
 
 ## Translation Progress
 
-Translation is ongoing, so some text may still appear in English (or Chinese on the China client).
+Translation is ongoing, so some text may still appear in English (or Chinese on the China client, which is no longer maintained).
 New releases are built automatically whenever translations are added.
 
 - **Global client:** [`Current-Status.md`](Obsidian-Vault/progress/Current-Status.md)
-- **China client:** [`CN-Current-Status.md`](Obsidian-Vault/cn/progress/CN-Current-Status.md)
+- **China client (no longer maintained, frozen):** [`CN-Current-Status.md`](Obsidian-Vault/cn/progress/CN-Current-Status.md)
 
 ---
 
@@ -48,7 +58,7 @@ No Python or tools needed — just copy two files into the game folder.
 
 1. Download the patch for your client:
    - Global: **[`wwm-indonesian-patch.zip`](../../releases/tag/latest)** — current target: game v2.3 (hotfix)
-   - China: **[`wwm-cn-indonesian-patch.zip`](../../releases/tag/cn-latest)**
+   - China: **[`wwm-cn-indonesian-patch.zip`](../../releases/tag/cn-latest)** — ⚠️ no longer maintained (last build only)
 2. Follow the steps for your platform below.
 
 > [!IMPORTANT]
@@ -65,7 +75,7 @@ No Python or tools needed — just copy two files into the game folder.
 | [PC — Official launcher](#pc--official-wwm-launcher) | `<InstallDir>\<variant>\LocalData\Patch\HD\oversea\locale\` | ✅ Yes | Reinstall |
 | [Android](#android) | `Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/` | ✅ Yes | Reinstall |
 | [PC — Steam](#pc--steam) | `<SteamLibrary>\steamapps\common\Where Winds Meet\Package\HD\oversea\locale\` | ⚠️ Partial — `_diff` text stays English | Usually survives; reinstall after a Steam update |
-| [PC — China client](#pc--china-client-燕云十六声) | `<InstallDir>\yysls_fast\LocalData\Patch\HD\v2\locale\` | ✅ Yes (except cutscene subtitles) | Reinstall |
+| [PC — China client](#pc--china-client-燕云十六声) ⚠️ unmaintained | `<InstallDir>\yysls_fast\LocalData\Patch\HD\v2\locale\` | ✅ Yes (except cutscene subtitles) | Reinstall |
 
 ### PC — Official WWM Launcher
 
@@ -172,7 +182,13 @@ To restore the originals, repeat step 10 with the files from `backup\locale\`.
 
 ### PC — China Client (燕云十六声)
 
-The China client has its own patch and release. Lines shared with the global game use the global
+> [!CAUTION]
+> **No longer maintained.** The patch below is the final build and may not match the current CN
+> game version. Don't install it over a newer game version, and don't expect updates. Reasons:
+> few Indonesian players on the CN client, limited scope (no cutscene subtitles), and CN updates
+> that move faster than the translation phases can follow. Use the global client instead.
+
+The China client had its own patch and release. Lines shared with the global game use the global
 translation; CN-only lines are still being translated.
 
 1. Close the game **and** the launcher.
@@ -223,7 +239,7 @@ platform table above.
 <summary><b>The patch disappeared after the game updated.</b></summary>
 
 Expected — every update (even hotfixes) restores the original files on the official launcher,
-Android and the China client. Reinstall the latest release.
+Android and the China client (the latter is no longer maintained, so no new build will come). Reinstall the latest release.
 </details>
 
 <details>

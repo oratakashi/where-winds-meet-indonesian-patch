@@ -204,6 +204,13 @@ A new `locale/updateN.jsonl` must also be registered in `PHASES` in `tools/progr
 
 ## China Client (`--profile cn`)
 
+> [!WARNING]
+> **Maintenance ended (2026-11):** the China profile is no longer maintained — few Indonesian CN
+> players, limited scope (no cutscene subtitles) and CN updates too fast for the phases to keep
+> up. The `cn-latest` release is frozen and `release-patch-cn.yml` is manual-only. Don't start new
+> CN translation sessions or CN game-update migrations unless the owner says maintenance resumes.
+> The tooling below is kept for reference.
+
 Every tool takes `--profile {global,cn}` (default `global`). The `cn` profile translates
 **WWM China (燕云十六声)** from Mandarin. CN files use **container v2** (zstd dictionary encrypted
 with a keystream), which `wwm_locmap.py` handles transparently once `cn/work/keystream_v2.bin`

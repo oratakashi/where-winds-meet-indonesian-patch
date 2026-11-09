@@ -1,5 +1,8 @@
 name: translation-qa-cn
 
+# NOTE (2026-11): the CN patch is no longer maintained (see README). This QA workflow is kept so
+# any stray change under cn/ stays valid, but no new CN work is planned.
+
 # WWM China (燕云十六声, profile cn): every translation session must leave
 # cn/locale/*.jsonl and cn/overrides.jsonl valid and the generated progress block in
 # Obsidian-Vault/cn/progress/CN-Current-Status.md up to date. These checks need no
