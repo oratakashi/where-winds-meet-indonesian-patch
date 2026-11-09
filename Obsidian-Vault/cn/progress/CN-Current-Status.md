@@ -1,5 +1,11 @@
 # CN Current Status
 
+> [!WARNING]
+> **Maintenance ended (2026-11): the WWM China patch is no longer maintained.** Reasons: few
+> Indonesian players on WWM CN, limited translation scope (no cutscene subtitles), and CN updates
+> too fast for the phases to keep up. The `cn-latest` release is frozen. The numbers below are the
+> final state and won't change.
+
 **Last updated: 2026-10-26 — CN Phase 4 complete: final 2,000 rows at idx 118,000–119,999 added. All six phases complete: 159,176 / 159,176 unique strings (100.00%); CN-only in-game coverage 823,139 / 823,139 (100.00%). No unfinished idx in the current corpus.**
 Single source of truth for the **WWM China (燕云十六声)** translation — overwritten each
 session. Phase plan: [[CN-Phase-Roadmap]]; resume checklist: [[CN-Resume-Procedure]];

@@ -9,7 +9,7 @@ Found a wrong, awkward or broken line in-game? Open an
 
 - the text as shown in-game (a screenshot helps),
 - where it appears (menu, quest, item, NPC dialogue),
-- your client (Steam, official launcher, Android, China client) and the patch release date.
+- your client (Steam, official launcher, Android; the China client is no longer maintained) and the patch release date.
 
 ## Work on the code or translations
 
