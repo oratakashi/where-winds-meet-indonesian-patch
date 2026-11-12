@@ -1,0 +1,13 @@
+[build]
+target = "./index.html"
+
+[watch]
+ignore = ["./src-tauri"]
+
+[serve]
+port = 1420
+open = false
+
+# Rust/UI needs Tailwind v4; Trunk downloads this standalone binary (no npm needed).
+[tools]
+tailwindcss = "4.1.13"

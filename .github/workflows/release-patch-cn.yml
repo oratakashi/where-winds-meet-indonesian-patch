@@ -59,6 +59,11 @@ jobs:
         run: |
           python tools/patch_all.py --profile cn --outdir patched-cn --level 19 | tee patch-cn.log
 
+      # Original + patched hashes per file; the Patch Guard app reads this to tell
+      # whether this build matches the files installed in the game folder.
+      - name: Write manifest.json
+        run: python tools/make_manifest.py --profile cn --outdir patched-cn
+
       - name: Compute progress summary
         id: progress
         run: |
@@ -137,5 +142,6 @@ jobs:
             **Donate via Saweria:** [https://saweria.co/oratakashi](https://saweria.co/oratakashi)
           files: |
             wwm-cn-indonesian-patch.zip
+            patched-cn/manifest.json
             patched-cn/translate_words_map_zh_cn
             patched-cn/translate_words_map_zh_cn__small

@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>WWM Patch Guard</title>
+    <link data-trunk rel="tailwind-css" href="style/tailwind.css" />
+    <!-- rustc emits bulk-memory etc.; wasm-opt rejects them unless told. WebView2 supports all. -->
+    <link data-trunk rel="rust" data-wasm-opt="z" data-wasm-opt-params="--all-features" />
+  </head>
+  <body></body>
+</html>

@@ -68,6 +68,10 @@ python tools/patch_all.py [--outdir patched] [--level N]
                                                        # translate_words_map_* variant (base, _diff, _mobile)
                                                        # at once, writing
                                                        # repacked copies under --outdir
+
+python tools/make_manifest.py [--outdir patched]      # after patch_all.py: write <outdir>/manifest.json with the
+                                                       # sha256/size of each ORIGINAL (repo binary) and PATCHED file;
+                                                       # published with the release, read by the Patch Guard app
 ```
 
 ### WWM China (`--profile cn`)
@@ -204,6 +208,22 @@ context — only use one if the user explicitly asks for it by name.
   `locale/phase*.jsonl` progress never needs remapping.
 - `tools/patch_all.py` — imports `expand_locale`'s dictionary builder and applies it to all known
   `translate_words_map_*` files in one pass, in memory (no intermediate per-file JSONL needed).
+- `tools/make_manifest.py` — writes `manifest.json` (original + patched sha256 per file) next to
+  `patch_all.py`'s output. Both release workflows publish it as a release asset; the
+  Patch Guard app (`app/`) uses `original_sha256` as the only proof that a build matches the files
+  installed in a game folder, so it must always be computed from the binary `patch_all.py` read.
+- `app/` — **WWM Patch Guard**, a Windows tray app (Tauri 2 + Leptos CSR + Rust/UI components,
+  built with Trunk) that reinstalls the patch when NetEase's patcher restores the originals.
+  It needs no codec: it compares sha256 hashes against the release `manifest.json` and copies
+  files. Rules live in `app/src-tauri/src/guard.rs` (unit-tested: `cargo test -p wwm-patch-guard
+  --lib` in `app/`); `engine.rs` is the watcher/poll loop, `lib.rs` the Tauri shell, `app/src/`
+  the UI. It never installs over a file whose hash matches no known original (a force install is
+  user-confirmed). Build: `cargo tauri build` in `app/` (needs `trunk`, `tauri-cli`, the
+  `wasm32-unknown-unknown` target). CI: `release-app.yml` (tag `app-v*` publishes the installer).
+  `WWM_PATCH_GUARD_BASE_URL` / `WWM_PATCH_GUARD_DATA_DIR` point it at a local release server /
+  data folder for testing. The Rust/UI CLI on crates.io (`ui-cli` 0.3.16) still targets the old
+  registry host, so components in `app/src/components/ui/` were copied from
+  `https://leptos.rust-ui.com/registry/styles/default/<name>.md`.
 - `tools/profiles.py` — per-profile paths/variants/dumps/phases (`global`, `cn`); `--profile` on
   every tool. `tools/bridge.py` — the global→CN keyHash/text bridge.
 - `cn/tools/find_dict_in_dump.py` (recover the v2 dictionary keystream from the running CN client),

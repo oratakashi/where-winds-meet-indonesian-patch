@@ -34,6 +34,7 @@
 
 - [Translation Progress](#translation-progress)
 - [Player Installation Guide](#player-installation-guide)
+- [Auto-reinstall app (Windows)](#auto-reinstall--wwm-patch-guard-windows)
 - [Updating & Uninstalling](#updating--uninstalling)
 - [FAQ](#faq)
 - [Support the Project](#support-the-project)
@@ -76,6 +77,33 @@ No Python or tools needed — just copy two files into the game folder.
 | [Android](#android) | `Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/` | ✅ Yes | Reinstall |
 | [PC — Steam](#pc--steam) | `<SteamLibrary>\steamapps\common\Where Winds Meet\Package\HD\oversea\locale\` | ⚠️ Partial — `_diff` text stays English | Usually survives; reinstall after a Steam update |
 | [PC — China client](#pc--china-client-燕云十六声) ⚠️ unmaintained | `<InstallDir>\yysls_fast\LocalData\Patch\HD\v2\locale\` | ✅ Yes (except cutscene subtitles) | Reinstall |
+
+### Auto-reinstall — WWM Patch Guard (Windows)
+
+Game updates and in-game hot-patches put the original files back, sometimes without the launcher
+showing any update. **WWM Patch Guard** is a small tray app that watches the game's locale folder
+and puts the patch back by itself. It is built for the **official launcher (global)**. It can
+also guard a China client folder, but only while the frozen `cn-latest` release stays unchanged
+and the original files still match it (that release has no `manifest.json`, so in practice it
+will report "waiting for a release" there).
+
+1. Download the `WWM Patch Guard` installer from the [releases page](../../releases) and run it.
+2. Click **Tambah folder game** and pick your game (or launcher) install folder. The locale
+   folders inside it are found automatically; the patch is downloaded and installed.
+3. Leave it in the tray (turn on **Jalankan saat Windows menyala**). When a file is restored while
+   the game is running, restart the game to see the Indonesian text again.
+
+How it decides what to do:
+
+- File is the original the patch was built from → the patch is reinstalled (from a local cache,
+  no download).
+- File is a **new** original from a real game update → the app waits for a patch release built
+  for that exact file, then installs it. It never installs an outdated patch over a newer game.
+- **Kembalikan file asli** in the app uninstalls the patch (backups are kept outside the game
+  folder, in `%LOCALAPPDATA%\io.github.oratakashi.wwm-patch-guard\`).
+
+It only copies files — it does not touch the game process, memory or network traffic. It is not
+available for Steam (see the note there) or Android.
 
 ### PC — Official WWM Launcher
 
@@ -239,7 +267,9 @@ platform table above.
 <summary><b>The patch disappeared after the game updated.</b></summary>
 
 Expected — every update (even hotfixes) restores the original files on the official launcher,
-Android and the China client (the latter is no longer maintained, so no new build will come). Reinstall the latest release.
+Android and the China client (the latter is no longer maintained, so no new build will come).
+Reinstall the latest release, or on Windows let
+[WWM Patch Guard](#auto-reinstall--wwm-patch-guard-windows) do it automatically.
 </details>
 
 <details>

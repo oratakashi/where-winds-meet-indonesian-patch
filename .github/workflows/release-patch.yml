@@ -39,6 +39,11 @@ jobs:
       - name: Build patched files
         run: python tools/patch_all.py --outdir patched --level 19
 
+      # Hash original + patched per file; dibaca app Patch Guard untuk tahu apakah
+      # build ini cocok dengan file game yang terpasang.
+      - name: Write manifest.json
+        run: python tools/make_manifest.py --outdir patched
+
       # strings.jsonl tidak ter-track (>100 MB sejak v2.3) — dump dari binary.
       - name: Dump strings.jsonl
         run: python wwm_locmap.py dump translate_words_map_en strings.jsonl
@@ -104,5 +109,6 @@ jobs:
             **Donate via Saweria:** [https://saweria.co/oratakashi](https://saweria.co/oratakashi)
           files: |
             wwm-indonesian-patch.zip
+            patched/manifest.json
             patched/translate_words_map_en
             patched/translate_words_map_en_diff

@@ -229,6 +229,26 @@ and the CN vault ([`CN-Current-Status.md`](../Obsidian-Vault/cn/progress/CN-Curr
 
 ---
 
+## WWM Patch Guard (`app/`)
+
+The tray app players run to have the patch reinstalled automatically. It is independent of the
+Python toolkit: it only compares file hashes with the `manifest.json` published in each patch
+release (`tools/make_manifest.py`) and copies files.
+
+```bash
+rustup target add wasm32-unknown-unknown
+cargo install trunk tauri-cli --locked
+
+cd app
+cargo test -p wwm-patch-guard --lib      # guard rules (guard.rs) + folder detection
+cargo tauri dev                          # run with hot reload
+cargo tauri build                        # installer -> target/release/bundle/nsis/
+```
+
+To try it without touching a real install, set `WWM_PATCH_GUARD_BASE_URL` to a local server that
+serves `<url>/latest/manifest.json` plus the patched files, and `WWM_PATCH_GUARD_DATA_DIR` to a
+scratch folder. Releasing: push a tag `app-vX.Y.Z` (`release-app.yml`).
+
 ## Repository Structure
 
 ```text
@@ -239,9 +259,11 @@ and the CN vault ([`CN-Current-Status.md`](../Obsidian-Vault/cn/progress/CN-Curr
 │   ├── expand_locale.py             # Expands the per-idx dictionary into a patch JSONL for one dump
 │   ├── rebuild_unique_strings.py    # Appends new strings after a game update (keeps existing idx)
 │   ├── patch_all.py                 # Patches every translate_words_map_* variant in one pass
+│   ├── make_manifest.py             # manifest.json (original + patched sha256) for a patch_all.py output
 │   ├── progress.py                  # Translation progress tables (--write / --check)
 │   ├── profiles.py                  # Per-profile paths/variants (global, cn)
 │   └── bridge.py                    # Global → CN keyHash/text bridge
+├── app/                             # WWM Patch Guard: Windows tray app that reinstalls the patch (Rust, Tauri + Leptos)
 ├── locale/                          # Global translations (phase*.jsonl, update*.jsonl)
 ├── translation_work/                # unique_strings.jsonl — deduplicated source text
 ├── cn/                              # China client: binaries, locale/, tools/, overrides.jsonl
