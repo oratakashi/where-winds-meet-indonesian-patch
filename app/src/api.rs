@@ -59,6 +59,7 @@ pub struct Ui {
     pub log: Vec<LogLine>,
     pub autostart: bool,
     pub version: String,
+    pub mica: bool,
 }
 
 #[derive(Serialize)]

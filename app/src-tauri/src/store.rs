@@ -1,4 +1,4 @@
-//! On-disk state under `%LOCALAPPDATA%\io.github.oratakashi.wwm-patch-guard\` — never inside the game folder,
+//! On-disk state under `%LOCALAPPDATA%\com.oratakashi.wwm\` — never inside the game folder,
 //! because NetEase's patcher deletes files it does not know there.
 //!
 //! ```text

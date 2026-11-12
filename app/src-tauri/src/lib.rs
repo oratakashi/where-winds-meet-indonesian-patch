@@ -12,9 +12,11 @@ use engine::{Engine, Msg, Snapshot};
 use model::Event;
 use serde::Serialize;
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicBool, Ordering};
 use store::Store;
 use tauri::menu::{Menu, MenuItem};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
+use tauri::window::{Effect, EffectsBuilder};
 use tauri::{AppHandle, Emitter, Manager, RunEvent, State, WebviewUrl, WebviewWindowBuilder};
 use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 use tauri_plugin_dialog::DialogExt;
@@ -23,20 +25,27 @@ use tauri_plugin_notification::NotificationExt;
 /// Passed by the autostart entry: start in the tray without opening the window.
 const ARG_MINIMIZED: &str = "--minimized";
 
+/// Whether the OS accepted the Mica backdrop (Windows 11). The page only goes transparent
+/// then; everywhere else it paints its own opaque background.
+#[derive(Default)]
+struct Mica(AtomicBool);
+
 #[derive(Serialize)]
 struct Ui {
     #[serde(flatten)]
     snapshot: Snapshot,
     autostart: bool,
     version: &'static str,
+    mica: bool,
 }
 
 #[tauri::command]
-fn get_status(app: AppHandle, engine: State<Engine>) -> Ui {
+fn get_status(app: AppHandle, engine: State<Engine>, mica: State<Mica>) -> Ui {
     Ui {
         snapshot: engine.snapshot(),
         autostart: app.autolaunch().is_enabled().unwrap_or(false),
         version: env!("CARGO_PKG_VERSION"),
+        mica: mica.0.load(Ordering::Relaxed),
     }
 }
 
@@ -124,11 +133,18 @@ fn show_window(app: &AppHandle) {
         let _ = w.set_focus();
         return;
     }
-    let _ = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
+    // Transparent webview + Mica: the page decides whether to show the backdrop (see `Mica`).
+    let Ok(window) = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
         .title("WWM Patch Guard")
-        .inner_size(560.0, 720.0)
-        .min_inner_size(440.0, 520.0)
-        .build();
+        .inner_size(600.0, 760.0)
+        .min_inner_size(460.0, 520.0)
+        .transparent(true)
+        .build()
+    else {
+        return;
+    };
+    let ok = window.set_effects(EffectsBuilder::new().effect(Effect::Mica).build()).is_ok();
+    app.state::<Mica>().0.store(ok, Ordering::Relaxed);
 }
 
 fn notify(app: &AppHandle, events: &[Event]) {
@@ -204,6 +220,7 @@ pub fn run() {
                 let _ = handle.emit("status", ());
             });
             app.manage(engine);
+            app.manage(Mica::default());
             build_tray(app.handle())?;
             if !std::env::args().any(|a| a == ARG_MINIMIZED) {
                 show_window(app.handle());

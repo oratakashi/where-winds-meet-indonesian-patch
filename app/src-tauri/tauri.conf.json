@@ -3,7 +3,7 @@
   "productName": "WWM Patch Guard",
   "mainBinaryName": "wwm-patch-guard",
   "version": "0.1.0",
-  "identifier": "io.github.oratakashi.wwm-patch-guard",
+  "identifier": "com.oratakashi.wwm",
   "build": {
     "beforeDevCommand": "trunk serve",
     "devUrl": "http://localhost:1420",

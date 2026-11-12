@@ -100,7 +100,7 @@ How it decides what to do:
 - File is a **new** original from a real game update → the app waits for a patch release built
   for that exact file, then installs it. It never installs an outdated patch over a newer game.
 - **Kembalikan file asli** in the app uninstalls the patch (backups are kept outside the game
-  folder, in `%LOCALAPPDATA%\io.github.oratakashi.wwm-patch-guard\`).
+  folder, in `%LOCALAPPDATA%\com.oratakashi.wwm\`).
 
 It only copies files — it does not touch the game process, memory or network traffic. It is not
 available for Steam (see the note there) or Android.

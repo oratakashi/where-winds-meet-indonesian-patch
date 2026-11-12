@@ -3,7 +3,7 @@ use leptos_ui::variants;
 
 variants! {
     Badge {
-        base: "inline-flex items-center font-semibold rounded-md border transition-colors focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 w-fit",
+        base: "inline-flex items-center font-medium rounded-full border transition-colors focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 w-fit",
         variants: {
             variant: {
                 Default: "border-transparent shadow bg-primary text-primary-foreground hover:bg-primary/80",
