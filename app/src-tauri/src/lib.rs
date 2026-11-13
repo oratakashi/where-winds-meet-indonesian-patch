@@ -9,7 +9,7 @@ pub mod remote;
 pub mod store;
 
 use engine::{Engine, Msg, Snapshot};
-use model::Event;
+use model::{Client, Event, Profile};
 use serde::Serialize;
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -82,6 +82,54 @@ async fn add_folder(app: AppHandle, engine: State<'_, Engine>) -> Result<Option<
     Ok(Some(added))
 }
 
+/// A locale folder of a game found on this machine.
+#[derive(Serialize)]
+struct Found {
+    profile: Profile,
+    client: Client,
+    path: PathBuf,
+    guarded: bool,
+}
+
+/// Look for installed copies of the game (Steam libraries, NetEase launchers).
+#[tauri::command]
+fn detect_installs(engine: State<Engine>) -> Vec<Found> {
+    let dirs = engine.config().dirs;
+    locations::discover()
+        .into_iter()
+        .map(|g| Found {
+            profile: g.profile,
+            client: Client::of(&g.path),
+            guarded: dirs.iter().any(|d| locations::same_path(&d.path, &g.path)),
+            path: g.path,
+        })
+        .collect()
+}
+
+/// Guard detected folders. Only folders `detect_installs` would report are accepted.
+/// Returns how many were added.
+#[tauri::command]
+fn add_detected(engine: State<Engine>, paths: Vec<PathBuf>) -> Result<usize, String> {
+    let found = locations::discover();
+    let mut added = 0;
+    engine.update_config(|c| {
+        for g in found {
+            let known = c.dirs.iter().any(|d| locations::same_path(&d.path, &g.path));
+            if paths.contains(&g.path) && !known {
+                c.dirs.push(g);
+                added += 1;
+            }
+        }
+    })?;
+    Ok(added)
+}
+
+#[tauri::command]
+fn clear_history(app: AppHandle, engine: State<Engine>) {
+    engine.clear_log();
+    let _ = app.emit("status", ());
+}
+
 #[tauri::command]
 fn remove_folder(engine: State<Engine>, path: PathBuf) -> Result<(), String> {
     engine.update_config(|c| c.dirs.retain(|d| d.path != path))
@@ -136,8 +184,8 @@ fn show_window(app: &AppHandle) {
     // Transparent webview + Mica: the page decides whether to show the backdrop (see `Mica`).
     let Ok(window) = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
         .title("WWM Patch Guard")
-        .inner_size(600.0, 760.0)
-        .min_inner_size(460.0, 520.0)
+        .inner_size(900.0, 660.0)
+        .min_inner_size(720.0, 520.0)
         .transparent(true)
         .build()
     else {
@@ -230,6 +278,9 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_status,
             add_folder,
+            detect_installs,
+            add_detected,
+            clear_history,
             remove_folder,
             check_now,
             set_paused,

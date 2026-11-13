@@ -206,7 +206,11 @@ context — only use one if the user explicitly asks for it by name.
   It needs no codec: it compares sha256 hashes against the release `manifest.json` and copies
   files. Rules live in `app/src-tauri/src/guard.rs` (unit-tested: `cargo test -p wwm-patch-guard
   --lib` in `app/`); `engine.rs` is the watcher/poll loop, `lib.rs` the Tauri shell, `app/src/`
-  the UI. It never installs over a file whose hash matches no known original (a force install is
+  the UI (navigation pane in `app.rs`, one file per page in `pages/`: Home, Settings, History).
+  `locations.rs` finds installed games (Steam: registry → `libraryfolders.vdf` →
+  `appmanifest_3564740.acf`; NetEase launchers: their uninstall registry entries) and picks the
+  folders to guard — on Steam only `Package\HD\oversea\locale`, never the `LocalData\Patch`
+  overlay the patcher re-downloads every launch. It never installs over a file whose hash matches no known original (a force install is
   user-confirmed). Build: `cargo tauri build` in `app/` (needs `trunk`, `tauri-cli`, the
   `wasm32-unknown-unknown` target). CI: `release-app.yml` (tag `app-v*` publishes the installer).
   `WWM_PATCH_GUARD_BASE_URL` / `WWM_PATCH_GUARD_DATA_DIR` point it at a local release server /

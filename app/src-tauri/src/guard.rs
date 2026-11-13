@@ -10,7 +10,7 @@
 //! `original_sha256` in the release manifest is the only proof that a build belongs to a
 //! given game file, so nothing is ever installed over a file whose hash is unknown —
 //! except on an explicit, user-confirmed force install.
-use crate::model::{DirReport, Event, FileEntry, FileReport, Manifest, Profile, Status};
+use crate::model::{Client, DirReport, Event, FileEntry, FileReport, Manifest, Profile, Status};
 use crate::remote::Remote;
 use crate::store::{Config, GuardDir, State, Store, copy_atomic, entry_key, sha256_file};
 use std::collections::HashMap;
@@ -85,6 +85,7 @@ impl<R: Remote> Guard<R> {
             }
             reports.push(DirReport {
                 profile: d.profile,
+                client: Client::of(&d.path),
                 path: d.path.to_string_lossy().into_owned(),
                 files,
             });

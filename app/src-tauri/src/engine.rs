@@ -1,7 +1,8 @@
 //! The background thread: watches the guarded folders and runs the guard whenever a file
 //! changes, on a slow poll (in case a change notification is lost), and on request.
 use crate::guard::{Guard, Opts};
-use crate::model::{DirReport, Event, Status};
+use crate::locations;
+use crate::model::{DirReport, Event, LogLine, Status};
 use crate::remote::HttpRemote;
 use crate::store::{Config, Store};
 use notify::{RecommendedWatcher, RecursiveMode, Watcher};
@@ -20,7 +21,8 @@ const RETRY: Duration = Duration::from_secs(5);
 const DEBOUNCE: Duration = Duration::from_secs(2);
 /// …but not forever, if the patcher keeps writing other files there.
 const DEBOUNCE_MAX: Duration = Duration::from_secs(30);
-const LOG_MAX: usize = 100;
+/// History lines kept (and saved to `history.json`).
+const LOG_MAX: usize = 500;
 
 pub enum Msg {
     /// Something changed in a watched folder.
@@ -32,13 +34,6 @@ pub enum Msg {
     Uninstall,
     /// The config changed: re-watch folders and re-check.
     Reload,
-}
-
-#[derive(Serialize, Clone, Debug)]
-pub struct LogLine {
-    /// Unix seconds.
-    pub at: u64,
-    pub text: String,
 }
 
 #[derive(Serialize, Clone, Default, Debug)]
@@ -61,11 +56,15 @@ pub struct Engine {
 impl Engine {
     /// `on_change` runs on the engine thread after every pass, with what the guard did.
     pub fn start(store: Store, on_change: impl Fn(&[Event]) + Send + 'static) -> Engine {
-        let cfg = store.load_config();
+        let mut cfg = store.load_config();
+        if locations::migrate(&mut cfg.dirs) {
+            let _ = store.save_config(&cfg);
+        }
         let shared = Arc::new(Mutex::new(Snapshot {
             paused: cfg.paused,
             auto_update: cfg.auto_update,
             checking: !cfg.dirs.is_empty(),
+            log: store.load_history(),
             ..Snapshot::default()
         }));
         let config = Arc::new(Mutex::new(cfg));
@@ -94,6 +93,11 @@ impl Engine {
 
     pub fn send(&self, msg: Msg) {
         let _ = self.tx.send(msg);
+    }
+
+    pub fn clear_log(&self) {
+        self.shared.lock().unwrap().log.clear();
+        let _ = self.store.save_history(&[]);
     }
 
     /// Change the config, persist it and make the engine pick it up.
@@ -199,9 +203,12 @@ impl Worker {
             let mut s = self.shared.lock().unwrap();
             lines.extend(new_problems(&s.dirs, &dirs));
             let now = unix_now();
-            s.log.extend(lines.into_iter().map(|text| LogLine { at: now, text }));
-            let extra = s.log.len().saturating_sub(LOG_MAX);
-            s.log.drain(..extra);
+            if !lines.is_empty() {
+                s.log.extend(lines.into_iter().map(|text| LogLine { at: now, text }));
+                let extra = s.log.len().saturating_sub(LOG_MAX);
+                s.log.drain(..extra);
+                let _ = self.store.save_history(&s.log);
+            }
             s.dirs = dirs;
             s.paused = cfg.paused;
             s.auto_update = cfg.auto_update;

@@ -245,6 +245,12 @@ cargo tauri dev                          # run with hot reload
 cargo tauri build                        # installer -> target/release/bundle/nsis/
 ```
 
+Installed games are found by `locations.rs`: Steam through the registry (`SteamPath`) →
+`steamapps\libraryfolders.vdf` → `appmanifest_3564740.acf`, the NetEase launchers through their
+uninstall entries (`wwm_launcher_uninstall`, `yysls_launcher_uninstall`). A Steam install is
+guarded in `Package\HD\oversea\locale` only. The UI (`app/src/`) is a navigation pane plus one
+file per page in `pages/` (Home, Settings, History); the history is kept in `history.json`.
+
 To try it without touching a real install, set `WWM_PATCH_GUARD_BASE_URL` to a local server that
 serves `<url>/latest/manifest.json` plus the patched files, and `WWM_PATCH_GUARD_DATA_DIR` to a
 scratch folder. Releasing: push a tag `app-vX.Y.Z` (`release-app.yml`).

@@ -82,14 +82,18 @@ No Python or tools needed — just copy two files into the game folder.
 
 Game updates and in-game hot-patches put the original files back, sometimes without the launcher
 showing any update. **WWM Patch Guard** is a small tray app that watches the game's locale folder
-and puts the patch back by itself. It is built for the **official launcher (global)**. It can
+and puts the patch back by itself. It is built for the **official launcher (global)** and also
+guards a **Steam** install — there only the `Package\HD\oversea\locale` folder, since Steam's
+in-game patcher re-downloads the `LocalData\Patch` overlay on every launch. It can
 also guard a China client folder, but only while the frozen `cn-latest` release stays unchanged
 and the original files still match it (that release has no `manifest.json`, so in practice it
 will report "waiting for a release" there).
 
 1. Download the `WWM Patch Guard` installer from the [releases page](../../releases) and run it.
-2. Click **Tambah folder game** and pick your game (or launcher) install folder. The locale
-   folders inside it are found automatically; the patch is downloaded and installed.
+2. Installed copies of the game (Steam and the official launcher) are found automatically and
+   listed under **Game terdeteksi** on the Home page: click **Jaga** (or **Jaga semua**) and the
+   patch is downloaded and installed. Only if nothing is found, click **Pilih folder manual** and
+   pick your game (or launcher) install folder.
 3. Leave it in the tray (turn on **Jalankan saat Windows menyala**). When a file is restored while
    the game is running, restart the game to see the Indonesian text again.
 

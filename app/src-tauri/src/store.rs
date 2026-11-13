@@ -3,11 +3,12 @@
 //!
 //! ```text
 //! config.json      folders to guard + switches
+//! history.json    what the guard did (shown on the History page)
 //! state.json       which build is cached per file, which original each path had
 //! patched/<sha>    cached patched builds, content-addressed
 //! originals/<sha>  files the guard replaced, content-addressed (for "restore original")
 //! ```
-use crate::model::{FileEntry, Profile};
+use crate::model::{FileEntry, LogLine, Profile};
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
@@ -100,6 +101,14 @@ impl Store {
 
     pub fn save_state(&self, s: &State) -> io::Result<()> {
         self.save("state.json", s)
+    }
+
+    pub fn load_history(&self) -> Vec<LogLine> {
+        self.load("history.json")
+    }
+
+    pub fn save_history(&self, log: &[LogLine]) -> io::Result<()> {
+        self.save("history.json", &log)
     }
 
     /// Drop cached files nothing in `state` refers to any more.

@@ -1,6 +1,7 @@
 //! Types shared by every backend module, plus the release manifest written by
 //! `tools/make_manifest.py`.
 use serde::{Deserialize, Serialize};
+use std::path::Path;
 
 pub const MANIFEST_SCHEMA: u32 = 1;
 
@@ -37,15 +38,41 @@ impl Profile {
         }
     }
 
-    /// Locale folders relative to a game variant folder (e.g. `wwm_lite`, `yysls_fast`).
-    pub fn locale_dirs(self) -> &'static [&'static str] {
-        match self {
-            Profile::Global => &[
-                r"LocalData\Patch\HD\oversea\locale",
-                r"Package\HD\oversea\locale",
-            ],
-            Profile::Cn => &[r"LocalData\Patch\HD\v2\locale"],
+    /// Locale folders worth guarding, relative to a game folder (`wwm_lite`, `yysls_fast`,
+    /// or the Steam install folder).
+    ///
+    /// On Steam only `Package` holds: the in-game patcher re-downloads the `LocalData\Patch`
+    /// overlay on every launch, so guarding it would only fight the patcher.
+    pub fn locale_dirs(self, client: Client) -> &'static [&'static str] {
+        match (self, client) {
+            (Profile::Global, Client::Steam) => &[PACKAGE_LOCALE],
+            (Profile::Global, Client::Launcher) => &[OVERLAY_LOCALE, PACKAGE_LOCALE],
+            (Profile::Cn, Client::Launcher) => &[r"LocalData\Patch\HD\v2\locale"],
+            (Profile::Cn, Client::Steam) => &[],
         }
+    }
+}
+
+/// The hot-patch overlay: what the official launcher's client loads.
+pub const OVERLAY_LOCALE: &str = r"LocalData\Patch\HD\oversea\locale";
+/// The packaged copy: the only one that holds on Steam.
+pub const PACKAGE_LOCALE: &str = r"Package\HD\oversea\locale";
+
+/// Which client installed the game. It decides which locale folders are worth guarding.
+#[derive(Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum Client {
+    Steam,
+    Launcher,
+}
+
+impl Client {
+    /// Steam games live under `<library>\steamapps\common\`; anything else is a launcher install.
+    pub fn of(path: &Path) -> Client {
+        let steam = path
+            .components()
+            .any(|c| c.as_os_str().to_string_lossy().eq_ignore_ascii_case("steamapps"));
+        if steam { Client::Steam } else { Client::Launcher }
     }
 }
 
@@ -100,8 +127,17 @@ pub struct FileReport {
 #[derive(Serialize, Clone, Debug)]
 pub struct DirReport {
     pub profile: Profile,
+    pub client: Client,
     pub path: String,
     pub files: Vec<FileReport>,
+}
+
+/// One line of the history shown in the window.
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct LogLine {
+    /// Unix seconds.
+    pub at: u64,
+    pub text: String,
 }
 
 /// Something the guard did, worth a log line and a notification.
