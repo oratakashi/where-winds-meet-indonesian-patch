@@ -78,6 +78,12 @@ GLOBAL_PHASES += [("Update-2A", "update2a.jsonl", 461704, 491703),
                   ("Update-2C", "update2c.jsonl", 521704, 534256)]
 # Update-2D = string baru dari hotfix v2.3 (2026-10-17) — hanya _diff yang berubah.
 GLOBAL_PHASES += [("Update-2D", "update2d.jsonl", 534257, 535918)]
+# Update-3 = string baru dari game v2.4 "Across Autumn Waters" (2026-11-13): NetEase menulis
+# ulang ~305k teks Inggris di base + _diff membesar jadi ~335k entri. 197.743 string,
+# dipecah per 30.000 (3A–3F penuh, 3G sisa 17.743).
+GLOBAL_PHASES += [("Update-3%s" % c, "update3%s.jsonl" % c.lower(),
+                   535919 + i * 30000, min(565918 + i * 30000, 733661))
+                  for i, c in enumerate("ABCDEFG")]
 
 GLOBAL = Profile(
     name="global", base=ROOT, phases=GLOBAL_PHASES,

@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-10-18 (session 149) — game v2.3 hotfix fully translated.** This is the single source of truth for "how
+**Last updated: 2026-11-13 (session 150) — game v2.4 [Across Autumn Waters] set up; Update-3A is next.** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,11 +16,11 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **535,919** | **535,919** | **100.00%** |
+| **Unique strings translated (all)** | **535,919** | **733,662** | **73.05%** |
 | ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
-| ↳ game-update strings (Update-N) | 106,032 | 106,032 | 100.00% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,122,784** | **1,122,784** | **100.00%** |
-| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **11,015** | **11,015** | **100.00%** |
+| ↳ game-update strings (Update-N) | 106,032 | 303,775 | 34.90% |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **858,199** | **1,116,561** | **76.86%** |
+| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **317,613** | **333,110** | **95.35%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -51,6 +51,13 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | Update-2B | 491,704–521,703 | done | — | 30,000 / 30,000 | 100.00% |
 | Update-2C | 521,704–534,256 | done | — | 12,553 / 12,553 | 100.00% |
 | Update-2D | 534,257–535,918 | done | — | 1,662 / 1,662 | 100.00% |
+| Update-3A | 535,919–565,918 | not started | 535,919 | 0 / 30,000 | 0.00% |
+| Update-3B | 565,919–595,918 | not started | 565,919 | 0 / 30,000 | 0.00% |
+| Update-3C | 595,919–625,918 | not started | 595,919 | 0 / 30,000 | 0.00% |
+| Update-3D | 625,919–655,918 | not started | 625,919 | 0 / 30,000 | 0.00% |
+| Update-3E | 655,919–685,918 | not started | 655,919 | 0 / 30,000 | 0.00% |
+| Update-3F | 685,919–715,918 | not started | 685,919 | 0 / 30,000 | 0.00% |
+| Update-3G | 715,919–733,661 | not started | 715,919 | 0 / 17,743 | 0.00% |
 
 <!-- progress:end -->
 
@@ -68,7 +75,44 @@ Phases 0–17, Update-1 and Update-2A/2B/2C/2D are complete and valid (no idx wa
 renumbered). The hotfix left `translate_words_map_en` byte-identical and only
 changed `translate_words_map_en_diff`; Update-2D (`locale/update2d.jsonl`, idx
 534,257–535,918, 1,662 rows) now covers its text, so the `_diff` coverage row
-is 100% as well. Nothing is active until the next game update.
+is 100% as well.
+
+**Game v2.4 [Across Autumn Waters]** (2026-11-13, session 150) added
+**Update-3A–3G** (idx 535,919–733,661, 197,743 strings): NetEase rewrote the
+English of ~305k base entries and grew the `_diff` to ~335k entries. **Active
+block: Update-3A, next idx 535,919** (`locale/update3a.jsonl`, created by the
+first translation session). See [[Update-3]].
+
+## 2026-11-13 — Session 150: game v2.4 [Across Autumn Waters] → Update-3 setup
+
+No translation in this session — migration only (same as sessions 126 and 148).
+The v2.4 files replace the v2.3-hotfix ones in the repo root (old copies kept
+locally as untracked `*.before`).
+
+| v2.4 file | Entries | Tombstones | Change vs v2.3 hotfix | Unique texts not yet in the dictionary |
+| --- | ---: | ---: | --- | ---: |
+| `translate_words_map_en` | 1,116,561 (4,363 blocks; v2.3: 1,122,784 / 4,387) | 0 | +1,332 keys, −7,555 keys, **305,768 values changed** | 188,491 |
+| `translate_words_map_en_diff` | 334,882 (v2.3: 12,934) | 1,772 (v2.3: 1,919) | +324,160 keys, −2,212 keys, 559 values changed | 9,298 |
+| **Combined (deduplicated)** | | | | **197,743** (~17.4M characters) |
+
+- The base change is mostly a **rewrite of the English text**, not new content:
+  sampled changes are rephrasings and renamed places/items (e.g. "Greenwood
+  Mansion Indoor Floor" → "Qingmu Hall Indoor Flooring", "Qianjiang Streets" →
+  "Qiantang Marketplace", "Imperial Soldier" → "Song Dynasty Soldier"). Those
+  keys lose their translation until the new text is translated; the glossary
+  may need new place-name entries as Update-3 sessions meet them.
+- Re-dumped `strings.jsonl` and `strings_diff.jsonl`; `rebuild_unique_strings.py`
+  appended **197,743** new strings as idx 535,919–733,661 (old idx untouched).
+  `unique_strings.jsonl` is now ~73 MB (GitHub warns above 50 MB, rejects at 100 MB).
+- Added **Update-3A … 3G** (30,000 each, 3G = 17,743) to `GLOBAL_PHASES` in
+  `tools/profiles.py`. `release-patch.yml` now names "WWM v2.4 Across Autumn
+  Waters"; `translation-qa.yml` needed no change (same two dumps).
+- Before any Update-3 work the dictionary covers 76.86% (858,199 / 1,116,561)
+  of the base file and 95.35% (317,613 / 333,110) of the live `_diff` entries.
+
+Overall: 535,919 / 733,662 unique strings (73.05%), in-game coverage 76.86% (base) / 95.35% (`_diff`).
+
+See [[Update-3]].
 
 ## 2026-10-18 — Session 149: Update-2D completed (idx 534,257–535,918)
 

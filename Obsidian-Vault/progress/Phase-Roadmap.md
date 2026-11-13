@@ -9,7 +9,8 @@ session-by-session timeline, see [[Session-History]].
 ## Why the work is split into phases
 
 The original 429,887 unique strings (461,704 after [[Update-1]], 534,257
-after [[Update-2]] for game v2.3, 535,919 after the v2.3 hotfix) are too
+after [[Update-2]] for game v2.3, 535,919 after the v2.3 hotfix, 733,662
+after [[Update-3]] for game v2.4) are too
 much for one session (even several small ones). To keep each session light and the output careful (not just
 haphazard translation), the work is split into **phases** based on `idx`
 ranges in `translation_work/unique_strings.jsonl` (already sorted by
@@ -44,6 +45,13 @@ for at the start of each session (see [[Current-Status]] §Batch size).
 | Update-2B (done)  | 491,704 – 521,703 | 30,000       | additional (v2.3)           | —                       | done                  | `locale/update2b.jsonl` |
 | Update-2C (done)  | 521,704 – 534,256 | 12,553       | additional (v2.3)           | —                       | done                  | `locale/update2c.jsonl` |
 | Update-2D (done, v2.3 hotfix) | 534,257 – 535,918 | 1,662 | additional (`_diff` only)   | —                       | done                  | `locale/update2d.jsonl` |
+| Update-3A (**active**) | 535,919 – 565,918 | 30,000 | additional (v2.4) | — | — | `locale/update3a.jsonl` |
+| Update-3B (pending) | 565,919 – 595,918 | 30,000 | additional (v2.4) | — | — | `locale/update3b.jsonl` |
+| Update-3C (pending) | 595,919 – 625,918 | 30,000 | additional (v2.4) | — | — | `locale/update3c.jsonl` |
+| Update-3D (pending) | 625,919 – 655,918 | 30,000 | additional (v2.4) | — | — | `locale/update3d.jsonl` |
+| Update-3E (pending) | 655,919 – 685,918 | 30,000 | additional (v2.4) | — | — | `locale/update3e.jsonl` |
+| Update-3F (pending) | 685,919 – 715,918 | 30,000 | additional (v2.4) | — | — | `locale/update3f.jsonl` |
+| Update-3G (pending) | 715,919 – 733,661 | 17,743 | additional (v2.4) | — | — | `locale/update3g.jsonl` |
 
 \* Percentage of the 963,050 total lines in the pre-update `strings.jsonl`,
 based on its frequency distribution. Figures from Phase 2 onward are rough
@@ -53,7 +61,8 @@ the matched share; 2026-09-24: 64.2% of the base file's 826,388 entries;
 2026-10-15, game v2.3 before any Update-2 work: 90.65% of 1,122,784 entries;
 2026-10-18, v2.3 hotfix before any Update-2D work: 100% of the base and
 73.01% of the 11,015 live `_diff` entries — `tools/progress.py` now reports
-both).
+both; 2026-11-13, game v2.4 before any Update-3 work: 76.86% of 1,116,561 base
+entries and 95.35% of 333,110 live `_diff` entries).
 
 **Update-1** (formerly labeled "Phase 9") was added on 2026-09-16 after a
 game update — it is not part of the original 429,887 unique strings.
@@ -85,6 +94,14 @@ tombstones). `rebuild_unique_strings.py` appended **1,662** new strings as idx
 534,257–535,918. It takes the next letter rather than `Update-3` at the
 user's request, since it is a hotfix of the same v2.3 release. Update-2A/2B/2C
 (all of v2.3) were completed on 2026-10-16. See [[Update-2]] and [[Update-2D]].
+
+**Update-3** (2026-11-13) is **game v2.4 [Across Autumn Waters]**. The base
+`translate_words_map_en` has 1,116,561 entries (−6,223 net) but NetEase
+**rewrote the English of 305,768 of them** (rephrased dialogue, renamed
+places/items), and `translate_words_map_en_diff` grew from 12,934 to 334,882
+entries. `rebuild_unique_strings.py` appended **197,743** new strings as idx
+535,919–733,661, split into 30,000-string blocks **Update-3A … 3G** (3G =
+17,743). See [[Update-3]].
 
 **Naming convention going forward:** a game-update string batch (appended by
 `rebuild_unique_strings.py`, always a disjoint idx block above the current

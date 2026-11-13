@@ -58,7 +58,7 @@ New releases are built automatically whenever translations are added.
 No Python or tools needed — just copy two files into the game folder.
 
 1. Download the patch for your client:
-   - Global: **[`wwm-indonesian-patch.zip`](../../releases/tag/latest)** — current target: game v2.3 (hotfix)
+   - Global: **[`wwm-indonesian-patch.zip`](../../releases/tag/latest)** — current target: game v2.4 [Across Autumn Waters]
    - China: **[`wwm-cn-indonesian-patch.zip`](../../releases/tag/cn-latest)** — ⚠️ no longer maintained (last build only)
 2. Follow the steps for your platform below.
 

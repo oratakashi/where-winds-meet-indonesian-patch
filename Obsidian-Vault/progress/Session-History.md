@@ -1925,3 +1925,11 @@ Overall: 535,919 / 535,919 unique strings (100.00%), in-game coverage 100.00% (b
 All of Update-1, Update-2A/2B/2C/2D and Phases 0–17 are now complete: nothing remains for the v2.3 hotfix. A patched `_diff` only sticks on the official NetEase launcher (see `CLAUDE.md`).
 
 See [[Update-2D]] and [[Update-2]].
+
+## 2026-11-13 — Session 150: game v2.4 [Across Autumn Waters] → Update-3 setup
+
+No translation — migration only. v2.4 shrank `translate_words_map_en` to 1,116,561 entries (4,363 blocks; +1,332 / −7,555 keys) but **rewrote the English of 305,768 entries**, and grew `translate_words_map_en_diff` from 12,934 to 334,882 entries (1,772 tombstones). `rebuild_unique_strings.py` appended **197,743** new strings as idx 535,919–733,661, registered as **Update-3A … 3G** (30,000 each, 3G = 17,743) in `tools/profiles.py`. The rolling release is renamed "WWM v2.4 Across Autumn Waters". Coverage before any Update-3 work: 76.86% (base) / 95.35% (`_diff`).
+
+Overall: 535,919 / 733,662 unique strings (73.05%), in-game coverage 76.86% (base) / 95.35% (`_diff`).
+
+See [[Update-3]].

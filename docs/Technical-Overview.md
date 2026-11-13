@@ -25,9 +25,10 @@ its known limitations. This is a summary; the exhaustive reverse-engineered spec
 | **In-place value editing** | Supported | Preserves control bytes, slot indices and hash structures |
 | **Arbitrary key insertion** | Unsupported | Requires reversing the proprietary 64-bit hash derivation |
 
-**Snapshot.** Entry counts change with every game update. The current target, **game v2.3
-hotfix** (October 2026), has **1,122,784 entries across 4,387 blocks** in the primary map plus a
-sparse `_diff` (12,934 entries, 1,919 tombstones), and no `__small` tables. For reference, the
+**Snapshot.** Entry counts change with every game update. The current target, **game v2.4
+[Across Autumn Waters]** (November 2026), has **1,116,561 entries across 4,363 blocks** in the
+primary map plus a much larger `_diff` (334,882 entries, 1,772 tombstones), and no `__small`
+tables. The v2.3 hotfix had 1,122,784 entries across 4,387 blocks and a 12,934-entry `_diff`. The
 September 2026 (v2.2) release had 826,388 entries across 3,230 blocks, a sparse `_diff` (212,117
 active entries) and an isolated `__small` table (4,009 entries; see
 [Format-Spec §4.6](../Obsidian-Vault/knowladge/Format-Spec.md#46-the-__small--__small_diff-variant-a-separate-table-not-part-of-_diff)).

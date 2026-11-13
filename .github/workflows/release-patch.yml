@@ -3,8 +3,8 @@ name: release-patch
 # Membangun ulang file translate_words_map_* hasil terjemahan setiap push ke main,
 # lalu mempublikasikannya sebagai satu GitHub Release "rolling" (tag tetap: latest)
 # supaya pemain punya SATU link download yang selalu berisi build terbaru.
-# Target: game v2.3 Hotfix — hanya translate_words_map_en + _diff (__small/__small_diff
-# sudah tidak dikirim NetEase sejak v2.3). Hotfix v2.3 hanya mengubah _diff; base tetap.
+# Target: game v2.4 [Across Autumn Waters] — hanya translate_words_map_en + _diff
+# (__small/__small_diff sudah tidak dikirim NetEase sejak v2.3). v2.4 mengubah base dan _diff.
 on:
   push:
     branches: [main]
@@ -70,15 +70,15 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
-          name: "Patch Terjemahan Indonesia — WWM v2.3 Hotfix (build terbaru)"
+          name: "Patch Terjemahan Indonesia — WWM v2.4 Across Autumn Waters (build terbaru)"
           prerelease: true
           target_commitish: ${{ github.sha }}
           body: |
             Build otomatis dari commit ${{ github.sha }} (${{ github.event.head_commit.timestamp }}).
 
-            **Untuk Where Winds Meet versi 2.3 (Hotfix).** Berisi `translate_words_map_en` dan
-            `translate_words_map_en_diff` — hotfix v2.3 hanya memperbarui `_diff`, jadi pastikan
-            kedua file disalin ulang. File `__small` / `__small_diff` sudah tidak ada sejak v2.3,
+            **Untuk Where Winds Meet versi 2.4 [Across Autumn Waters].** Berisi `translate_words_map_en` dan
+            `translate_words_map_en_diff` — v2.4 memperbarui keduanya, jadi pastikan
+            kedua file disalin ulang. String baru v2.4 masih dalam proses diterjemahkan. File `__small` / `__small_diff` sudah tidak ada sejak v2.3,
             jadi tidak perlu disalin lagi.
 
             Ini adalah build **terbaru dari `main`**, bukan rilis stabil — progress terjemahan
