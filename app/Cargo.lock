@@ -6162,7 +6162,7 @@ dependencies = [
 
 [[package]]
 name = "wwm-patch-guard"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "notify",
  "serde",
@@ -6181,7 +6181,7 @@ dependencies = [
 
 [[package]]
 name = "wwm-patch-guard-ui"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "console_error_panic_hook",
  "js-sys",
