@@ -1933,3 +1933,7 @@ No translation — migration only. v2.4 shrank `translate_words_map_en` to 1,116
 Overall: 535,919 / 733,662 unique strings (73.05%), in-game coverage 76.86% (base) / 95.35% (`_diff`).
 
 See [[Update-3]].
+
+## 2026-11-14 (session 152) — Update-3B
+
+Translated idx 565,919–595,918 (30,000 rows) via 15 subagents; QA clean. Overall: 595,919 / 733,662 unique strings (81.23%), in-game coverage 88.49% (base) / 95.38% (`_diff`). Update-3B done; next Update-3C (idx 595,919). See [[Update-3B]].
