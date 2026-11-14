@@ -16,11 +16,11 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **535,919** | **733,662** | **73.05%** |
+| **Unique strings translated (all)** | **565,919** | **733,662** | **77.14%** |
 | ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
-| ↳ game-update strings (Update-N) | 106,032 | 303,775 | 34.90% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **858,199** | **1,116,561** | **76.86%** |
-| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **317,613** | **333,110** | **95.35%** |
+| ↳ game-update strings (Update-N) | 136,032 | 303,775 | 44.78% |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **958,070** | **1,116,561** | **85.81%** |
+| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **317,722** | **333,110** | **95.38%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -51,7 +51,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | Update-2B | 491,704–521,703 | done | — | 30,000 / 30,000 | 100.00% |
 | Update-2C | 521,704–534,256 | done | — | 12,553 / 12,553 | 100.00% |
 | Update-2D | 534,257–535,918 | done | — | 1,662 / 1,662 | 100.00% |
-| Update-3A | 535,919–565,918 | not started | 535,919 | 0 / 30,000 | 0.00% |
+| Update-3A | 535,919–565,918 | done | — | 30,000 / 30,000 | 100.00% |
 | Update-3B | 565,919–595,918 | not started | 565,919 | 0 / 30,000 | 0.00% |
 | Update-3C | 595,919–625,918 | not started | 595,919 | 0 / 30,000 | 0.00% |
 | Update-3D | 625,919–655,918 | not started | 625,919 | 0 / 30,000 | 0.00% |
