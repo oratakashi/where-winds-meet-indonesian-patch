@@ -71,7 +71,7 @@ jobs:
         with:
           tag_name: latest
           name: "Patch Terjemahan Indonesia — WWM v2.4 Across Autumn Waters (build terbaru)"
-          prerelease: true
+          make_latest: "true"
           target_commitish: ${{ github.sha }}
           body: |
             Build otomatis dari commit ${{ github.sha }} (${{ github.event.head_commit.timestamp }}).
