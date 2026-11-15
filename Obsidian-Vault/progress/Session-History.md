@@ -1941,3 +1941,7 @@ Translated idx 565,919–595,918 (30,000 rows) via 15 subagents; QA clean. Overa
 ## 2026-11-15 (session 153) — Update-3C
 
 Translated idx 595,919–625,918 (30,000 rows) via 6 subagents (5,000 each, parallel; resumed twice after usage limits); merged QA clean (0 PROMPT_LEAK / MARKUP / EMPTY / IDX). Update-3C done; next Update-3D (idx 625,919). See [[Update-3]].
+
+## 2026-11-15 (session 154) — Update-3D
+
+Translated idx 625,919–655,918 (30,000 rows) via 30 subagents (1,000 each; resumed after two usage limits); merged QA clean (0 PROMPT_LEAK / MARKUP / EMPTY / IDX). Update-3D done; next Update-3E (idx 655,919). Overall: 655,919 / 733,662 unique strings (89.40%), in-game coverage 93.87% (base) / 95.39% (`_diff`). See [[Update-3D]].

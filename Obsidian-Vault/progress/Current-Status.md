@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-11-15 (session 153) — Update-3C complete (30,000/30,000); Update-3D is next.** This is the single source of truth for "how
+**Last updated: 2026-11-15 (session 154) — Update-3D complete (30,000/30,000); Update-3E is next.** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,11 +16,11 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **625,919** | **733,662** | **85.31%** |
+| **Unique strings translated (all)** | **655,919** | **733,662** | **89.40%** |
 | ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
-| ↳ game-update strings (Update-N) | 196,032 | 303,775 | 64.53% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,018,070** | **1,116,561** | **91.18%** |
-| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **317,738** | **333,110** | **95.39%** |
+| ↳ game-update strings (Update-N) | 226,032 | 303,775 | 74.41% |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,048,070** | **1,116,561** | **93.87%** |
+| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **317,742** | **333,110** | **95.39%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -54,7 +54,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | Update-3A | 535,919–565,918 | done | — | 30,000 / 30,000 | 100.00% |
 | Update-3B | 565,919–595,918 | done | — | 30,000 / 30,000 | 100.00% |
 | Update-3C | 595,919–625,918 | done | — | 30,000 / 30,000 | 100.00% |
-| Update-3D | 625,919–655,918 | not started | 625,919 | 0 / 30,000 | 0.00% |
+| Update-3D | 625,919–655,918 | done | — | 30,000 / 30,000 | 100.00% |
 | Update-3E | 655,919–685,918 | not started | 655,919 | 0 / 30,000 | 0.00% |
 | Update-3F | 685,919–715,918 | not started | 685,919 | 0 / 30,000 | 0.00% |
 | Update-3G | 715,919–733,661 | not started | 715,919 | 0 / 17,743 | 0.00% |
