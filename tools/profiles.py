@@ -27,8 +27,12 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 class Profile:
     def __init__(self, name, base, phases, files, dumps, status, coverage,
                  corpus_label, patched_dir, translated_out, bridge_from=None,
-                 overrides=None):
+                 overrides=None, regions=None):
         self.name = name
+        # Tabel "Phase status" dikelompokkan per region game: [(nama region, tag fase,
+        # [(label fase, nama bagian)])]. Region yang selesai semua jadi satu baris; yang
+        # belum ditampilkan per bagian. Fase tanpa region tampil sebagai barisnya sendiri.
+        self.regions = regions or []
         self.base = base                                    # folder binary + data
         self.unique = os.path.join(base, "translation_work", "unique_strings.jsonl")
         self.locale_dir = os.path.join(base, "locale")
@@ -85,6 +89,17 @@ GLOBAL_PHASES += [("Update-3%s" % c, "update3%s.jsonl" % c.lower(),
                    535919 + i * 30000, min(565918 + i * 30000, 733661))
                   for i, c in enumerate("ABCDEFG")]
 
+# Region game yang dibawa tiap blok — untuk tabel "Phase status" di Current-Status.md.
+# Update baru: tambahkan region-nya di sini juga (fase tanpa region tetap tampil, tapi
+# hanya dengan label teknisnya).
+GLOBAL_REGIONS = [
+    ("Qinghe, Kaifeng, Hexi", "Phase 0–17", [(str(n), "Phase %d" % n) for n in range(18)]),
+    ("Hidden Mountain", "Update-1", [("Update-1", "Update-1")]),
+    ("Qingzhou", "Update-2", [("Update-2%s" % c, "Part %s" % c) for c in "ABCD"]),
+    ("Hutuo", "Update-3", [("Update-3%s" % c, "Phase %d" % (i + 1))
+                           for i, c in enumerate("ABCDEFG")]),
+]
+
 GLOBAL = Profile(
     name="global", base=ROOT, phases=GLOBAL_PHASES,
     files=["translate_words_map_en",
@@ -98,7 +113,8 @@ GLOBAL = Profile(
     coverage="dump",
     corpus_label="original corpus (Phases 0–17)",
     patched_dir=os.path.join(ROOT, "patched"),
-    translated_out=os.path.join(ROOT, "strings.translated.jsonl"))
+    translated_out=os.path.join(ROOT, "strings.translated.jsonl"),
+    regions=GLOBAL_REGIONS)
 
 # ---------------------------------------------------------------------- cn
 CN_BASE = os.path.join(ROOT, "cn")

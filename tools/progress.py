@@ -142,17 +142,40 @@ def build_block(P=profiles.GLOBAL):
             "text has a translation — higher than the unique share because the "
             "earliest phases hold the most frequent strings." % P.rel(P.locale_dir),
             "",
-            "## Phase status", "",
-            "| Phase | Range | Status | Next idx | Done / total | % |",
-            "| --- | --- | --- | --- | ---: | ---: |"]
-    for label, lo, hi, total, done in rows:
-        status = "done" if done == total else ("**active**" if done else "not started")
-        nxt = "—" if done == total else num(lo + done)
-        out.append("| %s | %s–%s | %s | %s | %s / %s | %s |"
-                   % (label, num(lo), num(hi), status, nxt, num(done), num(total),
-                      pct(done, total)))
+            "## Phase status", ""]
+    out += status_table(P, rows)
     out += ["", END]
     return "\n".join(out), src_to_translated
+
+
+def status_table(P, rows):
+    """Tabel Phase status: per region game kalau profil punya `regions`, selain itu per fase."""
+    def line(name, part):
+        lo, hi = part[0][1], part[-1][2]
+        total, done = sum(r[3] for r in part), sum(r[4] for r in part)
+        status = "done" if done == total else ("**active**" if done else "not started")
+        nxt = next((num(r[1] + r[4]) for r in part if r[4] < r[3]), "—")
+        return "| %s | %s–%s | %s | %s | %s / %s | %s |" % (
+            name, num(lo), num(hi), status, nxt, num(done), num(total), pct(done, total))
+
+    by_label = {r[0]: r for r in rows}
+    used, groups = set(), []
+    for name, tag, parts in P.regions:
+        members = [(by_label[l], p) for l, p in parts if l in by_label]
+        used.update(r[0] for r, _ in members)
+        if members:
+            groups.append((name, tag, members))
+    out = ["| %s | Range | Status | Next idx | Done / total | %% |"
+           % ("Region" if groups else "Phase"),
+           "| --- | --- | --- | --- | ---: | ---: |"]
+    pending = {r[0]: r for r in rows if r[0] not in used}
+    for name, tag, members in groups:
+        part_rows = [r for r, _ in members]
+        out.append(line("**%s** (%s)" % (name, tag), part_rows))
+        if any(r[4] < r[3] for r in part_rows) and len(members) > 1:
+            out += [line("↳ %s %s (`%s`)" % (name, p, r[0]), [r]) for r, p in members]
+    out += [line(label, [r]) for label, r in pending.items()]
+    return out
 
 
 def read_status(P=profiles.GLOBAL):
