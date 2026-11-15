@@ -43,3 +43,18 @@ Split per 30,000 strings at the user's request.
 | Update-3E | 655,919–685,918 | 30,000 | `locale/update3e.jsonl` |
 | Update-3F | 685,919–715,918 | 30,000 | `locale/update3f.jsonl` |
 | Update-3G | 715,919–733,661 | 17,743 | `locale/update3g.jsonl` |
+
+## Batches
+
+### Update-3C — idx 595,919–625,918 (2026-11-15)
+
+30,000 rows → `locale/update3c.jsonl`, 6 parallel subagents × 5,000 (595,919–600,918 … 620,919–625,918). Merged file: 30,000 lines, no gaps, `qa_check.py --locale` clean.
+
+Decisions / inconsistencies to be aware of:
+- **Pronouns differ per chunk**: chunks 1 and 3 followed the update3b tail precedent (aku/kau/kamu); chunks 2 and 6 used gue/lo for casual dialogue; chunks 4/5 mixed. Not normalised.
+- **Senior/Junior Sister/Brother** (unresolved in Quick-Reference §7) was rendered "Kakak/Adik Seperguruan" in chunks 3, 5, 6. Commoner → Rakyat Jelata (3, 6) vs kept English (1).
+- Whole-sentence `<...>` tags kept verbatim (rule 3); stray Chinese inside tags left as is, outside tags sometimes translated (chunk 5) or left (chunk 1). `#EAffec` (idx 604323) → `#EAffects`; `#The` (613179) → `#Tabungan`.
+- Seconds: `d` shorthand and spelled-out "detik"; decimals with comma in some chunks.
+- Roughly 200–300 rows per chunk are intentionally identical to the source (names, titles, tokens).
+
+**Normalisation (2026-11-15):** in chunks 1, 3, 5 (idx 595,919–600,918, 605,919–610,918, 615,919–620,918) the casual pronouns aku→gue and kau/kamu→lo were applied mechanically outside tokens (2,712 rows), to match the gue/lo rule and chunks 2/4/6. Formal speakers in those chunks may now read casually. "Kakak/Adik Seperguruan" and "Rakyat Jelata" were left: both already have 3A/3B precedent.
