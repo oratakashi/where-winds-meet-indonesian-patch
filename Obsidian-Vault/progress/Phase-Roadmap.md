@@ -50,7 +50,7 @@ for at the start of each session (see [[Current-Status]] §Batch size).
 | Update-3C (pending) | 595,919 – 625,918 | 30,000 | additional (v2.4) | — | — | `locale/update3c.jsonl` |
 | Update-3D (pending) | 625,919 – 655,918 | 30,000 | additional (v2.4) | — | — | `locale/update3d.jsonl` |
 | Update-3E (pending) | 655,919 – 685,918 | 30,000 | additional (v2.4) | — | — | `locale/update3e.jsonl` |
-| Update-3F (pending) | 685,919 – 715,918 | 30,000 | additional (v2.4) | — | — | `locale/update3f.jsonl` |
+| Update-3F (done) | 685,919 – 715,918 | 30,000 | additional (v2.4) | — | — | `locale/update3f.jsonl` |
 | Update-3G (pending) | 715,919 – 733,661 | 17,743 | additional (v2.4) | — | — | `locale/update3g.jsonl` |
 
 \* Percentage of the 963,050 total lines in the pre-update `strings.jsonl`,

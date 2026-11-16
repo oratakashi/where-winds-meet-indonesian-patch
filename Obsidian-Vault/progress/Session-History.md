@@ -9,6 +9,10 @@ see [[Current-Status]].
 
 
 
+## 2026-11-16 — Session 156: Update-3F (idx 685,919–715,918)
+
+Translated the whole Update-3F block (30,000 rows) with 30 subagents of 1,000 rows each (user-authorized; ~20 were resumed after two usage-limit interruptions), merged in idx order into `locale/update3f.jsonl` (idx contiguous, 30,000 lines). `qa_check.py --locale "locale/*.jsonl"` clean (0 PROMPT_LEAK / MARKUP / EMPTY / IDX). Overall: 703,662 / 733,662 unique strings (95.91%), in-game coverage 97.31% (base) / 100.00% (`_diff`). Only Update-3E (655,919–685,918) remains. Details: [[Update-3F]].
+
 ## 2026-11-16 — Session 155: Update-3G (idx 715,919–733,661)
 
 Translated the whole Update-3G block (17,743 rows) with 18 subagents (user-authorized; some resumed after a usage limit), merged in idx order into `locale/update3g.jsonl`. `qa_check.py --locale "locale/*.jsonl"` clean (0 PROMPT_LEAK / MARKUP / EMPTY). Overall: 673,662 / 733,662 unique strings (91.82%), in-game coverage 94.63% (base) / 100.00% (`_diff`). Details: [[Update-3G]].
