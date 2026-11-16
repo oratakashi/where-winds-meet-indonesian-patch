@@ -5,6 +5,13 @@ name: release-patch
 # supaya pemain punya SATU link download yang selalu berisi build terbaru.
 # Target: game v2.4 [Across Autumn Waters] — hanya translate_words_map_en + _diff
 # (__small/__small_diff sudah tidak dikirim NetEase sejak v2.3). v2.4 mengubah base dan _diff.
+#
+# Attachment release `latest` (selain ini dihapus tiap rilis):
+#   - wwm-indonesian-patch.zip  -> semua file patched (flat)
+#   - manifest.json             -> hash original/patched per file + hash zip (dibaca Patch Guard)
+#   - wwm-patch-guard-setup.exe -> installer Patch Guard (app/); hanya di-build ulang kalau
+#                                  app/ berubah (atau dispatch dengan build_app), kalau tidak
+#                                  installer yang sudah ada di release dibiarkan.
 on:
   push:
     branches: [main]
@@ -14,7 +21,14 @@ on:
       - "translate_words_map_en*"
       - "tools/**"
       - "wwm_locmap.py"
-  workflow_dispatch: {}
+      - "app/**"
+      - ".github/workflows/release-patch.yml"
+  workflow_dispatch:
+    inputs:
+      build_app:
+        description: "Build ulang installer Patch Guard"
+        type: boolean
+        default: false
 
 # Kalau ada beberapa push beruntun dalam waktu singkat (10x/hari), cukup build
 # yang paling terakhir yang perlu selesai — batalkan run lama yang masih antre.
@@ -22,8 +36,71 @@ concurrency:
   group: release-patch
   cancel-in-progress: true
 
+env:
+  ZIP: wwm-indonesian-patch.zip
+  APP_EXE: wwm-patch-guard-setup.exe
+
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      app: ${{ steps.filter.outputs.app == 'true' || inputs.build_app == true }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            app:
+              - "app/**"
+
+  build-app:
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: app
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: trunk,tauri-cli
+
+      # The guard rules (what may be written over which file) are covered here.
+      - name: Test
+        run: cargo test -p wwm-patch-guard --lib
+
+      - name: Build installer
+        run: cargo tauri build
+
+      # Nama tetap supaya README bisa link langsung ke releases/download/latest/<nama>.
+      - name: Rename installer
+        shell: bash
+        run: |
+          set -- target/release/bundle/nsis/*.exe
+          [ "$#" -eq 1 ] || { echo "::error::expected one NSIS installer, got $#"; exit 1; }
+          cp "$1" "$APP_EXE"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wwm-patch-guard-windows
+          path: app/${{ env.APP_EXE }}
+          if-no-files-found: error
+
   build-and-release:
+    needs: [changes, build-app]
+    # build-app dilewati (app tidak berubah) = tetap rilis; build-app gagal = jangan rilis.
+    if: always() && needs.changes.result == 'success' && (needs.build-app.result == 'success' || needs.build-app.result == 'skipped')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -39,10 +116,17 @@ jobs:
       - name: Build patched files
         run: python tools/patch_all.py --outdir patched --level 19
 
-      # Hash original + patched per file; dibaca app Patch Guard untuk tahu apakah
-      # build ini cocok dengan file game yang terpasang.
+      # Zip hanya berisi file patched (flat, tanpa manifest) — Patch Guard mengambil
+      # file dari zip ini berdasarkan nama.
+      - name: Zip patched output
+        run: |
+          cd patched
+          zip -X -j "../$ZIP" translate_words_map_*
+
+      # Hash original + patched per file + hash zip; dibaca app Patch Guard untuk tahu
+      # apakah build ini cocok dengan file game yang terpasang.
       - name: Write manifest.json
-        run: python tools/make_manifest.py --outdir patched
+        run: python tools/make_manifest.py --outdir patched --archive "$ZIP"
 
       # strings.jsonl tidak ter-track (>100 MB sejak v2.3) — dump dari binary.
       - name: Dump strings.jsonl
@@ -61,10 +145,16 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Zip patched output
-        run: |
-          cd patched
-          zip -r ../wwm-indonesian-patch.zip .
+      - name: Download Patch Guard installer
+        if: needs.build-app.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: wwm-patch-guard-windows
+          path: app-dist
+
+      - name: Patch Guard version
+        id: app
+        run: echo "version=$(jq -r .version app/src-tauri/tauri.conf.json)" >> "$GITHUB_OUTPUT"
 
       - name: Publish rolling release
         uses: softprops/action-gh-release@v2
@@ -76,10 +166,11 @@ jobs:
           body: |
             Build otomatis dari commit ${{ github.sha }} (${{ github.event.head_commit.timestamp }}).
 
-            **Untuk Where Winds Meet versi 2.4 [Across Autumn Waters].** Berisi `translate_words_map_en` dan
-            `translate_words_map_en_diff` — v2.4 memperbarui keduanya, jadi pastikan
-            kedua file disalin ulang. String baru v2.4 masih dalam proses diterjemahkan. File `__small` / `__small_diff` sudah tidak ada sejak v2.3,
-            jadi tidak perlu disalin lagi.
+            **Untuk Where Winds Meet versi 2.4 [Across Autumn Waters].** Download
+            **`wwm-indonesian-patch.zip`** lalu ekstrak — isinya `translate_words_map_en` dan
+            `translate_words_map_en_diff`. v2.4 memperbarui keduanya, jadi pastikan kedua file
+            disalin ulang. String baru v2.4 masih dalam proses diterjemahkan. File `__small` /
+            `__small_diff` sudah tidak ada sejak v2.3, jadi tidak perlu disalin lagi.
 
             Ini adalah build **terbaru dari `main`**, bukan rilis stabil — progress terjemahan
             masih berjalan. File di release ini selalu ter-overwrite tiap kali ada perubahan
@@ -89,6 +180,14 @@ jobs:
 
             > [!NOTE]
             > Cara pakai: lihat [`README.md`](https://github.com/oratakashi/where-winds-meet-indonesian-patch#player-installation-guide) repo untuk petunjuk instalasi ke folder game.
+
+            ### WWM Patch Guard (Windows) — v${{ steps.app.outputs.version }}
+
+            Patcher NetEase mengembalikan file bahasa asli setiap ada update game. **`wwm-patch-guard-setup.exe`**
+            adalah app kecil (system tray) yang memasang ulang patch ini secara otomatis — tidak perlu
+            download dan menyalin zip manual. Panduan:
+            [README — Patch Guard](https://github.com/oratakashi/where-winds-meet-indonesian-patch#auto-reinstall--wwm-patch-guard-windows).
+            Patch Guard versi lama (sebelum 0.3.0) tidak bisa membaca rilis ini — install ulang dari sini.
 
             ---
 
@@ -108,7 +207,22 @@ jobs:
 
             **Donate via Saweria:** [https://saweria.co/oratakashi](https://saweria.co/oratakashi)
           files: |
-            wwm-indonesian-patch.zip
+            ${{ env.ZIP }}
             patched/manifest.json
-            patched/translate_words_map_en
-            patched/translate_words_map_en_diff
+            app-dist/${{ env.APP_EXE }}
+
+      # softprops tidak menghapus asset lama: buang semua yang bukan zip/manifest/installer
+      # (mis. file translate_words_map_* mentah dari rilis sebelumnya).
+      - name: Remove stale release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view latest --json assets --jq '.assets[].name' | while read -r name; do
+            case "$name" in
+              "$ZIP"|manifest.json|"$APP_EXE") ;;
+              *) echo "deleting $name"; gh release delete-asset latest "$name" --yes ;;
+            esac
+          done
+          if ! gh release view latest --json assets --jq '.assets[].name' | grep -qx "$APP_EXE"; then
+            echo "::warning::release latest has no $APP_EXE yet — run this workflow with build_app"
+          fi

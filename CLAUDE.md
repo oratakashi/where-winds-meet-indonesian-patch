@@ -56,9 +56,11 @@ python tools/patch_all.py [--outdir patched] [--level N]
                                                        # at once, writing
                                                        # repacked copies under --outdir
 
-python tools/make_manifest.py [--outdir patched]      # after patch_all.py: write <outdir>/manifest.json with the
-                                                       # sha256/size of each ORIGINAL (repo binary) and PATCHED file;
-                                                       # published with the release, read by the Patch Guard app
+python tools/make_manifest.py [--outdir patched] --archive wwm-indonesian-patch.zip
+                                                       # after patch_all.py + zipping its output (flat): write
+                                                       # <outdir>/manifest.json (schema 2) with the sha256/size of each
+                                                       # ORIGINAL (repo binary) and PATCHED file plus the zip's
+                                                       # sha256/size; published with the release, read by Patch Guard
 ```
 
 ### WWM China (`--profile cn`)
@@ -197,8 +199,10 @@ context — only use one if the user explicitly asks for it by name.
   `locale/phase*.jsonl` progress never needs remapping.
 - `tools/patch_all.py` — imports `expand_locale`'s dictionary builder and applies it to all known
   `translate_words_map_*` files in one pass, in memory (no intermediate per-file JSONL needed).
-- `tools/make_manifest.py` — writes `manifest.json` (original + patched sha256 per file) next to
-  `patch_all.py`'s output. Both release workflows publish it as a release asset; the
+- `tools/make_manifest.py` — writes `manifest.json` (original + patched sha256 per file, plus the
+  release zip's sha256/size under `archive`) next to `patch_all.py`'s output. Each release carries
+  only that zip (patched files, flat) + `manifest.json` (+ on `latest`, the Patch Guard installer);
+  the workflows delete any other asset. The
   Patch Guard app (`app/`) uses `original_sha256` as the only proof that a build matches the files
   installed in a game folder, so it must always be computed from the binary `patch_all.py` read.
 - `app/` — **WWM Patch Guard**, a Windows tray app (Tauri 2 + Leptos CSR + Rust/UI components,
@@ -212,7 +216,10 @@ context — only use one if the user explicitly asks for it by name.
   folders to guard — on Steam only `Package\HD\oversea\locale`, never the `LocalData\Patch`
   overlay the patcher re-downloads every launch. It never installs over a file whose hash matches no known original (a force install is
   user-confirmed). Build: `cargo tauri build` in `app/` (needs `trunk`, `tauri-cli`, the
-  `wasm32-unknown-unknown` target). CI: `release-app.yml` (tag `app-v*` publishes the installer).
+  `wasm32-unknown-unknown` target). CI: `app-ci.yml` tests/builds PRs; on main
+  `release-patch.yml` rebuilds the installer only when `app/` changed (or dispatch `build_app`) and
+  attaches it to the `latest` release as `wwm-patch-guard-setup.exe` — no separate app release.
+  The app downloads the release zip once per check pass and extracts files by name (`remote.rs`).
   `WWM_PATCH_GUARD_BASE_URL` / `WWM_PATCH_GUARD_DATA_DIR` point it at a local release server /
   data folder for testing. The Rust/UI CLI on crates.io (`ui-cli` 0.3.16) still targets the old
   registry host, so components in `app/src/components/ui/` were copied from

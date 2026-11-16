@@ -1,0 +1,52 @@
+name: app-ci
+
+# Tests + builds WWM Patch Guard (app/) on pull requests. Releases are no longer made
+# here: on main the installer is built and attached to the rolling `latest` patch
+# release by release-patch.yml (only when app/ changed).
+
+on:
+  pull_request:
+    paths:
+      - "app/**"
+      - ".github/workflows/app-ci.yml"
+  workflow_dispatch: {}
+
+concurrency:
+  group: app-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: app
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: trunk,tauri-cli
+
+      # The guard rules (what may be written over which file) are covered here.
+      - name: Test
+        run: cargo test -p wwm-patch-guard --lib
+
+      - name: Build installer
+        run: cargo tauri build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wwm-patch-guard-windows
+          path: app/target/release/bundle/nsis/*.exe
+          if-no-files-found: error

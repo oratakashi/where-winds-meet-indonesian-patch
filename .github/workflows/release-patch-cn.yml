@@ -59,10 +59,16 @@ jobs:
         run: |
           python tools/patch_all.py --profile cn --outdir patched-cn --level 19 | tee patch-cn.log
 
-      # Original + patched hashes per file; the Patch Guard app reads this to tell
-      # whether this build matches the files installed in the game folder.
+      # The release carries only this zip (patched files, flat) + manifest.json.
+      - name: Zip patched output
+        run: |
+          cd patched-cn
+          zip -X -j ../wwm-cn-indonesian-patch.zip translate_words_map_*
+
+      # Original + patched hashes per file + the zip's hash; the Patch Guard app reads
+      # this to tell whether this build matches the files installed in the game folder.
       - name: Write manifest.json
-        run: python tools/make_manifest.py --profile cn --outdir patched-cn
+        run: python tools/make_manifest.py --profile cn --outdir patched-cn --archive wwm-cn-indonesian-patch.zip
 
       - name: Compute progress summary
         id: progress
@@ -78,11 +84,6 @@ jobs:
             python tools/progress.py --profile cn
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
-
-      - name: Zip patched output
-        run: |
-          cd patched-cn
-          zip -r ../wwm-cn-indonesian-patch.zip .
 
       - name: Publish rolling release
         uses: softprops/action-gh-release@v2
@@ -107,7 +108,9 @@ jobs:
 
             **Untuk client China Where Winds Meet (燕云十六声)** — bukan untuk versi global (versi
             global ada di release [`latest`](https://github.com/oratakashi/where-winds-meet-indonesian-patch/releases/tag/latest)).
-            Berisi `translate_words_map_zh_cn` dan `translate_words_map_zh_cn__small`.
+            Download **`wwm-cn-indonesian-patch.zip`** lalu ekstrak — berisi `translate_words_map_zh_cn`
+            dan `translate_words_map_zh_cn__small`. Pemasangan ulang otomatis setelah update:
+            installer **WWM Patch Guard** ada di release [`latest`](https://github.com/oratakashi/where-winds-meet-indonesian-patch/releases/tag/latest).
 
             Teks yang juga ada di versi global memakai terjemahan Indonesia versi global; teks khusus
             versi China diterjemahkan langsung dari Mandarin, tetapi belum selesai dan tidak akan dilanjutkan, jadi sebagian teks
@@ -123,7 +126,7 @@ jobs:
             2. Buka folder `<folder instalasi>\yysls_fast\LocalData\Patch\HD\v2\locale\`
                (contoh: `D:\yysls\yysls_fast\LocalData\Patch\HD\v2\locale\`).
             3. **Backup** dulu `translate_words_map_zh_cn` dan `translate_words_map_zh_cn__small` yang lama.
-            4. Salin kedua file dari release ini ke folder tersebut (timpa file lama).
+            4. Ekstrak `wwm-cn-indonesian-patch.zip` ke folder tersebut (timpa file lama).
             5. Jalankan game seperti biasa, bahasa game tetap **简体中文**.
 
             > [!WARNING]
@@ -143,5 +146,16 @@ jobs:
           files: |
             wwm-cn-indonesian-patch.zip
             patched-cn/manifest.json
-            patched-cn/translate_words_map_zh_cn
-            patched-cn/translate_words_map_zh_cn__small
+
+      # softprops does not delete old assets: drop everything but the zip and manifest
+      # (e.g. the raw translate_words_map_* files earlier builds attached).
+      - name: Remove stale release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view cn-latest --json assets --jq '.assets[].name' | while read -r name; do
+            case "$name" in
+              wwm-cn-indonesian-patch.zip|manifest.json) ;;
+              *) echo "deleting $name"; gh release delete-asset cn-latest "$name" --yes ;;
+            esac
+          done

@@ -55,11 +55,12 @@ New releases are built automatically whenever translations are added.
 
 ## Player Installation Guide
 
-No Python or tools needed — just copy two files into the game folder.
+No Python or tools needed — just copy two files into the game folder. On Windows,
+[WWM Patch Guard](#auto-reinstall--wwm-patch-guard-windows) can do it for you.
 
-1. Download the patch for your client:
-   - Global: **[`wwm-indonesian-patch.zip`](../../releases/tag/latest)** — current target: game v2.4 [Across Autumn Waters]
-   - China: **[`wwm-cn-indonesian-patch.zip`](../../releases/tag/cn-latest)** — ⚠️ no longer maintained (last build only)
+1. Download the patch for your client and extract the zip:
+   - Global: **[`wwm-indonesian-patch.zip`](../../releases/download/latest/wwm-indonesian-patch.zip)** — current target: game v2.4 [Across Autumn Waters]
+   - China: **[`wwm-cn-indonesian-patch.zip`](../../releases/download/cn-latest/wwm-cn-indonesian-patch.zip)** — ⚠️ no longer maintained (last build only)
 2. Follow the steps for your platform below.
 
 > [!IMPORTANT]
@@ -85,11 +86,12 @@ showing any update. **WWM Patch Guard** is a small tray app that watches the gam
 and puts the patch back by itself. It is built for the **official launcher (global)** and also
 guards a **Steam** install — there only the `Package\HD\oversea\locale` folder, since Steam's
 in-game patcher re-downloads the `LocalData\Patch` overlay on every launch. It can
-also guard a China client folder, but only while the frozen `cn-latest` release stays unchanged
-and the original files still match it (that release has no `manifest.json`, so in practice it
-will report "waiting for a release" there).
+also guard a China client folder, as long as its original files still match the frozen
+`cn-latest` release.
 
-1. Download the `WWM Patch Guard` installer from the [releases page](../../releases) and run it.
+1. Download **[`wwm-patch-guard-setup.exe`](../../releases/download/latest/wwm-patch-guard-setup.exe)**
+   (it sits next to the patch zip in the [`latest` release](../../releases/tag/latest)) and run it.
+   Versions before 0.3.0 can no longer read the releases — install the new one over it.
 2. Installed copies of the game (Steam and the official launcher) are found automatically and
    listed under **Game terdeteksi** on the Home page: click **Jaga** (or **Jaga semua**) and the
    patch is downloaded and installed. Only if nothing is found, click **Pilih folder manual** and

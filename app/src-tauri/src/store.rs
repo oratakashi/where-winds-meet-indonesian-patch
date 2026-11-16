@@ -87,6 +87,16 @@ impl Store {
         self.base.join("patched").join(format!("{sha}.part"))
     }
 
+    /// Downloaded release zip, kept only for the check pass that needed it.
+    pub fn archive_path(&self, sha: &str) -> PathBuf {
+        self.base.join("archives").join(format!("{sha}.zip"))
+    }
+
+    /// Drop every downloaded release zip: what they held is in `patched/` by now.
+    pub fn clear_archives(&self) {
+        let _ = fs::remove_dir_all(self.base.join("archives"));
+    }
+
     pub fn load_config(&self) -> Config {
         self.load("config.json")
     }

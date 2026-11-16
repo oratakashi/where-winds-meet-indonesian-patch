@@ -252,8 +252,11 @@ guarded in `Package\HD\oversea\locale` only. The UI (`app/src/`) is a navigation
 file per page in `pages/` (Home, Settings, History); the history is kept in `history.json`.
 
 To try it without touching a real install, set `WWM_PATCH_GUARD_BASE_URL` to a local server that
-serves `<url>/latest/manifest.json` plus the patched files, and `WWM_PATCH_GUARD_DATA_DIR` to a
-scratch folder. Releasing: push a tag `app-vX.Y.Z` (`release-app.yml`).
+serves `<url>/latest/manifest.json` plus the release zip it names (`archive.name`), and
+`WWM_PATCH_GUARD_DATA_DIR` to a scratch folder. Releasing: bump the version in
+`app/src-tauri/tauri.conf.json` + `Cargo.toml` and push to main — `release-patch.yml` rebuilds the
+installer when `app/` changed and attaches it to the `latest` release as `wwm-patch-guard-setup.exe`
+(`app-ci.yml` only tests PRs).
 
 ## Repository Structure
 
@@ -265,7 +268,7 @@ scratch folder. Releasing: push a tag `app-vX.Y.Z` (`release-app.yml`).
 │   ├── expand_locale.py             # Expands the per-idx dictionary into a patch JSONL for one dump
 │   ├── rebuild_unique_strings.py    # Appends new strings after a game update (keeps existing idx)
 │   ├── patch_all.py                 # Patches every translate_words_map_* variant in one pass
-│   ├── make_manifest.py             # manifest.json (original + patched sha256) for a patch_all.py output
+│   ├── make_manifest.py             # manifest.json (original + patched sha256, release zip hash) for a patch_all.py output
 │   ├── progress.py                  # Translation progress tables (--write / --check)
 │   ├── profiles.py                  # Per-profile paths/variants (global, cn)
 │   └── bridge.py                    # Global → CN keyHash/text bridge

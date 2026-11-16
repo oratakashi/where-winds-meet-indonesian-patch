@@ -11,7 +11,7 @@
 //! given game file, so nothing is ever installed over a file whose hash is unknown —
 //! except on an explicit, user-confirmed force install.
 use crate::model::{Client, DirReport, Event, FileEntry, FileReport, Manifest, Profile, Status};
-use crate::remote::Remote;
+use crate::remote::{Remote, extract};
 use crate::store::{Config, GuardDir, State, Store, copy_atomic, entry_key, sha256_file};
 use std::collections::HashMap;
 use std::fs;
@@ -90,6 +90,8 @@ impl<R: Remote> Guard<R> {
                 files,
             });
         }
+        // The zip only serves the files fetched in this pass (both come from one download).
+        self.store.clear_archives();
         self.flush();
         (reports, events)
     }
@@ -280,19 +282,19 @@ impl<R: Remote> Guard<R> {
         if !cache.is_file() {
             let part = self.store.download_path(&r.patched_sha256);
             let got = self
-                .remote
-                .download(profile, r, &part)
+                .fetch_archive(profile)
+                .and_then(|zip| extract(&zip, &r.name, r.patched_size, &part))
                 .and_then(|()| sha256_file(&part).map_err(|e| e.to_string()))
                 .and_then(|sha| {
                     if sha == r.patched_sha256 {
                         fs::rename(&part, &cache).map_err(|e| e.to_string())
                     } else {
-                        // The rolling release can be replaced mid-download: just retry later.
-                        Err("unduhan tidak cocok dengan manifest".to_string())
+                        Err("isi zip tidak cocok dengan manifest".to_string())
                     }
                 });
             if let Err(e) = got {
                 let _ = fs::remove_file(&part);
+                self.store.clear_archives();
                 self.manifests.remove(&profile);
                 return Err((Status::Error, format!("gagal mengunduh: {e}"), None));
             }
@@ -300,6 +302,38 @@ impl<R: Remote> Guard<R> {
         self.install(path, cur_sha, r)?;
         self.state.entries.insert(entry_key(profile, &r.name), r.clone());
         Ok(())
+    }
+
+    /// The release zip of the cached manifest, downloaded once per check pass.
+    fn fetch_archive(&mut self, profile: Profile) -> Result<PathBuf, String> {
+        let archive = match self.manifests.get(&profile) {
+            Some((_, Ok(m))) => m.archive.clone(),
+            _ => return Err("manifest rilis belum dimuat".into()),
+        };
+        let zip = self.store.archive_path(&archive.sha256);
+        if zip.is_file() {
+            return Ok(zip);
+        }
+        if let Some(dir) = zip.parent() {
+            fs::create_dir_all(dir).map_err(|e| e.to_string())?;
+        }
+        let part = zip.with_extension("part");
+        let got = self
+            .remote
+            .download(profile, &archive, &part)
+            .and_then(|()| sha256_file(&part).map_err(|e| e.to_string()))
+            .and_then(|sha| {
+                if sha == archive.sha256 {
+                    fs::rename(&part, &zip).map_err(|e| e.to_string())
+                } else {
+                    // The rolling release can be replaced mid-download: just retry later.
+                    Err("unduhan tidak cocok dengan manifest".to_string())
+                }
+            });
+        if got.is_err() {
+            let _ = fs::remove_file(&part);
+        }
+        got.map(|()| zip)
     }
 
     /// Replace `path` (currently `cur_sha`) with the cached patched build of `entry`.
@@ -365,7 +399,8 @@ fn write_failure(e: io::Error) -> Outcome {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::model::MANIFEST_SCHEMA;
+    use crate::model::{Archive, MANIFEST_SCHEMA};
+    use crate::remote::zip_of;
     use sha2::{Digest, Sha256};
     use std::cell::{Cell, RefCell};
 
@@ -388,7 +423,7 @@ mod tests {
     impl Fake {
         fn publish(&self, original: &[u8], patched: &[u8]) {
             *self.build.borrow_mut() = Some((original.to_vec(), patched.to_vec()));
-            *self.served.borrow_mut() = Some(patched.to_vec());
+            *self.served.borrow_mut() = Some(zip_of(&[(NAME, patched)]));
         }
     }
 
@@ -397,11 +432,17 @@ mod tests {
             self.fetches.set(self.fetches.get() + 1);
             let b = self.build.borrow();
             let (o, p) = b.as_ref().ok_or("rilis belum punya manifest.json")?;
+            let zip = zip_of(&[(NAME, p)]);
             Ok(Manifest {
                 schema: MANIFEST_SCHEMA,
                 profile: "global".into(),
                 commit: String::new(),
                 built_at: String::new(),
+                archive: Archive {
+                    name: "wwm-indonesian-patch.zip".into(),
+                    sha256: sha(&zip),
+                    size: zip.len() as u64,
+                },
                 files: vec![FileEntry {
                     name: NAME.into(),
                     original_sha256: sha(o),
@@ -412,7 +453,7 @@ mod tests {
             })
         }
 
-        fn download(&self, _: Profile, _: &FileEntry, dest: &Path) -> Result<(), String> {
+        fn download(&self, _: Profile, _: &Archive, dest: &Path) -> Result<(), String> {
             self.downloads.set(self.downloads.get() + 1);
             fs::write(dest, self.served.borrow().as_ref().unwrap()).map_err(|e| e.to_string())
         }
@@ -543,12 +584,21 @@ mod tests {
     fn corrupt_download_is_rejected() {
         let mut r = Rig::new(b"orig-v1");
         r.guard.remote.publish(b"orig-v1", b"patched-v1");
-        *r.guard.remote.served.borrow_mut() = Some(b"something else".to_vec());
+        *r.guard.remote.served.borrow_mut() = Some(zip_of(&[(NAME, b"something else")]));
         assert_eq!(r.check(), (Status::Error, vec![]));
         assert_eq!(r.content(), b"orig-v1");
         // Fixed on the server: the next pass succeeds.
-        *r.guard.remote.served.borrow_mut() = Some(b"patched-v1".to_vec());
+        *r.guard.remote.served.borrow_mut() = Some(zip_of(&[(NAME, b"patched-v1")]));
         assert_eq!(r.check(), (Status::Patched, vec![installed()]));
+    }
+
+    #[test]
+    fn release_zip_is_not_kept_after_the_pass() {
+        let mut r = Rig::new(b"orig-v1");
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        assert_eq!(r.check(), (Status::Patched, vec![installed()]));
+        let archives = r._tmp.path().join("data").join("archives");
+        assert!(!archives.exists(), "zip left behind in {}", archives.display());
     }
 
     #[test]

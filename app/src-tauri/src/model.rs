@@ -3,7 +3,8 @@
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 
-pub const MANIFEST_SCHEMA: u32 = 1;
+/// 2: the release carries one zip (`archive`) instead of every file as its own asset.
+pub const MANIFEST_SCHEMA: u32 = 2;
 
 #[derive(Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Debug)]
 #[serde(rename_all = "lowercase")]
@@ -85,6 +86,14 @@ pub struct FileEntry {
     pub patched_size: u64,
 }
 
+/// The release zip: every patched file of `Manifest::files`, stored flat by name.
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Debug)]
+pub struct Archive {
+    pub name: String,
+    pub sha256: String,
+    pub size: u64,
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Manifest {
     pub schema: u32,
@@ -93,6 +102,7 @@ pub struct Manifest {
     pub commit: String,
     #[serde(default)]
     pub built_at: String,
+    pub archive: Archive,
     pub files: Vec<FileEntry>,
 }
 

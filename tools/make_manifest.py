@@ -3,11 +3,14 @@
 make_manifest.py — tulis manifest.json untuk hasil patch_all.py.
 
     python tools/make_manifest.py [--profile cn] [--outdir patched] [--commit SHA]
+                                  --archive wwm-indonesian-patch.zip
 
 Untuk tiap varian profil yang ada di --outdir, catat sha256 + ukuran file ORIGINAL
-(binary sumber di repo) dan file PATCHED (hasil patch_all.py). Manifest ini ikut
-dirilis (release `latest` / `cn-latest`) dan dibaca app Patch Guard (app/) untuk
-memutuskan, hanya dari hash file yang terpasang di folder game:
+(binary sumber di repo) dan file PATCHED (hasil patch_all.py). Rilis hanya membawa
+satu zip (file patched, flat) + manifest.json, jadi manifest juga mencatat zip itu
+(`archive`: nama, sha256, ukuran) — app mengunduh zip dan mengambil file dari situ.
+Manifest ini ikut dirilis (release `latest` / `cn-latest`) dan dibaca app Patch Guard
+(app/) untuk memutuskan, hanya dari hash file yang terpasang di folder game:
 
   = patched_sha256   -> sudah terpasang, tidak ada yang perlu dilakukan
   = original_sha256  -> tertimpa patcher NetEase, aman dipasang ulang
@@ -17,14 +20,14 @@ Jadi `original_sha256` adalah satu-satunya bukti bahwa sebuah build cocok dengan
 file game tertentu — jangan pernah diisi dari sumber selain binary yang benar-benar
 dipakai patch_all.py.
 """
-import argparse, datetime, hashlib, json, os, subprocess, sys
+import argparse, datetime, hashlib, json, os, subprocess, sys, zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 
 import profiles
 
-SCHEMA = 1
+SCHEMA = 2
 NAME = "manifest.json"
 
 
@@ -47,7 +50,24 @@ def current_commit():
         return ""
 
 
-def build(profile, outdir, commit):
+def archive_entry(path, files):
+    """sha256/ukuran zip rilis; pastikan isinya persis file patched yang sama."""
+    with zipfile.ZipFile(path) as z:
+        names = set(z.namelist())
+        for e in files:
+            if e["name"] not in names:
+                sys.exit("%s tidak ada di %s" % (e["name"], path))
+            h = hashlib.sha256()
+            with z.open(e["name"]) as f:
+                for chunk in iter(lambda: f.read(1 << 20), b""):
+                    h.update(chunk)
+            if h.hexdigest() != e["patched_sha256"]:
+                sys.exit("%s di %s tidak sama dengan file patched" % (e["name"], path))
+    sha, size = digest(path)
+    return {"name": os.path.basename(path), "sha256": sha, "size": size}
+
+
+def build(profile, outdir, commit, archive=None):
     P = profiles.get(profile)
     files = []
     for name in P.files:
@@ -59,10 +79,13 @@ def build(profile, outdir, commit):
         files.append({"name": name,
                       "original_sha256": o_sha, "original_size": o_size,
                       "patched_sha256": p_sha, "patched_size": p_size})
-    return {"schema": SCHEMA, "profile": profile, "commit": commit,
-            "built_at": datetime.datetime.now(datetime.timezone.utc)
-                        .strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "files": files}
+    m = {"schema": SCHEMA, "profile": profile, "commit": commit,
+         "built_at": datetime.datetime.now(datetime.timezone.utc)
+                     .strftime("%Y-%m-%dT%H:%M:%SZ")}
+    if files and archive:
+        m["archive"] = archive_entry(archive, files)
+    m["files"] = files
+    return m
 
 
 def main():
@@ -70,9 +93,12 @@ def main():
     profiles.add_argument(ap)
     ap.add_argument("--outdir", help="folder hasil patch_all.py (default: patched_dir profil)")
     ap.add_argument("--commit", help="default: $GITHUB_SHA atau git rev-parse HEAD")
+    ap.add_argument("--archive", required=True,
+                    help="zip rilis berisi file patched (flat); app Patch Guard mengunduh ini")
     a = ap.parse_args()
     outdir = a.outdir or profiles.get(a.profile).patched_dir
-    m = build(a.profile, outdir, a.commit if a.commit is not None else current_commit())
+    m = build(a.profile, outdir, a.commit if a.commit is not None else current_commit(),
+              a.archive)
     if not m["files"]:
         sys.exit("tidak ada file hasil patch di %s, jalankan tools/patch_all.py dulu" % outdir)
     path = os.path.join(outdir, NAME)
@@ -82,6 +108,8 @@ def main():
     for e in m["files"]:
         print("%-36s original=%s  patched=%s" % (e["name"], e["original_sha256"][:12],
                                                  e["patched_sha256"][:12]))
+    print("%-36s sha256=%s  size=%d" % (m["archive"]["name"], m["archive"]["sha256"][:12],
+                                        m["archive"]["size"]))
     print("->", path)
 
 
