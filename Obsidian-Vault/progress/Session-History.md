@@ -9,6 +9,10 @@ see [[Current-Status]].
 
 
 
+## 2026-11-16 — Session 155: Update-3G (idx 715,919–733,661)
+
+Translated the whole Update-3G block (17,743 rows) with 18 subagents (user-authorized; some resumed after a usage limit), merged in idx order into `locale/update3g.jsonl`. `qa_check.py --locale "locale/*.jsonl"` clean (0 PROMPT_LEAK / MARKUP / EMPTY). Overall: 673,662 / 733,662 unique strings (91.82%), in-game coverage 94.63% (base) / 100.00% (`_diff`). Details: [[Update-3G]].
+
 ## 2026-10-09 — Session 119: Phase 13 — 1,000-row iteration (idx 304,000–304,999)
 
 Per the user's request the iteration size was reduced to **1,000 rows** (from 3,000 requested earlier in the session, 4,000 before that). Appended **idx 304,000–304,999**; Phase 13 now contains **25,000/30,000 rows (83.33%)**. Next idx: **305,000**. No commit was created.
