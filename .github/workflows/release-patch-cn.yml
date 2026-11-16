@@ -59,15 +59,10 @@ jobs:
         run: |
           python tools/patch_all.py --profile cn --outdir patched-cn --level 19 | tee patch-cn.log
 
-      # The release carries only this zip (patched files, flat) + manifest.json.
-      - name: Zip patched output
-        run: |
-          cd patched-cn
-          zip -X -j ../wwm-cn-indonesian-patch.zip translate_words_map_*
-
-      # Original + patched hashes per file + the zip's hash; the Patch Guard app reads
-      # this to tell whether this build matches the files installed in the game folder.
-      - name: Write manifest.json
+      # Writes the release zip (patched files, flat) + manifest.json with original/patched
+      # hashes per file and the zip's hash; the Patch Guard app reads it to tell whether
+      # this build matches the files installed in the game folder.
+      - name: Write zip + manifest.json
         run: python tools/make_manifest.py --profile cn --outdir patched-cn --archive wwm-cn-indonesian-patch.zip
 
       - name: Compute progress summary

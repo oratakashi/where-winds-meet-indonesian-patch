@@ -116,16 +116,10 @@ jobs:
       - name: Build patched files
         run: python tools/patch_all.py --outdir patched --level 19
 
-      # Zip hanya berisi file patched (flat, tanpa manifest) — Patch Guard mengambil
-      # file dari zip ini berdasarkan nama.
-      - name: Zip patched output
-        run: |
-          cd patched
-          zip -X -j "../$ZIP" translate_words_map_*
-
-      # Hash original + patched per file + hash zip; dibaca app Patch Guard untuk tahu
-      # apakah build ini cocok dengan file game yang terpasang.
-      - name: Write manifest.json
+      # Menulis zip rilis (hanya file patched, flat — Patch Guard mengambil file dari zip
+      # ini berdasarkan nama) + manifest.json berisi hash original/patched per file dan
+      # hash zip; app memakai manifest untuk tahu apakah build cocok dengan file game.
+      - name: Write zip + manifest.json
         run: python tools/make_manifest.py --outdir patched --archive "$ZIP"
 
       # strings.jsonl tidak ter-track (>100 MB sejak v2.3) — dump dari binary.

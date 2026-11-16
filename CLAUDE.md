@@ -57,8 +57,9 @@ python tools/patch_all.py [--outdir patched] [--level N]
                                                        # repacked copies under --outdir
 
 python tools/make_manifest.py [--outdir patched] --archive wwm-indonesian-patch.zip
-                                                       # after patch_all.py + zipping its output (flat): write
-                                                       # <outdir>/manifest.json (schema 2) with the sha256/size of each
+                                                       # after patch_all.py: write the release zip (patched files,
+                                                       # flat) to --archive and <outdir>/manifest.json (schema 2)
+                                                       # with the sha256/size of each
                                                        # ORIGINAL (repo binary) and PATCHED file plus the zip's
                                                        # sha256/size; published with the release, read by Patch Guard
 ```

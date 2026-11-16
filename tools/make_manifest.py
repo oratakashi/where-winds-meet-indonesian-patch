@@ -7,7 +7,8 @@ make_manifest.py — tulis manifest.json untuk hasil patch_all.py.
 
 Untuk tiap varian profil yang ada di --outdir, catat sha256 + ukuran file ORIGINAL
 (binary sumber di repo) dan file PATCHED (hasil patch_all.py). Rilis hanya membawa
-satu zip (file patched, flat) + manifest.json, jadi manifest juga mencatat zip itu
+satu zip (file patched, flat — ditulis script ini ke --archive) + manifest.json, jadi
+manifest juga mencatat zip itu
 (`archive`: nama, sha256, ukuran) — app mengunduh zip dan mengambil file dari situ.
 Manifest ini ikut dirilis (release `latest` / `cn-latest`) dan dibaca app Patch Guard
 (app/) untuk memutuskan, hanya dari hash file yang terpasang di folder game:
@@ -50,19 +51,21 @@ def current_commit():
         return ""
 
 
-def archive_entry(path, files):
-    """sha256/ukuran zip rilis; pastikan isinya persis file patched yang sama."""
-    with zipfile.ZipFile(path) as z:
-        names = set(z.namelist())
+def write_archive(path, outdir, files):
+    """Tulis zip rilis: persis file patched yang tercatat di manifest, flat (tanpa folder),
+    lalu kembalikan entri `archive` (nama, sha256, ukuran) untuk manifest.
+
+    File translate_words_map_* sudah terkompresi zstd, jadi disimpan tanpa kompresi
+    (ZIP_STORED): ukurannya sama, ekstraksi lebih cepat. Timestamp tetap supaya zip
+    dari input yang sama selalu identik."""
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_STORED) as z:
         for e in files:
-            if e["name"] not in names:
-                sys.exit("%s tidak ada di %s" % (e["name"], path))
-            h = hashlib.sha256()
-            with z.open(e["name"]) as f:
-                for chunk in iter(lambda: f.read(1 << 20), b""):
-                    h.update(chunk)
-            if h.hexdigest() != e["patched_sha256"]:
-                sys.exit("%s di %s tidak sama dengan file patched" % (e["name"], path))
+            info = zipfile.ZipInfo(e["name"], date_time=(1980, 1, 1, 0, 0, 0))
+            info.external_attr = 0o644 << 16
+            with open(os.path.join(outdir, e["name"]), "rb") as src, \
+                    z.open(info, "w", force_zip64=True) as dst:
+                for chunk in iter(lambda: src.read(1 << 20), b""):
+                    dst.write(chunk)
     sha, size = digest(path)
     return {"name": os.path.basename(path), "sha256": sha, "size": size}
 
@@ -83,7 +86,7 @@ def build(profile, outdir, commit, archive=None):
          "built_at": datetime.datetime.now(datetime.timezone.utc)
                      .strftime("%Y-%m-%dT%H:%M:%SZ")}
     if files and archive:
-        m["archive"] = archive_entry(archive, files)
+        m["archive"] = write_archive(archive, outdir, files)
     m["files"] = files
     return m
 
@@ -94,7 +97,8 @@ def main():
     ap.add_argument("--outdir", help="folder hasil patch_all.py (default: patched_dir profil)")
     ap.add_argument("--commit", help="default: $GITHUB_SHA atau git rev-parse HEAD")
     ap.add_argument("--archive", required=True,
-                    help="zip rilis berisi file patched (flat); app Patch Guard mengunduh ini")
+                    help="zip rilis yang DITULIS script ini (file patched, flat); "
+                         "app Patch Guard mengunduh zip ini")
     a = ap.parse_args()
     outdir = a.outdir or profiles.get(a.profile).patched_dir
     m = build(a.profile, outdir, a.commit if a.commit is not None else current_commit(),
