@@ -11,22 +11,34 @@ follow the [installation guide in the README](../README.md#player-installation-g
 - [China Client (`--profile cn`)](#china-client---profile-cn)
 - [Repository Structure](#repository-structure)
 
-Related: [Technical Overview](Technical-Overview.md) · [Translation Guidelines](Translation-Guidelines.md) ·
+Related: [Rust Toolchain](Rust-Toolchain.md) · [Technical Overview](Technical-Overview.md) · [Translation Guidelines](Translation-Guidelines.md) ·
 [Contributing](Contributing.md) · [Full format spec](../Obsidian-Vault/knowladge/Format-Spec.md)
 
 ---
 
 ## Prerequisites
 
-- **Python 3.8+** and **pip**
+The toolkit exists twice, with identical arguments and output: a **Rust** binary `wwm` (fast,
+the default) and the original **Python** scripts (the failsafe). You need at least one of them;
+having both is best.
+
+- **Rust (stable)** via [rustup](https://rustup.rs) — builds `rust/target/release/wwm`
+- **Python 3.8+** and **pip** — the only third-party dependency is
+  [`zstandard`](https://pypi.org/project/zstandard/)
+- A POSIX `sh` (Linux/macOS, or Git Bash on Windows) for the `tools/wwm.sh` dispatcher — from
+  PowerShell/cmd use `tools\wwm.cmd <subcommand>` instead (it runs Git for Windows' `sh.exe`)
 
 ```bash
 git clone git@github.com:oratakashi/where-winds-meet-indonesian-patch.git
 cd where-winds-meet-indonesian-patch
-pip install -r requirements.txt
+cargo build --release --manifest-path rust/Cargo.toml   # Rust toolchain
+pip install -r requirements.txt                         # Python failsafe
+sh tools/wwm.sh toolchain                               # -> "rust <path>" or "python"
 ```
 
-The only third-party dependency is [`zstandard`](https://pypi.org/project/zstandard/).
+Every command below goes through `sh tools/wwm.sh <subcommand>`, which runs the Rust binary when
+it is built and the matching Python script otherwise (`WWM_TOOLCHAIN=python` forces Python). The
+mapping, timings and CI switch are in [Rust Toolchain](Rust-Toolchain.md).
 
 ---
 
@@ -58,7 +70,7 @@ translate_words_map_en  <──patch──────────────�
 ### 2. Inspect the binary header
 
 ```bash
-python wwm_locmap.py info translate_words_map_en
+sh tools/wwm.sh info translate_words_map_en
 ```
 
 ```text
@@ -75,7 +87,7 @@ files the counts intentionally diverge because their shards are sparse (see
 ### 3. Dump to JSON Lines
 
 ```bash
-python wwm_locmap.py dump translate_words_map_en strings.jsonl
+sh tools/wwm.sh dump translate_words_map_en strings.jsonl
 ```
 
 Each line is one localization entry:
@@ -106,7 +118,7 @@ format tags stay intact.
 ### 5. Run the QA check
 
 ```bash
-python tools/qa_check.py strings_original.jsonl strings_translated.jsonl --report qa_report.jsonl
+sh tools/wwm.sh qa strings_original.jsonl strings_translated.jsonl --report qa_report.jsonl
 ```
 
 ```text
@@ -121,7 +133,7 @@ The script exits with code `1` when it finds defects, so it works in CI and pre-
 ### 6. Repack into a binary
 
 ```bash
-python wwm_locmap.py patch translate_words_map_en strings.jsonl translate_words_map_en.new
+sh tools/wwm.sh patch translate_words_map_en strings.jsonl translate_words_map_en.new
 ```
 
 - `--level N` sets the zstd compression level (default `19`). Use `10`–`12` for fast iteration,
@@ -140,26 +152,27 @@ unique string) and `locale/phase*.jsonl` / `locale/update*.jsonl` (translations 
 
 ```bash
 # 0. Validate the per-idx translation files (tokens, empty values, idx gaps/duplicates)
-python tools/qa_check.py --locale "locale/*.jsonl"
+sh tools/wwm.sh qa --locale "locale/*.jsonl"
 
 # 1. Expand the translation dictionary against the original dump
-python tools/expand_locale.py
+sh tools/wwm.sh expand
 
 # 2. QA the expanded result (prompt leaks, broken markup, empty values)
-python tools/qa_check.py strings.jsonl strings.translated.jsonl --report qa_report.jsonl
+sh tools/wwm.sh qa strings.jsonl strings.translated.jsonl --report qa_report.jsonl
 
 # 3. If QA passes, repack into a distribution binary
-python wwm_locmap.py patch translate_words_map_en strings.translated.jsonl translate_words_map_en.id
+sh tools/wwm.sh patch translate_words_map_en strings.translated.jsonl translate_words_map_en.id
 
 # 4. Refresh the progress tables in Obsidian-Vault/progress/Current-Status.md
-python tools/progress.py --write
+sh tools/wwm.sh progress --write
 ```
 
 Notes:
-- Step 1 expects `strings.jsonl` (from `wwm_locmap.py dump`) in the repo root.
+- Step 1 expects `strings.jsonl` (from `sh tools/wwm.sh dump`) in the repo root. Step 4 does not
+  need it on the Rust toolchain (the binary is decoded directly); the Python `progress.py` does.
 - If step 2 exits with `1`, fix the strings listed in `qa_report.jsonl` before repacking.
 - To patch every file variant (base, `_diff`, `_mobile`) in one pass, use
-  `python tools/patch_all.py --outdir patched`.
+  `sh tools/wwm.sh patch-all --outdir patched`.
 - Session workflow, terminology and tone rules live in the Obsidian vault:
   [`Current-Status.md`](../Obsidian-Vault/progress/Current-Status.md),
   [`Resume-Procedure.md`](../Obsidian-Vault/progress/Resume-Procedure.md) and
@@ -182,21 +195,22 @@ After an update:
 
 ```bash
 # Dump the updated files
-python wwm_locmap.py dump translate_words_map_en strings.jsonl
-python wwm_locmap.py dump translate_words_map_en_diff strings_diff.jsonl
+sh tools/wwm.sh dump translate_words_map_en strings.jsonl
+sh tools/wwm.sh dump translate_words_map_en_diff strings_diff.jsonl
 
 # Append new unique strings WITHOUT renumbering existing idx values
-python tools/rebuild_unique_strings.py
+sh tools/wwm.sh rebuild-unique
 
 # Apply the translations to every variant at once
-python tools/patch_all.py --outdir patched
+sh tools/wwm.sh patch-all --outdir patched
 ```
 
 > [!CAUTION]
 > Never re-run `translation_work/build_unique.py` — it renumbers every `idx` and silently breaks
-> all `locale/*.jsonl` progress. Use `rebuild_unique_strings.py`, which only appends.
+> all `locale/*.jsonl` progress. Use `rebuild-unique`, which only appends.
 
-A new `locale/updateN.jsonl` must also be registered in `PHASES` in `tools/progress.py`. See
+A new `locale/updateN.jsonl` must also be registered in the profile's `phases` in
+`tools/profiles.json` (read by both toolchains). See
 [Format-Spec §4.6](../Obsidian-Vault/knowladge/Format-Spec.md) for the `__small` findings and
 [`CLAUDE.md`](../CLAUDE.md) for helper-script internals.
 
@@ -213,15 +227,15 @@ A new `locale/updateN.jsonl` must also be registered in `PHASES` in `tools/progr
 
 Every tool takes `--profile {global,cn}` (default `global`). The `cn` profile translates
 **WWM China (燕云十六声)** from Mandarin. CN files use **container v2** (zstd dictionary encrypted
-with a keystream), which `wwm_locmap.py` handles transparently once `cn/work/keystream_v2.bin`
+with a keystream), which both codecs handle transparently once `cn/work/keystream_v2.bin`
 is present. Lines shared with the global game reuse the global translation through
 `tools/bridge.py`, so `cn/translation_work/unique_strings.jsonl` holds only CN-only text.
 
 ```bash
-python tools/rebuild_unique_strings.py --profile cn
-python tools/qa_check.py --profile cn --locale "cn/locale/*.jsonl"
-python tools/progress.py --profile cn --write
-python tools/patch_all.py --profile cn
+sh tools/wwm.sh rebuild-unique --profile cn
+sh tools/wwm.sh qa --profile cn --locale "cn/locale/*.jsonl"
+sh tools/wwm.sh progress --profile cn --write
+sh tools/wwm.sh patch-all --profile cn
 ```
 
 Full setup (keystream decryption, dumps, name/term helpers) is in [`CLAUDE.md`](../CLAUDE.md#wwm-china---profile-cn)
@@ -232,8 +246,8 @@ and the CN vault ([`CN-Current-Status.md`](../Obsidian-Vault/cn/progress/CN-Curr
 ## WWM Patch Guard (`app/`)
 
 The tray app players run to have the patch reinstalled automatically. It is independent of the
-Python toolkit: it only compares file hashes with the `manifest.json` published in each patch
-release (`tools/make_manifest.py`) and copies files.
+toolkit (and of the `rust/` workspace): it only compares file hashes with the `manifest.json`
+published in each patch release (`sh tools/wwm.sh manifest`) and copies files.
 
 ```bash
 rustup target add wasm32-unknown-unknown
@@ -262,15 +276,20 @@ installer when `app/` changed and attaches it to the `latest` release as `wwm-pa
 
 ```text
 .
-├── wwm_locmap.py                    # Container codec + CLI: info / dump / patch (v1 and v2)
+├── rust/                            # Rust toolchain: the `wwm` binary (default; see docs/Rust-Toolchain.md)
+│   └── crates/                      # wwm-locmap (codec), wwm-tools (one module per script), wwm-cli (`wwm`)
+├── wwm_locmap.py                    # Python codec + CLI: info / dump / patch (v1 and v2) — failsafe
 ├── tools/
+│   ├── wwm.sh                       # Dispatcher: `sh tools/wwm.sh <subcommand>` -> Rust or Python
+│   ├── parity_check.sh              # Runs both toolchains on the repo data, fails on any difference
+│   ├── profiles.json                # Per-profile phases/regions/variants/paths (read by both toolchains)
 │   ├── qa_check.py                  # QA: prompt leaks, broken markup, empty values, idx gaps
 │   ├── expand_locale.py             # Expands the per-idx dictionary into a patch JSONL for one dump
 │   ├── rebuild_unique_strings.py    # Appends new strings after a game update (keeps existing idx)
 │   ├── patch_all.py                 # Patches every translate_words_map_* variant in one pass
 │   ├── make_manifest.py             # manifest.json (original + patched sha256, release zip hash) for a patch_all.py output
 │   ├── progress.py                  # Translation progress tables (--write / --check)
-│   ├── profiles.py                  # Per-profile paths/variants (global, cn)
+│   ├── profiles.py                  # Loads profiles.json for the Python scripts
 │   └── bridge.py                    # Global → CN keyHash/text bridge
 ├── app/                             # WWM Patch Guard: Windows tray app that reinstalls the patch (Rust, Tauri + Leptos)
 ├── locale/                          # Global translations (phase*.jsonl, update*.jsonl)
@@ -278,8 +297,9 @@ installer when `app/` changed and attaches it to the `latest` release as `wwm-pa
 ├── cn/                              # China client: binaries, locale/, tools/, overrides.jsonl
 ├── Obsidian-Vault/                  # Documentation, glossary, progress and session logs
 ├── docs/                            # Developer, technical and contributor docs (this folder)
-├── .github/workflows/               # QA + rolling release builds (global and CN)
+├── .github/workflows/               # QA + rolling release builds (global and CN), rust-ci (tests + parity)
+├── .github/actions/wwm-toolchain/   # CI: pick Rust or Python, cache the `wwm` binary, Python fallback
 ├── .githooks/pre-commit             # QA + progress check on translation commits
-├── requirements.txt                 # zstandard
+├── requirements.txt                 # zstandard (Python failsafe)
 └── LICENSE                          # GNU GPL v3
 ```

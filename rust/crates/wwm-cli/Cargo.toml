@@ -1,0 +1,21 @@
+[package]
+name = "wwm-cli"
+description = "`wwm` — Rust toolchain for the WWM Indonesian patch (Python scripts stay as fallback)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "wwm"
+path = "src/main.rs"
+
+[dependencies]
+wwm-tools.workspace = true
+anyhow.workspace = true
+clap.workspace = true
+
+[dev-dependencies]
+wwm-locmap.workspace = true
+assert_cmd.workspace = true
+tempfile.workspace = true

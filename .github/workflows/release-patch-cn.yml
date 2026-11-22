@@ -13,8 +13,16 @@ name: release-patch-cn
 #
 # Needs the CN_KEYSTREAM_PASSPHRASE secret: the CN files' zstd dictionary is encrypted
 # (Format-Spec.md §8); the keystream is committed only as cn/keystream_v2.bin.gpg.
+#
+# Tooling: Rust `wwm` by default, Python as failsafe (tools/wwm.sh, .github/actions/wwm-toolchain).
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      toolchain:
+        description: "Tooling: auto (repo variable WWM_TOOLCHAIN, else rust), rust, python"
+        type: choice
+        options: [auto, rust, python]
+        default: auto
 
 # Several pushes in a row: only the newest build needs to finish.
 concurrency:
@@ -31,11 +39,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - uses: ./.github/actions/wwm-toolchain
+        id: tc
         with:
-          python-version: "3.12"
-
-      - run: pip install -r requirements.txt
+          toolchain: ${{ (inputs.toolchain != 'auto' && inputs.toolchain) || vars.WWM_TOOLCHAIN || 'rust' }}
 
       - name: Decrypt CN dictionary keystream
         run: |
@@ -47,23 +54,26 @@ jobs:
             --passphrase-fd 0 -o cn/work/keystream_v2.bin -d cn/keystream_v2.bin.gpg
 
       # The bridge reads the global dumps (keyHash -> English) and the CN dumps
-      # (shared texts); none of them is tracked.
-      - name: Dump global and CN files
+      # (shared texts); none of them is tracked. Python needs them on disk; Rust
+      # decodes the binaries directly.
+      - name: Dump global and CN files (Python only)
+        if: steps.tc.outputs.toolchain == 'python'
         run: |
-          python wwm_locmap.py dump translate_words_map_en strings.jsonl
-          python wwm_locmap.py dump translate_words_map_en_diff strings_diff.jsonl
-          python wwm_locmap.py dump cn/translate_words_map_zh_cn cn/work/strings_zh_cn.jsonl
-          python wwm_locmap.py dump cn/translate_words_map_zh_cn__small cn/work/strings_zh_cn__small.jsonl
+          sh tools/wwm.sh dump translate_words_map_en strings.jsonl
+          sh tools/wwm.sh dump translate_words_map_en_diff strings_diff.jsonl
+          sh tools/wwm.sh dump cn/translate_words_map_zh_cn cn/work/strings_zh_cn.jsonl
+          sh tools/wwm.sh dump cn/translate_words_map_zh_cn__small cn/work/strings_zh_cn__small.jsonl
 
       - name: Build patched CN files
         run: |
-          python tools/patch_all.py --profile cn --outdir patched-cn --level 19 | tee patch-cn.log
+          set -o pipefail
+          sh tools/wwm.sh patch-all --profile cn --outdir patched-cn --level 19 | tee patch-cn.log
 
       # Writes the release zip (patched files, flat) + manifest.json with original/patched
       # hashes per file and the zip's hash; the Patch Guard app reads it to tell whether
       # this build matches the files installed in the game folder.
       - name: Write zip + manifest.json
-        run: python tools/make_manifest.py --profile cn --outdir patched-cn --archive wwm-cn-indonesian-patch.zip
+        run: sh tools/wwm.sh manifest --profile cn --outdir patched-cn --archive wwm-cn-indonesian-patch.zip
 
       - name: Compute progress summary
         id: progress
@@ -76,7 +86,7 @@ jobs:
               split($2, e, "="); split($4, c, "="); p = $5; gsub(/[()]/, "", p)
               printf "- `%s`: %s dari %s entri (%s)\n", $1, c[2], e[2], p }'
             echo
-            python tools/progress.py --profile cn
+            sh tools/wwm.sh progress --profile cn
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 

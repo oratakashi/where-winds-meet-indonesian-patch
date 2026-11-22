@@ -3,6 +3,11 @@ name: translation-qa
 # Every translation session must leave locale/*.jsonl valid and the generated
 # progress block in Obsidian-Vault/progress/Current-Status.md up to date.
 # WWM China (cn/) has its own workflow: translation-qa-cn.yml.
+#
+# Tooling: Rust `wwm` binary by default, Python scripts as failsafe (tools/wwm.sh,
+# .github/actions/wwm-toolchain). Force Python with the repo variable
+# WWM_TOOLCHAIN=python or the dispatch input below. On the Rust path progress decodes
+# the binaries directly, so the strings*.jsonl dump steps only run for Python.
 on:
   pull_request:
     paths:
@@ -11,6 +16,9 @@ on:
       - "translate_words_map_en"
       - "translate_words_map_en_diff"
       - "tools/**"
+      - "rust/**"
+      - "wwm_locmap.py"
+      - ".github/actions/wwm-toolchain/**"
       - "Obsidian-Vault/progress/Current-Status.md"
       - ".github/workflows/translation-qa.yml"
   push:
@@ -21,25 +29,36 @@ on:
       - "translate_words_map_en"
       - "translate_words_map_en_diff"
       - "tools/**"
+      - "rust/**"
+      - "wwm_locmap.py"
+      - ".github/actions/wwm-toolchain/**"
       - "Obsidian-Vault/progress/Current-Status.md"
       - ".github/workflows/translation-qa.yml"
+  workflow_dispatch:
+    inputs:
+      toolchain:
+        description: "Tooling: auto (repo variable WWM_TOOLCHAIN, else rust), rust, python"
+        type: choice
+        options: [auto, rust, python]
+        default: auto
 
 jobs:
   qa:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: ./.github/actions/wwm-toolchain
+        id: tc
         with:
-          python-version: "3.12"
-      - run: pip install -r requirements.txt
+          toolchain: ${{ (inputs.toolchain != 'auto' && inputs.toolchain) || vars.WWM_TOOLCHAIN || 'rust' }}
       - name: Validate translation files
-        run: python tools/qa_check.py --locale "locale/*.jsonl"
-      # strings.jsonl tidak ter-track (>100 MB sejak v2.3) — dump dari binary.
-      - name: Dump strings.jsonl
-        run: python wwm_locmap.py dump translate_words_map_en strings.jsonl
-      # Sejak hotfix v2.3 coverage _diff juga masuk blok progress.
-      - name: Dump strings_diff.jsonl
-        run: python wwm_locmap.py dump translate_words_map_en_diff strings_diff.jsonl
+        run: sh tools/wwm.sh qa --locale "locale/*.jsonl"
+      # strings.jsonl tidak ter-track (>100 MB sejak v2.3). Python butuh dump-nya;
+      # Rust men-decode binary langsung.
+      - name: Dump strings.jsonl + strings_diff.jsonl (Python only)
+        if: steps.tc.outputs.toolchain == 'python'
+        run: |
+          sh tools/wwm.sh dump translate_words_map_en strings.jsonl
+          sh tools/wwm.sh dump translate_words_map_en_diff strings_diff.jsonl
       - name: Progress block is up to date
-        run: python tools/progress.py --check
+        run: sh tools/wwm.sh progress --check

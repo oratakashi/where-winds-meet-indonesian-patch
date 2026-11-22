@@ -9,6 +9,12 @@ produces `(keyHash, value)` pairs that are 100% identical to the source.
 Related: [[Glossary]] (translation conventions), [[Resume-Procedure]] (workflow that
 consumes this format).
 
+Reference implementations (kept equivalent, checked by `tools/parity_check.sh`): the Rust crate
+`rust/crates/wwm-locmap` (default toolchain; `wwm info/dump/patch`) and `wwm_locmap.py` (Python
+failsafe). Function names match: `read_container_ex` / `write_container_ex`, `parse_shard`,
+`rebuild_shard`, `slots_off` (`_slots_off` in Python), `TOMBSTONE`. A patch written by either is
+byte-identical.
+
 ---
 
 ## 1. Container
@@ -210,7 +216,7 @@ is automatically correct for any file variant).
 
 `translate_words_map_en_mobile` (added to the repo 2026-09-22) is
 **byte-identical** to `translate_words_map_en` of the same version. It
-is in the global profile's `files` list (`tools/profiles.py`) anyway, so if a future update
+is in the global profile's `files` list (`tools/profiles.json`) anyway, so if a future update
 makes the two diverge, it still gets patched independently by source
 text. Re-check with a plain byte compare after each game update.
 

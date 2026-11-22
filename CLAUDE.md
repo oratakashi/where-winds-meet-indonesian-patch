@@ -13,55 +13,79 @@ they were committed before that and remain tracked — keeping them tracked is t
 Don't add new extracted dumps (`strings_diff.jsonl`, `strings.translated.jsonl`, `patched/`, ...);
 those stay ignored. `strings.jsonl` was tracked too until game v2.3, when it grew past GitHub's
 100 MB limit (114 MB); it is now untracked and regenerated with
-`python wwm_locmap.py dump translate_words_map_en strings.jsonl` (CI does this before
-`progress.py`, which exits with that hint if the file is missing). Since the v2.3 hotfix
-(Update-2D) `progress.py` also reports `_diff` coverage, so `strings_diff.jsonl` must be dumped
-the same way (`python wwm_locmap.py dump translate_words_map_en_diff strings_diff.jsonl`).
+`sh tools/wwm.sh dump translate_words_map_en strings.jsonl`. Since the v2.3 hotfix (Update-2D)
+`progress` also reports `_diff` coverage from `strings_diff.jsonl`
+(`sh tools/wwm.sh dump translate_words_map_en_diff strings_diff.jsonl`). The Rust tools decode
+the tracked binary in memory when a dump is missing; the Python `progress.py` exits with that
+hint instead, so CI dumps both files only on its Python path.
+
+## Toolchain: Rust `wwm` first, Python as failsafe
+
+Every tool exists twice with the **same arguments, output and exit codes**: the Rust binary
+`wwm` (workspace `rust/`, much faster — see `docs/Rust-Toolchain.md` for timings) and the
+original Python scripts, which are kept as the failsafe and must not be deleted. Always call
+them through the dispatcher **`sh tools/wwm.sh <subcommand> ...`**: it runs
+`rust/target/release/wwm[.exe]` when it is built (rebuilding it with cargo when `rust/` sources
+are newer) and the matching Python script otherwise. `WWM_TOOLCHAIN=python` forces Python,
+`WWM_TOOLCHAIN=rust` forces Rust. From PowerShell/cmd (no `sh` on PATH) use `tools\wwm.cmd`
+with the same arguments. One-time setup per machine:
+
+```bash
+pip install -r requirements.txt                       # Python fallback (only dependency: zstandard)
+cargo build --release --manifest-path rust/Cargo.toml  # Rust binary (optional but recommended)
+sh tools/wwm.sh toolchain                             # prints which toolchain will run
+```
+
+Profile data (phases, regions, file variants, dumps) lives in **`tools/profiles.json`**, read by
+both `tools/profiles.py` and the Rust binary — a new phase / `Update-N` block is one edit there.
 
 ## Commands
 
+`sh tools/wwm.sh <subcommand>` → Python fallback in brackets.
+
 ```bash
-pip install -r requirements.txt      # only dependency: zstandard
+sh tools/wwm.sh info  <src>                      # [wwm_locmap.py info] header/entry counts, sanity-check parser
+sh tools/wwm.sh dump  <src> <out.jsonl>          # [wwm_locmap.py dump] container -> one JSON object per line
+sh tools/wwm.sh patch <src> <edits.jsonl> <out>  # [wwm_locmap.py patch] overlay edits.jsonl onto src
+                                                 #   --level N zstd level (default 19; 10-12 for fast iteration)
+                                                 #   refuses records whose `h` doesn't match the slot's keyHash
 
-python wwm_locmap.py info  <src>                     # print header/entry counts, sanity-check parser
-python wwm_locmap.py dump  <src> <out.jsonl>          # decode container -> one JSON object per line
-python wwm_locmap.py patch <src> <edits.jsonl> <out>  # re-encode: overlay edits.jsonl onto src, write out
-                                                       #   --level N sets zstd level (default 19; use 10-12 for fast iteration)
-                                                       #   refuses records whose `h` doesn't match the slot's keyHash
+sh tools/wwm.sh qa <original.jsonl> <translated.jsonl> [--report qa.jsonl]
+                                                 # [tools/qa_check.py] validate a translated JSONL vs the source;
+                                                 # exit code 1 if findings exist (CI/pre-commit friendly)
+sh tools/wwm.sh qa --locale "locale/*.jsonl"     # same checks on per-idx translation files vs.
+                                                 # unique_strings.jsonl, plus idx gap/duplicate checks —
+                                                 # the per-batch validator for translation sessions
 
-python tools/qa_check.py <original.jsonl> <translated.jsonl> [--report qa.jsonl]
-                                                       # validates a translated JSONL against the source JSONL
-                                                       # exit code 1 if findings exist (CI/pre-commit friendly)
-python tools/qa_check.py --locale "locale/*.jsonl"     # same checks on per-idx translation files vs.
-                                                       # unique_strings.jsonl, plus idx gap/duplicate checks —
-                                                       # the per-batch validator for translation sessions
+sh tools/wwm.sh expand [--strings X.jsonl] [--out Y.jsonl]
+                                                 # [tools/expand_locale.py] patch JSONL for ANY single dump by
+                                                 # matching its `v` text against unique_strings.jsonl +
+                                                 # locale/phase*.jsonl + locale/update*.jsonl (default strings.jsonl)
 
-python tools/expand_locale.py [--strings X.jsonl] [--out Y.jsonl]
-                                                       # build a patch JSONL for ANY single dump by matching its
-                                                       # `v` text against translation_work/unique_strings.jsonl +
-                                                       # locale/phase*.jsonl + locale/update*.jsonl (defaults to strings.jsonl)
+sh tools/wwm.sh rebuild-unique [--dry-run]       # [tools/rebuild_unique_strings.py] after a game update: append
+                                                 # newly-seen strings to unique_strings.jsonl WITHOUT touching
+                                                 # existing idx, scanning strings.jsonl + strings_diff.jsonl
 
-python tools/rebuild_unique_strings.py [--dry-run]    # after a game update: append newly-seen strings to
-                                                       # unique_strings.jsonl WITHOUT touching existing idx
-                                                       # (keeps locale/phase*.jsonl valid), scanning
-                                                       # strings.jsonl + strings_diff.jsonl
+sh tools/wwm.sh progress [--write | --check]     # [tools/progress.py] overall/per-phase translation progress;
+                                                 # --write regenerates the block in Current-Status.md,
+                                                 # --check exits 1 if that block is stale (CI)
 
-python tools/progress.py [--write | --check]          # compute overall/per-phase translation progress;
-                                                       # --write regenerates the block in Current-Status.md,
-                                                       # --check exits 1 if that block is stale (CI)
+sh tools/wwm.sh patch-all [--outdir patched] [--level N]
+                                                 # [tools/patch_all.py] apply the dictionary to every
+                                                 # translate_words_map_* variant (base, _diff, _mobile) at once,
+                                                 # writing repacked copies under --outdir
 
-python tools/patch_all.py [--outdir patched] [--level N]
-                                                       # apply the translation dictionary to every
-                                                       # translate_words_map_* variant (base, _diff, _mobile)
-                                                       # at once, writing
-                                                       # repacked copies under --outdir
+sh tools/wwm.sh manifest [--outdir patched] --archive wwm-indonesian-patch.zip
+                                                 # [tools/make_manifest.py] after patch-all: write the release zip
+                                                 # (patched files, flat) and <outdir>/manifest.json (schema 2) with
+                                                 # sha256/size of each ORIGINAL (repo binary) and PATCHED file plus
+                                                 # the zip's; published with the release, read by Patch Guard
 
-python tools/make_manifest.py [--outdir patched] --archive wwm-indonesian-patch.zip
-                                                       # after patch_all.py: write the release zip (patched files,
-                                                       # flat) to --archive and <outdir>/manifest.json (schema 2)
-                                                       # with the sha256/size of each
-                                                       # ORIGINAL (repo binary) and PATCHED file plus the zip's
-                                                       # sha256/size; published with the release, read by Patch Guard
+sh tools/wwm.sh compare-update                   # [wwm-game-update skill script] new game files vs *.before
+sh tools/wwm.sh hook stop                        # [tools/hooks/claude_stop_check.py] Claude Stop hook
+
+sh tools/parity_check.sh                         # run Rust AND Python on the real data, fail on any difference
+cd rust && cargo test                            # Rust unit + integration tests
 ```
 
 ### WWM China (`--profile cn`)
@@ -75,7 +99,7 @@ python tools/make_manifest.py [--outdir patched] --archive wwm-indonesian-patch.
 
 
 Every tool above takes `--profile {global,cn}` (default `global`, behaviour unchanged); paths,
-variants, dumps and phases per profile live in `tools/profiles.py`. The `cn` profile is the
+variants, dumps and phases per profile live in `tools/profiles.json`. The `cn` profile is the
 Indonesian translation of **WWM China (燕云十六声)**, sourced from Mandarin:
 
 ```bash
@@ -84,24 +108,27 @@ Indonesian translation of **WWM China (燕云十六声)**, sourced from Mandarin
 # cn/work/keystream_passphrase.txt) ...
 gpg --batch --pinentry-mode loopback --passphrase-file cn/work/keystream_passphrase.txt -o cn/work/keystream_v2.bin -d cn/keystream_v2.bin.gpg
 # ... or recover it from the running client (login screen, ADMIN terminal)
-python cn/tools/find_dict_in_dump.py --pid <yysls.exe PID> --v2-dir "D:\yysls\yysls_fast\LocalData\Patch\HD\v2"
-python wwm_locmap.py dump cn/translate_words_map_zh_cn cn/work/strings_zh_cn.jsonl
-python wwm_locmap.py dump cn/translate_words_map_zh_cn__small cn/work/strings_zh_cn__small.jsonl
-# (+ the global strings.jsonl / strings_diff.jsonl dumps — the bridge needs them)
+sh tools/wwm.sh cn find-dict --pid <yysls.exe PID> --v2-dir "D:\yysls\yysls_fast\LocalData\Patch\HD\v2"
+sh tools/wwm.sh dump cn/translate_words_map_zh_cn cn/work/strings_zh_cn.jsonl
+sh tools/wwm.sh dump cn/translate_words_map_zh_cn__small cn/work/strings_zh_cn__small.jsonl
+# (+ the global strings.jsonl / strings_diff.jsonl dumps — the Python bridge needs them; the Rust
+#  bridge decodes any missing dump from its binary)
 
-python tools/rebuild_unique_strings.py --profile cn   # find unique strings -> cn/translation_work/
-python tools/qa_check.py --profile cn --locale "cn/locale/*.jsonl"
-python tools/progress.py --profile cn --write         # -> Obsidian-Vault/cn/progress/CN-Current-Status.md
-python tools/expand_locale.py --profile cn            # -> cn/work/strings.translated.jsonl
-python tools/patch_all.py --profile cn                # -> cn/work/patched/translate_words_map_zh_cn*
-python cn/tools/term_lookup.py 止戈定音技 …            # how global translated a Mandarin term
-python cn/tools/name_check.py [--idx A-B] [--fix]     # CN rows missing a global name (place/NPC/Inner Way);
-                                                       # --fix rewrites Pinyin/known variants in cn/locale
+sh tools/wwm.sh rebuild-unique --profile cn      # find unique strings -> cn/translation_work/
+sh tools/wwm.sh qa --profile cn --locale "cn/locale/*.jsonl"
+sh tools/wwm.sh progress --profile cn --write    # -> Obsidian-Vault/cn/progress/CN-Current-Status.md
+sh tools/wwm.sh expand --profile cn              # -> cn/work/strings.translated.jsonl
+sh tools/wwm.sh patch-all --profile cn           # -> cn/work/patched/translate_words_map_zh_cn*
+sh tools/wwm.sh cn term-lookup 止戈定音技 …       # [cn/tools/term_lookup.py] how global translated a Mandarin term
+sh tools/wwm.sh cn name-check [--idx A-B] [--fix]
+                                                 # [cn/tools/name_check.py] CN rows missing a global name
+                                                 # (place/NPC/Inner Way); --fix rewrites Pinyin/known variants
+                                                 # (Rust uses the `pinyin` crate instead of pypinyin)
 ```
 
 - CN files are **container v2** (zstd dictionary encrypted with one keystream shared by every
-  file in the client; `Format-Spec.md` §8). `wwm_locmap.py` handles v1 and v2 transparently
-  (`read_container_ex`/`write_container_ex`); v2 needs `cn/work/keystream_v2.bin` (or
+  file in the client; `Format-Spec.md` §8). `wwm_locmap.py` and the Rust crate `wwm-locmap` handle
+  v1 and v2 transparently (`read_container_ex`/`write_container_ex`); v2 needs `cn/work/keystream_v2.bin` (or
   `WWM_KEYSTREAM`). Patching copies the encrypted dictionary verbatim — no re-encryption.
 - **Bridge** (`tools/bridge.py`): CN keyHashes are the same per-entry IDs as global. Each CN
   entry gets the global translation of its key → else `cn/locale` (by Mandarin text) → else
@@ -111,16 +138,17 @@ python cn/tools/name_check.py [--idx A-B] [--fix]     # CN rows missing a global
   checks CN without dumps or keystream. `cn/overrides.jsonl` (`{"h","src","v","note"}`) holds
   per-key fixes that win over everything — for inherited global text that breaks a CN layout.
   Never rebuild it from scratch once `cn/locale/` has rows
-  (same rule as `build_unique.py`); `rebuild_unique_strings.py --profile cn` only appends.
+  (same rule as `build_unique.py`); `rebuild-unique --profile cn` only appends.
 - CN translation sessions follow `Obsidian-Vault/cn/` (`CN-Current-Status`, `CN-Resume-Procedure`,
   `CN-Quick-Reference`, `CN-Phase-Roadmap`, logs in `cn/translation_logs/CN-Phase-N.md`) under the
-  same rules as global: end with `progress.py --profile cn --write` and update the phase log.
+  same rules as global: end with `sh tools/wwm.sh progress --profile cn --write` and update the
+  phase log.
   The Stop hook and `.githooks/pre-commit` cover `cn/` too.
 - **CI and releases are split per profile.** Global: `translation-qa.yml` + `release-patch.yml`
   (rolling release, tag `latest`). CN: `translation-qa-cn.yml` (QA + progress check without
   secrets; with the secret also decrypts and parses the CN binaries) + `release-patch-cn.yml`
   (rolling release, tag `cn-latest`; decrypts `cn/keystream_v2.bin.gpg` with the
-  `CN_KEYSTREAM_PASSPHRASE` secret, dumps global + CN, runs `patch_all --profile cn`). A global
+  `CN_KEYSTREAM_PASSPHRASE` secret, runs `patch-all --profile cn`). A global
   `locale/` change also rebuilds `cn-latest`, because CN reuses it through the bridge.
 - The CN binaries `cn/translate_words_map_zh_cn*` are tracked (like the global ones) so CI can
   build them; the keystream is only ever committed encrypted. After a CN game update, re-encrypt
@@ -133,10 +161,14 @@ python cn/tools/name_check.py [--idx A-B] [--fix]     # CN rows missing a global
 
 `translation_work/build_unique.py` is the one-time bootstrap that created `unique_strings.jsonl`.
 Never re-run it: it renumbers every idx and silently breaks all `locale/*.jsonl` progress (it now
-refuses to run when the file exists). Use `rebuild_unique_strings.py` instead.
+refuses to run when the file exists; so does `wwm build-unique`). Use `rebuild-unique` instead.
 
-There is no test suite; correctness is verified by round-tripping a real
-`translate_words_map_en` file through `info` → `dump` → `patch` → `info` and diffing entries.
+Tests: the Rust workspace has unit + integration tests (`cd rust && cargo test`; synthetic
+containers, no game data needed), and `sh tools/parity_check.sh` runs Rust and Python side by side
+on the real repo data (dump, qa, progress, expand, rebuild-unique, patch-all, manifest) and fails
+on any difference — run it after touching either toolchain; CI does (`rust-ci.yml`). The Python
+scripts have no test suite of their own beyond that parity run; the codec is also verified by
+round-tripping a real `translate_words_map_en` through `info` → `dump` → `patch` → `info`.
 
 ## Translation session workflow lives in the Obsidian vault
 
@@ -155,13 +187,14 @@ in this file. Before starting or continuing a translation session, read:
   Quick-Reference doesn't cover, or its reasoning/history).
 - `Obsidian-Vault/translation_logs/Phase-N.md` — the historical reasoning behind past decisions, per phase.
 
-**Every translation session must end by running `python tools/progress.py --write`** and quoting
+**Every translation session must end by running `sh tools/wwm.sh progress --write`** and quoting
 its overall line (unique strings done/total/% and in-game coverage %) in the session write-ups and
 the final message to the user. The "Overall progress" / "Phase status" tables in
-`Current-Status.md` are generated by that script — never edit them by hand. CI
-(`.github/workflows/translation-qa.yml`) runs `qa_check.py --locale` and `progress.py --check` on
-every PR touching `locale/`. A new `locale/updateN.jsonl` or phase file must be added to `PHASES`
-in `tools/progress.py` (the script refuses to run otherwise).
+`Current-Status.md` are generated by that script — never edit them by hand (if the Rust binary is
+not built, `tools/wwm.sh` runs `python tools/progress.py --write` — same result). CI
+(`.github/workflows/translation-qa.yml`) runs `qa --locale` and `progress --check` on every PR
+touching `locale/`. A new `locale/updateN.jsonl` or phase file must be added to the profile's
+`phases` in `tools/profiles.json` (both toolchains refuse to run otherwise).
 
 **Every translation session must also update `Obsidian-Vault/translation_logs/Phase-N.md`** (or
 `Update-N.md`) for whichever phase it touched, before ending the turn — not just
@@ -172,11 +205,12 @@ skipped before (Phase 7–17 logs were missing and had to be reconstructed retro
 history on 2026-09-26) — don't let it happen again.
 
 Local sessions are enforced by two hooks as well:
-- `.claude/settings.json` registers a **Stop hook** (`tools/hooks/claude_stop_check.py`): if
+- `.claude/settings.json` registers a **Stop hook** (`sh tools/wwm.sh hook stop` → Rust `wwm hook stop`, or
+  `tools/hooks/claude_stop_check.py` when the binary is missing/stale; it never builds): if
   `locale/` has uncommitted changes and the progress block is stale, Claude is blocked from ending
-  the turn until it runs `progress.py --write` and reports the overall line.
-- `.githooks/pre-commit` runs `qa_check.py --locale` + `progress.py --check` on any commit that
-  touches translation data. Enable it once per clone: `git config core.hooksPath .githooks`.
+  the turn until it runs `progress --write` and reports the overall line.
+- `.githooks/pre-commit` runs `tools/wwm.sh qa --locale` + `progress --check` on any commit that
+  touches translation data, `tools/` or `rust/`. Enable it once per clone: `git config core.hooksPath .githooks`.
 
 ## Do not use subagents
 
@@ -186,6 +220,16 @@ context — only use one if the user explicitly asks for it by name.
 
 ## Architecture
 
+- `rust/` — Cargo workspace of the Rust toolchain (`docs/Rust-Toolchain.md`): `crates/wwm-locmap`
+  (codec, port of `wwm_locmap.py`; parallel shard parse/rebuild/compress), `crates/wwm-tools` (one
+  module per Python script: `qa`, `dict` (expand), `bridge`, `progress`, `patch_all`, `manifest`,
+  `unique`, `compare`, `hook`, `cn/*`; `py.rs` reproduces Python's `json.dumps`/`repr`/number
+  formats so text output stays byte-identical) and `crates/wwm-cli` (the `wwm` binary, clap).
+  Separate from `app/` (the Patch Guard workspace).
+- `tools/wwm.sh` — the dispatcher (Rust or Python, see Toolchain above); `tools/parity_check.sh` —
+  Rust-vs-Python check on the real data; `.github/actions/wwm-toolchain` — the CI side: picks the
+  toolchain (dispatch input → repo variable `WWM_TOOLCHAIN` → `rust`), caches the binary per
+  `rust/` source hash, and falls back to Python with a warning when the Rust build fails.
 - `wwm_locmap.py` — the container/shard codec (`read_container`/`write_container`,
   `parse_shard`/`rebuild_shard`) plus a thin CLI (`info`/`dump`/`patch`) over it.
 - `tools/qa_check.py` — a standalone validator that diffs an original JSONL dump against a
@@ -225,7 +269,8 @@ context — only use one if the user explicitly asks for it by name.
   data folder for testing. The Rust/UI CLI on crates.io (`ui-cli` 0.3.16) still targets the old
   registry host, so components in `app/src/components/ui/` were copied from
   `https://leptos.rust-ui.com/registry/styles/default/<name>.md`.
-- `tools/profiles.py` — per-profile paths/variants/dumps/phases (`global`, `cn`); `--profile` on
+- `tools/profiles.json` — per-profile paths/variants/dumps/phases (`global`, `cn`), loaded by
+  `tools/profiles.py` and by `wwm`; `--profile` on
   every tool. `tools/bridge.py` — the global→CN keyHash/text bridge.
 - `cn/tools/find_dict_in_dump.py` (recover the v2 dictionary keystream from the running CN client),
   `cn/tools/term_lookup.py` (Mandarin term → global English/Indonesian via shared keys),
@@ -235,7 +280,7 @@ context — only use one if the user explicitly asks for it by name.
 Pipeline: `translate_words_map_en` --dump--> `strings.jsonl` --(edit `v` field)--> validate with
 `qa_check.py` --patch--> new `translate_words_map_en`. For an update with several file variants
 (base + `_diff`; `__small` + `__small_diff` up to v2.2), the recommended path is `rebuild_unique_strings.py`
-once, then `patch_all.py` to apply the dictionary everywhere at once.
+once, then `patch-all` to apply the dictionary everywhere at once.
 
 `translate_words_map_en_diff` (the incremental file shipped between game updates) uses the exact
 same container/shard format and is handled by the same `info`/`dump`/`patch` commands. The
@@ -246,7 +291,7 @@ removed since the base version is stored as a single `0xFF` byte instead of bein
 ### The `__small` / `__small_diff` variant (v2.2 and earlier only)
 
 **Game v2.3 (2026-10-15) no longer ships `__small` / `__small_diff`** (checked on Steam and the
-official launcher); they were removed from the repo, the global profile's `files` (`tools/profiles.py`) and the release. The
+official launcher); they were removed from the repo, the global profile's `files` (`tools/profiles.json`) and the release. The
 notes below are kept in case NetEase reintroduces them.
 
 A game update introduced `translate_words_map_en__small` (and its own `__small_diff`) alongside
@@ -265,7 +310,7 @@ Because the translation dictionary (`unique_strings.jsonl` + `locale/phase*.json
 literal source text, not by file/block/slot/hash, applying it to a new variant needs no format
 work: dump the file, match its `v` text against the dictionary (`tools/expand_locale.py` or
 `tools/patch_all.py`), patch it back. Same recipe for `__small_diff`, main `_diff`, and any future
-variant NetEase adds — add its name to the profile's `files` in `tools/profiles.py`.
+variant NetEase adds — add its name to the profile's `files` in `tools/profiles.json`.
 
 `translate_words_map_en_mobile` (2026-09-22) is byte-identical to `translate_words_map_en`; it is
 in the global profile's `files` anyway so it keeps working if the two ever diverge.

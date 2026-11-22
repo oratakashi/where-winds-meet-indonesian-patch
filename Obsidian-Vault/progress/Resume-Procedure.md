@@ -5,6 +5,15 @@ validation that must pass before any batch is appended. See
 [[Current-Status]] for where things stand right now and [[Glossary]] for the
 rules to apply while translating.
 
+## Tooling (Rust first, Python failsafe)
+
+Every command below is `sh tools/wwm.sh <subcommand>` (Git Bash on Windows). It runs the Rust
+binary `rust/target/release/wwm` when it is built — several times faster, see
+`docs/Rust-Toolchain.md` — and the matching Python script otherwise, with identical output.
+If anything about the Rust binary looks wrong mid-session, prefix the command with
+`WWM_TOOLCHAIN=python` to use the Python scripts and carry on; report the difference so it can be
+fixed (`sh tools/parity_check.sh` shows it). `sh tools/wwm.sh toolchain` says which one runs.
+
 ## How these files relate
 
 - `translation_work/unique_strings.jsonl` — 534,257 unique strings (idx
@@ -13,7 +22,7 @@ rules to apply while translating.
   429,887–461,703 — see [[Update-1]]) and 72,553 appended for game v2.3
   (idx 461,704–534,256 — see [[Update-2]]). Never regenerate it with
   `translation_work/build_unique.py` (that would renumber every idx); new
-  strings are only ever appended by `tools/rebuild_unique_strings.py`.
+  strings are only ever appended by `sh tools/wwm.sh rebuild-unique`.
 - `locale/phase*.jsonl` / `locale/update*.jsonl` — translation output, append-only,
   `{"idx": N, "v": "..."}` per line, one file per phase (see
   [[Phase-Roadmap]]). The last line in the active phase's file marks the
@@ -47,7 +56,7 @@ rules to apply while translating.
    `{"idx": N, "v": "..."}` per line (idx stays the **absolute** idx from
    `unique_strings.jsonl`), in ascending idx order.
 6. **Validate before appending — no exceptions**: run
-   `python tools/qa_check.py --locale <scratch file>` (see below) to make
+   `sh tools/wwm.sh qa --locale <scratch file>` (see below) to make
    sure `#E`, `#aabbcc`, `#X`, `%s`, `%d`, `{0}`, `<...>` etc. appear the
    same number of times as in the source.
 7. Append the batch to `locale/phase{N}.jsonl` (the currently active
@@ -55,13 +64,14 @@ rules to apply while translating.
    phase's idx range runs out partway through a batch, cut the batch there
    and let the remainder start a new `locale/phase{N+1}.jsonl`). Confirm idx
    stays strictly sequential with no gaps/duplicates within each file
-   (`qa_check.py --locale` on the phase file checks this too).
+   (`qa --locale` on the phase file checks this too).
 8. **Refresh the overall progress — mandatory, every session:** run
-   `python tools/progress.py --write`. It recomputes the "Overall progress"
+   `sh tools/wwm.sh progress --write`. It recomputes the "Overall progress"
    and "Phase status" tables in [[Current-Status]] from `locale/*.jsonl`
-   and `strings.jsonl` (untracked since v2.3 — if missing, regenerate with
-   `python wwm_locmap.py dump translate_words_map_en strings.jsonl`) — never type those numbers by hand (CI runs
-   `tools/progress.py --check` and fails a PR whose block is stale). Then
+   and the dumped game files (`strings.jsonl` / `strings_diff.jsonl`, untracked since v2.3; the
+   Rust binary decodes the binaries itself when they are missing, the Python fallback needs
+   `sh tools/wwm.sh dump translate_words_map_en strings.jsonl` and the same for `_diff`) — never
+   type those numbers by hand (CI runs `progress --check` and fails a PR whose block is stale). Then
    update the prose in [[Current-Status]] (session date/number, what the
    batch contained, any new terminology decisions — also add those to
    [[Glossary]] and the matching `translation_logs/Phase-N` file) and
@@ -119,9 +129,9 @@ Run from the repo root on the merged scratch file, then on the phase file
 after appending:
 
 ```bash
-python tools/qa_check.py --locale scratch_batch.jsonl
-python tools/qa_check.py --locale locale/phase6.jsonl     # <- the active phase
-python tools/qa_check.py --locale "locale/*.jsonl"        # full cross-file check
+sh tools/wwm.sh qa --locale scratch_batch.jsonl
+sh tools/wwm.sh qa --locale locale/phase6.jsonl     # <- the active phase
+sh tools/wwm.sh qa --locale "locale/*.jsonl"        # full cross-file check
 ```
 
 It looks every `idx` up in `translation_work/unique_strings.jsonl` and
@@ -135,7 +145,8 @@ This replaces the inline Python snippet older sessions copy-pasted from
 here. That snippet's regex tried `#[A-Za-z]` before `#[0-9a-fA-F]{6}`, so a
 color like `#e9a35f` was read as `#e` and a damaged color code passed
 (idx 54382 — see [[Placeholders-And-Formatting]]). There is now one regex,
-the `TOKEN` constant in `tools/qa_check.py`; don't write a separate one.
+the `TOKEN` constant in `tools/qa_check.py` (mirrored byte-for-byte in
+`rust/crates/wwm-tools/src/qa.rs`; change both together); don't write a separate one.
 
 Some placeholders are **not** caught by the `TOKEN` regex but must still be
 preserved character-for-character: `$VAR$`/`$P`/`$N`-style variables,
@@ -151,19 +162,19 @@ and matches by literal source text, so it works on every file variant:
 
 ```bash
 # after a game update only: append newly seen strings (existing idx untouched)
-python tools/rebuild_unique_strings.py --dry-run
-python tools/rebuild_unique_strings.py   # scans strings.jsonl + strings_diff.jsonl
+sh tools/wwm.sh rebuild-unique --dry-run
+sh tools/wwm.sh rebuild-unique   # scans strings.jsonl + strings_diff.jsonl
 
 # validate the whole dictionary, then patch every translate_words_map_* at once
-python tools/qa_check.py --locale "locale/*.jsonl"
-python tools/patch_all.py --outdir patched            # --level 19 for a release build
+sh tools/wwm.sh qa --locale "locale/*.jsonl"
+sh tools/wwm.sh patch-all --outdir patched            # --level 19 for a release build
 ```
 
-`patch_all.py` writes repacked copies of `translate_words_map_en`, `_diff`
+`patch-all` writes repacked copies of `translate_words_map_en`, `_diff`
 and `_mobile` (if present) under `patched/` (`__small` / `__small_diff` are
 no longer shipped since game v2.3). For a single
-file, `tools/expand_locale.py` + `wwm_locmap.py patch` does the same via an
-intermediate JSONL (and `wwm_locmap.py patch` refuses a JSONL whose `h`
+file, `expand` + `patch` does the same via an
+intermediate JSONL (and `patch` refuses a JSONL whose `h`
 doesn't match the target file, i.e. one dumped from another game version).
 Only the `Package\...` copy of the base file (and, up to v2.2, `__small`) stays patched
 in a live install — see [[Format-Spec]] §7.

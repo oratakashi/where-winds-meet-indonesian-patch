@@ -1,0 +1,69 @@
+name: rust-ci
+
+# Rust toolchain (rust/, the `wwm` binary): format, lint and unit/integration tests on
+# Linux + Windows, then a parity run against the Python scripts on the real repo data
+# (tools/parity_check.sh). Parity also runs when only the Python tools change, so the
+# Python failsafe and the Rust port never drift apart.
+on:
+  pull_request:
+    paths:
+      - "rust/**"
+      - "tools/**"
+      - "wwm_locmap.py"
+      - "cn/tools/**"
+      - "translation_work/build_unique.py"
+      - ".github/actions/wwm-toolchain/**"
+      - ".github/workflows/rust-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "rust/**"
+      - "tools/**"
+      - "wwm_locmap.py"
+      - "cn/tools/**"
+      - "translation_work/build_unique.py"
+      - ".github/actions/wwm-toolchain/**"
+      - ".github/workflows/rust-ci.yml"
+  workflow_dispatch: {}
+
+concurrency:
+  group: rust-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: rust
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+      - name: Format
+        run: cargo fmt --all --check
+      - name: Clippy
+        run: cargo clippy --all-targets --locked -- -D warnings
+      - name: Test
+        run: cargo test --locked
+
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Build wwm
+        run: cargo build --release --locked --manifest-path rust/Cargo.toml
+      - name: Rust vs Python on the repo data
+        run: sh tools/parity_check.sh

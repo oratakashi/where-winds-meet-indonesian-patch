@@ -143,7 +143,8 @@ the base package, whatever part of it is already translated becomes permanent on
 ### 2. New strings after updates
 
 Strings added in a game update stay in English until they are extracted, translated and released.
-`tools/rebuild_unique_strings.py` reconciles the new text without breaking existing progress.
+`sh tools/wwm.sh rebuild-unique` (Rust `wwm`, or `tools/rebuild_unique_strings.py` as the
+failsafe) reconciles the new text without breaking existing progress.
 
 ### 3. Key insertion
 
@@ -152,8 +153,9 @@ unsolved ([Format-Spec §4.4](../Obsidian-Vault/knowladge/Format-Spec.md)).
 
 ### 4. Codec exclusivity
 
-Only `codec = 4` (zstd) is implemented. Any other codec is rejected with an explicit error rather
-than producing corrupted output.
+Only `codec = 4` (zstd) and, in container v2, `codec = 5` (zstd with the file's dictionary) are
+implemented — in both codecs, the Rust crate `wwm-locmap` and `wwm_locmap.py`. Any other codec is
+rejected with an explicit error rather than producing corrupted output.
 
 ### 5. Text-only scope
 

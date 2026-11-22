@@ -126,7 +126,7 @@ parentheses (ordinary notes, not code) are translated structurally.
 Baseline: every token must appear the same number of times as in the source (`tools/qa_check.py`'s
 `TOKEN` regex: `#[0-9a-fA-F]{6}|#[A-Za-z]|%[sd]|\{[^}]*\}|<[^>]*>` — hex is tried before the
 1-letter code). The check counts tokens, not their order, so moving a token to fit Indonesian word
-order is fine. Validate a batch with `python tools/qa_check.py --locale locale/phaseN.jsonl`.
+order is fine. Validate a batch with `sh tools/wwm.sh qa --locale locale/phaseN.jsonl`.
 
 - `<...>` tag rules (four distinct cases):
   1. Plain tag without `|id|#C|n>` format (e.g. `<Player Name 7 characters>`) — keep the

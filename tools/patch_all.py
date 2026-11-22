@@ -3,7 +3,7 @@
 patch_all.py — terapkan dictionary terjemahan (translation_work/unique_strings.jsonl
 + locale/phase*.jsonl + locale/update*.jsonl) ke SEMUA varian translate_words_map_*
 sekaligus (base, _diff, _mobile), lalu repack masing-masing. (__small/__small_diff
-sudah tidak dikirim game sejak v2.3; tambahkan lagi ke files profil global di tools/profiles.py kalau muncul kembali.)
+sudah tidak dikirim game sejak v2.3; tambahkan lagi ke files profil global di tools/profiles.json kalau muncul kembali.)
 
     python tools/patch_all.py [--outdir patched] [--level 12] [--files ...]
     python tools/patch_all.py --profile cn     # WWM China: cn/translate_words_map_zh_cn* -> cn/work/patched/
@@ -32,7 +32,7 @@ from expand_locale import load_translated_map, load_overrides
 from bridge import load_bridge
 import profiles
 
-FILES = profiles.GLOBAL.files       # varian per profil: tools/profiles.py
+FILES = profiles.GLOBAL.files       # varian per profil: tools/profiles.json
 
 
 def patch_file(src_path, src_to_translated, level, bridge=None, text_bridge=None,
