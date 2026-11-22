@@ -250,25 +250,34 @@ context — only use one if the user explicitly asks for it by name.
   the workflows delete any other asset. The
   Patch Guard app (`app/`) uses `original_sha256` as the only proof that a build matches the files
   installed in a game folder, so it must always be computed from the binary `patch_all.py` read.
-- `app/` — **WWM Patch Guard**, a Windows tray app (Tauri 2 + Leptos CSR + Rust/UI components,
-  built with Trunk) that reinstalls the patch when NetEase's patcher restores the originals.
-  It needs no codec: it compares sha256 hashes against the release `manifest.json` and copies
-  files. Rules live in `app/src-tauri/src/guard.rs` (unit-tested: `cargo test -p wwm-patch-guard
-  --lib` in `app/`); `engine.rs` is the watcher/poll loop, `lib.rs` the Tauri shell, `app/src/`
-  the UI (navigation pane in `app.rs`, one file per page in `pages/`: Home, Settings, History).
+- `app/` — **WWM Patch Guard**, a Windows tray app that reinstalls the patch when NetEase's
+  patcher restores the originals. Since v0.4 it is a native Rust app on **GPUI** (`gpui-pre`,
+  pinned exactly — pre-1.0 API) with no WebView2; v0.3 and earlier were Tauri + Leptos
+  (`docs/Patch-Guard-GPUI-Plan.md` has the migration). It needs no codec: it compares sha256
+  hashes against the release `manifest.json` and copies files. Rules live in
+  `app/src/core/guard.rs` (unit-tested: `cargo test -p wwm-patch-guard --lib` in `app/`);
+  `core/engine.rs` is the watcher/poll loop; `core/` has no UI code. `shell/` is the OS side
+  (tray via `tray-icon`, single instance via a named mutex + event, autostart via `auto-launch`
+  under the v0.3 Run-key name, accent colour/Mica/data folder in `system.rs`), `fluent/` a small
+  WinUI 3 look-alike (theme tokens, Button, Toggle, badge, InfoBar; Segoe UI Variable + Segoe
+  Fluent Icons glyphs, Segoe UI / MDL2 Assets on Windows 10, Mica only from build 22621),
+  `state.rs` the window state + actions, `app.rs` the window/NavigationView/ContentDialog and the
+  main-thread command loop, `pages/` one file per page (Home, Settings, History). GPUI quits on
+  the last window by default on Windows — `app.rs` sets `QuitMode::Explicit` so the guard keeps
+  running in the tray. Data stays in `%LOCALAPPDATA%\com.oratakashi.wwm` (Tauri's folder) so
+  config/history carry over.
   `locations.rs` finds installed games (Steam: registry → `libraryfolders.vdf` →
   `appmanifest_3564740.acf`; NetEase launchers: their uninstall registry entries) and picks the
   folders to guard — on Steam only `Package\HD\oversea\locale`, never the `LocalData\Patch`
   overlay the patcher re-downloads every launch. It never installs over a file whose hash matches no known original (a force install is
-  user-confirmed). Build: `cargo tauri build` in `app/` (needs `trunk`, `tauri-cli`, the
-  `wasm32-unknown-unknown` target). CI: `app-ci.yml` tests/builds PRs; on main
+  user-confirmed). Build: `cargo build --release` in `app/`; installer: `cargo packager --release
+  --formats nsis` (`cargo install cargo-packager --locked`; config in `[package.metadata.packager]`
+  of `app/Cargo.toml`). CI: `app-ci.yml` tests/builds PRs; on main
   `release-patch.yml` rebuilds the installer only when `app/` changed (or dispatch `build_app`) and
   attaches it to the `latest` release as `wwm-patch-guard-setup.exe` — no separate app release.
   The app downloads the release zip once per check pass and extracts files by name (`remote.rs`).
   `WWM_PATCH_GUARD_BASE_URL` / `WWM_PATCH_GUARD_DATA_DIR` point it at a local release server /
-  data folder for testing. The Rust/UI CLI on crates.io (`ui-cli` 0.3.16) still targets the old
-  registry host, so components in `app/src/components/ui/` were copied from
-  `https://leptos.rust-ui.com/registry/styles/default/<name>.md`.
+  data folder for testing.
 - `tools/profiles.json` — per-profile paths/variants/dumps/phases (`global`, `cn`), loaded by
   `tools/profiles.py` and by `wwm`; `--profile` on
   every tool. `tools/bridge.py` — the global→CN keyHash/text bridge.

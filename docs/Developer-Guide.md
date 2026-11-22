@@ -249,26 +249,29 @@ The tray app players run to have the patch reinstalled automatically. It is inde
 toolkit (and of the `rust/` workspace): it only compares file hashes with the `manifest.json`
 published in each patch release (`sh tools/wwm.sh manifest`) and copies files.
 
+A native Rust app on [GPUI](https://gpui.rs) since v0.4 (no WebView2, no JS/WASM build step).
+
 ```bash
-rustup target add wasm32-unknown-unknown
-cargo install trunk tauri-cli --locked
+cargo install cargo-packager --locked    # once, for the installer only
 
 cd app
-cargo test -p wwm-patch-guard --lib      # guard rules (guard.rs) + folder detection
-cargo tauri dev                          # run with hot reload
-cargo tauri build                        # installer -> target/release/bundle/nsis/
+cargo test -p wwm-patch-guard --lib      # guard rules (core/guard.rs) + folder detection
+cargo run                                # debug build with a console
+cargo packager --release --formats nsis  # release exe + NSIS installer
 ```
 
 Installed games are found by `locations.rs`: Steam through the registry (`SteamPath`) →
 `steamapps\libraryfolders.vdf` → `appmanifest_3564740.acf`, the NetEase launchers through their
 uninstall entries (`wwm_launcher_uninstall`, `yysls_launcher_uninstall`). A Steam install is
-guarded in `Package\HD\oversea\locale` only. The UI (`app/src/`) is a navigation pane plus one
-file per page in `pages/` (Home, Settings, History); the history is kept in `history.json`.
+guarded in `Package\HD\oversea\locale` only. The guard itself lives in `app/src/core/` (no UI
+code); `shell/` is the tray, single instance and autostart; `fluent/` the WinUI-style controls;
+the window is a navigation pane plus one file per page in `pages/` (Home, Settings, History). The
+history is kept in `history.json`.
 
 To try it without touching a real install, set `WWM_PATCH_GUARD_BASE_URL` to a local server that
 serves `<url>/latest/manifest.json` plus the release zip it names (`archive.name`), and
 `WWM_PATCH_GUARD_DATA_DIR` to a scratch folder. Releasing: bump the version in
-`app/src-tauri/tauri.conf.json` + `Cargo.toml` and push to main — `release-patch.yml` rebuilds the
+`app/Cargo.toml` and push to main — `release-patch.yml` rebuilds the
 installer when `app/` changed and attaches it to the `latest` release as `wwm-patch-guard-setup.exe`
 (`app-ci.yml` only tests PRs).
 
@@ -291,7 +294,7 @@ installer when `app/` changed and attaches it to the `latest` release as `wwm-pa
 │   ├── progress.py                  # Translation progress tables (--write / --check)
 │   ├── profiles.py                  # Loads profiles.json for the Python scripts
 │   └── bridge.py                    # Global → CN keyHash/text bridge
-├── app/                             # WWM Patch Guard: Windows tray app that reinstalls the patch (Rust, Tauri + Leptos)
+├── app/                             # WWM Patch Guard: Windows tray app that reinstalls the patch (Rust, GPUI)
 ├── locale/                          # Global translations (phase*.jsonl, update*.jsonl)
 ├── translation_work/                # unique_strings.jsonl — deduplicated source text
 ├── cn/                              # China client: binaries, locale/, tools/, overrides.jsonl

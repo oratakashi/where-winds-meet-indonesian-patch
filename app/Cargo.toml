@@ -1,24 +1,67 @@
 [package]
-name = "wwm-patch-guard-ui"
-version = "0.3.0"
+name = "wwm-patch-guard"
+version = "0.4.0"
+description = "Keeps the Where Winds Meet Indonesian patch installed after NetEase's patcher restores the original locale files"
+authors = ["oratakashi"]
+license = "GPL-3.0-or-later"
 edition = "2024"
 
+[lib]
+name = "wwm_patch_guard"
+path = "src/lib.rs"
+
+[[bin]]
+name = "wwm-patch-guard"
+path = "src/main.rs"
+
 [dependencies]
-leptos = { version = "0.8", features = ["csr"] }
-wasm-bindgen = "0.2"
-wasm-bindgen-futures = "0.4"
-js-sys = "0.3"
+# GPUI (https://gpui.rs). `gpui-pre` is a regular crates.io snapshot of Zed's gpui; the API is
+# pre-1.0, so the version is pinned exactly and only bumped on purpose.
+gpui = { package = "gpui-pre", version = "=0.3.13" }
+gpui_platform = { package = "gpui-pre-platform", version = "=0.3.13" }
+tray-icon = "0.26"
+auto-launch = "0.6"
+async-channel = "2"
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+dirs = "6"
 serde = { version = "1", features = ["derive"] }
-serde-wasm-bindgen = "0.6"
-console_error_panic_hook = "0.1.7"
-# Rust/UI (https://leptos.rust-ui.com) component runtime
-leptos_ui = "0.3"
-tw_merge = { version = "0.1", features = ["variant"] }
+serde_json = "1"
+sha2 = "0.10"
+notify = "8"
+ureq = "2"
+zip = { version = "9.6.0", default-features = false, features = ["deflate"] }
 
-[workspace]
-members = ["src-tauri"]
+[target.'cfg(windows)'.dependencies]
+winreg = "0.55"
+windows = { version = "0.62", features = [
+    "Wdk_System_SystemServices",
+    "Win32_Foundation",
+    "Win32_Security",
+    "Win32_System_SystemInformation",
+    "Win32_System_Threading",
+    "Win32_UI_WindowsAndMessaging",
+] }
 
-# https://tauri.app/concept/size/#cargo-configuration
+[build-dependencies]
+winresource = "0.1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[package.metadata.packager]
+product-name = "WWM Patch Guard"
+identifier = "com.oratakashi.wwm"
+publisher = "oratakashi"
+homepage = "https://github.com/oratakashi/where-winds-meet-indonesian-patch"
+before-packaging-command = "cargo build --release"
+binaries = [{ path = "wwm-patch-guard", main = true }]
+icons = ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.ico"]
+formats = ["nsis"]
+out-dir = "target/release/bundle"
+
+[package.metadata.packager.nsis]
+installer-mode = "currentUser"
+
 [profile.release]
 codegen-units = 1
 lto = true
