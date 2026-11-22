@@ -8,7 +8,7 @@ sudah diterjemahkan tetap valid/tidak perlu di-remap).
         [--extra strings_diff.jsonl]
     python tools/rebuild_unique_strings.py --profile cn     # WWM China (cn/)
 
-Default --strings/--extra = dump-dump profil (tools/profiles.py). Kalau
+Default --strings/--extra = dump-dump profil (tools/profiles.json). Kalau
 unique_strings.jsonl profil belum ada, file dibuat dari nol (bootstrap: idx 0..N-1).
 Profil dengan jembatan (cn) melewati entri yang key-nya ada di global dan teks yang
 muncul di key bersama — itu diterjemahkan lewat tools/bridge.py, bukan di profil ini.

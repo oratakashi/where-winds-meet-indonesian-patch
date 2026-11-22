@@ -174,9 +174,9 @@ some data to work with.
 4. Translate, append to `locale/phase{N}.jsonl` (N = the active phase — see
    the "Output file" column above). Never mix idx from another phase into
    the wrong file.
-5. Run `python tools/qa_check.py --locale` (see [[Resume-Procedure]]) — 0
+5. Run `sh tools/wwm.sh qa --locale` (see [[Resume-Procedure]]) — 0
    findings required before continuing.
-6. Run `python tools/progress.py --write` (regenerates the overall
+6. Run `sh tools/wwm.sh progress --write` (regenerates the overall
    progress and phase tables in [[Current-Status]] — never edit those by
    hand), then update the rest of [[Current-Status]]: date, batch summary,
    and any new terminology decisions (also add those to [[Glossary]] and

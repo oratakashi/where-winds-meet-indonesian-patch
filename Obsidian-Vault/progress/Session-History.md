@@ -1957,3 +1957,22 @@ Translated idx 595,919–625,918 (30,000 rows) via 6 subagents (5,000 each, para
 ## 2026-11-15 (session 154) — Update-3D
 
 Translated idx 625,919–655,918 (30,000 rows) via 30 subagents (1,000 each; resumed after two usage limits); merged QA clean (0 PROMPT_LEAK / MARKUP / EMPTY / IDX). Update-3D done; next Update-3E (idx 655,919). Overall: 655,919 / 733,662 unique strings (89.40%), in-game coverage 93.87% (base) / 95.39% (`_diff`). See [[Update-3D]].
+
+## 2026-11-22 — Tooling: Rust port of the toolkit (Python kept as failsafe)
+
+No translation — tooling only. Every script now also exists in Rust: the `wwm` binary in the new
+`rust/` workspace (`wwm-locmap` codec, `wwm-tools` with one module per script, `wwm-cli`), with the
+same arguments, output and exit codes. `sh tools/wwm.sh <subcommand>` (or `tools\wwm.cmd` from
+PowerShell) runs Rust when it is built and the Python script otherwise; `WWM_TOOLCHAIN=python`
+forces Python. Profile data moved to `tools/profiles.json`, read by both — **new phases / Update-N
+blocks are added there now**, not in `tools/profiles.py`. CI uses the composite action
+`.github/actions/wwm-toolchain` (dispatch input → repo variable `WWM_TOOLCHAIN` → `rust`, cached
+binary, automatic Python fallback when the Rust build fails); `rust-ci.yml` runs fmt/clippy/tests
+on Linux + Windows and `tools/parity_check.sh` (Rust vs Python on the real data). The pre-commit
+and Claude Stop hooks go through the dispatcher.
+
+Parity on the real data: dump, qa, progress, expand, rebuild-unique, compare-update, term-lookup
+and name-check (incl. `--fix`) identical; `patch-all --level 19` writes byte-identical files in
+2.8 s instead of 22.8 s. Timings and the switch-back procedure: `docs/Rust-Toolchain.md`.
+
+Overall (unchanged): 733,662 / 733,662 unique strings (100.00%), in-game coverage 100.00% (base) / 100.00% (`_diff`).

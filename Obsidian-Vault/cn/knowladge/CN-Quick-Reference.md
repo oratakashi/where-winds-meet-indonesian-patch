@@ -12,8 +12,8 @@ Proper nouns (people, places, sects, skills, items, titles) must match what the 
 say. Look every one of them up before inventing anything — many terms per call:
 
 ```bash
-python cn/tools/term_lookup.py 止戈定音技 告辞 开封府
-python cn/tools/term_lookup.py --contains 燕云 --limit 5
+sh tools/wwm.sh cn term-lookup 止戈定音技 告辞 开封府
+sh tools/wwm.sh cn term-lookup --contains 燕云 --limit 5
 ```
 
 It prints how the same Mandarin text was rendered in global (English) and in the Indonesian
@@ -47,9 +47,9 @@ official English, so:
 ## 2a. Check names before ending a batch — `name_check.py`
 
 ```bash
-python cn/tools/name_check.py --idx 94000-97999          # rows in the batch that miss a global name
-python cn/tools/name_check.py --fix                       # replace Pinyin/known variants automatically
-python cn/tools/name_check.py --report names.jsonl        # full list (src, v, expected names)
+sh tools/wwm.sh cn name-check --idx 94000-97999          # rows in the batch that miss a global name
+sh tools/wwm.sh cn name-check --fix                       # replace Pinyin/known variants automatically
+sh tools/wwm.sh cn name-check --report names.jsonl        # full list (src, v, expected names)
 ```
 
 It flags every row whose source contains a Mandarin term that global keeps as an English name

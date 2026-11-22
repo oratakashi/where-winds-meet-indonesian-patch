@@ -26,7 +26,8 @@
 #   WWM_BIN=/path/to/wwm     use this binary as is (no staleness check)
 set -eu
 
-ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+case "$0" in */*) HERE=${0%/*} ;; *) HERE=. ;; esac
+ROOT=$(CDPATH= cd -- "$HERE/.." && pwd)
 MODE=${WWM_TOOLCHAIN:-auto}
 
 warn() { echo "wwm.sh: $*" >&2; }

@@ -21,22 +21,24 @@ never hand-edit the generated progress tables, and don't commit/push unless the 
 ## 1. Measure (read-only)
 
 ```bash
-python .claude/skills/wwm-game-update/scripts/compare_update.py
+sh tools/wwm.sh compare-update
 ```
 
 It reports, per `translate_words_map_*` file: byte-identical or not, block/entry/tombstone
 counts vs `.before`, keys added/removed, values changed, how many texts aren't in the
 dictionary yet, the combined new-string total with its future idx range, variants that
 appeared or disappeared, and the projected `unique_strings.jsonl` size (GitHub warns at 50 MB,
-**rejects at 100 MB**). Use `PYTHONIOENCODING=utf-8` if the Windows console chokes.
+**rejects at 100 MB**). `tools/wwm.sh` runs the Rust `wwm compare-update` when the binary is
+built (fast), else the Python script (`PYTHONIOENCODING=utf-8` if the Windows console chokes).
+Every command in this procedure goes through `sh tools/wwm.sh` — see `docs/Rust-Toolchain.md`.
 
 Read the result carefully:
-- **New variant** (no `.before`): confirm `python wwm_locmap.py info <file>` parses it, then it
-  must be added to the profile's `files` in `tools/profiles.py`, the release `files:` list, and possibly
-  `TRACKED_DUMPS` in `tools/progress.py`.
+- **New variant** (no `.before`): confirm `sh tools/wwm.sh info <file>` parses it, then it
+  must be added to the profile's `files` in `tools/profiles.json`, the release `files:` list, and
+  possibly the profile's `dumps` (also in `tools/profiles.json`).
 - **Variant gone** (only `.before`): check on the user's client(s) whether NetEase really
-  dropped it (v2.3 dropped `__small`/`__small_diff`); then remove it from the profile's `files`,
-  `rebuild_unique_strings.py` defaults, `progress.py` dumps, the release and the README.
+  dropped it (v2.3 dropped `__small`/`__small_diff`); then remove it from the profile's `files`
+  and `dumps` in `tools/profiles.json`, the release and the README.
 - **Parse error**: stop — the container/shard format changed; that's reverse-engineering
   work, not this procedure (see `Obsidian-Vault/knowladge/Format-Spec.md`).
 - **Projected size > 100 MB**: stop and discuss with the user before appending.
@@ -54,22 +56,25 @@ Show the numbers from step 1, then ask:
 ## 3. Apply
 
 1. Re-dump the untracked dumps from the new binaries:
-   `python wwm_locmap.py dump translate_words_map_en strings.jsonl` and
-   `python wwm_locmap.py dump translate_words_map_en_diff strings_diff.jsonl` (plus any other
+   `sh tools/wwm.sh dump translate_words_map_en strings.jsonl` and
+   `sh tools/wwm.sh dump translate_words_map_en_diff strings_diff.jsonl` (plus any other
    variant, passed via `--extra`).
-2. `python tools/rebuild_unique_strings.py --dry-run` → the count must equal step 1's total.
+2. `sh tools/wwm.sh rebuild-unique --dry-run` → the count must equal step 1's total.
    Then run it for real. Confirm the appended idx range and that old rows are untouched
    (`git diff --stat translation_work/unique_strings.jsonl` shows only insertions).
-3. `tools/progress.py`: add the block(s) to `PHASES` with exact inclusive idx ranges and a
-   dated comment; adjust `TRACKED_DUMPS`/`LOCAL_DUMPS` if variants changed (and the docstring).
-   Don't create the empty `locale/updateN.jsonl` — the first translation session does that.
-4. CI — keep both workflows in step with `progress.py`:
-   - `.github/workflows/translation-qa.yml`: one `wwm_locmap.py dump` step per tracked dump
-     before `progress.py --check`; `paths:` filters list every tracked binary.
-   - `.github/workflows/release-patch.yml`: same dump steps before "Compute progress summary";
-     the release `name:`, header comment and body text name the new game version; `files:`
-     lists exactly the shipped variants; no `paths:` entry for gitignored files.
-5. `python tools/progress.py --write` (regenerates the tables in `Current-Status.md`).
+3. `tools/profiles.json` (read by both the Python scripts and the Rust binary — no rebuild
+   needed): add the block(s) to the profile's `phases` with exact inclusive idx ranges, and to
+   `regions` (game region of the update); adjust `files` / `dumps` if variants changed. Add a
+   dated line about the block to the history comment in `tools/profiles.py`. Don't create the
+   empty `locale/updateN.jsonl` — the first translation session does that.
+4. CI — keep the workflows in step with the profile:
+   - `.github/workflows/translation-qa.yml`: the Python-only dump step must dump every profile
+     dump before `progress --check` (the Rust path decodes binaries itself); `paths:` filters
+     list every tracked binary.
+   - `.github/workflows/release-patch.yml`: same Python-only dump step before "Compute progress
+     summary"; the release `name:`, header comment and body text name the new game version;
+     `files:` lists exactly the shipped variants; no `paths:` entry for gitignored files.
+5. `sh tools/wwm.sh progress --write` (regenerates the tables in `Current-Status.md`).
 
 ## 4. Docs (all in the same session)
 
@@ -91,13 +96,14 @@ Show the numbers from step 1, then ask:
 ## 5. Verify, then report
 
 ```bash
-python tools/rebuild_unique_strings.py --dry-run      # must report 0 new strings
-python tools/qa_check.py --locale "locale/*.jsonl"    # 0 findings
-python tools/progress.py --check                      # block up to date
-python tools/patch_all.py --outdir <scratchpad>/patched --level 10   # every variant repacks
+sh tools/wwm.sh rebuild-unique --dry-run      # must report 0 new strings
+sh tools/wwm.sh qa --locale "locale/*.jsonl"    # 0 findings
+sh tools/wwm.sh progress --check                      # block up to date
+sh tools/wwm.sh patch-all --outdir <scratchpad>/patched --level 10   # every variant repacks
 ```
 
-`patch_all.py`'s match percentages should equal the coverage rows in the progress block.
+`patch-all`'s match percentages should equal the coverage rows in the progress block. If
+anything looks off, rerun with `WWM_TOOLCHAIN=python` and compare (`sh tools/parity_check.sh`).
 Write its output to the scratchpad, never to the repo. Report to the user: what changed per
 file, the new block(s) and idx range, the overall progress line (unique % and coverage per
 tracked dump), anything skipped, and offer to commit. If the user asks to commit, stage the
@@ -107,13 +113,14 @@ Then propose the translation of the new block as a follow-up session.
 
 ## WWM China (`--profile cn`)
 
-A CN client update follows the same idea with the CN profile (`tools/profiles.py`, data in `cn/`):
+A CN client update follows the same idea with the CN profile (`tools/profiles.json`, data in `cn/`):
 copy the new `translate_words_map_zh_cn*` from `D:\yysls\yysls_fast\LocalData\Patch\HD\v2\locale\`
-into `cn/` (keep `*.before`), check `python wwm_locmap.py info` still decrypts them (a failure
-means the keystream changed — rerun `cn/tools/find_dict_in_dump.py --pid …` from an admin
-terminal), re-dump to `cn/work/`, then `python tools/rebuild_unique_strings.py --profile cn`
+into `cn/` (keep `*.before`), check `sh tools/wwm.sh info` still decrypts them (a failure
+means the keystream changed — rerun `sh tools/wwm.sh cn find-dict --pid …` from an admin
+terminal), re-dump to `cn/work/`, then `sh tools/wwm.sh rebuild-unique --profile cn`
 (appends only strings never translated in global, see `tools/bridge.py`), add an `Update-N`
-block to `CN_PHASES` and `python tools/progress.py --profile cn --write`. Docs live in
+block to the cn profile's `phases` in `tools/profiles.json` and
+`sh tools/wwm.sh progress --profile cn --write`. Docs live in
 `Obsidian-Vault/cn/`. A **global** update also changes the CN bridge: re-run the CN
 rebuild after it (new global keys can turn CN-only strings into bridged ones — they stay in
 `unique_strings.jsonl`, harmlessly, since idx are never removed).

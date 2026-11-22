@@ -7,7 +7,8 @@
 [![Latest patch](https://img.shields.io/github/release-date/oratakashi/where-winds-meet-indonesian-patch?label=latest%20patch)](../../releases/tag/latest)
 [![Downloads](https://img.shields.io/github/downloads/oratakashi/where-winds-meet-indonesian-patch/total?label=downloads)](../../releases)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
+[![Rust](https://img.shields.io/badge/tooling-Rust-orange.svg)](docs/Rust-Toolchain.md)
+[![Python 3.8+ (failsafe)](https://img.shields.io/badge/python-3.8%2B%20failsafe-blue.svg)](https://www.python.org/)
 
 [**⬇ Download — Global client**](../../releases/tag/latest) &nbsp;·&nbsp;
 [⬇ China client (燕云十六声) — **no longer maintained**](../../releases/tag/cn-latest) &nbsp;·&nbsp;
@@ -320,12 +321,24 @@ it with other players or reporting bad translations helps too.
 
 ## For Contributors & Developers
 
-This repo also contains a reverse-engineering toolkit (`wwm_locmap.py` + `tools/`) to dump,
-translate, validate and repack the game's `translate_words_map_*` localization files.
+This repo also contains a reverse-engineering toolkit to dump, translate, validate and repack the
+game's `translate_words_map_*` localization files. It is written in **Rust** (the `wwm` binary in
+[`rust/`](rust), used by default in CI and locally) with the original **Python** scripts
+(`wwm_locmap.py` + `tools/`) kept as a drop-in failsafe; `sh tools/wwm.sh <command>` runs
+whichever is available.
+
+```bash
+cargo build --release --manifest-path rust/Cargo.toml   # Rust toolchain (recommended)
+pip install -r requirements.txt                         # Python failsafe
+sh tools/wwm.sh qa --locale "locale/*.jsonl"            # same command on either toolchain
+```
+
+On Windows PowerShell/cmd use `tools\wwm.cmd …` (same arguments).
 
 | Guide | What's inside |
 |---|---|
 | [Developer Guide](docs/Developer-Guide.md) | Setup, dump → translate → QA → repack, daily workflow, game updates, China profile, repo layout |
+| [Rust Toolchain](docs/Rust-Toolchain.md) | `wwm` subcommands ↔ Python scripts, switching to Python (locally and in CI), tests, parity check, timings |
 | [Technical Overview](docs/Technical-Overview.md) | Binary format, why English is required, known limitations |
 | [Translation Guidelines](docs/Translation-Guidelines.md) | Engine format tokens, proper nouns, LLM QA |
 | [Contributing](docs/Contributing.md) | Reporting issues, pull requests, open research areas |

@@ -23,17 +23,20 @@ Found a wrong, awkward or broken line in-game? Open an
    [`Quick-Reference.md`](../Obsidian-Vault/knowladge/Quick-Reference.md) glossary.
 4. Before opening a pull request, run:
    ```bash
-   python tools/qa_check.py --locale "locale/*.jsonl"
-   python tools/progress.py --write
+   sh tools/wwm.sh qa --locale "locale/*.jsonl"
+   sh tools/wwm.sh progress --write
    ```
    CI runs the same checks on every PR that touches `locale/` (and `cn/` for the China client).
+5. Changing the tooling? Every tool exists in Rust (`rust/`) **and** Python — change both, then run
+   `cd rust && cargo test` and `sh tools/parity_check.sh` (CI's `rust-ci` does the same). See
+   [Rust Toolchain](Rust-Toolchain.md).
 
 ## Open research areas
 
 1. **Hash derivation** — the H1/H2 split derived from `keyHash` and `seed`
    ([Format-Spec §4.4](../Obsidian-Vault/knowladge/Format-Spec.md)) would allow inserting new keys.
 2. **QA signatures** — report new LLM prompt-leak patterns for `LEAK_SIGNATURES` in
-   `tools/qa_check.py`.
+   `tools/qa_check.py` (and its Rust twin in `rust/crates/wwm-tools/src/qa.rs`).
 3. **Other locales** — check parser compatibility with non-English packages (`_de`, `_fr`, `_ja`, …).
 4. **Glossary polish** — refine Wuxia terminology in
    [`Obsidian-Vault/knowladge/glossary/`](../Obsidian-Vault/knowladge/glossary/).
