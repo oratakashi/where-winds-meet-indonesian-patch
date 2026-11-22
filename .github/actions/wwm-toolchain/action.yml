@@ -1,0 +1,87 @@
+name: wwm-toolchain
+description: >
+  Pick the toolchain for tools/wwm.sh: the Rust `wwm` binary (default; cached per
+  source hash, built on a miss) or the Python scripts. If the Rust build fails, the
+  job falls back to Python with a warning — a failing QA/progress check never does.
+  Exports WWM_TOOLCHAIN (and WWM_BIN on the Rust path) for every later step.
+
+inputs:
+  toolchain:
+    description: "rust | python (callers pass: dispatch input || vars.WWM_TOOLCHAIN || 'rust')"
+    required: false
+    default: rust
+
+outputs:
+  toolchain:
+    description: "toolchain actually used: rust or python"
+    value: ${{ steps.final.outputs.toolchain }}
+
+runs:
+  using: composite
+  steps:
+    - name: Requested toolchain
+      id: want
+      shell: bash
+      run: |
+        t="${{ inputs.toolchain }}"
+        case "$t" in rust|python) ;; ""|auto) t=rust ;; *) echo "::error::toolchain tak dikenal: $t"; exit 1 ;; esac
+        echo "toolchain=$t" >> "$GITHUB_OUTPUT"
+        echo "requested toolchain: $t"
+
+    # The binary depends only on rust/ sources: restore it when they did not change.
+    - name: Restore wwm binary
+      id: cache
+      if: steps.want.outputs.toolchain == 'rust'
+      uses: actions/cache@v4
+      with:
+        path: rust/target/release/wwm${{ runner.os == 'Windows' && '.exe' || '' }}
+        key: wwm-bin-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock', 'rust/Cargo.toml', 'rust/rust-toolchain.toml', 'rust/crates/**') }}
+
+    - name: Cache Rust dependencies
+      if: steps.want.outputs.toolchain == 'rust' && steps.cache.outputs.cache-hit != 'true'
+      uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: rust
+
+    # Runners ship rustup; rust/rust-toolchain.toml selects stable. Never fails the job:
+    # a failed build falls back to Python below.
+    - name: Build wwm (cache miss)
+      id: build
+      if: steps.want.outputs.toolchain == 'rust' && steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        if cargo build --release --locked --manifest-path rust/Cargo.toml; then
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "ok=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Select toolchain
+      id: final
+      shell: bash
+      run: |
+        t="${{ steps.want.outputs.toolchain }}"
+        bin="$PWD/rust/target/release/wwm"
+        [ "${{ runner.os }}" = Windows ] && bin="$bin.exe"
+        if [ "$t" = rust ]; then
+          if [ -f "$bin" ] && "$bin" --version; then
+            echo "WWM_BIN=$bin" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Rust toolchain unavailable (build ${{ steps.build.outputs.ok || 'skipped' }}) — falling back to Python"
+            t=python
+          fi
+        fi
+        echo "WWM_TOOLCHAIN=$t" >> "$GITHUB_ENV"
+        echo "toolchain=$t" >> "$GITHUB_OUTPUT"
+        echo "### Tooling: \`$t\`" >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Set up Python
+      if: steps.final.outputs.toolchain == 'python'
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install Python dependencies
+      if: steps.final.outputs.toolchain == 'python'
+      shell: bash
+      run: pip install -r requirements.txt
