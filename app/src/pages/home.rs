@@ -1,243 +1,295 @@
 //! Home: the current status, and the folders being guarded ("active directories") together
 //! with the game folders found on this machine that are not guarded yet.
-use crate::api::{self, DirReport, FileReport, Found, Status};
-use crate::app::{Ctx, PageTitle, client_title, clock, confirm, profile_title};
-use crate::components::ui::badge::{Badge, BadgeVariant};
-use crate::components::ui::button::{Button, ButtonSize, ButtonVariant};
-use crate::components::ui::card::{Card, CardContent};
-use leptos::prelude::*;
+use super::{client_title, clock, profile_title};
+use crate::fluent::{
+    BODY, Button, ButtonStyle, Tone, badge, caption, card, divider, glyph, icon, page_title,
+    subtitle, theme,
+};
+use crate::model::{DirReport, FileReport, Status};
+use crate::state::{AppState, Confirm, Found};
+use gpui::prelude::*;
+use gpui::{App, AnyElement, Div, Entity, FontWeight, SharedString, div, px};
+use std::path::PathBuf;
+use std::rc::Rc;
 
-#[component]
-pub fn Home(ctx: Ctx) -> impl IntoView {
-    let pick = move |_| {
-        ctx.run(async move {
-            match api::add_folder().await? {
-                Some(0) => Err("Folder itu sudah dijaga.".to_string()),
-                _ => Ok(()),
-            }
-        })
-    };
-    // Found on this machine, not guarded yet.
-    let pending = move || ctx.found.with(|f| f.iter().filter(|x| !x.guarded).cloned().collect::<Vec<_>>());
+pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
+    let s = state.read(cx);
+    let dirs = s.snap.dirs.clone();
+    let pending: Vec<Found> = s.found.iter().filter(|f| !f.guarded).cloned().collect();
     // Picking a folder by hand is the fallback: prominent only when nothing was detected.
-    let nothing_found = move || ctx.found.with(|f| f.is_empty());
+    let nothing_found = s.found.is_empty();
+    let no_dirs = dirs.is_empty();
 
-    view! {
-        <PageTitle text="Home" />
+    let mut out = vec![
+        page_title("Home", cx).into_any_element(),
+        subtitle("Status saat ini").into_any_element(),
+        hero(state, cx).into_any_element(),
+    ];
 
-        <h2 class="text-sm font-semibold">"Status saat ini"</h2>
-        <Hero ctx />
+    let rescan = state.clone();
+    let pick = state.clone();
+    out.push(
+        div()
+            .flex()
+            .items_center()
+            .gap(px(8.))
+            .mt(px(12.))
+            .child(subtitle("Folder aktif").flex_1())
+            .child(
+                Button::new("rescan", "Deteksi ulang")
+                    .icon(glyph::REFRESH)
+                    .style(ButtonStyle::Subtle)
+                    .small()
+                    .on_click(move |_, _, cx| rescan.update(cx, |s, cx| s.rescan(cx))),
+            )
+            .child(
+                Button::new("pick", "Pilih folder manual")
+                    .icon(glyph::FOLDER_OPEN)
+                    .style(if nothing_found { ButtonStyle::Accent } else { ButtonStyle::Standard })
+                    .small()
+                    .on_click(move |_, _, cx| pick.update(cx, |s, cx| s.add_folder(cx))),
+            )
+            .into_any_element(),
+    );
 
-        <div class="flex gap-2 items-center mt-3">
-            <h2 class="text-sm font-semibold grow">"Folder aktif"</h2>
-            <Button variant=ButtonVariant::Ghost size=ButtonSize::Sm on:click=move |_| ctx.rescan()>
-                <span class="icon">"\u{E72C}"</span>
-                "Deteksi ulang"
-            </Button>
-            {move || {
-                let variant = if nothing_found() { ButtonVariant::Default } else { ButtonVariant::Outline };
-                view! {
-                    <Button variant=variant size=ButtonSize::Sm on:click=pick>
-                        <span class="icon">"\u{E8B7}"</span>
-                        "Pilih folder manual"
-                    </Button>
-                }
-            }}
-        </div>
-
-        {move || {
-            let dirs = ctx.ui.with(|u| u.dirs.clone());
-            dirs.into_iter().map(|d| view! { <DirCard ctx dir=d /> }).collect_view()
-        }}
-
-        {move || {
-            let pending = pending();
-            (!pending.is_empty()).then(|| view! { <Detected ctx pending /> })
-        }}
-
-        {move || {
-            (ctx.ui.with(|u| u.dirs.is_empty()) && nothing_found())
-                .then(|| {
-                    view! {
-                        <Card>
-                            <CardContent class="flex flex-col gap-1">
-                                <p class="font-medium">"Game tidak ditemukan otomatis"</p>
-                                <p class="text-muted-foreground">
-                                    "Pilih folder instalasi Where Winds Meet secara manual (folder Steam, launcher, atau folder game-nya). Folder bahasa di dalamnya dicari otomatis."
-                                </p>
-                            </CardContent>
-                        </Card>
-                    }
-                })
-        }}
+    for (i, d) in dirs.into_iter().enumerate() {
+        out.push(dir_card(i, d, state, cx).into_any_element());
     }
+    if !pending.is_empty() {
+        out.push(detected(pending, state, cx).into_any_element());
+    }
+    if no_dirs && nothing_found {
+        out.push(
+            card(cx)
+                .gap(px(4.))
+                .p(px(16.))
+                .child(div().font_weight(FontWeight::MEDIUM).child("Game tidak ditemukan otomatis"))
+                .child(div().text_color(theme(cx).muted_fg).child(
+                    "Pilih folder instalasi Where Winds Meet secara manual (folder Steam, launcher, \
+                     atau folder game-nya). Folder bahasa di dalamnya dicari otomatis.",
+                ))
+                .into_any_element(),
+        );
+    }
+    out
 }
 
 /// Status summary, like the banner at the top of Windows Update.
-#[component]
-fn Hero(ctx: Ctx) -> impl IntoView {
-    move || {
-        let (glyph, tone, title, sub) = ctx.ui.with(|u| {
-            let files = || u.dirs.iter().flat_map(|d| &d.files);
-            if u.dirs.is_empty() {
-                ("\u{E710}", "text-muted-foreground", "Belum diatur", "Belum ada folder game yang dijaga.")
-            } else if u.paused {
-                ("\u{E769}", "text-warning", "Penjaga dijeda", "File game tidak diubah sampai dilanjutkan.")
-            } else if files().any(|f| f.status == Status::Error) {
-                ("\u{EA39}", "text-destructive", "Ada masalah", "Lihat History untuk detailnya.")
-            } else if files().any(|f| f.status == Status::Busy) {
-                ("\u{E895}", "text-info", "Menunggu file game", "File sedang ditulis atau dipakai; dicoba lagi otomatis.")
-            } else if files().any(|f| f.status == Status::Unknown) {
-                ("\u{E7BA}", "text-warning", "Menunggu rilis baru", "Versi file game belum punya patch yang cocok.")
-            } else {
-                ("\u{E73E}", "text-success", "Patch terjaga", "Akan dipasang ulang otomatis jika ditimpa.")
-            }
-        });
-        let last = ctx.ui.with(|u| u.last_check).map(|at| format!("Terakhir diperiksa {}", clock(at)));
-        view! {
-            <Card>
-                <CardContent class="flex gap-4 items-center">
-                    <span class=format!("icon text-[32px] {tone}")>{glyph}</span>
-                    <div class="min-w-0 grow">
-                        <p class="text-base font-semibold">{title}</p>
-                        <p class="text-muted-foreground">{sub}</p>
-                        {last.map(|l| view! { <p class="text-xs text-muted-foreground">{l}</p> })}
-                    </div>
-                    <Button
-                        variant=ButtonVariant::Outline
-                        attr:disabled=move || ctx.ui.with(|u| u.checking || u.dirs.is_empty())
-                        on:click=move |_| ctx.run(api::check_now())
-                    >
-                        {move || if ctx.ui.with(|u| u.checking) { "Memeriksa…" } else { "Periksa sekarang" }}
-                    </Button>
-                </CardContent>
-            </Card>
-        }
-    }
+fn hero(state: &Entity<AppState>, cx: &App) -> Div {
+    let t = theme(cx).clone();
+    let s = state.read(cx);
+    let u = &s.snap;
+    let files = || u.dirs.iter().flat_map(|d| &d.files);
+    let (g, tone, title, sub) = if u.dirs.is_empty() {
+        (glyph::ADD, t.muted_fg, "Belum diatur", "Belum ada folder game yang dijaga.")
+    } else if u.paused {
+        (glyph::PAUSE, t.warning, "Penjaga dijeda", "File game tidak diubah sampai dilanjutkan.")
+    } else if files().any(|f| f.status == Status::Error) {
+        (glyph::ERROR, t.destructive, "Ada masalah", "Lihat History untuk detailnya.")
+    } else if files().any(|f| f.status == Status::Busy) {
+        (glyph::SYNC, t.info, "Menunggu file game", "File sedang ditulis atau dipakai; dicoba lagi otomatis.")
+    } else if files().any(|f| f.status == Status::Unknown) {
+        (glyph::WARNING, t.warning, "Menunggu rilis baru", "Versi file game belum punya patch yang cocok.")
+    } else {
+        (glyph::ACCEPT, t.success, "Patch terjaga", "Akan dipasang ulang otomatis jika ditimpa.")
+    };
+    let last = u.last_check.map(|at| format!("Terakhir diperiksa {}", clock(at)));
+    let checking = u.checking;
+    let disabled = u.checking || u.dirs.is_empty();
+    let check = state.clone();
+    card(cx)
+        .flex_row()
+        .items_center()
+        .gap(px(16.))
+        .p(px(16.))
+        .child(icon(g, 32., tone, cx))
+        .child(
+            div()
+                .flex()
+                .flex_col()
+                .flex_1()
+                .min_w_0()
+                .child(div().text_size(px(16.)).line_height(px(22.)).font_weight(FontWeight::SEMIBOLD).child(title))
+                .child(div().text_color(t.muted_fg).child(sub))
+                .children(last.map(|l| caption(l, cx))),
+        )
+        .child(
+            Button::new("check", if checking { "Memeriksa…" } else { "Periksa sekarang" })
+                .disabled(disabled)
+                .on_click(move |_, _, cx| check.update(cx, |s, cx| s.check_now(cx))),
+        )
 }
 
 /// Game folders found on this machine that are not guarded yet.
-#[component]
-fn Detected(ctx: Ctx, pending: Vec<Found>) -> impl IntoView {
-    let all: Vec<String> = pending.iter().map(|f| f.path.clone()).collect();
+fn detected(pending: Vec<Found>, state: &Entity<AppState>, cx: &App) -> Div {
+    let all: Vec<PathBuf> = pending.iter().map(|f| f.path.clone()).collect();
     let many = all.len() > 1;
-    let guard = move |paths: Vec<String>| {
-        ctx.run(async move { api::add_detected(&paths).await.map(|_| ()) });
-    };
-    view! {
-        <Card class="gap-0 pb-0">
-            <CardContent class="flex gap-3 items-center pb-3">
-                <div class="min-w-0 grow">
-                    <p class="font-semibold">"Game terdeteksi"</p>
-                    <p class="text-xs text-muted-foreground">"Ditemukan di komputer ini, belum dijaga."</p>
-                </div>
-                {many
-                    .then(|| {
-                        view! {
-                            <Button size=ButtonSize::Sm on:click=move |_| guard(all.clone())>
-                                "Jaga semua"
-                            </Button>
-                        }
-                    })}
-            </CardContent>
-            <div class="flex flex-col border-t divide-y">
-                {pending
-                    .into_iter()
-                    .map(|f| {
-                        let path = f.path.clone();
-                        let variant = if many { ButtonVariant::Outline } else { ButtonVariant::Default };
-                        view! {
-                            <div class="flex gap-3 items-center py-2.5 px-4">
-                                <div class="min-w-0 grow">
-                                    <p class="flex gap-2 items-center font-medium">
-                                        {profile_title(f.profile)}
-                                        <Badge variant=BadgeVariant::Muted>{client_title(f.client)}</Badge>
-                                    </p>
-                                    <p class="text-xs break-all select-text text-muted-foreground">{f.path}</p>
-                                </div>
-                                <Button
-                                    variant=variant
-                                    size=ButtonSize::Sm
-                                    on:click=move |_| guard(vec![path.clone()])
-                                >
-                                    "Jaga"
-                                </Button>
-                            </div>
-                        }
-                    })
-                    .collect_view()}
-            </div>
-        </Card>
+    let mut c = card(cx).child(
+        div()
+            .flex()
+            .items_center()
+            .gap(px(12.))
+            .px(px(16.))
+            .pt(px(16.))
+            .pb(px(12.))
+            .child(
+                div()
+                    .flex()
+                    .flex_col()
+                    .flex_1()
+                    .min_w_0()
+                    .child(subtitle("Game terdeteksi"))
+                    .child(caption("Ditemukan di komputer ini, belum dijaga.", cx)),
+            )
+            .when(many, |el| {
+                let st = state.clone();
+                el.child(
+                    Button::new("guard-all", "Jaga semua")
+                        .style(ButtonStyle::Accent)
+                        .small()
+                        .on_click(move |_, _, cx| {
+                            let all = all.clone();
+                            st.update(cx, |s, cx| s.add_detected(all, cx))
+                        }),
+                )
+            }),
+    );
+    for (i, f) in pending.into_iter().enumerate() {
+        let st = state.clone();
+        let path = f.path.clone();
+        c = c.child(divider(cx)).child(
+            div()
+                .flex()
+                .items_center()
+                .gap(px(12.))
+                .px(px(16.))
+                .py(px(10.))
+                .child(
+                    div()
+                        .flex()
+                        .flex_col()
+                        .flex_1()
+                        .min_w_0()
+                        .child(
+                            div()
+                                .flex()
+                                .items_center()
+                                .gap(px(8.))
+                                .font_weight(FontWeight::MEDIUM)
+                                .child(profile_title(f.profile))
+                                .child(badge(client_title(f.client), Tone::Muted, cx)),
+                        )
+                        .child(caption(f.path.display().to_string(), cx)),
+                )
+                .child(
+                    Button::new(("guard", i), "Jaga")
+                        .style(if many { ButtonStyle::Standard } else { ButtonStyle::Accent })
+                        .small()
+                        .on_click(move |_, _, cx| {
+                            let p = vec![path.clone()];
+                            st.update(cx, |s, cx| s.add_detected(p, cx))
+                        }),
+                ),
+        );
     }
+    c
 }
 
-fn status_badge(s: Status) -> (BadgeVariant, &'static str) {
+fn status_badge(s: Status) -> (Tone, &'static str) {
     match s {
-        Status::Patched => (BadgeVariant::Success, "Terpasang"),
-        Status::Original => (BadgeVariant::Warning, "File asli"),
-        Status::Unknown => (BadgeVariant::Warning, "Tidak dikenal"),
-        Status::Missing => (BadgeVariant::Muted, "Tidak ada"),
-        Status::Busy => (BadgeVariant::Info, "Menunggu"),
-        Status::Error => (BadgeVariant::Destructive, "Gagal"),
+        Status::Patched => (Tone::Success, "Terpasang"),
+        Status::Original => (Tone::Warning, "File asli"),
+        Status::Unknown => (Tone::Warning, "Tidak dikenal"),
+        Status::Missing => (Tone::Muted, "Tidak ada"),
+        Status::Busy => (Tone::Info, "Menunggu"),
+        Status::Error => (Tone::Error, "Gagal"),
     }
 }
 
-#[component]
-fn DirCard(ctx: Ctx, dir: DirReport) -> impl IntoView {
+fn dir_card(i: usize, dir: DirReport, state: &Entity<AppState>, cx: &App) -> Div {
     let has_unknown = dir.files.iter().any(|f| f.status == Status::Unknown);
-    let path = StoredValue::new(dir.path.clone());
-
-    let force = move |_| {
-        if confirm(
-            "Pasang rilis terbaru di folder ini walau versi file game-nya tidak dikenali?\n\n\
-             Lakukan ini hanya kalau game sudah versi terbaru (misalnya file itu patch lama \
-             yang dipasang manual). File yang ada sekarang disimpan sebagai cadangan.",
-        ) {
-            ctx.run(async move { api::force_install(&path.get_value()).await });
-        }
-    };
-    let remove = move |_| ctx.run(async move { api::remove_folder(&path.get_value()).await });
-
-    view! {
-        <Card>
-            <CardContent class="flex flex-col gap-0.5">
-                <p class="flex gap-2 items-center font-semibold">
-                    {profile_title(dir.profile)}
-                    <Badge variant=BadgeVariant::Muted>{client_title(dir.client)}</Badge>
-                </p>
-                <p class="text-xs break-all select-text text-muted-foreground">{dir.path.clone()}</p>
-            </CardContent>
-            <div class="flex flex-col border-t divide-y">
-                {dir.files.into_iter().map(|f| view! { <FileRow file=f /> }).collect_view()}
-            </div>
-            <CardContent class="flex flex-wrap gap-2 pt-1">
-                {has_unknown
-                    .then(|| {
-                        view! {
-                            <Button variant=ButtonVariant::Outline size=ButtonSize::Sm on:click=force>
-                                "Pasang paksa"
-                            </Button>
-                        }
-                    })}
-                <Button variant=ButtonVariant::Ghost size=ButtonSize::Sm on:click=remove>
-                    "Berhenti menjaga"
-                </Button>
-            </CardContent>
-        </Card>
+    let path = PathBuf::from(&dir.path);
+    let mut c = card(cx).child(
+        div()
+            .flex()
+            .flex_col()
+            .gap(px(2.))
+            .px(px(16.))
+            .pt(px(16.))
+            .pb(px(12.))
+            .child(
+                div()
+                    .flex()
+                    .items_center()
+                    .gap(px(8.))
+                    .font_weight(FontWeight::SEMIBOLD)
+                    .child(profile_title(dir.profile))
+                    .child(badge(client_title(dir.client), Tone::Muted, cx)),
+            )
+            .child(caption(dir.path.clone(), cx)),
+    );
+    for f in dir.files {
+        c = c.child(divider(cx)).child(file_row(f, cx));
     }
+    let force_state = state.clone();
+    let force_path = path.clone();
+    let remove_state = state.clone();
+    c.child(divider(cx)).child(
+        div()
+            .flex()
+            .flex_wrap()
+            .gap(px(8.))
+            .px(px(16.))
+            .py(px(12.))
+            .when(has_unknown, |el| {
+                el.child(Button::new(("force", i), "Pasang paksa").small().on_click(move |_, _, cx| {
+                    let path = force_path.clone();
+                    force_state.update(cx, |s, cx| {
+                        s.ask(
+                            Confirm {
+                                title: "Pasang paksa?".into(),
+                                body: "Pasang rilis terbaru di folder ini walau versi file game-nya \
+                                       tidak dikenali?\n\nLakukan ini hanya kalau game sudah versi \
+                                       terbaru (misalnya file itu patch lama yang dipasang manual). \
+                                       File yang ada sekarang disimpan sebagai cadangan."
+                                    .into(),
+                                primary: "Pasang paksa".into(),
+                                action: Rc::new(move |s, cx| s.force_install(path.clone(), cx)),
+                            },
+                            cx,
+                        )
+                    })
+                }))
+            })
+            .child(
+                Button::new(("remove", i), "Berhenti menjaga")
+                    .style(ButtonStyle::Subtle)
+                    .small()
+                    .on_click(move |_, _, cx| {
+                        let p = path.clone();
+                        remove_state.update(cx, |s, cx| s.remove_folder(p, cx))
+                    }),
+            ),
+    )
 }
 
-#[component]
-fn FileRow(file: FileReport) -> impl IntoView {
-    let (variant, label) = status_badge(file.status);
-    view! {
-        <div class="flex gap-3 justify-between items-center py-2.5 px-4">
-            <div class="min-w-0">
-                <p class="font-mono break-all text-[13px]">{file.name}</p>
-                {(!file.detail.is_empty())
-                    .then(|| view! { <p class="text-xs text-muted-foreground">{file.detail}</p> })}
-            </div>
-            <Badge variant=variant class="shrink-0">{label}</Badge>
-        </div>
-    }
+fn file_row(file: FileReport, cx: &App) -> Div {
+    let (tone, label) = status_badge(file.status);
+    let detail: Option<SharedString> = (!file.detail.is_empty()).then(|| file.detail.into());
+    div()
+        .flex()
+        .items_center()
+        .justify_between()
+        .gap(px(12.))
+        .px(px(16.))
+        .py(px(10.))
+        .child(
+            div()
+                .flex()
+                .flex_col()
+                .min_w_0()
+                .child(div().font_family("Consolas").text_size(px(BODY - 1.)).child(file.name))
+                .children(detail.map(|d| caption(d, cx))),
+        )
+        .child(badge(label, tone, cx))
 }
