@@ -58,7 +58,7 @@ def main():
         before = path + ".before"
         print("\n== %s (%s bytes)" % (name, format(os.path.getsize(path), ",")))
         if not os.path.exists(before):
-            print("   !! tidak ada .before — variant BARU (cek format, tambahkan ke FILES di tools/patch_all.py)")
+            print("   !! tidak ada .before — variant BARU (cek format, tambahkan ke files di tools/profiles.json)")
             old = None
         elif sha(path) == sha(before):
             print("   byte-identik dengan .before — tidak berubah")

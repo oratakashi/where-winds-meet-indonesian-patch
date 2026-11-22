@@ -1,0 +1,37 @@
+[workspace]
+resolver = "3"
+members = ["crates/wwm-locmap", "crates/wwm-tools", "crates/wwm-cli"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+publish = false
+
+[workspace.dependencies]
+wwm-locmap = { path = "crates/wwm-locmap" }
+wwm-tools = { path = "crates/wwm-tools" }
+anyhow = "1"
+clap = { version = "4.6", features = ["derive"] }
+fancy-regex = "0.20"
+glob = "0.3"
+indexmap = "2.14"
+memchr = "2"
+memmap2 = "0.9"
+pinyin = { version = "0.11", features = ["heteronym", "plain"] }
+rayon = "1.12"
+regex = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+sha2 = "0.10"
+time = { version = "0.3", features = ["formatting", "macros"] }
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_System_Threading", "Win32_System_Memory", "Win32_System_Diagnostics_Debug"] }
+zip = { version = "9.8", default-features = false }
+zstd = { version = "0.13", features = ["zstdmt"] }
+assert_cmd = "2.2"
+tempfile = "3"
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3

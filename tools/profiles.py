@@ -16,10 +16,11 @@ progress) menerima `--profile {global,cn}`; default `global`, jadi perilaku lama
 tidak berubah.
 
 Fase: (label, file di locale_dir, idx awal, idx akhir inklusif). Fase/blok baru
-(mis. Update-N setelah update game) WAJIB ditambahkan di sini — progress.py
-menolak file locale yang tidak terdaftar.
+(mis. Update-N setelah update game) WAJIB ditambahkan di tools/profiles.json —
+progress.py menolak file locale yang tidak terdaftar. File JSON itu juga dibaca
+binary Rust `wwm`, jadi kedua toolchain selalu memakai data fase yang sama.
 """
-import os
+import json, os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -64,83 +65,49 @@ class Profile:
         return os.path.relpath(path, ROOT).replace(os.sep, "/")
 
 
-# ------------------------------------------------------------------ global
-GLOBAL_PHASES = [("0", "phase0.jsonl", 0, 799),
-                 ("1", "phase1.jsonl", 800, 1999),
-                 ("2", "phase2.jsonl", 2000, 4999),
-                 ("3", "phase3.jsonl", 5000, 9999),
-                 ("4", "phase4.jsonl", 10000, 19999),
-                 ("5", "phase5.jsonl", 20000, 49999),
-                 ("6", "phase6.jsonl", 50000, 99999)]
-GLOBAL_PHASES += [(str(n), "phase%d.jsonl" % n, 100000 + (n - 7) * 30000, 129999 + (n - 7) * 30000)
-                  for n in range(7, 17)]
-GLOBAL_PHASES += [("17", "phase17.jsonl", 400000, 429886),
-                  ("Update-1", "update1.jsonl", 429887, 461703)]
-# Update-2 = string baru dari game v2.3 (2026-10-15), dipecah per 30.000 string.
-GLOBAL_PHASES += [("Update-2A", "update2a.jsonl", 461704, 491703),
-                  ("Update-2B", "update2b.jsonl", 491704, 521703),
-                  ("Update-2C", "update2c.jsonl", 521704, 534256)]
-# Update-2D = string baru dari hotfix v2.3 (2026-10-17) — hanya _diff yang berubah.
-GLOBAL_PHASES += [("Update-2D", "update2d.jsonl", 534257, 535918)]
-# Update-3 = string baru dari game v2.4 "Across Autumn Waters" (2026-11-13): NetEase menulis
-# ulang ~305k teks Inggris di base + _diff membesar jadi ~335k entri. 197.743 string,
-# dipecah per 30.000 (3A–3F penuh, 3G sisa 17.743).
-GLOBAL_PHASES += [("Update-3%s" % c, "update3%s.jsonl" % c.lower(),
-                   535919 + i * 30000, min(565918 + i * 30000, 733661))
-                  for i, c in enumerate("ABCDEFG")]
+# ------------------------------------------------------------- profiles.json
+# Data profil (fase, region, varian file, dump, path) ada di tools/profiles.json — satu
+# sumber untuk script Python ini DAN binary Rust `wwm` (rust/). Fase/blok Update-N baru
+# ditambahkan di sana, bukan di sini.
+#
+# Riwayat fase global: Phase 0–17 = korpus awal; Update-1 = Hidden Mountain; Update-2A–2C =
+# string baru game v2.3 (2026-10-15) per 30.000; Update-2D = hotfix v2.3 (2026-10-17, hanya
+# _diff); Update-3A–3G = game v2.4 "Across Autumn Waters" (2026-11-13), 197.743 string per
+# 30.000. CN: korpus 159.176 teks khusus CN (client 2026-10-20) per 30.000 -> Phase 1..6.
+PROFILES_JSON = os.path.join(ROOT, "tools", "profiles.json")
 
-# Region game yang dibawa tiap blok — untuk tabel "Phase status" di Current-Status.md.
-# Update baru: tambahkan region-nya di sini juga (fase tanpa region tetap tampil, tapi
-# hanya dengan label teknisnya).
-GLOBAL_REGIONS = [
-    ("Qinghe, Kaifeng, Hexi", "Phase 0–17", [(str(n), "Phase %d" % n) for n in range(18)]),
-    ("Hidden Mountain", "Update-1", [("Update-1", "Update-1")]),
-    ("Qingzhou", "Update-2", [("Update-2%s" % c, "Part %s" % c) for c in "ABCD"]),
-    ("Hutuo", "Update-3", [("Update-3%s" % c, "Phase %d" % (i + 1))
-                           for i, c in enumerate("ABCDEFG")]),
-]
 
-GLOBAL = Profile(
-    name="global", base=ROOT, phases=GLOBAL_PHASES,
-    files=["translate_words_map_en",
-           "translate_words_map_en_diff",
-           "translate_words_map_en_mobile"],
-    # _diff ikut dihitung sejak hotfix v2.3 (string barunya hanya ada di _diff).
-    # (__small / __small_diff tidak dikirim lagi sejak game v2.3.)
-    dumps=[("translate_words_map_en", "strings.jsonl"),
-           ("translate_words_map_en_diff", "strings_diff.jsonl")],
-    status=os.path.join(ROOT, "Obsidian-Vault", "progress", "Current-Status.md"),
-    coverage="dump",
-    corpus_label="original corpus (Phases 0–17)",
-    patched_dir=os.path.join(ROOT, "patched"),
-    translated_out=os.path.join(ROOT, "strings.translated.jsonl"),
-    regions=GLOBAL_REGIONS)
+def _abs(rel):
+    return None if rel is None else os.path.normpath(os.path.join(ROOT, rel))
 
-# ---------------------------------------------------------------------- cn
-CN_BASE = os.path.join(ROOT, "cn")
-# Korpus awal CN (client 2026-10-20): 159.176 teks unik yang belum pernah diterjemahkan
-# lewat global (key tidak ada di global DAN teksnya tidak muncul di key bersama — lihat
-# tools/bridge.py), urut frekuensi menurun, dipecah rata per 30.000 string -> Phase 1..6.
-CN_CORPUS = 159176
-CN_PHASES = [(str(n + 1), "phase%d.jsonl" % (n + 1), n * 30000,
-              min((n + 1) * 30000, CN_CORPUS) - 1)
-             for n in range((CN_CORPUS + 29999) // 30000)]
 
-CN = Profile(
-    name="cn", base=CN_BASE, phases=CN_PHASES,
-    files=["translate_words_map_zh_cn",
-           "translate_words_map_zh_cn__small"],
-    dumps=[("translate_words_map_zh_cn", os.path.join("work", "strings_zh_cn.jsonl")),
-           ("translate_words_map_zh_cn__small", os.path.join("work", "strings_zh_cn__small.jsonl"))],
-    status=os.path.join(ROOT, "Obsidian-Vault", "cn", "progress", "CN-Current-Status.md"),
-    coverage="freq",
-    corpus_label="CN-only corpus (Phases 1–%d)" % len(CN_PHASES),
-    patched_dir=os.path.join(CN_BASE, "work", "patched"),
-    translated_out=os.path.join(CN_BASE, "work", "strings.translated.jsonl"),
-    bridge_from="global",
-    overrides=os.path.join(CN_BASE, "overrides.jsonl"))
+def _load_profiles():
+    with open(PROFILES_JSON, encoding="utf-8") as f:
+        data = json.load(f)
+    out = {}
+    for name, d in data.items():
+        if name.startswith("_"):
+            continue
+        out[name] = Profile(
+            name=name, base=_abs(d["base"]),
+            phases=[tuple(p) for p in d["phases"]],
+            files=list(d["files"]),
+            dumps=[(b, os.path.join(*dump.split("/"))) for b, dump in d["dumps"]],
+            status=_abs(d["status"]),
+            coverage=d["coverage"],
+            corpus_label=d["corpus_label"],
+            patched_dir=_abs(d["patched_dir"]),
+            translated_out=_abs(d["translated_out"]),
+            bridge_from=d.get("bridge_from"),
+            overrides=_abs(d.get("overrides")),
+            regions=[(r, tag, [tuple(p) for p in parts]) for r, tag, parts in d.get("regions", [])])
+    return out
 
-PROFILES = {"global": GLOBAL, "cn": CN}
+
+PROFILES = _load_profiles()
+GLOBAL, CN = PROFILES["global"], PROFILES["cn"]
+GLOBAL_PHASES, GLOBAL_REGIONS = GLOBAL.phases, GLOBAL.regions
+CN_PHASES = CN.phases
 
 
 def get(name):

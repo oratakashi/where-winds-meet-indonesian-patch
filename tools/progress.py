@@ -49,7 +49,7 @@ def phase_rows(P):
     extra = [os.path.basename(p) for p in glob.glob(os.path.join(P.locale_dir, "*.jsonl"))
              if os.path.basename(p) not in known]
     if extra:
-        sys.exit("file locale tanpa entri di phases (tambahkan ke tools/profiles.py): %s" % extra)
+        sys.exit("file locale tanpa entri di phases (tambahkan ke tools/profiles.json): %s" % extra)
     rows = []
     for label, fname, lo, hi in P.phases:
         path = os.path.join(P.locale_dir, fname)
