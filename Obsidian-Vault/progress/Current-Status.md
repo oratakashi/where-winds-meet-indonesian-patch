@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-11-16 (session 156) — Update-3F complete (30,000/30,000) and Update-3G complete; only Update-3E is still open.** This is the single source of truth for "how
+**Last updated: 2026-11-22 (session 157) — Update-3E complete; all of Update-3 (game v2.4) is 100% translated.** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
@@ -16,11 +16,11 @@ fails a PR whose block is stale (`tools/progress.py --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **703,662** | **733,662** | **95.91%** |
+| **Unique strings translated (all)** | **733,662** | **733,662** | **100.00%** |
 | ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
-| ↳ game-update strings (Update-N) | 273,775 | 303,775 | 90.12% |
-| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,086,561** | **1,116,561** | **97.31%** |
-| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **333,109** | **333,110** | **100.00%** |
+| ↳ game-update strings (Update-N) | 303,775 | 303,775 | 100.00% |
+| **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,116,561** | **1,116,561** | **100.00%** |
+| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **333,110** | **333,110** | **100.00%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -31,14 +31,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | **Qinghe, Kaifeng, Hexi** (Phase 0–17) | 0–429,886 | done | — | 429,887 / 429,887 | 100.00% |
 | **Hidden Mountain** (Update-1) | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
 | **Qingzhou** (Update-2) | 461,704–535,918 | done | — | 74,215 / 74,215 | 100.00% |
-| **Hutuo** (Update-3) | 535,919–733,661 | **active** | 655,919 | 167,743 / 197,743 | 84.83% |
-| ↳ Hutuo Phase 1 (`Update-3A`) | 535,919–565,918 | done | — | 30,000 / 30,000 | 100.00% |
-| ↳ Hutuo Phase 2 (`Update-3B`) | 565,919–595,918 | done | — | 30,000 / 30,000 | 100.00% |
-| ↳ Hutuo Phase 3 (`Update-3C`) | 595,919–625,918 | done | — | 30,000 / 30,000 | 100.00% |
-| ↳ Hutuo Phase 4 (`Update-3D`) | 625,919–655,918 | done | — | 30,000 / 30,000 | 100.00% |
-| ↳ Hutuo Phase 5 (`Update-3E`) | 655,919–685,918 | not started | 655,919 | 0 / 30,000 | 0.00% |
-| ↳ Hutuo Phase 6 (`Update-3F`) | 685,919–715,918 | done | — | 30,000 / 30,000 | 100.00% |
-| ↳ Hutuo Phase 7 (`Update-3G`) | 715,919–733,661 | done | — | 17,743 / 17,743 | 100.00% |
+| **Hutuo** (Update-3) | 535,919–733,661 | done | — | 197,743 / 197,743 | 100.00% |
 
 <!-- progress:end -->
 
