@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python \"$CLAUDE_PROJECT_DIR/tools/hooks/claude_stop_check.py\"",
+            "command": "WWM_NO_BUILD=1 sh \"$CLAUDE_PROJECT_DIR/tools/wwm.sh\" hook stop",
             "timeout": 60,
             "statusMessage": "Checking translation progress block..."
           }
