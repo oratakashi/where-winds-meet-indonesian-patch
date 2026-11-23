@@ -5,3 +5,4 @@ pub mod locations;
 pub mod model;
 pub mod remote;
 pub mod store;
+pub mod update;

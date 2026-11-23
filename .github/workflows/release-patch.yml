@@ -9,9 +9,17 @@ name: release-patch
 # Attachment release `latest` (selain ini dihapus tiap rilis):
 #   - wwm-indonesian-patch.zip  -> semua file patched (flat)
 #   - manifest.json             -> hash original/patched per file + hash zip (dibaca Patch Guard)
+#   - manifest.json.sig         -> tanda tangan minisign manifest.json (Patch Guard >= 0.5 menolak
+#                                  manifest tanpa tanda tangan yang valid)
 #   - wwm-patch-guard-setup.exe -> installer Patch Guard (app/); hanya di-build ulang kalau
 #                                  app/ berubah (atau dispatch dengan build_app), kalau tidak
-#                                  installer yang sudah ada di release dibiarkan.
+#                                  installer yang sudah ada di release dibiarkan. Begitu juga:
+#   - wwm-patch-guard-setup.exe.sig, patch-guard-update.json(.sig)
+#                               -> auto-update Patch Guard (versi, sha256, ukuran, tanda tangan)
+#
+# Tanda tangan: secret PATCH_GUARD_SIGN_KEY (private key `cargo packager signer generate`,
+# isi file-nya) + PATCH_GUARD_SIGN_KEY_PASSWORD (boleh kosong). Public key-nya ada di
+# app/signing/patch-guard.pub. Lihat Obsidian-Vault/knowladge/Patch-Guard.md.
 #
 # Tooling: binary Rust `wwm` (default, di-cache per hash source rust/) dengan script Python
 # sebagai failsafe — lihat .github/actions/wwm-toolchain dan docs/Rust-Toolchain.md.
@@ -49,6 +57,7 @@ concurrency:
 env:
   ZIP: wwm-indonesian-patch.zip
   APP_EXE: wwm-patch-guard-setup.exe
+  APP_UPDATE: patch-guard-update.json
 
 jobs:
   changes:
@@ -101,10 +110,43 @@ jobs:
           [ "$#" -eq 1 ] || { echo "::error::expected one NSIS installer, got $#"; exit 1; }
           cp "$1" "$APP_EXE"
 
+      # Auto-update (app/src/core/update.rs): installer + patch-guard-update.json, keduanya
+      # ditandatangani. Password dikirim eksplisit (boleh kosong) supaya minisign tidak meminta
+      # password secara interaktif.
+      - name: Sign installer + write update info
+        shell: bash
+        env:
+          KEY: ${{ secrets.PATCH_GUARD_SIGN_KEY }}
+          PW: ${{ secrets.PATCH_GUARD_SIGN_KEY_PASSWORD }}
+        run: |
+          [ -n "$KEY" ] || { echo "::error::secret PATCH_GUARD_SIGN_KEY belum di-set"; exit 1; }
+          cargo packager signer sign -k "$KEY" --password "$PW" "$APP_EXE"
+          version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n1)
+          VERSION="$version" python - <<'PY'
+          import hashlib, json, os, datetime
+          exe = os.environ["APP_EXE"]
+          data = open(exe, "rb").read()
+          info = {
+              "version": os.environ["VERSION"],
+              "name": exe,
+              "sha256": hashlib.sha256(data).hexdigest(),
+              "size": len(data),
+              "signature": open(exe + ".sig").read().strip(),
+              "notes": "",
+              "pub_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+          }
+          open(os.environ["APP_UPDATE"], "w").write(json.dumps(info, indent=2) + "\n")
+          PY
+          cargo packager signer sign -k "$KEY" --password "$PW" "$APP_UPDATE"
+
       - uses: actions/upload-artifact@v4
         with:
           name: wwm-patch-guard-windows
-          path: app/${{ env.APP_EXE }}
+          path: |
+            app/${{ env.APP_EXE }}
+            app/${{ env.APP_EXE }}.sig
+            app/${{ env.APP_UPDATE }}
+            app/${{ env.APP_UPDATE }}.sig
           if-no-files-found: error
 
   build-and-release:
@@ -133,6 +175,20 @@ jobs:
       # hash zip; app memakai manifest untuk tahu apakah build cocok dengan file game.
       - name: Write zip + manifest.json
         run: sh tools/wwm.sh manifest --outdir patched --archive "$ZIP"
+
+      # Patch Guard >= 0.5 hanya membaca manifest.json yang ditandatangani (manifest.json.sig);
+      # zip-nya dipercaya lewat sha256 di manifest itu.
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-packager
+
+      - name: Sign manifest.json
+        env:
+          KEY: ${{ secrets.PATCH_GUARD_SIGN_KEY }}
+          PW: ${{ secrets.PATCH_GUARD_SIGN_KEY_PASSWORD }}
+        run: |
+          [ -n "$KEY" ] || { echo "::error::secret PATCH_GUARD_SIGN_KEY belum di-set"; exit 1; }
+          cargo packager signer sign -k "$KEY" --password "$PW" patched/manifest.json
 
       # strings.jsonl tidak ter-track (>100 MB sejak v2.3) — Python butuh dump dari binary
       # (blok progress juga memuat coverage _diff sejak hotfix v2.3); Rust men-decode
@@ -176,12 +232,11 @@ jobs:
             **Untuk Where Winds Meet versi 2.4 [Across Autumn Waters].** Download
             **`wwm-indonesian-patch.zip`** lalu ekstrak — isinya `translate_words_map_en` dan
             `translate_words_map_en_diff`. v2.4 memperbarui keduanya, jadi pastikan kedua file
-            disalin ulang. String baru v2.4 masih dalam proses diterjemahkan. File `__small` /
+            disalin ulang. Semua teks v2.4 sudah **100% diterjemahkan**. File `__small` /
             `__small_diff` sudah tidak ada sejak v2.3, jadi tidak perlu disalin lagi.
 
-            Ini adalah build **terbaru dari `main`**, bukan rilis stabil — progress terjemahan
-            masih berjalan. File di release ini selalu ter-overwrite tiap kali ada perubahan
-            terjemahan yang di-push ke `main`.
+            Ini adalah build **terbaru dari `main`** (rolling release). File di release ini selalu
+            ter-overwrite tiap kali ada perbaikan terjemahan yang di-push ke `main`.
 
             ${{ steps.progress.outputs.line }}
 
@@ -194,7 +249,10 @@ jobs:
             adalah app kecil (system tray) yang memasang ulang patch ini secara otomatis — tidak perlu
             download dan menyalin zip manual. Panduan:
             [README — Patch Guard](https://github.com/oratakashi/where-winds-meet-indonesian-patch#auto-reinstall--wwm-patch-guard-windows).
-            Patch Guard versi lama (sebelum 0.3.0) tidak bisa membaca rilis ini — install ulang dari sini.
+            Sejak **v0.5.0** Patch Guard memperbarui dirinya sendiri (unduh di latar belakang, lalu
+            "Restart sekarang") dan hanya membaca rilis yang ditandatangani. **Versi 0.4.x ke bawah
+            tidak bisa membaca rilis ini — install ulang sekali dari sini**; setelah itu update
+            berikutnya otomatis.
 
             ---
 
@@ -216,20 +274,27 @@ jobs:
           files: |
             ${{ env.ZIP }}
             patched/manifest.json
+            patched/manifest.json.sig
             app-dist/${{ env.APP_EXE }}
+            app-dist/${{ env.APP_EXE }}.sig
+            app-dist/${{ env.APP_UPDATE }}
+            app-dist/${{ env.APP_UPDATE }}.sig
 
-      # softprops tidak menghapus asset lama: buang semua yang bukan zip/manifest/installer
-      # (mis. file translate_words_map_* mentah dari rilis sebelumnya).
+      # softprops tidak menghapus asset lama: buang semua yang bukan zip/manifest/installer/
+      # file auto-update (mis. file translate_words_map_* mentah dari rilis sebelumnya).
       - name: Remove stale release assets
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release view latest --json assets --jq '.assets[].name' | while read -r name; do
             case "$name" in
-              "$ZIP"|manifest.json|"$APP_EXE") ;;
+              "$ZIP"|manifest.json|manifest.json.sig|"$APP_EXE"|"$APP_EXE.sig"|"$APP_UPDATE"|"$APP_UPDATE.sig") ;;
               *) echo "deleting $name"; gh release delete-asset latest "$name" --yes ;;
             esac
           done
           if ! gh release view latest --json assets --jq '.assets[].name' | grep -qx "$APP_EXE"; then
             echo "::warning::release latest has no $APP_EXE yet — run this workflow with build_app"
+          fi
+          if ! gh release view latest --json assets --jq '.assets[].name' | grep -qx "$APP_UPDATE"; then
+            echo "::warning::release latest has no $APP_UPDATE yet (Patch Guard auto-update) — run this workflow with build_app"
           fi

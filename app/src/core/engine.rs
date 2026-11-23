@@ -1,10 +1,12 @@
-//! The background thread: watches the guarded folders and runs the guard whenever a file
-//! changes, on a slow poll (in case a change notification is lost), and on request.
+//! The background threads: the guard thread watches the guarded folders and runs the guard
+//! whenever a file changes, on a slow poll (in case a change notification is lost), and on
+//! request; the update thread looks for a newer Patch Guard and downloads it (see `update.rs`).
 use crate::guard::{Guard, Opts};
 use crate::locations;
 use crate::model::{DirReport, Event, LogLine, Status};
 use crate::remote::HttpRemote;
 use crate::store::{Config, Store};
+use crate::update::{self, Pending, Updates};
 use notify::{RecommendedWatcher, RecursiveMode, Watcher};
 use serde::Serialize;
 use std::path::PathBuf;
@@ -23,6 +25,12 @@ const DEBOUNCE: Duration = Duration::from_secs(2);
 const DEBOUNCE_MAX: Duration = Duration::from_secs(30);
 /// History lines kept (and saved to `history.json`).
 const LOG_MAX: usize = 500;
+/// First app-update check after start (let the guard's first pass go first)…
+const UPDATE_FIRST: Duration = Duration::from_secs(20);
+/// …then this often.
+const UPDATE_EVERY: Duration = Duration::from_secs(6 * 60 * 60);
+
+type OnChange = Arc<dyn Fn(&[Event]) + Send + Sync>;
 
 pub enum Msg {
     /// Something changed in a watched folder.
@@ -44,10 +52,19 @@ pub struct Snapshot {
     pub checking: bool,
     pub last_check: Option<u64>,
     pub log: Vec<LogLine>,
+    /// Self-update switch (`Config::auto_update_app`).
+    pub auto_update_app: bool,
+    /// A newer Patch Guard is downloaded, verified and waiting: its version.
+    pub app_update: Option<String>,
+    pub app_update_checking: bool,
+    /// Outcome of the last app-update check, for the Settings page.
+    pub app_update_note: Option<String>,
 }
 
 pub struct Engine {
     tx: Sender<Msg>,
+    update_tx: Sender<()>,
+    updates: Arc<Updates>,
     store: Store,
     config: Arc<Mutex<Config>>,
     shared: Arc<Mutex<Snapshot>>,
@@ -55,7 +72,8 @@ pub struct Engine {
 
 impl Engine {
     /// `on_change` runs on the engine thread after every pass, with what the guard did.
-    pub fn start(store: Store, on_change: impl Fn(&[Event]) + Send + 'static) -> Engine {
+    pub fn start(store: Store, on_change: impl Fn(&[Event]) + Send + Sync + 'static) -> Engine {
+        let on_change: OnChange = Arc::new(on_change);
         let mut cfg = store.load_config();
         if locations::migrate(&mut cfg.dirs) {
             let _ = store.save_config(&cfg);
@@ -65,6 +83,7 @@ impl Engine {
             auto_update: cfg.auto_update,
             checking: !cfg.dirs.is_empty(),
             log: store.load_history(),
+            auto_update_app: cfg.auto_update_app,
             ..Snapshot::default()
         }));
         let config = Arc::new(Mutex::new(cfg));
@@ -76,11 +95,41 @@ impl Engine {
             config: config.clone(),
             shared: shared.clone(),
         };
+        let guard_change = on_change.clone();
         thread::Builder::new()
             .name("guard".into())
-            .spawn(move || worker.run(on_change))
+            .spawn(move || worker.run(&*guard_change))
             .expect("spawn guard thread");
-        Engine { tx, store, config, shared }
+
+        let updates = Arc::new(Updates::new(store.base()));
+        let (update_tx, update_rx) = mpsc::channel();
+        let updater = Updater {
+            rx: update_rx,
+            updates: updates.clone(),
+            store: store.clone(),
+            config: config.clone(),
+            shared: shared.clone(),
+        };
+        thread::Builder::new()
+            .name("app-update".into())
+            .spawn(move || updater.run(&*on_change))
+            .expect("spawn update thread");
+        Engine { tx, update_tx, updates, store, config, shared }
+    }
+
+    /// Look for a newer Patch Guard now (also when automatic updates are off).
+    pub fn check_app_update(&self) {
+        let _ = self.update_tx.send(());
+    }
+
+    /// The downloaded update waiting to be installed, if any.
+    pub fn pending_update(&self) -> Option<Pending> {
+        self.updates.pending()
+    }
+
+    /// The guard is in the middle of a pass (it may be writing game files).
+    pub fn busy(&self) -> bool {
+        self.shared.lock().unwrap().checking
     }
 
     pub fn snapshot(&self) -> Snapshot {
@@ -144,7 +193,7 @@ struct Worker {
 }
 
 impl Worker {
-    fn run(self, on_change: impl Fn(&[Event])) {
+    fn run(self, on_change: &dyn Fn(&[Event])) {
         let mut guard = Guard::new(self.store.clone(), HttpRemote::new());
         let tx = self.tx.clone();
         let mut watcher = notify::recommended_watcher(move |res: notify::Result<notify::Event>| {
@@ -212,10 +261,82 @@ impl Worker {
             s.dirs = dirs;
             s.paused = cfg.paused;
             s.auto_update = cfg.auto_update;
+            s.auto_update_app = cfg.auto_update_app;
             s.checking = false;
             s.last_check = Some(now);
             drop(s);
             on_change(&events);
+        }
+    }
+}
+
+struct Updater {
+    rx: Receiver<()>,
+    updates: Arc<Updates>,
+    store: Store,
+    config: Arc<Mutex<Config>>,
+    shared: Arc<Mutex<Snapshot>>,
+}
+
+impl Updater {
+    fn run(self, on_change: &dyn Fn(&[Event])) {
+        let remote = HttpRemote::new();
+        // A download from an earlier run may still be waiting.
+        self.shared.lock().unwrap().app_update = self.updates.pending().map(|p| p.info.version);
+        let mut wait = UPDATE_FIRST;
+        // The last automatic failure: logged once, not every six hours while offline.
+        let mut last_error: Option<String> = None;
+        loop {
+            let manual = match self.rx.recv_timeout(wait) {
+                Ok(()) => true,
+                Err(RecvTimeoutError::Timeout) => false,
+                Err(RecvTimeoutError::Disconnected) => return,
+            };
+            wait = UPDATE_EVERY;
+            if !manual && !self.config.lock().unwrap().auto_update_app {
+                continue;
+            }
+            self.shared.lock().unwrap().app_update_checking = true;
+            on_change(&[]);
+
+            let res = update::check(&remote).and_then(|found| match found {
+                Some(info) => self.updates.fetch(&remote, &info).map(Some),
+                None => Ok(None),
+            });
+            let mut line = None;
+            let (ready, note) = match res {
+                Ok(Some(p)) => {
+                    last_error = None;
+                    let v = p.info.version;
+                    (Some(v.clone()), format!("Versi {v} sudah diunduh dan siap dipasang."))
+                }
+                Ok(None) => {
+                    last_error = None;
+                    (None, format!("Sudah versi terbaru ({}).", update::CURRENT))
+                }
+                Err(e) => {
+                    if manual || last_error.as_deref() != Some(e.as_str()) {
+                        line = Some(format!("Gagal memeriksa update Patch Guard: {e}"));
+                    }
+                    last_error = Some(e.clone());
+                    (self.updates.pending().map(|p| p.info.version), format!("Gagal memeriksa: {e}"))
+                }
+            };
+            let mut s = self.shared.lock().unwrap();
+            if let Some(v) = ready.as_ref().filter(|v| s.app_update.as_ref() != Some(*v)) {
+                line = Some(format!("Patch Guard v{v} sudah diunduh — restart untuk memasang"));
+            }
+            s.app_update = ready;
+            s.app_update_checking = false;
+            s.app_update_note = Some(note);
+            if let Some(text) = line {
+                s.log.push(LogLine { at: unix_now(), text });
+                let extra = s.log.len().saturating_sub(LOG_MAX);
+                s.log.drain(..extra);
+                let _ = self.store.save_history(&s.log);
+            }
+            drop(s);
+            on_change(&[]);
         }
     }
 }

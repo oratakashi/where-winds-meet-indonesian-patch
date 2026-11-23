@@ -7,7 +7,8 @@ Fully verified via round-trip on 963,050 entries: parse → dump → repack → 
 produces `(keyHash, value)` pairs that are 100% identical to the source.
 
 Related: [[Glossary]] (translation conventions), [[Resume-Procedure]] (workflow that
-consumes this format).
+consumes this format), [[Patch-Guard]] (the tray app that installs the patched files and
+reads the signed release `manifest.json`).
 
 Reference implementations (kept equivalent, checked by `tools/parity_check.sh`): the Rust crate
 `rust/crates/wwm-locmap` (default toolchain; `wwm info/dump/patch`) and `wwm_locmap.py` (Python

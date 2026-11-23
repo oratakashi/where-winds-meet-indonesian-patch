@@ -7,6 +7,7 @@
 //! state.json       which build is cached per file, which original each path had
 //! patched/<sha>    cached patched builds, content-addressed
 //! originals/<sha>  files the guard replaced, content-addressed (for "restore original")
+//! updates/         a downloaded Patch Guard installer + pending.json (see `update.rs`)
 //! ```
 use crate::model::{FileEntry, LogLine, Profile};
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
@@ -35,11 +36,14 @@ pub struct Config {
     pub auto_update: bool,
     #[serde(default)]
     pub paused: bool,
+    /// Download new Patch Guard versions in the background and offer to restart.
+    #[serde(default = "yes")]
+    pub auto_update_app: bool,
 }
 
 impl Default for Config {
     fn default() -> Self {
-        Config { dirs: Vec::new(), auto_update: true, paused: false }
+        Config { dirs: Vec::new(), auto_update: true, paused: false, auto_update_app: true }
     }
 }
 
@@ -72,6 +76,11 @@ impl Store {
         fs::create_dir_all(base.join("patched"))?;
         fs::create_dir_all(base.join("originals"))?;
         Ok(Store { base })
+    }
+
+    /// The data folder itself.
+    pub fn base(&self) -> &Path {
+        &self.base
     }
 
     pub fn patched_path(&self, sha: &str) -> PathBuf {

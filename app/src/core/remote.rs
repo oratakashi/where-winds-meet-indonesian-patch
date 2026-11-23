@@ -1,9 +1,12 @@
 //! Where builds come from: the repo's rolling GitHub releases (`latest`, `cn-latest`).
 //! Plain asset URLs — no GitHub API, so no rate limit and no token.
 //!
-//! A release carries two assets the app reads: `manifest.json` and one zip
-//! (`Manifest::archive`) holding every patched file flat, by name.
+//! A release carries the assets the app reads: `manifest.json`, its minisign signature
+//! `manifest.json.sig` (checked before anything in the manifest is trusted) and one zip
+//! (`Manifest::archive`) holding every patched file flat, by name. The zip is trusted through
+//! its sha256 in the signed manifest.
 use crate::model::{Archive, MANIFEST_SCHEMA, Manifest, Profile};
+use crate::update;
 use std::fs;
 use std::io;
 use std::path::Path;
@@ -14,6 +17,11 @@ pub trait Remote {
     /// Download the release zip `archive` to `dest`. The caller verifies the hash.
     fn download(&self, profile: Profile, archive: &Archive, dest: &Path) -> Result<(), String>;
 }
+
+/// The release Patch Guard updates itself from.
+pub const LATEST_TAG: &str = "latest";
+const MANIFEST_MAX: u64 = 16 << 20;
+const SIG_MAX: u64 = 4096;
 
 const DEFAULT_BASE: &str =
     "https://github.com/oratakashi/where-winds-meet-indonesian-patch/releases/download";
@@ -39,35 +47,62 @@ impl HttpRemote {
         HttpRemote { base: base.trim_end_matches('/').to_string(), agent }
     }
 
-    fn url(&self, profile: Profile, name: &str) -> String {
-        format!("{}/{}/{}", self.base, profile.release_tag(), name)
+    fn url(&self, tag: &str, name: &str) -> String {
+        format!("{}/{}/{}", self.base, tag, name)
+    }
+
+    /// A small asset, at most `limit` bytes. `Err(None)` = the release has no such asset.
+    pub fn get_bytes(&self, tag: &str, name: &str, limit: u64) -> Result<Vec<u8>, Option<String>> {
+        let resp = self.agent.get(&self.url(tag, name)).call().map_err(|e| match e {
+            ureq::Error::Status(404, _) => None,
+            e => Some(e.to_string()),
+        })?;
+        let mut out = Vec::new();
+        io::Read::read_to_end(&mut io::Read::take(resp.into_reader(), limit + 1), &mut out)
+            .map_err(|e| Some(e.to_string()))?;
+        if out.len() as u64 > limit {
+            return Err(Some(format!("{name} terlalu besar")));
+        }
+        Ok(out)
+    }
+
+    /// Download asset `name` to `dest`, reading at most `size + 1` bytes (the caller verifies).
+    pub fn download_to(&self, tag: &str, name: &str, size: u64, dest: &Path) -> Result<(), String> {
+        let resp = self.agent.get(&self.url(tag, name)).call().map_err(|e| e.to_string())?;
+        let mut out = fs::File::create(dest).map_err(|e| e.to_string())?;
+        // Never trust the server for the length: stop a little past what we expect.
+        let mut body = io::Read::take(resp.into_reader(), size + 1);
+        io::copy(&mut body, &mut out).map_err(|e| e.to_string())?;
+        Ok(())
     }
 }
 
 impl Remote for HttpRemote {
     fn manifest(&self, profile: Profile) -> Result<Manifest, String> {
-        let resp = self
-            .agent
-            .get(&self.url(profile, "manifest.json"))
-            .call()
-            .map_err(|e| match e {
-                ureq::Error::Status(404, _) => "rilis belum punya manifest.json".to_string(),
-                e => e.to_string(),
-            })?;
-        let v: serde_json::Value = serde_json::from_reader(resp.into_reader())
-            .map_err(|e| format!("manifest.json tidak terbaca: {e}"))?;
-        parse_manifest(v, profile)
+        let tag = profile.release_tag();
+        let json = self.get_bytes(tag, "manifest.json", MANIFEST_MAX).map_err(|e| {
+            e.unwrap_or_else(|| "rilis belum punya manifest.json".to_string())
+        })?;
+        let sig = self.get_bytes(tag, "manifest.json.sig", SIG_MAX).map_err(|e| {
+            e.unwrap_or_else(|| {
+                "rilis belum bertanda tangan (manifest.json.sig tidak ada) — tunggu build berikutnya"
+                    .to_string()
+            })
+        })?;
+        verified_manifest(&json, &String::from_utf8_lossy(&sig), profile)
     }
 
     fn download(&self, profile: Profile, archive: &Archive, dest: &Path) -> Result<(), String> {
-        let resp =
-            self.agent.get(&self.url(profile, &archive.name)).call().map_err(|e| e.to_string())?;
-        let mut out = fs::File::create(dest).map_err(|e| e.to_string())?;
-        // Never trust the server for the length: stop a little past what the manifest says.
-        let mut body = io::Read::take(resp.into_reader(), archive.size + 1);
-        io::copy(&mut body, &mut out).map_err(|e| e.to_string())?;
-        Ok(())
+        self.download_to(profile.release_tag(), &archive.name, archive.size, dest)
     }
+}
+
+/// Only a manifest signed with the release key is read at all.
+fn verified_manifest(json: &[u8], sig: &str, profile: Profile) -> Result<Manifest, String> {
+    update::verify(json, sig).map_err(|e| format!("manifest.json tidak bisa dipercaya: {e}"))?;
+    let v: serde_json::Value =
+        serde_json::from_slice(json).map_err(|e| format!("manifest.json tidak terbaca: {e}"))?;
+    parse_manifest(v, profile)
 }
 
 /// Check the schema before the shape, so an older/newer release gets a clear message
@@ -140,6 +175,16 @@ mod tests {
         let z = tmp.path().join("p.zip");
         fs::write(&z, b"<html>not found</html>").unwrap();
         assert!(extract(&z, "a", 5, &tmp.path().join("out")).is_err());
+    }
+
+    #[test]
+    fn unsigned_or_tampered_manifest_is_rejected() {
+        let json = br#"{"schema": 2, "profile": "global", "files": []}"#;
+        let e = verified_manifest(json, "", Profile::Global).unwrap_err();
+        assert!(e.contains("tidak bisa dipercaya"), "{e}");
+        // Signed by some other key: rejected too.
+        let (_, sign) = crate::update::tests::test_key();
+        assert!(verified_manifest(json, &sign(json), Profile::Global).is_err());
     }
 
     #[test]

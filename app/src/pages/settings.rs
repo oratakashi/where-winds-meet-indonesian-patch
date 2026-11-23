@@ -1,4 +1,4 @@
-//! Settings: autostart, auto-update, pause, and putting the original files back.
+//! Settings: autostart, translation and app updates, pause, and putting the original files back.
 use crate::fluent::{Button, Toggle, caption, card, divider, page_title};
 use crate::state::{AppState, Confirm};
 use gpui::prelude::*;
@@ -9,8 +9,13 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
     let s = state.read(cx);
     let (autostart, auto_update, paused) = (s.autostart, s.snap.auto_update, s.snap.paused);
     let no_dirs = s.snap.dirs.is_empty();
+    let auto_update_app = s.snap.auto_update_app;
+    let app_checking = s.snap.app_update_checking;
+    let ready = s.snap.app_update.clone();
+    let note = s.snap.app_update_note.clone();
 
     let (a, b, c, r) = (state.clone(), state.clone(), state.clone(), state.clone());
+    let (u, chk) = (state.clone(), state.clone());
     vec![
         page_title("Settings", cx).into_any_element(),
         card(cx)
@@ -64,6 +69,50 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
         div()
             .pt(px(8.))
             .child(caption("Menutup jendela ini menyembunyikannya ke tray; penjaga tetap berjalan.", cx))
+            .into_any_element(),
+        card(cx)
+            .child(setting(
+                "auto-update-app",
+                "Perbarui Patch Guard otomatis",
+                "Unduh versi baru di latar belakang, lalu tawarkan restart untuk memasangnya.",
+                auto_update_app,
+                move |v, _, cx| u.update(cx, |s, cx| s.set_auto_update_app(v, cx)),
+                cx,
+            ))
+            .child(divider(cx))
+            .child(
+                div()
+                    .flex()
+                    .items_center()
+                    .justify_between()
+                    .gap(px(16.))
+                    .px(px(16.))
+                    .py(px(12.))
+                    .child(
+                        div()
+                            .flex()
+                            .flex_col()
+                            .min_w_0()
+                            .child(
+                                div()
+                                    .font_weight(FontWeight::MEDIUM)
+                                    .child(format!("Versi {}", env!("CARGO_PKG_VERSION"))),
+                            )
+                            .child(caption(
+                                match (&ready, &note) {
+                                    (Some(v), _) => format!("Versi {v} siap dipasang — buka Home untuk restart."),
+                                    (None, Some(n)) => n.clone(),
+                                    (None, None) => "Update diperiksa otomatis setiap 6 jam.".to_string(),
+                                },
+                                cx,
+                            )),
+                    )
+                    .child(
+                        Button::new("check-app-update", if app_checking { "Memeriksa…" } else { "Periksa update" })
+                            .disabled(app_checking)
+                            .on_click(move |_, _, cx| chk.update(cx, |s, cx| s.check_app_update(cx))),
+                    ),
+            )
             .into_any_element(),
     ]
 }

@@ -1,6 +1,6 @@
 [package]
 name = "wwm-patch-guard"
-version = "0.4.0"
+version = "0.5.0"
 description = "Keeps the Where Winds Meet Indonesian patch installed after NetEase's patcher restores the original locale files"
 authors = ["oratakashi"]
 license = "GPL-3.0-or-later"
@@ -21,6 +21,8 @@ gpui = { package = "gpui-pre", version = "=0.3.13" }
 gpui_platform = { package = "gpui-pre-platform", version = "=0.3.13" }
 tray-icon = "0.26"
 auto-launch = "0.6"
+base64 = "0.22"
+minisign-verify = "0.2"
 async-channel = "2"
 chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
 dirs = "6"
@@ -46,6 +48,7 @@ windows = { version = "0.62", features = [
 winresource = "0.1"
 
 [dev-dependencies]
+minisign = "0.9"
 tempfile = "3"
 
 [package.metadata.packager]

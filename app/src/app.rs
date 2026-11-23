@@ -8,6 +8,7 @@ use crate::shell::system::{self, IDENTIFIER, PRODUCT_NAME};
 use crate::shell::{autostart, instance, tray};
 use crate::state::{AppState, Page};
 use crate::store::Store;
+use crate::update::{self, Updates};
 use gpui::prelude::*;
 use gpui::{
     App, Bounds, Context, Entity, FocusHandle, FontWeight, KeyBinding, QuitMode, Role, SharedString,
@@ -16,6 +17,7 @@ use gpui::{
 };
 use std::rc::Rc;
 use std::sync::Arc;
+use std::time::Duration;
 
 actions!(patch_guard, [FocusNext, FocusPrev, Dismiss]);
 
@@ -23,6 +25,9 @@ actions!(patch_guard, [FocusNext, FocusPrev, Dismiss]);
 pub enum Cmd {
     Show,
     CheckNow,
+    /// Install the downloaded Patch Guard update and start again.
+    RestartForUpdate,
+    /// Exit; a downloaded update is installed on the way out (no restart).
     Quit,
     /// The engine finished (or started) a pass; non-empty when it changed files.
     Engine(Vec<Event>),
@@ -41,6 +46,15 @@ pub fn run() {
     let Some(store) = system::data_dir().and_then(|d| Store::new(d).ok()) else {
         return;
     };
+    update::clean_helpers();
+    // An update downloaded earlier and never installed (the PC was shut down while the app
+    // ran): install it now and come back with the same arguments.
+    if let Some(p) = Updates::new(store.base()).pending() {
+        let args: Vec<String> = std::env::args().skip(1).collect();
+        if update::apply(&p, Some(&args)).is_ok() {
+            return;
+        }
+    }
     let engine_tx = tx.clone();
     let engine = Arc::new(Engine::start(store, move |events| {
         let _ = engine_tx.try_send(Cmd::Engine(events.to_vec()));
@@ -59,20 +73,46 @@ pub fn run() {
             KeyBinding::new("escape", Dismiss, None),
         ]);
 
-        let state = cx.new(|cx| AppState::new(engine, cx));
+        let state = cx.new(|cx| AppState::new(engine.clone(), tx.clone(), cx));
         // Lives on the main thread for as long as the app runs (dropped on "Keluar").
         let tray = tray::build(tx.clone()).ok();
         let loop_state = state.clone();
         cx.spawn(async move |cx| {
             let mut tray = tray;
             while let Ok(cmd) = rx.recv().await {
-                if let Cmd::Quit = cmd {
-                    // Remove the icon first, or it lingers in the tray until hovered.
-                    drop(tray.take());
-                    cx.update(|cx| cx.quit());
-                    break;
+                let relaunch = match cmd {
+                    Cmd::Quit => false,
+                    Cmd::RestartForUpdate => true,
+                    cmd => {
+                        if let (Cmd::Engine(_), Some(t)) = (&cmd, tray.as_ref()) {
+                            t.set_update(engine.snapshot().app_update.as_deref());
+                        }
+                        cx.update(|cx| handle(cmd, &loop_state, cx));
+                        continue;
+                    }
+                };
+                // Let a guard pass that is writing game files finish first (at most a minute).
+                for _ in 0..120 {
+                    if !engine.busy() {
+                        break;
+                    }
+                    cx.background_executor().timer(Duration::from_millis(500)).await;
                 }
-                cx.update(|cx| handle(cmd, &loop_state, cx));
+                if let Some(p) = engine.pending_update() {
+                    let args: &[String] = &[];
+                    if let Err(e) = update::apply(&p, relaunch.then_some(args)) {
+                        if relaunch {
+                            cx.update(|cx| loop_state.update(cx, |s, cx| s.show_error(e, cx)));
+                            continue;
+                        }
+                    }
+                } else if relaunch {
+                    continue;
+                }
+                // Remove the icon first, or it lingers in the tray until hovered.
+                drop(tray.take());
+                cx.update(|cx| cx.quit());
+                break;
             }
         })
         .detach();
@@ -91,7 +131,8 @@ fn handle(cmd: Cmd, state: &Entity<AppState>, cx: &mut App) {
             notify(&events, cx);
             state.update(cx, |s, cx| s.refresh(cx));
         }
-        Cmd::Quit => cx.quit(),
+        // Handled by the command loop in `run`.
+        Cmd::Quit | Cmd::RestartForUpdate => {}
     }
 }
 

@@ -5,18 +5,42 @@ use crate::app::Cmd;
 use tray_icon::menu::{Menu, MenuEvent, MenuItem};
 use tray_icon::{Icon, MouseButton, MouseButtonState, TrayIcon, TrayIconBuilder, TrayIconEvent};
 
+/// The tray icon plus the menu item that changes when an app update is waiting.
+pub struct Tray {
+    _icon: TrayIcon,
+    update: MenuItem,
+}
+
+impl Tray {
+    /// `Some(version)`: a downloaded update is waiting; offer the restart.
+    pub fn set_update(&self, version: Option<&str>) {
+        match version {
+            Some(v) => {
+                self.update.set_text(format!("Restart untuk update ke v{v}"));
+                self.update.set_enabled(true);
+            }
+            None => {
+                self.update.set_text("Tidak ada update Patch Guard");
+                self.update.set_enabled(false);
+            }
+        }
+    }
+}
+
 /// Must be called on the main thread; keep the returned icon alive for as long as it should show.
-pub fn build(tx: async_channel::Sender<Cmd>) -> Result<TrayIcon, String> {
+pub fn build(tx: async_channel::Sender<Cmd>) -> Result<Tray, String> {
     let open = MenuItem::with_id("open", "Buka Patch Guard", true, None);
     let check = MenuItem::with_id("check", "Periksa sekarang", true, None);
+    let update = MenuItem::with_id("update", "Tidak ada update Patch Guard", false, None);
     let quit = MenuItem::with_id("quit", "Keluar", true, None);
-    let menu = Menu::with_items(&[&open, &check, &quit]).map_err(|e| e.to_string())?;
+    let menu = Menu::with_items(&[&open, &check, &update, &quit]).map_err(|e| e.to_string())?;
 
     let menu_tx = tx.clone();
     MenuEvent::set_event_handler(Some(move |e: MenuEvent| {
         let cmd = match e.id.as_ref() {
             "open" => Cmd::Show,
             "check" => Cmd::CheckNow,
+            "update" => Cmd::RestartForUpdate,
             "quit" => Cmd::Quit,
             _ => return,
         };
@@ -44,5 +68,6 @@ pub fn build(tx: async_channel::Sender<Cmd>) -> Result<TrayIcon, String> {
     }
     #[cfg(not(windows))]
     let _ = Icon::from_rgba;
-    builder.build().map_err(|e| e.to_string())
+    let icon = builder.build().map_err(|e| e.to_string())?;
+    Ok(Tray { _icon: icon, update })
 }

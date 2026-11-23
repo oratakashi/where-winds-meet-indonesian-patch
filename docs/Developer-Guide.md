@@ -268,12 +268,24 @@ code); `shell/` is the tray, single instance and autostart; `fluent/` the WinUI-
 the window is a navigation pane plus one file per page in `pages/` (Home, Settings, History). The
 history is kept in `history.json`.
 
+Since v0.5 it updates itself (`core/update.rs`): it downloads a newer installer from the `latest`
+release in the background, verifies it, and installs it when the user clicks **Restart sekarang**,
+quits from the tray, or starts again. Every release file it trusts is signed with minisign:
+`manifest.json.sig` (unsigned manifests are rejected), `wwm-patch-guard-setup.exe.sig` and
+`patch-guard-update.json(.sig)`. The public key is `app/signing/patch-guard.pub`. CI signs with the
+secrets `PATCH_GUARD_SIGN_KEY` / `PATCH_GUARD_SIGN_KEY_PASSWORD`.
+
 To try it without touching a real install, set `WWM_PATCH_GUARD_BASE_URL` to a local server that
-serves `<url>/latest/manifest.json` plus the release zip it names (`archive.name`), and
-`WWM_PATCH_GUARD_DATA_DIR` to a scratch folder. Releasing: bump the version in
-`app/Cargo.toml` and push to main — `release-patch.yml` rebuilds the
-installer when `app/` changed and attaches it to the `latest` release as `wwm-patch-guard-setup.exe`
-(`app-ci.yml` only tests PRs).
+serves `<url>/latest/manifest.json` + `manifest.json.sig` plus the release zip it names
+(`archive.name`), `WWM_PATCH_GUARD_DATA_DIR` to a scratch folder, and (debug builds only)
+`WWM_PATCH_GUARD_PUBKEY` to a test key's public key. Releasing: bump the version in
+`app/Cargo.toml` and push to main. When `app/` changed, `release-patch.yml` rebuilds the
+installer, signs it, writes `patch-guard-update.json` and attaches them to the `latest` release;
+installed copies pick it up within 6 hours (`app-ci.yml` only tests PRs).
+
+The full write-up (folders guarded, release assets, signing and key rotation, the self-update
+flow, the end-to-end test recipe) is in
+[`Obsidian-Vault/knowladge/Patch-Guard.md`](../Obsidian-Vault/knowladge/Patch-Guard.md).
 
 ## Repository Structure
 

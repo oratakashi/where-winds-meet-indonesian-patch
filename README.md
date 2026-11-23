@@ -46,7 +46,8 @@
 
 ## Translation Progress
 
-Translation is ongoing, so some text may still appear in English (or Chinese on the China client, which is no longer maintained).
+The global client is **100% translated for game v2.4 [Across Autumn Waters]**. Each new game update adds new text,
+which shows in English until it is translated (the China client is no longer maintained, so it keeps some Chinese).
 New releases are built automatically whenever translations are added.
 
 - **Global client:** [`Current-Status.md`](Obsidian-Vault/progress/Current-Status.md)
@@ -92,7 +93,8 @@ also guard a China client folder, as long as its original files still match the 
 
 1. Download **[`wwm-patch-guard-setup.exe`](../../releases/download/latest/wwm-patch-guard-setup.exe)**
    (it sits next to the patch zip in the [`latest` release](../../releases/tag/latest)) and run it.
-   Versions before 0.3.0 can no longer read the releases — install the new one over it.
+   Versions before 0.5.0 can no longer read the releases (they are signed now) — install the new
+   one over it once. From 0.5.0 on, Patch Guard updates itself (see below).
 2. Installed copies of the game (Steam and the official launcher) are found automatically and
    listed under **Game terdeteksi** on the Home page: click **Jaga** (or **Jaga semua**) and the
    patch is downloaded and installed. Only if nothing is found, click **Pilih folder manual** and
@@ -108,6 +110,12 @@ How it decides what to do:
   for that exact file, then installs it. It never installs an outdated patch over a newer game.
 - **Kembalikan file asli** in the app uninstalls the patch (backups are kept outside the game
   folder, in `%LOCALAPPDATA%\com.oratakashi.wwm\`).
+- Patch releases and app updates are **signed**; anything without a valid signature is ignored.
+
+**App updates:** a new Patch Guard version is downloaded in the background and verified. The Home
+page then shows **Restart sekarang** (also in the tray menu); if you don't click it, the update is
+installed when you quit Patch Guard or the next time it starts. You can turn this off under
+Settings → **Perbarui Patch Guard otomatis**, or check by hand with **Periksa update**.
 
 It only copies files — it does not touch the game process, memory or network traffic. It is not
 available for Steam (see the note there) or Android.
@@ -265,7 +273,7 @@ The China client is the exception: keep it on Chinese.
 <details>
 <summary><b>Some text is still in English (or Chinese). Is the patch broken?</b></summary>
 
-No. Translation is still in progress, new game updates add new text, and on Steam the `_diff`
+No. v2.4 is fully translated, but every new game update adds new text, and on Steam the `_diff`
 layer is restored on every launch. Check [Translation Progress](#translation-progress) and the
 platform table above.
 </details>

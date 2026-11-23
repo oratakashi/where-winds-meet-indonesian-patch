@@ -75,6 +75,20 @@ jobs:
       - name: Write zip + manifest.json
         run: sh tools/wwm.sh manifest --profile cn --outdir patched-cn --archive wwm-cn-indonesian-patch.zip
 
+      # Patch Guard >= 0.5 only reads a signed manifest.json (manifest.json.sig, same key as the
+      # global release: secrets PATCH_GUARD_SIGN_KEY + PATCH_GUARD_SIGN_KEY_PASSWORD).
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-packager
+
+      - name: Sign manifest.json
+        env:
+          KEY: ${{ secrets.PATCH_GUARD_SIGN_KEY }}
+          PW: ${{ secrets.PATCH_GUARD_SIGN_KEY_PASSWORD }}
+        run: |
+          [ -n "$KEY" ] || { echo "::error::secret PATCH_GUARD_SIGN_KEY is not set"; exit 1; }
+          cargo packager signer sign -k "$KEY" --password "$PW" patched-cn/manifest.json
+
       - name: Compute progress summary
         id: progress
         run: |
@@ -151,8 +165,9 @@ jobs:
           files: |
             wwm-cn-indonesian-patch.zip
             patched-cn/manifest.json
+            patched-cn/manifest.json.sig
 
-      # softprops does not delete old assets: drop everything but the zip and manifest
+      # softprops does not delete old assets: drop everything but the zip and manifest (+ .sig)
       # (e.g. the raw translate_words_map_* files earlier builds attached).
       - name: Remove stale release assets
         env:
@@ -160,7 +175,7 @@ jobs:
         run: |
           gh release view cn-latest --json assets --jq '.assets[].name' | while read -r name; do
             case "$name" in
-              wwm-cn-indonesian-patch.zip|manifest.json) ;;
+              wwm-cn-indonesian-patch.zip|manifest.json|manifest.json.sig) ;;
               *) echo "deleting $name"; gh release delete-asset cn-latest "$name" --yes ;;
             esac
           done

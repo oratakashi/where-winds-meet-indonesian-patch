@@ -2,8 +2,8 @@
 //! with the game folders found on this machine that are not guarded yet.
 use super::{client_title, clock, profile_title};
 use crate::fluent::{
-    BODY, Button, ButtonStyle, Tone, badge, caption, card, divider, glyph, icon, page_title,
-    subtitle, theme,
+    BODY, Button, ButtonStyle, Tone, badge, caption, card, divider, glyph, icon, info_bar,
+    page_title, subtitle, theme,
 };
 use crate::model::{DirReport, FileReport, Status};
 use crate::state::{AppState, Confirm, Found};
@@ -20,11 +20,27 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
     let nothing_found = s.found.is_empty();
     let no_dirs = dirs.is_empty();
 
-    let mut out = vec![
-        page_title("Home", cx).into_any_element(),
-        subtitle("Status saat ini").into_any_element(),
-        hero(state, cx).into_any_element(),
-    ];
+    let app_update = s.snap.app_update.clone();
+    let mut out = vec![page_title("Home", cx).into_any_element()];
+    if let Some(v) = app_update {
+        let restart = state.clone();
+        out.push(
+            info_bar(
+                "app-update",
+                format!("Patch Guard v{v} siap dipasang").into(),
+                "Sudah diunduh dan diverifikasi. Patch Guard akan ditutup sebentar lalu dibuka \
+                 lagi; kalau tidak sekarang, update dipasang saat keluar atau saat Windows \
+                 menyala berikutnya."
+                    .into(),
+                "Restart sekarang".into(),
+                Rc::new(move |_, _, cx| restart.update(cx, |s, cx| s.restart_for_update(cx))),
+                cx,
+            )
+            .into_any_element(),
+        );
+    }
+    out.push(subtitle("Status saat ini").into_any_element());
+    out.push(hero(state, cx).into_any_element());
 
     let rescan = state.clone();
     let pick = state.clone();

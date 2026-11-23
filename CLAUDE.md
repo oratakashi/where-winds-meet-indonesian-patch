@@ -2,6 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+`AGENTS.md` is the same document for other coding agents (plus two sections of its own).
+**Change both files together** so they never drift apart again.
+
 ## What this is
 
 A reverse-engineering toolkit for the `translate_words_map_*` localization file format used by
@@ -276,6 +279,13 @@ context — only use one if the user explicitly asks for it by name.
   `release-patch.yml` rebuilds the installer only when `app/` changed (or dispatch `build_app`) and
   attaches it to the `latest` release as `wwm-patch-guard-setup.exe` — no separate app release.
   The app downloads the release zip once per check pass and extracts files by name (`remote.rs`).
+  Since v0.5 every release file it trusts is **minisign-signed** (`manifest.json.sig` is required;
+  public key `app/signing/patch-guard.pub`, CI secrets `PATCH_GUARD_SIGN_KEY` /
+  `PATCH_GUARD_SIGN_KEY_PASSWORD`; `release-patch-cn.yml` signs `cn-latest` too) and it **updates
+  itself** (`core/update.rs`): `patch-guard-update.json(.sig)` + `wwm-patch-guard-setup.exe(.sig)`
+  on `latest` are downloaded and verified in the background, then installed by a `%TEMP%` copy of
+  the exe (`--apply-update`, silent NSIS `/S`) on "Restart sekarang", tray quit or next start.
+  Full write-up: `Obsidian-Vault/knowladge/Patch-Guard.md`.
   `WWM_PATCH_GUARD_BASE_URL` / `WWM_PATCH_GUARD_DATA_DIR` point it at a local release server /
   data folder for testing.
 - `tools/profiles.json` — per-profile paths/variants/dumps/phases (`global`, `cn`), loaded by

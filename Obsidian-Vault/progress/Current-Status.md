@@ -1,9 +1,10 @@
 # Current Status
 
-**Last updated: 2026-11-22 (session 157) — Update-3E complete; all of Update-3 (game v2.4) is 100% translated.** This is the single source of truth for "how
+**Last updated: 2026-11-23 — the whole dictionary is 100% translated (game v2.4, Update-3 finished in session 157).** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
-[[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]].
+[[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]]; for the
+Patch Guard app and its releases, see [[Patch-Guard]].
 
 The two sections below are **generated** — every session must run
 `sh tools/wwm.sh progress --write` (Rust `wwm`, or `python tools/progress.py --write`
@@ -54,9 +55,21 @@ is 100% as well.
 
 **Game v2.4 [Across Autumn Waters]** (2026-11-13, session 150) added
 **Update-3A–3G** (idx 535,919–733,661, 197,743 strings): NetEase rewrote the
-English of ~305k base entries and grew the `_diff` to ~335k entries. **Active
-block: Update-3A, next idx 535,919** (`locale/update3a.jsonl`, created by the
-first translation session). See [[Update-3]].
+English of ~305k base entries and grew the `_diff` to ~335k entries. **All of
+Update-3A–3G is complete (sessions 151–157)**, so every block of the dictionary —
+Phases 0–17, Update-1, Update-2 and Update-3 — is at 100%, and so is the in-game
+coverage of both `translate_words_map_en` and `_diff`. There is no active block:
+the next translation work starts with the next game update (new `Update-4` block via
+the `wwm-game-update` skill). See [[Update-3]].
+
+## 2026-11-14 – 2026-11-22 — Sessions 151–157: Update-3 (game v2.4) translated
+
+Update-3A–3G (idx 535,919–733,661, 197,743 strings) were translated block by block
+in sessions 151–157 and each passed `qa --locale` with 0 findings. The per-session
+entries live in [[Session-History]] and the per-block logs in [[Update-3A]] …
+[[Update-3G]].
+
+Overall: 733,662 / 733,662 unique strings (100.00%), in-game coverage 100.00% (base) / 100.00% (`_diff`).
 
 ## 2026-11-13 — Session 150: game v2.4 [Across Autumn Waters] → Update-3 setup
 

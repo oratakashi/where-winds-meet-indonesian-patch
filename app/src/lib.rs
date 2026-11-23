@@ -9,4 +9,4 @@ pub mod pages;
 pub mod shell;
 pub mod state;
 
-pub use core::{engine, guard, locations, model, remote, store};
+pub use core::{engine, guard, locations, model, remote, store, update};

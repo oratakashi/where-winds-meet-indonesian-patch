@@ -2,6 +2,10 @@
 
 This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
+`CLAUDE.md` is the same document for Claude Code; this file adds two sections of its own
+(scratch files, no system assessment).
+**Change both files together** so they never drift apart again.
+
 ## What this is
 
 A reverse-engineering toolkit for the `translate_words_map_*` localization file format used by
@@ -133,6 +137,10 @@ sh tools/wwm.sh progress --profile cn --write    # -> Obsidian-Vault/cn/progress
 sh tools/wwm.sh expand --profile cn              # -> cn/work/strings.translated.jsonl
 sh tools/wwm.sh patch-all --profile cn           # -> cn/work/patched/translate_words_map_zh_cn*
 sh tools/wwm.sh cn term-lookup 止戈定音技 …       # [cn/tools/term_lookup.py] how global translated a Mandarin term
+sh tools/wwm.sh cn name-check [--idx A-B] [--fix]
+                                                 # [cn/tools/name_check.py] CN rows missing a global name
+                                                 # (place/NPC/Inner Way); --fix rewrites Pinyin/known variants
+                                                 # (Rust uses the `pinyin` crate instead of pypinyin)
 ```
 
 - CN files are **container v2** (zstd dictionary encrypted with one keystream shared by every
@@ -259,26 +267,48 @@ context — only use one if the user explicitly asks for it by name.
   the workflows delete any other asset. The
   Patch Guard app (`app/`) uses `original_sha256` as the only proof that a build matches the files
   installed in a game folder, so it must always be computed from the binary `patch_all.py` read.
-- `app/` — **WWM Patch Guard**, a Windows tray app (Tauri 2 + Leptos CSR + Rust/UI components,
-  built with Trunk) that reinstalls the patch when NetEase's patcher restores the originals.
-  It needs no codec: it compares sha256 hashes against the release `manifest.json` and copies
-  files. Rules live in `app/src-tauri/src/guard.rs` (unit-tested: `cargo test -p wwm-patch-guard
-  --lib` in `app/`); `engine.rs` is the watcher/poll loop, `lib.rs` the Tauri shell, `app/src/`
-  the UI. It never installs over a file whose hash matches no known original (a force install is
-  user-confirmed). Build: `cargo tauri build` in `app/` (needs `trunk`, `tauri-cli`, the
-  `wasm32-unknown-unknown` target). CI: `app-ci.yml` tests/builds PRs; on main
+- `app/` — **WWM Patch Guard**, a Windows tray app that reinstalls the patch when NetEase's
+  patcher restores the originals. Since v0.4 it is a native Rust app on **GPUI** (`gpui-pre`,
+  pinned exactly — pre-1.0 API) with no WebView2; v0.3 and earlier were Tauri + Leptos
+  (`docs/Patch-Guard-GPUI-Plan.md` has the migration). It needs no codec: it compares sha256
+  hashes against the release `manifest.json` and copies files. Rules live in
+  `app/src/core/guard.rs` (unit-tested: `cargo test -p wwm-patch-guard --lib` in `app/`);
+  `core/engine.rs` is the watcher/poll loop; `core/` has no UI code. `shell/` is the OS side
+  (tray via `tray-icon`, single instance via a named mutex + event, autostart via `auto-launch`
+  under the v0.3 Run-key name, accent colour/Mica/data folder in `system.rs`), `fluent/` a small
+  WinUI 3 look-alike (theme tokens, Button, Toggle, badge, InfoBar; Segoe UI Variable + Segoe
+  Fluent Icons glyphs, Segoe UI / MDL2 Assets on Windows 10, Mica only from build 22621),
+  `state.rs` the window state + actions, `app.rs` the window/NavigationView/ContentDialog and the
+  main-thread command loop, `pages/` one file per page (Home, Settings, History). GPUI quits on
+  the last window by default on Windows — `app.rs` sets `QuitMode::Explicit` so the guard keeps
+  running in the tray. Data stays in `%LOCALAPPDATA%\com.oratakashi.wwm` (Tauri's folder) so
+  config/history carry over.
+  `locations.rs` finds installed games (Steam: registry → `libraryfolders.vdf` →
+  `appmanifest_3564740.acf`; NetEase launchers: their uninstall registry entries) and picks the
+  folders to guard — on Steam only `Package\HD\oversea\locale`, never the `LocalData\Patch`
+  overlay the patcher re-downloads every launch. It never installs over a file whose hash matches no known original (a force install is
+  user-confirmed). Build: `cargo build --release` in `app/`; installer: `cargo packager --release
+  --formats nsis` (`cargo install cargo-packager --locked`; config in `[package.metadata.packager]`
+  of `app/Cargo.toml`). CI: `app-ci.yml` tests/builds PRs; on main
   `release-patch.yml` rebuilds the installer only when `app/` changed (or dispatch `build_app`) and
   attaches it to the `latest` release as `wwm-patch-guard-setup.exe` — no separate app release.
   The app downloads the release zip once per check pass and extracts files by name (`remote.rs`).
+  Since v0.5 every release file it trusts is **minisign-signed** (`manifest.json.sig` is required;
+  public key `app/signing/patch-guard.pub`, CI secrets `PATCH_GUARD_SIGN_KEY` /
+  `PATCH_GUARD_SIGN_KEY_PASSWORD`; `release-patch-cn.yml` signs `cn-latest` too) and it **updates
+  itself** (`core/update.rs`): `patch-guard-update.json(.sig)` + `wwm-patch-guard-setup.exe(.sig)`
+  on `latest` are downloaded and verified in the background, then installed by a `%TEMP%` copy of
+  the exe (`--apply-update`, silent NSIS `/S`) on "Restart sekarang", tray quit or next start.
+  Full write-up: `Obsidian-Vault/knowladge/Patch-Guard.md`.
   `WWM_PATCH_GUARD_BASE_URL` / `WWM_PATCH_GUARD_DATA_DIR` point it at a local release server /
-  data folder for testing. The Rust/UI CLI on crates.io (`ui-cli` 0.3.16) still targets the old
-  registry host, so components in `app/src/components/ui/` were copied from
-  `https://leptos.rust-ui.com/registry/styles/default/<name>.md`.
+  data folder for testing.
 - `tools/profiles.json` — per-profile paths/variants/dumps/phases (`global`, `cn`), loaded by
   `tools/profiles.py` and by `wwm`; `--profile` on
   every tool. `tools/bridge.py` — the global→CN keyHash/text bridge.
 - `cn/tools/find_dict_in_dump.py` (recover the v2 dictionary keystream from the running CN client),
-  `cn/tools/term_lookup.py` (Mandarin term → global English/Indonesian via shared keys).
+  `cn/tools/term_lookup.py` (Mandarin term → global English/Indonesian via shared keys),
+  `cn/tools/name_check.py` (flags/fixes CN rows that don't use the global name of a place/NPC/
+  Inner Way found in their source).
 
 Pipeline: `translate_words_map_en` --dump--> `strings.jsonl` --(edit `v` field)--> validate with
 `qa_check.py` --patch--> new `translate_words_map_en`. For an update with several file variants

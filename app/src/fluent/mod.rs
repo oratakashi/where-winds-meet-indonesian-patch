@@ -28,6 +28,7 @@ pub mod glyph {
     pub const DELETE: &str = "\u{E74D}";
     pub const ERROR_BADGE: &str = "\u{EA39}";
     pub const CANCEL: &str = "\u{E711}";
+    pub const INFO: &str = "\u{E946}";
 }
 
 pub type Handler = Rc<dyn Fn(&ClickEvent, &mut Window, &mut App)>;
@@ -327,5 +328,45 @@ pub fn error_bar(title: &'static str, message: SharedString, on_close: Handler, 
                 .style(ButtonStyle::Subtle)
                 .small()
                 .on_click(move |e, w, cx| on_close(e, w, cx)),
+        )
+}
+
+/// WinUI `InfoBar`, informational severity, with one action button.
+pub fn info_bar(
+    id: &'static str,
+    title: SharedString,
+    message: SharedString,
+    action: SharedString,
+    on_action: Handler,
+    cx: &App,
+) -> Stateful<Div> {
+    let t = theme(cx).clone();
+    div()
+        .id(id)
+        .flex()
+        .items_center()
+        .gap(px(12.))
+        .px(px(16.))
+        .py(px(12.))
+        .rounded(px(4.))
+        .border_1()
+        .border_color(t.border)
+        .bg(t.info_bg)
+        .role(Role::Status)
+        .child(icon(glyph::INFO, 16., t.info, cx))
+        .child(
+            div()
+                .flex()
+                .flex_col()
+                .flex_1()
+                .min_w_0()
+                .gap(px(2.))
+                .child(subtitle(title))
+                .child(div().text_size(px(BODY)).line_height(px(20.)).child(message)),
+        )
+        .child(
+            Button::new((id, 1usize), action)
+                .style(ButtonStyle::Accent)
+                .on_click(move |e, w, cx| on_action(e, w, cx)),
         )
 }

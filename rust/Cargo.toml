@@ -5,7 +5,7 @@ members = ["crates/wwm-locmap", "crates/wwm-tools", "crates/wwm-cli"]
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
-license = "MIT"
+license = "GPL-3.0-or-later"
 publish = false
 
 [workspace.dependencies]

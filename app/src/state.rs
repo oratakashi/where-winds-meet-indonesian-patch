@@ -1,5 +1,6 @@
 //! What the window shows, and the actions behind its buttons — the Tauri commands of v0.3,
 //! now plain method calls on the engine.
+use crate::app::Cmd;
 use crate::engine::{Engine, Msg, Snapshot};
 use crate::locations;
 use crate::model::{Client, Profile};
@@ -36,6 +37,7 @@ pub struct Confirm {
 
 pub struct AppState {
     engine: Arc<Engine>,
+    cmd: async_channel::Sender<Cmd>,
     pub snap: Snapshot,
     pub autostart: bool,
     /// Game folders found on this machine (guarded or not).
@@ -46,10 +48,11 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub fn new(engine: Arc<Engine>, cx: &mut Context<Self>) -> Self {
+    pub fn new(engine: Arc<Engine>, cmd: async_channel::Sender<Cmd>, cx: &mut Context<Self>) -> Self {
         let mut s = AppState {
             snap: engine.snapshot(),
             engine,
+            cmd,
             autostart: autostart::is_enabled(),
             found: Vec::new(),
             error: None,
@@ -104,6 +107,11 @@ impl AppState {
         self.rescan(cx);
     }
 
+    pub fn show_error(&mut self, e: String, cx: &mut Context<Self>) {
+        self.error = Some(e.into());
+        cx.notify();
+    }
+
     pub fn dismiss_error(&mut self, cx: &mut Context<Self>) {
         self.error = None;
         cx.notify();
@@ -141,6 +149,22 @@ impl AppState {
     pub fn set_auto_update(&mut self, enabled: bool, cx: &mut Context<Self>) {
         let r = self.engine.update_config(|c| c.auto_update = enabled);
         self.done(r, cx);
+    }
+
+    pub fn set_auto_update_app(&mut self, enabled: bool, cx: &mut Context<Self>) {
+        let r = self.engine.update_config(|c| c.auto_update_app = enabled);
+        self.done(r, cx);
+    }
+
+    pub fn check_app_update(&mut self, cx: &mut Context<Self>) {
+        self.engine.check_app_update();
+        self.snap.app_update_checking = true;
+        cx.notify();
+    }
+
+    /// Install the downloaded Patch Guard update; the app closes and starts again.
+    pub fn restart_for_update(&mut self, _cx: &mut Context<Self>) {
+        let _ = self.cmd.try_send(Cmd::RestartForUpdate);
     }
 
     pub fn set_autostart(&mut self, enabled: bool, cx: &mut Context<Self>) {
