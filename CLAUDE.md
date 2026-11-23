@@ -281,7 +281,7 @@ context — only use one if the user explicitly asks for it by name.
   The app downloads the release zip once per check pass and extracts files by name (`remote.rs`).
   Since v0.5 every release file it trusts is **minisign-signed** (`manifest.json.sig` is required;
   public key `app/signing/patch-guard.pub`, CI secrets `PATCH_GUARD_SIGN_KEY` /
-  `PATCH_GUARD_SIGN_KEY_PASSWORD`; `release-patch-cn.yml` signs `cn-latest` too) and it **updates
+  `PATCH_GUARD_SIGN_KEY_PASSWORD` (optional, unset for a key without a password); `release-patch-cn.yml` signs `cn-latest` too) and it **updates
   itself** (`core/update.rs`): `patch-guard-update.json(.sig)` + `wwm-patch-guard-setup.exe(.sig)`
   on `latest` are downloaded and verified in the background, then installed by a `%TEMP%` copy of
   the exe (`--apply-update`, silent NSIS `/S`) on "Restart sekarang", tray quit or next start.

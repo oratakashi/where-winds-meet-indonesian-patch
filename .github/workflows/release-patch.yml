@@ -18,7 +18,7 @@ name: release-patch
 #                               -> auto-update Patch Guard (versi, sha256, ukuran, tanda tangan)
 #
 # Tanda tangan: secret PATCH_GUARD_SIGN_KEY (private key `cargo packager signer generate`,
-# isi file-nya) + PATCH_GUARD_SIGN_KEY_PASSWORD (boleh kosong). Public key-nya ada di
+# isi file-nya) + PATCH_GUARD_SIGN_KEY_PASSWORD (opsional: jangan dibuat kalau key tanpa password). Public key-nya ada di
 # app/signing/patch-guard.pub. Lihat Obsidian-Vault/knowladge/Patch-Guard.md.
 #
 # Tooling: binary Rust `wwm` (default, di-cache per hash source rust/) dengan script Python

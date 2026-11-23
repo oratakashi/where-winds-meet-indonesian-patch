@@ -75,7 +75,7 @@ the installer, its `.sig` and `patch-guard-update.json(.sig)` from the previous 
   cargo-packager/Tauri way). Public key: `app/signing/patch-guard.pub`, compiled into the app
   (`include_str!` in `core/update.rs`). The private key never enters the repo.
 - CI secrets: **`PATCH_GUARD_SIGN_KEY`** (the private key file's content) and
-  **`PATCH_GUARD_SIGN_KEY_PASSWORD`** (may be empty). Signing runs
+  **`PATCH_GUARD_SIGN_KEY_PASSWORD`** (optional: GitHub rejects empty secrets, so leave it unset for a key without a password — an unset secret reads as an empty string). Signing runs
   `cargo packager signer sign -k "$KEY" --password "$PW" <file>`; the password is always passed
   explicitly, because minisign prompts for one when it is missing. A missing secret fails the run.
 - Signed: `manifest.json` (global and CN), the installer, `patch-guard-update.json`.

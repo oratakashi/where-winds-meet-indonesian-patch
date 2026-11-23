@@ -273,7 +273,7 @@ release in the background, verifies it, and installs it when the user clicks **R
 quits from the tray, or starts again. Every release file it trusts is signed with minisign:
 `manifest.json.sig` (unsigned manifests are rejected), `wwm-patch-guard-setup.exe.sig` and
 `patch-guard-update.json(.sig)`. The public key is `app/signing/patch-guard.pub`. CI signs with the
-secrets `PATCH_GUARD_SIGN_KEY` / `PATCH_GUARD_SIGN_KEY_PASSWORD`.
+secrets `PATCH_GUARD_SIGN_KEY` / `PATCH_GUARD_SIGN_KEY_PASSWORD` (the latter optional, unset when the key has no password).
 
 To try it without touching a real install, set `WWM_PATCH_GUARD_BASE_URL` to a local server that
 serves `<url>/latest/manifest.json` + `manifest.json.sig` plus the release zip it names
