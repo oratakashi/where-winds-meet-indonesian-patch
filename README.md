@@ -4,7 +4,7 @@
 
 **A community Indonesian translation for *Where Winds Meet*, plus the open-source toolkit that builds it.**
 
-[![Latest patch](https://img.shields.io/github/release-date/oratakashi/where-winds-meet-indonesian-patch?label=latest%20patch)](../../releases/tag/latest)
+[![Latest patch](https://img.shields.io/github/last-commit/oratakashi/where-winds-meet-indonesian-patch?path=locale&label=latest%20patch)](../../releases/tag/latest)
 [![Downloads](https://img.shields.io/github/downloads/oratakashi/where-winds-meet-indonesian-patch/total?label=downloads)](../../releases)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/tooling-Rust-orange.svg)](docs/Rust-Toolchain.md)
