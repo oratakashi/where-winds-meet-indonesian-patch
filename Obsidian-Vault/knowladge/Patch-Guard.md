@@ -204,6 +204,23 @@ The guard runs from login until "Keluar", so it must stay out of the game's way:
 - A cached patched build (`patched/<sha>`) is re-hashed before it is installed (`Guard::cached`,
   hash cached per size + mtime). A damaged copy is deleted and downloaded again, so it never
   turns the game file into "unknown".
+- **Berhenti menjaga** (v0.6.3) asks first, then the guard thread restores that folder's
+  originals and only then drops it from the config and forgets its `backups` / `installed` /
+  hash entries (so `originals/<sha>` is pruned). If a file cannot be restored (the game holds
+  it) the folder stays guarded and the History says why (`Guard::remove_dir`,
+  `Msg::RemoveFolder`).
+- A `config.json` that exists but does not parse is copied to `config.json.bad` before the
+  defaults are used, and the window shows an error (v0.6.3). Every JSON file in the data
+  folder is written through a temp file that is `sync_all`ed before the rename, so a power
+  cut leaves the old or the new file, never an empty one.
+- A leftover `.<name>.wwmpg-tmp` (the app quit or crashed mid-copy) is deleted at the start
+  of each pass (v0.6.3).
+- When the update helper cannot be started at launch or quit (with **Pasang otomatis** on),
+  that version is marked failed in `update-failed.json`, so it is not retried at every start;
+  **Restart sekarang** or **Periksa update** still can (v0.6.3).
+- The single-instance mutex and show event carry the user's SID
+  (`Local\com.oratakashi.wwm.instance.<SID>`), so another account's process in the same
+  session cannot take the names first (v0.6.3). v0.6.2 and older use the names without SID.
 
 ## Language (v0.6)
 
@@ -273,4 +290,5 @@ cargo packager --release --formats nsis
 | 0.5.0 | Self-update (VS Code style) and minisign signatures; unsigned manifests are rejected |
 | 0.6.0 | Indonesian/English UI; short error TTL, signature retry, cache re-verification; failed self-updates are reported |
 | 0.6.1 | Update helper takes no paths and re-verifies the signed update before installing; signatures bound to their file name, manifest anti-rollback, active + backup key; installing on quit/start is opt-in (`auto_install_app`); CI signs in a separate `sign` job (environment `release`) |
+| 0.6.3 | Bugs: Berhenti menjaga restores the folder first and drops its backups, a broken `config.json` is kept as `.bad` and reported, durable JSON saves, leftover temp copies removed, a helper that cannot start is not retried every start, SID in the single-instance names |
 | 0.6.2 | Background cost: no copying over a locked game file (backoff instead), hashes kept across restarts, 30 s delay at autostart, background thread priority, quiet polls, offline backoff |

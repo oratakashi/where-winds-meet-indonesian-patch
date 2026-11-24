@@ -15,6 +15,7 @@ use crate::model::{Client, DirReport, Event, FileEntry, FileReport, Manifest, Pr
 use crate::remote::{Remote, extract};
 use crate::store::{
     Config, GuardDir, HashCache, HashEntry, State, Store, copy_atomic, entry_key, sha256_file,
+    temp_path,
 };
 use std::collections::HashMap;
 use std::fs;
@@ -112,6 +113,9 @@ impl<R: Remote> Guard<R> {
             let force = force_dir == Some(d.path.as_path());
             let mut files = Vec::new();
             for name in d.profile.files() {
+                // Left behind when the app quit or crashed mid-copy (no copy is running now:
+                // only this thread writes game files).
+                let _ = fs::remove_file(temp_path(&d.path.join(name)));
                 let (status, detail, ev) = self.check_file(d.profile, &d.path, name, opts, force);
                 events.extend(ev);
                 files.push(FileReport { name: name.to_string(), status, detail });
@@ -170,6 +174,25 @@ impl<R: Remote> Guard<R> {
             }
         }
         self.flush();
+        (events, errors)
+    }
+
+    /// Stop guarding `dir`: put its originals back, then forget everything kept for it
+    /// (backups, installed builds, hashes), so the cached originals are pruned. When a file
+    /// cannot be restored (the game holds it) nothing is forgotten and the errors are returned:
+    /// the folder must stay guarded until it can be.
+    pub fn remove_dir(&mut self, dir: &GuardDir) -> (Vec<Event>, Vec<String>) {
+        let (events, errors) = self.uninstall(std::slice::from_ref(dir));
+        if errors.is_empty() {
+            for name in dir.profile.files() {
+                let path = dir.path.join(name);
+                let pkey = path_key(&path);
+                self.dirty |= self.state.backups.remove(&pkey).is_some();
+                self.dirty |= self.state.installed.remove(&pkey).is_some();
+                self.forget_hash(&path);
+            }
+            self.flush();
+        }
         (events, errors)
     }
 
@@ -906,6 +929,33 @@ mod tests {
         assert_eq!(r.content(), b"orig-v1");
         // A second uninstall has nothing to do.
         assert_eq!(r.guard.uninstall(&r.cfg.dirs).0.len(), 0);
+    }
+
+    #[test]
+    fn removing_a_folder_restores_it_and_drops_its_backup() {
+        let mut r = Rig::new(b"orig-v1");
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        r.check();
+        let backup = r.guard.store.original_path(&sha(b"orig-v1"));
+        assert!(backup.is_file());
+        let dir = r.cfg.dirs[0].clone();
+        let (evs, errs) = r.guard.remove_dir(&dir);
+        assert_eq!((evs.len(), errs.len()), (1, 0));
+        assert_eq!(r.content(), b"orig-v1");
+        let key = path_key(&r.file);
+        let saved = r.guard.store.load_state();
+        assert!(!saved.backups.contains_key(&key) && !saved.installed.contains_key(&key));
+        assert!(!r.guard.store.load_hashes().contains_key(&key));
+        assert!(!backup.exists(), "the cached original is pruned");
+    }
+
+    #[test]
+    fn a_leftover_temp_copy_is_removed_on_the_next_pass() {
+        let mut r = Rig::new(b"orig-v1");
+        let tmp = temp_path(&r.file);
+        fs::write(&tmp, b"half a copy").unwrap();
+        r.check();
+        assert!(!tmp.exists());
     }
 
     #[test]

@@ -51,12 +51,12 @@ pub struct AppState {
 impl AppState {
     pub fn new(engine: Arc<Engine>, cmd: async_channel::Sender<Cmd>, cx: &mut Context<Self>) -> Self {
         let mut s = AppState {
+            error: engine.config_error().map(Into::into),
             snap: engine.snapshot(),
             engine,
             cmd,
             autostart: autostart::is_enabled(),
             found: Vec::new(),
-            error: None,
             page: Page::Home,
             confirm: None,
         };
@@ -231,9 +231,17 @@ impl AppState {
         self.done(r, cx);
     }
 
+    /// Stop guarding a folder. The guard thread restores its originals first and removes it
+    /// from the config only when that worked (`Msg::RemoveFolder`); the list follows after
+    /// that pass, through `refresh`.
     pub fn remove_folder(&mut self, path: PathBuf, cx: &mut Context<Self>) {
-        let r = self.engine.update_config(|c| c.dirs.retain(|d| d.path != path));
-        self.done_folders(r, cx);
+        let r = if self.engine.config().dirs.iter().any(|d| d.path == path) {
+            self.engine.send(Msg::RemoveFolder(path));
+            Ok(())
+        } else {
+            Err(t!("state.that_folder_is_not").to_string())
+        };
+        self.done(r, cx);
     }
 
     pub fn clear_history(&mut self, cx: &mut Context<Self>) {

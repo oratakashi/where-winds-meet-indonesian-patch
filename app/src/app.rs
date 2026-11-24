@@ -56,10 +56,19 @@ pub fn run() {
     // An update downloaded earlier and never installed (the PC was shut down while the app
     // ran): install it now and come back the way we were started — only when the user turned
     // on "install automatically"; otherwise it waits for "Restart sekarang".
-    if store.load_config().auto_install_app && Updates::new(&data_dir).pending().is_some() {
-        let again = if minimized { Relaunch::Minimized } else { Relaunch::Window };
-        if update::apply(&data_dir, again).is_ok() {
-            return;
+    // A version whose helper could not be started before is not tried again at every start:
+    // it waits for "Restart sekarang" (or "Periksa update", which forgets the failure).
+    if store.load_config().auto_install_app {
+        let updates = Updates::new(&data_dir);
+        if let Some(p) = updates.pending() {
+            let version = p.info.version;
+            if updates.failed_version().as_deref() != Some(version.as_str()) {
+                let again = if minimized { Relaunch::Minimized } else { Relaunch::Window };
+                if update::apply(&data_dir, again).is_ok() {
+                    return;
+                }
+                updates.set_failed_version(Some(&version));
+            }
         }
     }
     let engine_tx = tx.clone();
@@ -125,9 +134,13 @@ pub fn run() {
                 }
                 // Quitting installs a waiting update only with "install automatically" on.
                 let install = relaunch || engine.config().auto_install_app;
-                if install && engine.pending_update().is_some() {
+                if let Some(p) = engine.pending_update().filter(|_| install) {
                     let again = if relaunch { Relaunch::Window } else { Relaunch::No };
                     if let Err(e) = update::apply(&data_dir, again) {
+                        // Quitting goes on; the next start must not retry it by itself.
+                        if !relaunch {
+                            Updates::new(&data_dir).set_failed_version(Some(&p.info.version));
+                        }
                         if relaunch {
                             cx.update(|cx| loop_state.update(cx, |s, cx| s.show_error(e, cx)));
                             continue;

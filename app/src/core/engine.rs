@@ -41,6 +41,9 @@ pub enum Msg {
     ForceInstall(PathBuf),
     /// Put the original files back (the caller pauses the guard first).
     Uninstall,
+    /// Stop guarding this folder: restore its originals, forget its backups and drop it from
+    /// the config. A folder whose files cannot be restored yet stays guarded.
+    RemoveFolder(PathBuf),
     /// The config changed: re-watch folders and re-check.
     Reload,
 }
@@ -118,6 +121,8 @@ pub struct Engine {
     store: Store,
     config: Arc<Mutex<Config>>,
     shared: Arc<Mutex<Snapshot>>,
+    /// `config.json` could not be read at start (see [`Engine::config_error`]).
+    config_error: Option<String>,
 }
 
 impl Engine {
@@ -130,12 +135,13 @@ impl Engine {
         on_change: impl Fn(&[Event]) + Send + Sync + 'static,
     ) -> Engine {
         let on_change: OnChange = Arc::new(on_change);
-        let mut cfg = store.load_config();
+        let (mut cfg, bad) = store.load_config_checked();
         if locations::migrate(&mut cfg.dirs) {
             let _ = store.save_config(&cfg);
         }
         // Before any thread phrases a status detail or a history line.
         i18n::set(cfg.language);
+        let config_error = bad.map(|p| tf!("engine.config_was_unreadable", path = p.display()));
         let shared = Arc::new(Mutex::new(Snapshot {
             lang: cfg.language,
             paused: cfg.paused,
@@ -175,7 +181,17 @@ impl Engine {
             .name("app-update".into())
             .spawn(move || updater.run(&*on_change))
             .expect("spawn update thread");
-        Engine { tx, update_tx, updates, store, config, shared }
+        if let Some(e) = &config_error {
+            let mut s = shared.lock().unwrap();
+            push_log(&mut s, &store, e.clone(), None);
+        }
+        Engine { tx, update_tx, updates, store, config, shared, config_error }
+    }
+
+    /// Set when `config.json` existed but could not be read at start: the defaults are in
+    /// use and the old file was copied to `config.json.bad`. Shown once in the window.
+    pub fn config_error(&self) -> Option<String> {
+        self.config_error.clone()
     }
 
     /// Look for a newer Patch Guard now (also when automatic updates are off).
@@ -238,13 +254,19 @@ struct Batch {
     force_remote: bool,
     force_dir: Option<PathBuf>,
     uninstall: bool,
+    remove: Vec<PathBuf>,
     reload: bool,
 }
 
 impl Batch {
     /// Nothing asked for this pass: the poll timer ran out.
     fn is_routine(&self) -> bool {
-        !(self.fs || self.force_remote || self.force_dir.is_some() || self.uninstall || self.reload)
+        !(self.fs
+            || self.force_remote
+            || self.force_dir.is_some()
+            || self.uninstall
+            || !self.remove.is_empty()
+            || self.reload)
     }
 
     fn absorb(&mut self, m: Msg) {
@@ -256,6 +278,11 @@ impl Batch {
                 self.force_dir = Some(dir);
             }
             Msg::Uninstall => self.uninstall = true,
+            Msg::RemoveFolder(dir) => {
+                if !self.remove.contains(&dir) {
+                    self.remove.push(dir);
+                }
+            }
             Msg::Reload => self.reload = true,
         }
     }
@@ -308,7 +335,7 @@ impl Worker {
                 }
             }
 
-            let cfg = self.config.lock().unwrap().clone();
+            let mut cfg = self.config.lock().unwrap().clone();
             if batch.reload {
                 rewatch(watcher.as_mut(), &mut watched, &cfg);
             }
@@ -333,6 +360,34 @@ impl Worker {
                 lines.extend(
                     errs.into_iter().map(|e| (tf!("engine.could_not_restore", e = e), None)),
                 );
+            }
+            let mut removed = false;
+            for path in std::mem::take(&mut batch.remove) {
+                let Some(dir) = cfg.dirs.iter().find(|d| d.path == path).cloned() else { continue };
+                let (ev, errs) = guard.remove_dir(&dir);
+                events.extend(ev);
+                if !errs.is_empty() {
+                    lines.extend(
+                        errs.into_iter().map(|e| (tf!("engine.could_not_restore", e = e), None)),
+                    );
+                    lines.push((tf!("engine.folder_still_guarded", path = path.display()), None));
+                    continue;
+                }
+                // Saved before it is used, as in `Engine::update_config`.
+                let mut live = self.config.lock().unwrap();
+                let mut next = live.clone();
+                next.dirs.retain(|d| d.path != path);
+                match self.store.save_config(&next) {
+                    Ok(()) => {
+                        *live = next.clone();
+                        cfg = next;
+                        removed = true;
+                    }
+                    Err(e) => lines.push((tf!("engine.could_not_save_config", e = e), None)),
+                }
+            }
+            if removed {
+                rewatch(watcher.as_mut(), &mut watched, &cfg);
             }
             let opts = Opts { force_remote: batch.force_remote, ..Opts::default() };
             let (dirs, ev) = guard.check_all(&cfg, opts, batch.force_dir.as_deref());
