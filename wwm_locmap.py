@@ -96,6 +96,35 @@ def _zdict(raw):
     return zstd.ZstdCompressionDict(raw, dict_type=zstd.DICT_TYPE_FULLDICT)
 
 
+# Largest decompressed size one block / a whole container may declare (real shards are
+# < 64 KiB, real files < 200 MiB). Same limits as the Rust codec.
+MAX_BLOCK_RAW = 64 << 20
+MAX_TOTAL_RAW = 1 << 30
+
+
+def _check_blocks(d, base, offs):
+    """Validate the block table before anything is decompressed: offsets must not go
+    backwards, each block must hold its 9-byte header and its payload, and the declared
+    decompressed sizes (used as allocation sizes) must stay under the limits above."""
+    prev = total = 0
+    for i, o in enumerate(offs):
+        if o < prev:
+            raise ValueError("blok %d: offset tidak monoton" % i)
+        s, e = base + prev, base + o
+        if e - s < 9:
+            raise ValueError("blok %d: header blok terpotong" % i)
+        _, cs, us = struct.unpack_from('<BII', d, s)
+        if cs > e - s - 9:
+            raise ValueError("blok %d: payload terpotong" % i)
+        if us > MAX_BLOCK_RAW:
+            raise ValueError("blok %d: ukuran hasil dekompresi %d melebihi batas %d"
+                             % (i, us, MAX_BLOCK_RAW))
+        total += us
+        if total > MAX_TOTAL_RAW:
+            raise ValueError("total hasil dekompresi melebihi batas %d byte" % MAX_TOTAL_RAW)
+        prev = o
+
+
 def read_container_ex(path, keystream=None):
     """Read a v1 or v2 container. Returns (hdr, blocks); hdr is a dict with
     `version`, `mode` and, for mode 6, `enc_dict` (as stored) and `zdict`
@@ -130,10 +159,14 @@ def read_container_ex(path, keystream=None):
         raise ValueError("versi container tak dikenal: %d" % ver)
     if cnt == 0:
         raise ValueError("container tanpa blok (blockCount = 0)")
+    # Every size below comes from the file, so check it fits before allocating for it.
+    if p + cnt * 4 > len(d):
+        raise ValueError("tabel offset (%d blok) melebihi ukuran file" % cnt)
     offs = struct.unpack_from('<%dI' % cnt, d, p)
     base = p + cnt * 4
     if base + offs[-1] != len(d):
         raise ValueError("ukuran file tidak konsisten dengan tabel offset")
+    _check_blocks(d, base, offs)
     dctx = {CODEC_ZSTD: zstd.ZstdDecompressor()}
     if hdr["zdict"]:
         dctx[CODEC_ZSTD_DICT] = zstd.ZstdDecompressor(dict_data=_zdict(hdr["zdict"]))
@@ -144,7 +177,16 @@ def read_container_ex(path, keystream=None):
         codec, cs, us = struct.unpack_from('<BII', b, 0)
         if codec not in dctx:
             raise ValueError("codec tak dikenal: %d" % codec)
-        raw = dctx[codec].decompress(b[9:9 + cs], max_output_size=us)
+        payload = b[9:9 + cs]
+        # zstandard allocates a size declared in the frame header, ignoring
+        # max_output_size, so a known size must match `us` before decompressing.
+        try:
+            fcs = zstd.frame_content_size(payload)
+        except zstd.ZstdError:
+            fcs = -1  # corrupt header: let decompress() report it
+        if fcs >= 0 and fcs != us:
+            raise ValueError("blok %d: ukuran hasil dekompresi %d != %d" % (i, fcs, us))
+        raw = dctx[codec].decompress(payload, max_output_size=us)
         if len(raw) != us:
             raise ValueError("blok %d: ukuran hasil dekompresi %d != %d"
                              % (i, len(raw), us))
@@ -210,7 +252,11 @@ def parse_index(blk):
 def parse_shard(blk):
     cap, size, seed = struct.unpack_from('<QQQ', blk, 0)
     ctrl = blk[24:24 + cap]
-    if blk[24 + cap] != 0xFF:
+    if len(ctrl) != cap:
+        raise ValueError("shard terpotong (ctrl)")
+    if size > cap:
+        raise ValueError("jumlah slot terisi != size")
+    if blk[24 + cap:25 + cap] != b'\xff':
         raise ValueError("sentinel hilang — layout tidak cocok")
     S = _slots_off(cap)
     out = []

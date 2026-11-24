@@ -242,6 +242,104 @@ fn container_errors() {
     );
 }
 
+fn read_err(b: &[u8]) -> String {
+    read_container_bytes(b, &Keystream::Bytes(&[]))
+        .unwrap_err()
+        .0
+}
+
+/// Sizes read from the file must be checked before they are used to allocate (#34).
+#[test]
+fn container_bounds() {
+    // v2 PoC from the issue: blockCount = u64::MAX right after the header
+    let mut poc = Vec::new();
+    for v in [MAGIC, 2, MODE_ZSTD] {
+        poc.extend_from_slice(&v.to_le_bytes());
+    }
+    poc.extend_from_slice(&u64::MAX.to_le_bytes());
+    assert!(read_err(&poc).starts_with("tabel offset (18446744073709551615 blok) melebihi"));
+
+    // v1 with a huge u32 blockCount
+    let (_, bytes) = container(&Header::v1());
+    let mut b = bytes.clone();
+    b[8..12].copy_from_slice(&u32::MAX.to_le_bytes());
+    assert!(read_err(&b).starts_with("tabel offset (4294967295 blok) melebihi"));
+
+    // block 0 declares a decompressed size over the per-block limit
+    let blk0 = 16 + 12; // v1 header + 3 offsets
+    let mut b = bytes.clone();
+    b[blk0 + 5..blk0 + 9].copy_from_slice(&u32::MAX.to_le_bytes());
+    assert_eq!(
+        read_err(&b),
+        format!(
+            "blok 0: ukuran hasil dekompresi {} melebihi batas {MAX_BLOCK_RAW}",
+            u32::MAX
+        )
+    );
+
+    // compressed size larger than the block itself
+    let mut b = bytes.clone();
+    b[blk0 + 1..blk0 + 5].copy_from_slice(&u32::MAX.to_le_bytes());
+    assert_eq!(read_err(&b), "blok 0: payload terpotong");
+
+    // frame header declares a content size other than the block header's
+    let mut b = bytes.clone();
+    let us = u32::from_le_bytes(b[blk0 + 5..blk0 + 9].try_into().unwrap());
+    b[blk0 + 5..blk0 + 9].copy_from_slice(&(us - 1).to_le_bytes());
+    assert_eq!(
+        read_err(&b),
+        format!("blok 0: ukuran hasil dekompresi {us} != {}", us - 1)
+    );
+
+    // offsets going backwards
+    let mut b = bytes.clone();
+    b[20..24].copy_from_slice(&1u32.to_le_bytes()); // offset of block 1 < block 0 end
+    assert_eq!(read_err(&b), "blok 1: offset tidak monoton");
+
+    // block too short for its 9-byte header
+    let mut b = bytes;
+    b[16..20].copy_from_slice(&4u32.to_le_bytes());
+    assert_eq!(read_err(&b), "blok 0: header blok terpotong");
+
+    // total over the container limit: 17 blocks each declaring MAX_BLOCK_RAW
+    let n = (MAX_TOTAL_RAW / MAX_BLOCK_RAW) + 1;
+    let mut big = Vec::new();
+    for v in [MAGIC, 1, n as u32, 0] {
+        big.extend_from_slice(&v.to_le_bytes());
+    }
+    for i in 1..=n {
+        big.extend_from_slice(&((i * 9) as u32).to_le_bytes());
+    }
+    for _ in 0..n {
+        big.push(CODEC_ZSTD);
+        big.extend_from_slice(&0u32.to_le_bytes());
+        big.extend_from_slice(&(MAX_BLOCK_RAW as u32).to_le_bytes());
+    }
+    assert_eq!(
+        read_err(&big),
+        format!("total hasil dekompresi melebihi batas {MAX_TOTAL_RAW} byte")
+    );
+}
+
+#[test]
+fn shard_bounds() {
+    // size far beyond capacity must be an error, not a huge allocation
+    let mut blk = sample_shard();
+    blk[8..16].copy_from_slice(&u64::MAX.to_le_bytes());
+    assert_eq!(
+        parse_shard(&blk).unwrap_err().0,
+        "jumlah slot terisi != size"
+    );
+    // capacity far beyond the block
+    let mut blk = sample_shard();
+    blk[0..8].copy_from_slice(&u64::MAX.to_le_bytes());
+    assert_eq!(parse_shard(&blk).unwrap_err().0, "shard terpotong (ctrl)");
+    assert_eq!(
+        rebuild_shard(&blk, |_| None).unwrap_err().0,
+        "shard terpotong"
+    );
+}
+
 #[test]
 fn file_round_trip() {
     let dir = tempfile::tempdir().unwrap();

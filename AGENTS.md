@@ -441,6 +441,11 @@ survived; it is only replaced by a Steam depot update.
   `u32[blockCount]` table of block **end offsets**, relative to the end of that offset table.
 - Each block is independently zstd-compressed (`codec=4` is the only one handled; anything else
   raises rather than silently producing corrupt data).
+- Every size in the file is untrusted: both codecs check the offset table fits the file, offsets
+  never go backwards and each block's header/payload fit, and refuse a declared decompressed
+  size over `MAX_BLOCK_RAW` (64 MiB per block) or `MAX_TOTAL_RAW` (1 GiB per file) before
+  allocating (real files: < 64 KiB per block, < 200 MiB total). Keep the limits and error
+  texts identical in `wwm_locmap.py` and `wwm-locmap`.
 - Block 0 is an index (`totalEntries`, `dataBlockCount`, an `ids` array). Blocks 1..n are shards:
   a serialized `absl::flat_hash_map` (SwissTable) with `capacity/size/seed`, a control byte array
   (`ctrl[i] >= 0x80` means empty), a sentinel + 15-byte clone region for SIMD probing, then a
