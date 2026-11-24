@@ -118,6 +118,44 @@ pub enum Keystream<'a> {
 }
 
 /// Read a v1 or v2 container from bytes. Returns the header and the decompressed blocks.
+/// Largest decompressed size one block may declare. Real shards are < 64 KiB.
+pub const MAX_BLOCK_RAW: usize = 64 << 20;
+/// Largest decompressed size of a whole container. Real files are < 200 MiB.
+pub const MAX_TOTAL_RAW: usize = 1 << 30;
+
+/// Validate the block table before anything is decompressed: offsets must not go
+/// backwards, each block must hold its 9-byte header and its payload, and the declared
+/// decompressed sizes must stay under `MAX_BLOCK_RAW` / `MAX_TOTAL_RAW` (they are used
+/// as allocation sizes). Returns the (start, end) byte range of each block.
+fn block_ranges(d: &[u8], base: usize, offs: &[usize]) -> Result<Vec<(usize, usize)>> {
+    let mut ranges = Vec::with_capacity(offs.len());
+    let (mut prev, mut total) = (0usize, 0usize);
+    for (i, &o) in offs.iter().enumerate() {
+        if o < prev {
+            bail!("blok {i}: offset tidak monoton");
+        }
+        let (s, e) = (base + prev, base + o);
+        if e - s < 9 {
+            bail!("blok {i}: header blok terpotong");
+        }
+        let cs = rd_u32(d, s + 1)? as usize;
+        let us = rd_u32(d, s + 5)? as usize;
+        if cs > e - s - 9 {
+            bail!("blok {i}: payload terpotong");
+        }
+        if us > MAX_BLOCK_RAW {
+            bail!("blok {i}: ukuran hasil dekompresi {us} melebihi batas {MAX_BLOCK_RAW}");
+        }
+        total += us;
+        if total > MAX_TOTAL_RAW {
+            bail!("total hasil dekompresi melebihi batas {MAX_TOTAL_RAW} byte");
+        }
+        ranges.push((s, e));
+        prev = o;
+    }
+    Ok(ranges)
+}
+
 pub fn read_container_bytes(d: &[u8], ks: &Keystream) -> Result<(Header, Vec<Vec<u8>>)> {
     let magic = rd_u32(d, 0)?;
     let ver = rd_u32(d, 4)?;
@@ -169,18 +207,22 @@ pub fn read_container_bytes(d: &[u8], ks: &Keystream) -> Result<(Header, Vec<Vec
     if cnt == 0 {
         bail!("container tanpa blok (blockCount = 0)");
     }
-    let mut offs = Vec::with_capacity(cnt);
-    for i in 0..cnt {
-        offs.push(rd_u32(d, p + i * 4)? as usize);
-    }
-    p += cnt * 4;
+    // Every size below comes from the file, so check it fits before allocating for it.
+    let table_end = cnt
+        .checked_mul(4)
+        .and_then(|n| n.checked_add(p))
+        .filter(|&e| e <= d.len())
+        .ok_or_else(|| Error(format!("tabel offset ({cnt} blok) melebihi ukuran file")))?;
+    let offs: Vec<usize> = d[p..table_end]
+        .chunks_exact(4)
+        .map(|c| u32::from_le_bytes(c.try_into().unwrap()) as usize)
+        .collect();
+    p = table_end;
     let base = p;
     if base + offs[cnt - 1] != d.len() {
         bail!("ukuran file tidak konsisten dengan tabel offset");
     }
-    let ranges: Vec<(usize, usize)> = (0..cnt)
-        .map(|i| (base + if i > 0 { offs[i - 1] } else { 0 }, base + offs[i]))
-        .collect();
+    let ranges = block_ranges(d, base, &offs)?;
     let zdict = hdr.zdict.clone();
     let blocks = ranges
         .par_iter()
@@ -343,8 +385,11 @@ pub fn parse_shard(blk: &[u8]) -> Result<(usize, u64, Vec<Entry<'_>>)> {
     let size = rd_u64(blk, 8)? as usize;
     let seed = rd_u64(blk, 16)?;
     let ctrl = blk
-        .get(24..24 + cap)
+        .get(24..24usize.saturating_add(cap))
         .ok_or_else(|| Error("shard terpotong (ctrl)".into()))?;
+    if size > cap {
+        bail!("jumlah slot terisi != size");
+    }
     if blk.get(24 + cap) != Some(&0xFF) {
         bail!("sentinel hilang — layout tidak cocok");
     }
@@ -382,6 +427,9 @@ where
     F: FnMut(usize) -> Option<&'v [u8]>,
 {
     let cap = rd_u64(orig, 0)? as usize;
+    if cap > orig.len() {
+        bail!("shard terpotong");
+    }
     let s = slots_off(cap);
     let mut head = orig
         .get(..s + cap * 16)
