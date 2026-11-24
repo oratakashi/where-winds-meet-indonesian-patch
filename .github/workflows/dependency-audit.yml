@@ -4,6 +4,12 @@ name: dependency-audit
 # RustSec advisory database, so a vulnerable crate pinned in a lockfile shows up on the PR
 # that adds it, and new advisories against crates already pinned show up within a week.
 # A vulnerability fails the job; unmaintained/yanked warnings are only printed.
+#
+# cargo audit only knows RustSec advisories, not CVEs in bundled C libraries, so the
+# `native-zstd` job also reports which libzstd the wwm toolchain really bundles (Rust:
+# the `+zstd.X.Y.Z` suffix of zstd-sys in rust/Cargo.lock; Python fallback: zstandard's
+# ZSTD_VERSION) and warns while it is older than 1.6.0 (CVE-2026-124851, issue #35).
+# It only warns: no wrapper ships 1.6.0 yet. Make it fail once both have been upgraded.
 
 on:
   pull_request:
@@ -13,12 +19,14 @@ on:
       - "rust/Cargo.lock"
       - "rust/Cargo.toml"
       - "rust/crates/*/Cargo.toml"
+      - "requirements.txt"
       - ".github/workflows/dependency-audit.yml"
   push:
     branches: [main]
     paths:
       - "app/Cargo.lock"
       - "rust/Cargo.lock"
+      - "requirements.txt"
   schedule:
     - cron: "17 3 * * 1"
   workflow_dispatch: {}
@@ -51,3 +59,48 @@ jobs:
 
       - name: cargo audit
         run: cargo audit --file Cargo.lock
+
+  native-zstd:
+    runs-on: ubuntu-latest
+    env:
+      MIN_ZSTD: "1.6.0"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+
+      - name: Install Python fallback dependencies
+        run: pip install -r requirements.txt
+
+      - name: Report bundled libzstd versions
+        run: |
+          python - <<'PY'
+          import os, re, sys
+          import zstandard
+
+          minimum = tuple(int(x) for x in os.environ["MIN_ZSTD"].split("."))
+          found = {}
+
+          lock = open("rust/Cargo.lock", encoding="utf-8").read()
+          m = re.search(r'name = "zstd-sys"\s+version = "([^"]+)"', lock)
+          if not m or "+zstd." not in m.group(1):
+              sys.exit("zstd-sys with a +zstd.X.Y.Z version not found in rust/Cargo.lock")
+          found[f"Rust zstd-sys {m.group(1)}"] = tuple(int(x) for x in m.group(1).split("+zstd.")[1].split("."))
+
+          found[f"Python zstandard {zstandard.__version__}"] = tuple(zstandard.ZSTD_VERSION)
+
+          summary = ["| Toolchain | libzstd | Status |", "|---|---|---|"]
+          for name, ver in found.items():
+              v = ".".join(map(str, ver))
+              ok = ver >= minimum
+              print(f"{name}: libzstd {v}")
+              if not ok:
+                  print(f"::warning::{name} bundles libzstd {v} < {os.environ['MIN_ZSTD']} (CVE-2026-124851, see issue #35)")
+              summary.append(f"| {name} | {v} | {'ok' if ok else 'below ' + os.environ['MIN_ZSTD']} |")
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
+              f.write("\n".join(summary) + "\n")
+          PY

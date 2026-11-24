@@ -117,8 +117,10 @@ page then shows **Restart sekarang** (also in the tray menu); if you don't click
 installed when you quit Patch Guard or the next time it starts. You can turn this off under
 Settings → **Perbarui Patch Guard otomatis**, or check by hand with **Periksa update**.
 
-It only copies files — it does not touch the game process, memory or network traffic. It is not
-available for Steam (see the note there) or Android.
+It only copies files — it does not touch the game process, memory or network traffic. It runs on
+Windows only: the official launcher and Steam (on Steam only the `Package` locale folder; the
+`LocalData\Patch` overlay is restored on every launch, see the Steam note below). Android needs
+the manual install.
 
 ### PC — Official WWM Launcher
 
