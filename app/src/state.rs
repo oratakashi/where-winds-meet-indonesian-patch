@@ -2,6 +2,7 @@
 //! now plain method calls on the engine.
 use crate::app::Cmd;
 use crate::engine::{Engine, Msg, Snapshot};
+use crate::i18n::{self, Lang};
 use crate::locations;
 use crate::model::{Client, Profile};
 use crate::shell::autostart;
@@ -167,6 +168,22 @@ impl AppState {
         let _ = self.cmd.try_send(Cmd::RestartForUpdate);
     }
 
+    /// Switch the UI language: saved in the config, then the tray, the window and the guard's
+    /// status details (re-phrased by an immediate pass) follow.
+    pub fn set_language(&mut self, lang: Lang, cx: &mut Context<Self>) {
+        if i18n::get() == lang {
+            return;
+        }
+        let r = self.engine.update_config(|c| c.language = lang);
+        if r.is_ok() {
+            i18n::set(lang);
+            let _ = self.cmd.try_send(Cmd::LanguageChanged);
+            self.engine.send(Msg::Check { force_remote: false });
+        }
+        self.done(r, cx);
+        cx.refresh_windows();
+    }
+
     pub fn set_autostart(&mut self, enabled: bool, cx: &mut Context<Self>) {
         let r = autostart::set(enabled);
         self.done(r, cx);
@@ -187,7 +204,7 @@ impl AppState {
             self.engine.send(Msg::ForceInstall(path));
             Ok(())
         } else {
-            Err("folder itu tidak dijaga".to_string())
+            Err(t!("state.that_folder_is_not").to_string())
         };
         self.done(r, cx);
     }
@@ -222,7 +239,7 @@ impl AppState {
             files: false,
             directories: true,
             multiple: false,
-            prompt: Some("Pilih folder".into()),
+            prompt: Some(t!("state.choose_folder").into()),
         });
         cx.spawn(async move |this, cx| {
             let Ok(Ok(Some(paths))) = picked.await else { return };
@@ -233,9 +250,7 @@ impl AppState {
                 .await;
             let _ = this.update(cx, |s, cx| {
                 let r = if found.is_empty() {
-                    Err("Tidak ada file bahasa game (translate_words_map_*) di folder itu. \
-                         Pilih folder instalasi game atau launcher-nya."
-                        .to_string())
+                    Err(t!("state.that_folder_has_no").to_string())
                 } else {
                     let mut added = 0;
                     s.engine
@@ -248,7 +263,11 @@ impl AppState {
                             }
                         })
                         .and_then(|()| {
-                            if added == 0 { Err("Folder itu sudah dijaga.".to_string()) } else { Ok(()) }
+                            if added == 0 {
+                                Err(t!("state.that_folder_is_already").to_string())
+                            } else {
+                                Ok(())
+                            }
                         })
                 };
                 s.done(r, cx);

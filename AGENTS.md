@@ -279,7 +279,9 @@ context — only use one if the user explicitly asks for it by name.
   WinUI 3 look-alike (theme tokens, Button, Toggle, badge, InfoBar; Segoe UI Variable + Segoe
   Fluent Icons glyphs, Segoe UI / MDL2 Assets on Windows 10, Mica only from build 22621),
   `state.rs` the window state + actions, `app.rs` the window/NavigationView/ContentDialog and the
-  main-thread command loop, `pages/` one file per page (Home, Settings, History). GPUI quits on
+  main-thread command loop, `pages/` one file per page (Home, Settings, History), `i18n.rs` the
+  UI language (Indonesian default, English; all texts in `app/locales/{id,en}.json`, used by key
+  as `t!("home.restart_now")`, checked by `app/build.rs`). GPUI quits on
   the last window by default on Windows — `app.rs` sets `QuitMode::Explicit` so the guard keeps
   running in the tray. Data stays in `%LOCALAPPDATA%\com.oratakashi.wwm` (Tauri's folder) so
   config/history carry over.

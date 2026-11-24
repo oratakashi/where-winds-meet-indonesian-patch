@@ -24,21 +24,24 @@ fn by_day(log: &[LogLine]) -> Vec<(String, Vec<LogLine>)> {
 pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
     let s = state.read(cx);
     let last = match s.snap.last_check {
-        Some(at) => format!("Terakhir diperiksa {}", clock(at)),
-        None => "Belum diperiksa".to_string(),
+        Some(at) => {
+            let c = clock(at);
+            tf!("common.last_checked", c = c)
+        }
+        None => t!("history.not_checked_yet").to_string(),
     };
     let days = by_day(&s.snap.log);
     let st = state.clone();
 
     let mut out = vec![
-        page_title("History", cx).into_any_element(),
+        page_title(t!("common.history"), cx).into_any_element(),
         div()
             .flex()
             .items_center()
             .gap(px(12.))
             .child(caption(last, cx).flex_1())
             .child(
-                Button::new("clear", "Hapus riwayat")
+                Button::new("clear", t!("history.clear_history"))
                     .icon(glyph::DELETE)
                     .style(ButtonStyle::Subtle)
                     .small()
@@ -47,9 +50,9 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
                         st.update(cx, |s, cx| {
                             s.ask(
                                 Confirm {
-                                    title: "Hapus semua riwayat?".into(),
-                                    body: "Riwayat yang dihapus tidak bisa dikembalikan.".into(),
-                                    primary: "Hapus".into(),
+                                    title: t!("history.clear_all_history").into(),
+                                    body: t!("history.cleared_history_cannot_be").into(),
+                                    primary: t!("history.clear_confirm").into(),
                                     action: Rc::new(|s, cx| s.clear_history(cx)),
                                 },
                                 cx,
@@ -64,7 +67,7 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
         out.push(
             card(cx)
                 .p(px(16.))
-                .child(div().text_color(theme(cx).muted_fg).child("Belum ada kejadian."))
+                .child(div().text_color(theme(cx).muted_fg).child(t!("history.nothing_has_happened_yet")))
                 .into_any_element(),
         );
         return out;
@@ -86,7 +89,7 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
                     .text_size(px(BODY - 1.))
                     .line_height(px(18.))
                     .child(div().flex_none().font_family("Consolas").text_color(muted).child(clock(l.at)))
-                    .child(div().flex_1().min_w_0().child(l.text)),
+                    .child(div().flex_1().min_w_0().child(l.display())),
             );
         }
         out.push(c.into_any_element());

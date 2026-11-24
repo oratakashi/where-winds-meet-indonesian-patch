@@ -35,6 +35,9 @@ pub const ARG_APPLY: &str = "--apply-update";
 const ARG_WAIT_PID: &str = "--wait-pid";
 const ARG_RELAUNCH: &str = "--relaunch";
 const ARG_PENDING: &str = "--pending";
+const ARG_VERSION: &str = "--version";
+/// What the last update helper did, next to `updates\` (that folder is deleted afterwards).
+const RESULT_JSON: &str = "update-result.json";
 
 // ---------------------------------------------------------------- signatures
 
@@ -52,14 +55,14 @@ pub fn verify(data: &[u8], sig: &str) -> Result<(), String> {
 
 fn verify_with(pubkey_b64: &str, data: &[u8], sig_b64: &str) -> Result<(), String> {
     let text = |b64: &str| -> Result<String, String> {
-        let raw = STANDARD.decode(b64.trim()).map_err(|_| "bukan base64".to_string())?;
-        String::from_utf8(raw).map_err(|_| "bukan teks".to_string())
+        let raw = STANDARD.decode(b64.trim()).map_err(|_| t!("update.not_base64").to_string())?;
+        String::from_utf8(raw).map_err(|_| t!("update.not_text").to_string())
     };
     let pk = minisign_verify::PublicKey::decode(&text(pubkey_b64)?)
-        .map_err(|e| format!("public key rusak: {e}"))?;
+        .map_err(|e| tf!("update.public_key_is_damaged", e = e))?;
     let sig = minisign_verify::Signature::decode(&text(sig_b64)?)
-        .map_err(|e| format!("tanda tangan rusak: {e}"))?;
-    pk.verify(data, &sig, false).map_err(|_| "tanda tangan tidak cocok".to_string())
+        .map_err(|e| tf!("update.signature_is_damaged", e = e))?;
+    pk.verify(data, &sig, false).map_err(|_| t!("update.signature_does_not_match").to_string())
 }
 
 // ---------------------------------------------------------------- versions
@@ -104,16 +107,17 @@ pub fn parse_info(json: &[u8], sig: &str) -> Result<UpdateInfo, String> {
 
 fn decode_info(json: &[u8]) -> Result<UpdateInfo, String> {
     let info: UpdateInfo =
-        serde_json::from_slice(json).map_err(|e| format!("{UPDATE_JSON} tidak terbaca: {e}"))?;
+        serde_json::from_slice(json).map_err(|e| tf!("update.cannot_be_read", UPDATE_JSON = UPDATE_JSON, e = e))?;
     if parse_version(&info.version).is_none() {
-        return Err(format!("{UPDATE_JSON}: versi '{}' tidak valid", info.version));
+        let version = &info.version;
+        return Err(tf!("update.invalid_version", UPDATE_JSON = UPDATE_JSON, version = version));
     }
     // A name, not a path: the installer is always fetched from the same release.
     if info.name.is_empty() || info.name.contains(['/', '\\']) || info.name.contains("..") {
-        return Err(format!("{UPDATE_JSON}: nama installer tidak valid"));
+        return Err(tf!("update.invalid_installer_name", UPDATE_JSON = UPDATE_JSON));
     }
     if info.size == 0 || info.size > INSTALLER_MAX {
-        return Err(format!("{UPDATE_JSON}: ukuran installer tidak masuk akal"));
+        return Err(tf!("update.implausible_installer_size", UPDATE_JSON = UPDATE_JSON));
     }
     Ok(info)
 }
@@ -123,6 +127,17 @@ fn decode_info(json: &[u8]) -> Result<UpdateInfo, String> {
 pub struct Pending {
     pub info: UpdateInfo,
     pub installer: PathBuf,
+}
+
+/// What the update helper did: read once by the next start, then deleted.
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct UpdateResult {
+    pub version: String,
+    pub ok: bool,
+    /// The installer's exit code; `None` when it could not be started.
+    pub code: Option<i32>,
+    /// Unix seconds.
+    pub at: u64,
 }
 
 /// Where downloads live: `<data dir>\updates\`.
@@ -158,6 +173,14 @@ impl Updates {
         let _ = fs::remove_dir_all(&self.dir);
     }
 
+    /// The result the last update helper left behind, if any. Removed once read.
+    pub fn take_result(&self) -> Option<UpdateResult> {
+        let path = result_path(&self.dir)?;
+        let bytes = fs::read(&path).ok()?;
+        let _ = fs::remove_file(&path);
+        serde_json::from_slice(&bytes).ok()
+    }
+
     /// Download and verify `info`'s installer, then record it as pending.
     pub fn fetch(&self, remote: &HttpRemote, info: &UpdateInfo) -> Result<Pending, String> {
         if let Some(p) = self.pending().filter(|p| p.info == *info) {
@@ -184,11 +207,11 @@ impl Updates {
 fn check_installer(path: &Path, info: &UpdateInfo) -> Result<(), String> {
     let data = fs::read(path).map_err(|e| e.to_string())?;
     if data.len() as u64 != info.size {
-        return Err("installer terunduh tidak lengkap".into());
+        return Err(t!("update.downloaded_installer_is_incomplete").into());
     }
     let sha = sha256_file(path).map_err(|e| e.to_string())?;
     if sha != info.sha256 {
-        return Err("hash installer tidak cocok".into());
+        return Err(t!("update.installer_hash_does_not").into());
     }
     verify(&data, &info.signature).map_err(|e| format!("installer: {e}"))
 }
@@ -197,12 +220,12 @@ fn check_installer(path: &Path, info: &UpdateInfo) -> Result<(), String> {
 pub fn check(remote: &HttpRemote) -> Result<Option<UpdateInfo>, String> {
     let json = remote.get_bytes(LATEST_TAG, UPDATE_JSON, 64 << 10).map_err(|e| match e {
         Some(e) => e,
-        None => format!("rilis belum punya {UPDATE_JSON}"),
+        None => tf!("update.no_update_json", UPDATE_JSON = UPDATE_JSON),
     })?;
     let sig_name = format!("{UPDATE_JSON}.sig");
     let sig = remote.get_bytes(LATEST_TAG, &sig_name, 4096).map_err(|e| match e {
         Some(e) => e,
-        None => format!("rilis belum punya {sig_name}"),
+        None => tf!("update.no_update_sig", sig_name = sig_name),
     })?;
     let info = parse_info(&json, &String::from_utf8_lossy(&sig))?;
     Ok(is_newer(&info.version, CURRENT).then_some(info))
@@ -223,7 +246,9 @@ pub fn apply(p: &Pending, relaunch: Option<&[String]>) -> Result<(), String> {
         .arg(ARG_WAIT_PID)
         .arg(pid.to_string())
         .arg(ARG_PENDING)
-        .arg(p.installer.parent().and_then(Path::parent).unwrap_or(Path::new("")));
+        .arg(p.installer.parent().and_then(Path::parent).unwrap_or(Path::new("")))
+        .arg(ARG_VERSION)
+        .arg(&p.info.version);
     if let Some(args) = relaunch {
         cmd.arg(ARG_RELAUNCH).arg(&exe).arg("--").args(args);
     }
@@ -242,7 +267,14 @@ struct HelperArgs {
     installer: PathBuf,
     wait_pid: u32,
     updates_dir: PathBuf,
+    version: String,
     relaunch: Option<(PathBuf, Vec<String>)>,
+}
+
+/// `<data dir>\update-result.json` for an `updates` folder; `None` for anything else, so a
+/// bad `--pending` argument never makes the helper write somewhere unexpected.
+fn result_path(updates_dir: &Path) -> Option<PathBuf> {
+    updates_dir.ends_with("updates").then(|| updates_dir.parent().map(|d| d.join(RESULT_JSON)))?
 }
 
 fn parse_helper_args(args: &[String]) -> Option<HelperArgs> {
@@ -251,6 +283,7 @@ fn parse_helper_args(args: &[String]) -> Option<HelperArgs> {
         installer: PathBuf::new(),
         wait_pid: 0,
         updates_dir: PathBuf::new(),
+        version: String::new(),
         relaunch: None,
     };
     let mut seen_apply = false;
@@ -262,6 +295,7 @@ fn parse_helper_args(args: &[String]) -> Option<HelperArgs> {
             }
             ARG_WAIT_PID => out.wait_pid = it.next()?.parse().ok()?,
             ARG_PENDING => out.updates_dir = it.next()?.into(),
+            ARG_VERSION => out.version = it.next()?.clone(),
             ARG_RELAUNCH => {
                 let exe = PathBuf::from(it.next()?);
                 let rest: Vec<String> = match it.next().map(String::as_str) {
@@ -286,7 +320,24 @@ pub fn helper_main() -> Option<i32> {
     }
     let Some(h) = parse_helper_args(&args) else { return Some(2) };
     wait_for_exit(h.wait_pid, Duration::from_secs(60));
-    let ok = Command::new(&h.installer).arg("/S").status().is_ok_and(|s| s.success());
+    let status = Command::new(&h.installer).arg("/S").status();
+    let ok = status.as_ref().is_ok_and(|s| s.success());
+    // Leave a note for the next start, so a failed install shows up in the History instead
+    // of silently retrying every six hours.
+    if let Some(path) = result_path(&h.updates_dir) {
+        let res = UpdateResult {
+            version: h.version.clone(),
+            ok,
+            code: status.ok().and_then(|s| s.code()),
+            at: std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|d| d.as_secs())
+                .unwrap_or(0),
+        };
+        if let Ok(json) = serde_json::to_vec_pretty(&res) {
+            let _ = fs::write(path, json);
+        }
+    }
     // Installed or not, the pending update is done: a failing installer must not run again
     // on every start.
     if h.updates_dir.ends_with("updates") {
@@ -380,13 +431,15 @@ pub(crate) mod tests {
     fn helper_args_round_trip() {
         let a: Vec<String> = [
             "--apply-update", r"C:\u\updates\0.5.1\setup.exe", "--wait-pid", "42", "--pending",
-            r"C:\u\updates", "--relaunch", r"C:\app\wwm.exe", "--", "--minimized",
+            r"C:\u\updates", "--version", "0.5.1", "--relaunch", r"C:\app\wwm.exe", "--",
+            "--minimized",
         ]
         .iter()
         .map(|s| s.to_string())
         .collect();
         let h = parse_helper_args(&a).unwrap();
         assert_eq!(h.wait_pid, 42);
+        assert_eq!(h.version, "0.5.1");
         assert_eq!(h.installer, PathBuf::from(r"C:\u\updates\0.5.1\setup.exe"));
         assert_eq!(h.relaunch, Some((PathBuf::from(r"C:\app\wwm.exe"), vec!["--minimized".into()])));
         assert!(parse_helper_args(&["--minimized".to_string()]).is_none());
@@ -421,6 +474,20 @@ pub(crate) mod tests {
         fs::write(&installer, b"installer").unwrap();
         write(&Pending { info: UpdateInfo { version: "0.0.1".into(), ..info }, installer });
         assert_eq!(u.pending(), None);
+    }
+
+    #[test]
+    fn update_result_is_read_once() {
+        let tmp = tempfile::tempdir().unwrap();
+        let u = Updates::new(tmp.path());
+        assert_eq!(u.take_result(), None);
+        let res = UpdateResult { version: "0.6.0".into(), ok: false, code: Some(2), at: 7 };
+        let path = result_path(&u.dir).unwrap();
+        assert_eq!(path, tmp.path().join(RESULT_JSON));
+        fs::write(&path, serde_json::to_vec(&res).unwrap()).unwrap();
+        assert_eq!(u.take_result(), Some(res));
+        assert_eq!(u.take_result(), None, "deleted after the first read");
+        assert_eq!(result_path(Path::new(r"C:\somewhere\else")), None);
     }
 
     #[test]

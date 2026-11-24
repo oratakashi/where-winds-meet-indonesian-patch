@@ -9,6 +9,7 @@
 //! originals/<sha>  files the guard replaced, content-addressed (for "restore original")
 //! updates/         a downloaded Patch Guard installer + pending.json (see `update.rs`)
 //! ```
+use crate::i18n::Lang;
 use crate::model::{FileEntry, LogLine, Profile};
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use sha2::{Digest, Sha256};
@@ -39,11 +40,20 @@ pub struct Config {
     /// Download new Patch Guard versions in the background and offer to restart.
     #[serde(default = "yes")]
     pub auto_update_app: bool,
+    /// UI language; a config from before v0.6 has none and gets Indonesian.
+    #[serde(default)]
+    pub language: Lang,
 }
 
 impl Default for Config {
     fn default() -> Self {
-        Config { dirs: Vec::new(), auto_update: true, paused: false, auto_update_app: true }
+        Config {
+            dirs: Vec::new(),
+            auto_update: true,
+            paused: false,
+            auto_update_app: true,
+            language: Lang::Id,
+        }
     }
 }
 
@@ -186,4 +196,20 @@ pub fn copy_atomic(src: &Path, dest: &Path) -> io::Result<()> {
         let _ = fs::remove_file(&tmp);
     }
     res.map(|_| ())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn config_without_language_is_indonesian_and_english_is_kept() {
+        let c: Config = serde_json::from_str(r#"{"dirs": [], "paused": false}"#).unwrap();
+        assert_eq!(c.language, Lang::Id);
+        assert!(c.auto_update && c.auto_update_app);
+        let tmp = tempfile::tempdir().unwrap();
+        let s = Store::new(tmp.path()).unwrap();
+        s.save_config(&Config { language: Lang::En, ..Config::default() }).unwrap();
+        assert_eq!(s.load_config().language, Lang::En);
+    }
 }

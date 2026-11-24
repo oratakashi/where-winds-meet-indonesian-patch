@@ -16,7 +16,7 @@ pub fn profile_title(p: Profile) -> &'static str {
 pub fn client_title(c: Client) -> &'static str {
     match c {
         Client::Steam => "Steam",
-        Client::Launcher => "Launcher resmi",
+        Client::Launcher => t!("pages.official_launcher"),
     }
 }
 
@@ -31,9 +31,21 @@ pub fn clock(at: u64) -> String {
 
 /// `13 Nov 2026` of a Unix timestamp, local time.
 pub fn day(at: u64) -> String {
-    const MONTHS: [&str; 12] =
-        ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+    let months = [
+        t!("date.month.01"),
+        t!("date.month.02"),
+        t!("date.month.03"),
+        t!("date.month.04"),
+        t!("date.month.05"),
+        t!("date.month.06"),
+        t!("date.month.07"),
+        t!("date.month.08"),
+        t!("date.month.09"),
+        t!("date.month.10"),
+        t!("date.month.11"),
+        t!("date.month.12"),
+    ];
     local(at)
-        .map(|d| format!("{} {} {}", d.day(), MONTHS[d.month0() as usize % 12], d.year()))
+        .map(|d| format!("{} {} {}", d.day(), months[d.month0() as usize % 12], d.year()))
         .unwrap_or_default()
 }
