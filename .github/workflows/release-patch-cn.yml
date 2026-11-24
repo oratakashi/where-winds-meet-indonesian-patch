@@ -24,10 +24,11 @@ on:
         options: [auto, rust, python]
         default: auto
 
-# Several pushes in a row: only the newest build needs to finish.
+# Runs queue one after another: a run uploading assets must not be cancelled halfway
+# (it could leave a new zip next to an old manifest).
 concurrency:
   group: release-patch-cn
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build-and-release:
@@ -39,7 +40,7 @@ jobs:
     env:
       CN_KEYSTREAM_PASSPHRASE: ${{ secrets.CN_KEYSTREAM_PASSPHRASE }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - uses: ./.github/actions/wwm-toolchain
         id: tc
@@ -80,7 +81,7 @@ jobs:
       # Patch Guard >= 0.5 only reads a signed manifest.json (manifest.json.sig, same key as the
       # global release: secrets PATCH_GUARD_SIGN_KEY + PATCH_GUARD_SIGN_KEY_PASSWORD).
       # Exact version (same as release-patch.yml): this binary holds the signing key.
-      - uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@fe3acb53a98b62c772db35de75ce0e4595e7ca8c # v2.90.8
         with:
           tool: cargo-packager@0.11.8
 
@@ -96,9 +97,12 @@ jobs:
 
       - name: Compute progress summary
         id: progress
+        # Random delimiter: output that happens to contain the delimiter line cannot end
+        # the block early and inject other outputs.
         run: |
+          d="EOF_$(openssl rand -hex 16)"
           {
-            echo "line<<EOF"
+            echo "line<<$d"
             echo "**Isi patch (entri yang sudah berbahasa Indonesia):**"
             echo
             grep '^translate_words_map' patch-cn.log | awk '{
@@ -106,11 +110,11 @@ jobs:
               printf "- `%s`: %s dari %s entri (%s)\n", $1, c[2], e[2], p }'
             echo
             sh tools/wwm.sh progress --profile cn
-            echo "EOF"
+            echo "$d"
           } >> "$GITHUB_OUTPUT"
 
       - name: Publish rolling release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
           tag_name: cn-latest
           name: "[TIDAK DIMAINTAIN LAGI] Patch Terjemahan Indonesia — WWM China 燕云十六声"
