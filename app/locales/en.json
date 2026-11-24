@@ -23,6 +23,7 @@
   "dialog.cancel": "Cancel",
   "engine.check_failed": "Check failed: {e}",
   "engine.config_was_unreadable": "config.json is damaged and could not be read, so the settings are back to their defaults (no folders are guarded). A copy was kept at {path}.",
+  "engine.config_was_unreadable_not_kept": "config.json is damaged and could not be read, so the settings are back to their defaults (no folders are guarded). A copy could not be kept ({e}), so check config.json before changing any setting.",
   "engine.could_not_check_for": "Could not check for Patch Guard updates: {e}",
   "engine.could_not_restore": "Could not restore {e}",
   "engine.could_not_save_config": "The settings could not be saved: {e}",

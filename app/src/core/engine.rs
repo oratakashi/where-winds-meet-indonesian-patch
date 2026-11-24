@@ -141,7 +141,10 @@ impl Engine {
         }
         // Before any thread phrases a status detail or a history line.
         i18n::set(cfg.language);
-        let config_error = bad.map(|p| tf!("engine.config_was_unreadable", path = p.display()));
+        let config_error = bad.map(|kept| match kept {
+            Ok(p) => tf!("engine.config_was_unreadable", path = p.display()),
+            Err(e) => tf!("engine.config_was_unreadable_not_kept", e = e),
+        });
         let shared = Arc::new(Mutex::new(Snapshot {
             lang: cfg.language,
             paused: cfg.paused,
@@ -498,9 +501,14 @@ impl Updater {
             });
             let mut line: Option<(String, Option<LogMsg>)> = None;
             let (ready, note) = match res {
+                // Not downloaded again, but an installer already here and verified (its helper
+                // could not be started) stays offered: "Restart sekarang" can still install it.
                 Ok(None) if skipped.is_some() => {
                     last_error = None;
-                    (None, AppNote::SkippedFailed(skipped.unwrap_or_default()))
+                    (
+                        self.updates.pending().map(|p| p.info.version),
+                        AppNote::SkippedFailed(skipped.unwrap_or_default()),
+                    )
                 }
                 Ok(Some(p)) => {
                     last_error = None;

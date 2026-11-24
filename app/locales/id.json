@@ -23,6 +23,7 @@
   "dialog.cancel": "Batal",
   "engine.check_failed": "Gagal memeriksa: {e}",
   "engine.config_was_unreadable": "config.json rusak dan tidak bisa dibaca, jadi pengaturan kembali ke awal (folder yang dijaga juga kosong). Salinannya disimpan di {path}.",
+  "engine.config_was_unreadable_not_kept": "config.json rusak dan tidak bisa dibaca, jadi pengaturan kembali ke awal (folder yang dijaga juga kosong). Salinannya gagal disimpan ({e}), jadi jangan ubah pengaturan sebelum config.json diperiksa.",
   "engine.could_not_check_for": "Gagal memeriksa update Patch Guard: {e}",
   "engine.could_not_restore": "Gagal mengembalikan {e}",
   "engine.could_not_save_config": "Pengaturan gagal disimpan: {e}",

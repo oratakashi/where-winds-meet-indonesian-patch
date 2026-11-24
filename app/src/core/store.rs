@@ -146,9 +146,10 @@ impl Store {
         self.load("config.json")
     }
 
-    /// Like [`load_config`](Self::load_config), plus where the unreadable file was kept when
-    /// `config.json` exists but cannot be parsed (the defaults are used until the next save).
-    pub fn load_config_checked(&self) -> (Config, Option<PathBuf>) {
+    /// Like [`load_config`](Self::load_config), plus `Some` when `config.json` exists but
+    /// cannot be parsed (the defaults are used until the next save): where its copy was kept,
+    /// or why the copy could not be written.
+    pub fn load_config_checked(&self) -> (Config, Option<io::Result<PathBuf>>) {
         self.load_checked("config.json")
     }
 
@@ -210,17 +211,20 @@ impl Store {
     }
 
     /// A missing file gives the defaults. A file that exists but does not parse gives them
-    /// too, and is first copied to `<name>.bad` (returned): the next save replaces it, and
-    /// what it held must not be lost without a trace.
-    fn load_checked<T: DeserializeOwned + Default>(&self, name: &str) -> (T, Option<PathBuf>) {
+    /// too, and is first copied to `<name>.bad`: the next save replaces it, and what it held
+    /// must not be lost without a trace. Then the second value is `Some` — the copy's path, or
+    /// the error that kept it from being written (the broken file is reported either way).
+    fn load_checked<T: DeserializeOwned + Default>(
+        &self,
+        name: &str,
+    ) -> (T, Option<io::Result<PathBuf>>) {
         let path = self.base.join(name);
         let Ok(bytes) = fs::read(&path) else { return (T::default(), None) };
         match serde_json::from_slice(&bytes) {
             Ok(v) => (v, None),
             Err(_) => {
                 let bad = self.base.join(format!("{name}.bad"));
-                let kept = fs::write(&bad, &bytes).is_ok().then_some(bad);
-                (T::default(), kept)
+                (T::default(), Some(fs::write(&bad, &bytes).map(|()| bad)))
             }
         }
     }
@@ -310,12 +314,23 @@ mod tests {
         fs::write(tmp.path().join("config.json"), b"{\"dirs\": [ broken").unwrap();
         let (c, bad) = s.load_config_checked();
         assert!(c.dirs.is_empty());
-        let bad = bad.expect("broken config reported");
+        let bad = bad.expect("broken config reported").expect("copy written");
         assert_eq!(fs::read(&bad).unwrap(), b"{\"dirs\": [ broken");
         // Saving the defaults replaces config.json; the copy stays.
         s.save_config(&c).unwrap();
         assert!(s.load_config_checked().1.is_none());
         assert!(bad.is_file());
         assert!(!tmp.path().join("config.json.tmp").exists());
+    }
+
+    #[test]
+    fn a_broken_config_is_reported_even_when_its_copy_fails() {
+        let tmp = tempfile::tempdir().unwrap();
+        let s = Store::new(tmp.path()).unwrap();
+        fs::write(tmp.path().join("config.json"), b"not json").unwrap();
+        // A folder where the copy would go: it cannot be written.
+        fs::create_dir(tmp.path().join("config.json.bad")).unwrap();
+        let (_, bad) = s.load_config_checked();
+        assert!(bad.expect("broken config reported").is_err());
     }
 }

@@ -152,23 +152,31 @@ impl<R: Remote> Guard<R> {
                 let pkey = path_key(&path);
                 let Some(backup) = self.state.backups.get(&pkey).cloned() else { continue };
                 let src = self.store.original_path(&backup);
-                if !src.is_file() || !path.is_file() {
+                if !src.is_file() {
                     continue;
                 }
-                match sha256_file(&path) {
-                    Ok(cur) if cur == backup => {}
-                    Ok(_) => match copy_atomic(&src, &path) {
-                        Ok(()) => {
-                            self.forget_hash(&path);
-                            self.state.installed.remove(&pkey);
-                            self.dirty = true;
-                            events.push(Event::Uninstalled {
-                                profile: d.profile,
-                                name: name.to_string(),
-                            });
+                // A file missing from a folder that is still there is put back too (the backup
+                // is the only copy of it); a folder that is gone (game uninstalled) has nothing
+                // to restore.
+                if path.is_file() {
+                    match sha256_file(&path) {
+                        Ok(cur) if cur == backup => continue,
+                        Ok(_) => {}
+                        Err(e) => {
+                            errors.push(format!("{}: {e}", path.display()));
+                            continue;
                         }
-                        Err(e) => errors.push(format!("{}: {e}", path.display())),
-                    },
+                    }
+                } else if !d.path.is_dir() {
+                    continue;
+                }
+                match copy_atomic(&src, &path) {
+                    Ok(()) => {
+                        self.forget_hash(&path);
+                        self.state.installed.remove(&pkey);
+                        self.dirty = true;
+                        events.push(Event::Uninstalled { profile: d.profile, name: name.to_string() });
+                    }
                     Err(e) => errors.push(format!("{}: {e}", path.display())),
                 }
             }
@@ -947,6 +955,31 @@ mod tests {
         assert!(!saved.backups.contains_key(&key) && !saved.installed.contains_key(&key));
         assert!(!r.guard.store.load_hashes().contains_key(&key));
         assert!(!backup.exists(), "the cached original is pruned");
+    }
+
+    #[test]
+    fn removing_a_folder_puts_back_a_file_that_went_missing() {
+        let mut r = Rig::new(b"orig-v1");
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        r.check();
+        fs::remove_file(&r.file).unwrap();
+        let dir = r.cfg.dirs[0].clone();
+        let (evs, errs) = r.guard.remove_dir(&dir);
+        assert_eq!((evs.len(), errs.len()), (1, 0));
+        assert_eq!(r.content(), b"orig-v1");
+    }
+
+    #[test]
+    fn removing_a_folder_that_is_gone_just_forgets_it() {
+        let mut r = Rig::new(b"orig-v1");
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        r.check();
+        let dir = r.cfg.dirs[0].clone();
+        fs::remove_dir_all(&dir.path).unwrap();
+        let (evs, errs) = r.guard.remove_dir(&dir);
+        assert_eq!((evs.len(), errs.len()), (0, 0));
+        assert!(!dir.path.exists(), "a removed game folder is not created again");
+        assert!(r.guard.store.load_state().backups.is_empty());
     }
 
     #[test]

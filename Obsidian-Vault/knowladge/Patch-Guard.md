@@ -208,16 +208,19 @@ The guard runs from login until "Keluar", so it must stay out of the game's way:
   originals and only then drops it from the config and forgets its `backups` / `installed` /
   hash entries (so `originals/<sha>` is pruned). If a file cannot be restored (the game holds
   it) the folder stays guarded and the History says why (`Guard::remove_dir`,
-  `Msg::RemoveFolder`).
+  `Msg::RemoveFolder`). A file missing from a folder that still exists is put back from its
+  backup too (also on **Kembalikan file asli**); a game folder that is gone is just forgotten.
 - A `config.json` that exists but does not parse is copied to `config.json.bad` before the
-  defaults are used, and the window shows an error (v0.6.3). Every JSON file in the data
+  defaults are used, and the window shows an error (v0.6.3) — also when the copy cannot be
+  written, which the error then says. Every JSON file in the data
   folder is written through a temp file that is `sync_all`ed before the rename, so a power
   cut leaves the old or the new file, never an empty one.
 - A leftover `.<name>.wwmpg-tmp` (the app quit or crashed mid-copy) is deleted at the start
   of each pass (v0.6.3).
 - When the update helper cannot be started at launch or quit (with **Pasang otomatis** on),
-  that version is marked failed in `update-failed.json`, so it is not retried at every start;
-  **Restart sekarang** or **Periksa update** still can (v0.6.3).
+  that version is marked failed in `update-failed.json`, so it is not retried at every start
+  and not downloaded again; the verified installer stays offered, so **Restart sekarang**
+  (or **Periksa update**) can still install it (v0.6.3).
 - The single-instance mutex and show event carry the user's SID
   (`Local\com.oratakashi.wwm.instance.<SID>`), so another account's process in the same
   session cannot take the names first (v0.6.3). v0.6.2 and older use the names without SID.
