@@ -1,6 +1,6 @@
 [package]
 name = "wwm-patch-guard"
-version = "0.6.2"
+version = "0.6.3"
 description = "Keeps the Where Winds Meet Indonesian patch installed after NetEase's patcher restores the original locale files"
 authors = ["oratakashi"]
 license = "GPL-3.0-or-later"
@@ -39,6 +39,7 @@ windows = { version = "0.62", features = [
     "Wdk_System_SystemServices",
     "Win32_Foundation",
     "Win32_Security",
+    "Win32_Security_Authorization",
     "Win32_System_LibraryLoader",
     "Win32_System_SystemInformation",
     "Win32_System_Threading",

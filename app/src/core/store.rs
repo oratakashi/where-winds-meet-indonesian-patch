@@ -16,7 +16,7 @@ use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::fs;
-use std::io::{self, Read};
+use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Debug)]
@@ -146,6 +146,13 @@ impl Store {
         self.load("config.json")
     }
 
+    /// Like [`load_config`](Self::load_config), plus `Some` when `config.json` exists but
+    /// cannot be parsed (the defaults are used until the next save): where its copy was kept,
+    /// or why the copy could not be written.
+    pub fn load_config_checked(&self) -> (Config, Option<io::Result<PathBuf>>) {
+        self.load_checked("config.json")
+    }
+
     pub fn save_config(&self, c: &Config) -> io::Result<()> {
         self.save("config.json", c)
     }
@@ -200,16 +207,38 @@ impl Store {
     }
 
     fn load<T: DeserializeOwned + Default>(&self, name: &str) -> T {
-        fs::read(self.base.join(name))
-            .ok()
-            .and_then(|b| serde_json::from_slice(&b).ok())
-            .unwrap_or_default()
+        self.load_checked(name).0
     }
 
+    /// A missing file gives the defaults. A file that exists but does not parse gives them
+    /// too, and is first copied to `<name>.bad`: the next save replaces it, and what it held
+    /// must not be lost without a trace. Then the second value is `Some` — the copy's path, or
+    /// the error that kept it from being written (the broken file is reported either way).
+    fn load_checked<T: DeserializeOwned + Default>(
+        &self,
+        name: &str,
+    ) -> (T, Option<io::Result<PathBuf>>) {
+        let path = self.base.join(name);
+        let Ok(bytes) = fs::read(&path) else { return (T::default(), None) };
+        match serde_json::from_slice(&bytes) {
+            Ok(v) => (v, None),
+            Err(_) => {
+                let bad = self.base.join(format!("{name}.bad"));
+                (T::default(), Some(fs::write(&bad, &bytes).map(|()| bad)))
+            }
+        }
+    }
+
+    /// Write through a temp file that is flushed to disk before the rename, so a power cut
+    /// leaves the old file or the new one, never an empty one.
     fn save<T: Serialize>(&self, name: &str, v: &T) -> io::Result<()> {
         let dest = self.base.join(name);
         let tmp = self.base.join(format!("{name}.tmp"));
-        fs::write(&tmp, serde_json::to_vec_pretty(v).map_err(io::Error::other)?)?;
+        let data = serde_json::to_vec_pretty(v).map_err(io::Error::other)?;
+        let mut f = fs::File::create(&tmp)?;
+        f.write_all(&data)?;
+        f.sync_all()?;
+        drop(f);
         fs::rename(&tmp, &dest)
     }
 }
@@ -243,12 +272,17 @@ pub fn is_sha256_hex(s: &str) -> bool {
     s.len() == 64 && s.bytes().all(|b| matches!(b, b'0'..=b'9' | b'a'..=b'f'))
 }
 
+/// The temp file [`copy_atomic`] writes next to `dest`: `.<name>.wwmpg-tmp`.
+pub fn temp_path(dest: &Path) -> PathBuf {
+    let name = dest.file_name().unwrap_or_default().to_string_lossy();
+    dest.with_file_name(format!(".{name}.wwmpg-tmp"))
+}
+
 /// Copy `src` over `dest` through a temp file in `dest`'s folder, so a reader never sees a
 /// half-written file. Fails (leaving `dest` untouched) while another process holds `dest`
 /// open without delete sharing — the caller retries later.
 pub fn copy_atomic(src: &Path, dest: &Path) -> io::Result<()> {
-    let name = dest.file_name().unwrap_or_default().to_string_lossy();
-    let tmp = dest.with_file_name(format!(".{name}.wwmpg-tmp"));
+    let tmp = temp_path(dest);
     let res = fs::copy(src, &tmp).and_then(|_| fs::rename(&tmp, dest));
     if res.is_err() {
         let _ = fs::remove_file(&tmp);
@@ -270,5 +304,33 @@ mod tests {
         let s = Store::new(tmp.path()).unwrap();
         s.save_config(&Config { language: Lang::En, ..Config::default() }).unwrap();
         assert_eq!(s.load_config().language, Lang::En);
+    }
+
+    #[test]
+    fn a_broken_config_is_kept_aside_not_lost() {
+        let tmp = tempfile::tempdir().unwrap();
+        let s = Store::new(tmp.path()).unwrap();
+        assert!(s.load_config_checked().1.is_none(), "no file is not an error");
+        fs::write(tmp.path().join("config.json"), b"{\"dirs\": [ broken").unwrap();
+        let (c, bad) = s.load_config_checked();
+        assert!(c.dirs.is_empty());
+        let bad = bad.expect("broken config reported").expect("copy written");
+        assert_eq!(fs::read(&bad).unwrap(), b"{\"dirs\": [ broken");
+        // Saving the defaults replaces config.json; the copy stays.
+        s.save_config(&c).unwrap();
+        assert!(s.load_config_checked().1.is_none());
+        assert!(bad.is_file());
+        assert!(!tmp.path().join("config.json.tmp").exists());
+    }
+
+    #[test]
+    fn a_broken_config_is_reported_even_when_its_copy_fails() {
+        let tmp = tempfile::tempdir().unwrap();
+        let s = Store::new(tmp.path()).unwrap();
+        fs::write(tmp.path().join("config.json"), b"not json").unwrap();
+        // A folder where the copy would go: it cannot be written.
+        fs::create_dir(tmp.path().join("config.json.bad")).unwrap();
+        let (_, bad) = s.load_config_checked();
+        assert!(bad.expect("broken config reported").is_err());
     }
 }

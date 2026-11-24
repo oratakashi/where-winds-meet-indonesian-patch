@@ -281,7 +281,17 @@ fn dir_card(i: usize, dir: DirReport, state: &Entity<AppState>, cx: &App) -> Div
                     .small()
                     .on_click(move |_, _, cx| {
                         let p = path.clone();
-                        remove_state.update(cx, |s, cx| s.remove_folder(p, cx))
+                        remove_state.update(cx, |s, cx| {
+                            s.ask(
+                                Confirm {
+                                    title: t!("home.stop_guarding_title").into(),
+                                    body: t!("home.stop_guarding_body").into(),
+                                    primary: t!("home.stop_guarding").into(),
+                                    action: Rc::new(move |s, cx| s.remove_folder(p.clone(), cx)),
+                                },
+                                cx,
+                            )
+                        })
                     }),
             ),
     )
