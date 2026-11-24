@@ -418,9 +418,11 @@ impl<R: Remote> Guard<R> {
             self.locked_now = true;
             return Err(write_failure(e));
         }
-        // What was just written is the verified cache copy: remember its hash, so the pass the
-        // watcher triggers for our own write does not read 85 MB again.
-        self.remember_hash(path, &entry.patched_sha256);
+        // Forget the old digest; the next look re-reads what is really on disk. Recording the
+        // patched hash here would pair it with metadata read after the rename, and another
+        // writer could replace the file in between. An install is rare (once per game update),
+        // so one extra read is the price.
+        self.forget_hash(path);
         self.state.installed.insert(pkey, entry.patched_sha256.clone());
         self.dirty = true;
         Ok(())
@@ -520,18 +522,6 @@ impl<R: Remote> Guard<R> {
         }
     }
 
-    /// `path` was just written with content of hash `sha`.
-    fn remember_hash(&mut self, path: &Path, sha: &str) {
-        match fs::metadata(path) {
-            Ok(meta) => {
-                let (len, modified, created) = stamp(&meta);
-                let e = HashEntry { len, modified, created, sha256: sha.to_string() };
-                self.hashes.insert(path_key(path), e);
-                self.hashes_dirty = true;
-            }
-            Err(_) => self.forget_hash(path),
-        }
-    }
 }
 
 fn stamp(meta: &fs::Metadata) -> (u64, Option<i128>, Option<i128>) {
@@ -1003,7 +993,10 @@ mod tests {
         let mut r = Rig::new(b"orig-v1");
         r.guard.remote.publish(b"orig-v1", b"patched-v1");
         r.check();
+        // The install drops the file's cached hash; the next pass reads it once and keeps it.
         let key = r.file.to_string_lossy().into_owned();
+        assert!(!r.guard.store.load_hashes().contains_key(&key));
+        r.check();
         let saved = r.guard.store.load_hashes();
         assert_eq!(saved.get(&key).map(|e| e.sha256.as_str()), Some(sha(b"patched-v1").as_str()));
         // A fresh guard (the next start) takes the stored hash instead of reading the file: a

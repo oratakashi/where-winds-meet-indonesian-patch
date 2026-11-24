@@ -182,8 +182,9 @@ The guard runs from login until "Keluar", so it must stay out of the game's way:
   file is free.
 - **Hashes survive restarts**: `hashes.json` keeps sha256 + size + write time + creation time per
   path, so autostart does not re-read every file. Entries for files that are gone are dropped
-  on save. After an install the written file's hash is recorded at once, so the pass the
-  watcher triggers for our own write reads nothing.
+  on save. After an install the file's cached hash is dropped, so the next look re-reads what
+  is really on disk (recording the patched hash would pair it with metadata read after the
+  rename, which another writer could have replaced; installs are rare, so one read is fine).
 - **Autostart waits 30 s** (`FIRST_PASS_AT_LOGIN` in `app.rs`, only with `--minimized`).
 - Both background threads run at `THREAD_MODE_BACKGROUND_BEGIN` (low CPU and disk I/O priority).
 - **Quiet polls**: the 30 s poll no longer flashes "checking" or wakes the window first; the main
