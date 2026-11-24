@@ -372,11 +372,11 @@ impl Updater {
 
             let mut skipped = None;
             let res = update::check(&remote).and_then(|found| match found {
-                Some(info) if failed_version.as_deref() == Some(info.version.as_str()) => {
-                    skipped = Some(info.version);
+                Some(rel) if failed_version.as_deref() == Some(rel.info.version.as_str()) => {
+                    skipped = Some(rel.info.version);
                     Ok(None)
                 }
-                Some(info) => self.updates.fetch(&remote, &info).map(Some),
+                Some(rel) => self.updates.fetch(&remote, &rel).map(Some),
                 None => Ok(None),
             });
             let mut line: Option<(String, Option<LogMsg>)> = None;

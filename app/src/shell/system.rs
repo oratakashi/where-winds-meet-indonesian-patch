@@ -54,11 +54,49 @@ pub fn accent_palette() -> Option<[u32; 7]> {
     None
 }
 
+/// The exe name the installer puts in its folder (`binaries` in `[package.metadata.packager]`).
+pub const MAIN_EXE: &str = "wwm-patch-guard.exe";
+
 /// `%LOCALAPPDATA%\com.oratakashi.wwm` — the same folder Tauri's `app_local_data_dir` gave v0.3,
-/// so its config and history carry over. `WWM_PATCH_GUARD_DATA_DIR` overrides it (testing).
+/// so its config and history carry over. Debug builds accept `WWM_PATCH_GUARD_DATA_DIR`
+/// instead (testing); release builds ignore it, so the environment cannot move the data — and
+/// the update the helper installs — somewhere else.
 pub fn data_dir() -> Option<PathBuf> {
-    match std::env::var_os("WWM_PATCH_GUARD_DATA_DIR") {
-        Some(d) if !d.is_empty() => Some(PathBuf::from(d)),
-        _ => dirs::data_local_dir().map(|d| d.join(IDENTIFIER)),
+    #[cfg(debug_assertions)]
+    if let Some(d) = std::env::var_os("WWM_PATCH_GUARD_DATA_DIR").filter(|d| !d.is_empty()) {
+        return Some(PathBuf::from(d));
+    }
+    dirs::data_local_dir().map(|d| d.join(IDENTIFIER))
+}
+
+/// Where the per-user NSIS installer put Patch Guard: its uninstall entry's `InstallLocation`
+/// (`HKCU\…\Uninstall\WWM Patch Guard`, written by cargo-packager's template) plus
+/// [`MAIN_EXE`]. `None` when it is not installed (a dev build): the update helper then starts
+/// nothing.
+pub fn installed_exe() -> Option<PathBuf> {
+    #[cfg(windows)]
+    {
+        use winreg::RegKey;
+        use winreg::enums::HKEY_CURRENT_USER;
+        let key = RegKey::predef(HKEY_CURRENT_USER)
+            .open_subkey(format!(r"Software\Microsoft\Windows\CurrentVersion\Uninstall\{PRODUCT_NAME}"))
+            .ok()?;
+        let loc: String = key.get_value("InstallLocation").ok()?;
+        let exe = PathBuf::from(loc.trim().trim_matches('"')).join(MAIN_EXE);
+        exe.is_file().then_some(exe)
+    }
+    #[cfg(not(windows))]
+    None
+}
+
+/// Load DLLs only from the exe's folder and System32, never from the current folder or `PATH`.
+/// Called first thing in `main`.
+pub fn harden_dll_search() {
+    #[cfg(windows)]
+    unsafe {
+        use windows::Win32::System::LibraryLoader::{
+            LOAD_LIBRARY_SEARCH_DEFAULT_DIRS, SetDefaultDllDirectories,
+        };
+        let _ = SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
     }
 }

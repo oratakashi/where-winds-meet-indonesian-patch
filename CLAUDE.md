@@ -285,11 +285,16 @@ context — only use one if the user explicitly asks for it by name.
   public key `app/signing/patch-guard.pub`, CI secrets `PATCH_GUARD_SIGN_KEY` /
   `PATCH_GUARD_SIGN_KEY_PASSWORD` (optional, unset for a key without a password); `release-patch-cn.yml` signs `cn-latest` too) and it **updates
   itself** (`core/update.rs`): `patch-guard-update.json(.sig)` + `wwm-patch-guard-setup.exe(.sig)`
-  on `latest` are downloaded and verified in the background, then installed by a `%TEMP%` copy of
-  the exe (`--apply-update`, silent NSIS `/S`) on "Restart sekarang", tray quit or next start.
+  on `latest` are downloaded and verified in the background into `updates\<version>\` (installer
+  + the signed JSON and `.sig`, no unsigned `pending.json`), then installed by a copy of the exe in
+  a fresh `<data>\updater\<id>\` folder (`--apply-update --wait-pid N [--relaunch [--minimized]]`,
+  silent NSIS `/S`) on "Restart sekarang", tray quit or next start. The helper takes **no paths**
+  from its command line: it re-verifies both signatures, hash and version, holds the installer
+  locked while it runs, and relaunches only the installed exe (uninstall entry `InstallLocation`).
   Full write-up: `Obsidian-Vault/knowladge/Patch-Guard.md`.
-  `WWM_PATCH_GUARD_BASE_URL` / `WWM_PATCH_GUARD_DATA_DIR` point it at a local release server /
-  data folder for testing.
+  In **debug builds only**, `WWM_PATCH_GUARD_BASE_URL` / `WWM_PATCH_GUARD_DATA_DIR` /
+  `WWM_PATCH_GUARD_PUBKEY` point it at a local release server / data folder / test key; release
+  builds ignore them and download over https only.
 - `tools/profiles.json` — per-profile paths/variants/dumps/phases (`global`, `cn`), loaded by
   `tools/profiles.py` and by `wwm`; `--profile` on
   every tool. `tools/bridge.py` — the global→CN keyHash/text bridge.

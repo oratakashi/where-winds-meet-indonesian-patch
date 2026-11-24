@@ -124,8 +124,14 @@ impl Store {
         self.save("config.json", c)
     }
 
+    /// Entries whose hashes are not plain sha256 are dropped: those hashes are used as file
+    /// names under `patched/` and `originals/`.
     pub fn load_state(&self) -> State {
-        self.load("state.json")
+        let mut s: State = self.load("state.json");
+        s.entries.retain(|_, e| is_sha256_hex(&e.original_sha256) && is_sha256_hex(&e.patched_sha256));
+        s.backups.retain(|_, sha| is_sha256_hex(sha));
+        s.installed.retain(|_, sha| is_sha256_hex(sha));
+        s
     }
 
     pub fn save_state(&self, s: &State) -> io::Result<()> {
@@ -182,7 +188,22 @@ pub fn sha256_file(path: &Path) -> io::Result<String> {
         }
         h.update(&buf[..n]);
     }
-    Ok(h.finalize().iter().map(|b| format!("{b:02x}")).collect())
+    Ok(hex(&h.finalize()))
+}
+
+/// sha256 of bytes already in memory, as lowercase hex.
+pub fn sha256_bytes(data: &[u8]) -> String {
+    hex(&Sha256::digest(data))
+}
+
+fn hex(digest: &[u8]) -> String {
+    digest.iter().map(|b| format!("{b:02x}")).collect()
+}
+
+/// A sha256 as this app writes it: 64 lowercase hex digits. Hashes from the manifest and from
+/// `state.json` become file names under the data folder, so nothing else is accepted.
+pub fn is_sha256_hex(s: &str) -> bool {
+    s.len() == 64 && s.bytes().all(|b| matches!(b, b'0'..=b'9' | b'a'..=b'f'))
 }
 
 /// Copy `src` over `dest` through a temp file in `dest`'s folder, so a reader never sees a

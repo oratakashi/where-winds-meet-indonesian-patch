@@ -98,18 +98,30 @@ VS Code style: download in the background, install when the user restarts.
 2. `update::check` reads `patch-guard-update.json` + `.sig` from `latest`, verifies the signature,
    compares `version` with `CARGO_PKG_VERSION` (`major.minor.patch`).
 3. `Updates::fetch` downloads the installer (by name from the same release, capped at `size + 1`)
-   to `<data>\updates\<version>\`, checks size, sha256 and the installer `.sig`, then writes
-   `updates\pending.json`. Any failure deletes the folder; nothing unverified is ever run.
+   to `<data>\updates\<version>\` and stores the signed `patch-guard-update.json` + `.sig` next
+   to it, exactly as served. There is no `pending.json` any more (v0.6.1+): every reader
+   (`Updates::pending`, the helper) re-verifies the folder each time — JSON signature, folder
+   name = signed `version`, version newer than the running build, installer size, sha256 and
+   installer signature, the installer read through a handle that denies writes and deletes.
+   Any failure deletes `updates\`; nothing unverified is ever run. `version` and `name` must be
+   plain file names (`[A-Za-z0-9.+_-]`, no `..`, the name ending in `.exe`).
 4. The window shows an info bar **"Patch Guard vX siap dipasang — Restart sekarang"**, the tray
    menu gets **Restart untuk update ke vX**, and History logs it.
-5. Installing (`update::apply`): copy the running exe to
-   `%TEMP%\wwm-patch-guard-updater-<pid>.exe`, start it detached with
-   `--apply-update <installer> --wait-pid <pid> --pending <updates dir> --version <v> [--relaunch <exe> -- <args>]`,
-   then quit. The helper waits for the app to exit, runs the installer with `/S` (per-user NSIS
-   install, no UAC), writes `<data>\update-result.json` (`{version, ok, code, at}`, v0.6+),
-   deletes `updates\`, and starts Patch Guard again. The copy is needed because
-   the installer replaces the exe the app runs from. Leftover helper copies are deleted on the
-   next normal start.
+5. Installing (`update::apply`): copy the running exe to a fresh folder
+   `<data>\updater\<pid>-<nanos>\wwm-patch-guard-updater.exe` (not `%TEMP%`: an exe there would
+   load any DLL dropped next to it), start it detached with
+   `--apply-update --wait-pid <pid> [--relaunch [--minimized]]`, then quit. **The helper takes no
+   paths** (v0.6.1+; any other argument → exit 2, nothing done): it finds the data folder itself
+   (`system::data_dir`), waits for the app to exit, verifies the pending update again (step 3)
+   and keeps the installer locked while it runs it with `/S` (per-user NSIS install, no UAC),
+   writes `<data>\update-result.json` (`{version, ok, code, at}`, v0.6+), deletes `updates\`,
+   and — with `--relaunch` — starts **the installed exe only**: `InstallLocation` of
+   `HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\WWM Patch Guard` +
+   `wwm-patch-guard.exe` (`system::installed_exe`; a dev build that was never installed is not
+   relaunched). So starting the exe with `--apply-update` by hand can only install a signed,
+   newer Patch Guard. The copy is needed because the installer replaces the exe the app runs
+   from. Leftover helper folders (and v0.6.0's `%TEMP%` copies) are deleted on the next normal
+   start. `main` also calls `SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS)` first.
 6. When it installs:
    - **Restart sekarang** (window) or the tray item → install, then start again.
    - **Keluar** from the tray with an update waiting → install, no restart.
@@ -179,7 +191,11 @@ cargo packager --release --formats nsis
   `<srv>/latest/{patch-guard-update.json(.sig), wwm-patch-guard-setup.exe(.sig), manifest.json(.sig)}`
   with `python -m http.server`, and start the debug build with
   `WWM_PATCH_GUARD_BASE_URL=http://127.0.0.1:<port>`, `WWM_PATCH_GUARD_DATA_DIR=<tmp>\data` and
-  `WWM_PATCH_GUARD_PUBKEY=<content of test.key.pub>` (the key override only exists in debug builds).
+  `WWM_PATCH_GUARD_PUBKEY=<content of test.key.pub>`. Since v0.6.1 **all three overrides exist
+  only in debug builds** (release builds ignore them, always use GitHub and refuse plain http,
+  redirects included — `https_only`); the helper relaunches only an installed copy.
+  Manifest hashes must be 64 lowercase hex digits and the zip name a plain name, and
+  `state.json` entries with other hashes are dropped on load (they become file names).
   Checked on 2026-11-23: download and verification → `pending.json`; start with a pending update →
   helper → relaunch; a tampered installer or a JSON signed by another key is rejected and logged.
 - Releasing a new version: bump `version` in `app/Cargo.toml`, push to `main` →
