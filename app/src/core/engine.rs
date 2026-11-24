@@ -78,6 +78,16 @@ pub enum AppNote {
     InstallFailed { version: String, code: Option<i32> },
 }
 
+impl Snapshot {
+    /// Copy the Settings switches from the saved config.
+    fn show_switches(&mut self, cfg: &Config) {
+        self.paused = cfg.paused;
+        self.auto_update = cfg.auto_update;
+        self.auto_update_app = cfg.auto_update_app;
+        self.auto_install_app = cfg.auto_install_app;
+    }
+}
+
 impl AppNote {
     pub fn text(&self) -> String {
         match self {
@@ -190,11 +200,16 @@ impl Engine {
     }
 
     /// Change the config, persist it and make the engine pick it up.
+    /// The switches in the snapshot follow at once (the window refreshes from it right after),
+    /// not only when the next guard pass ends.
     pub fn update_config(&self, f: impl FnOnce(&mut Config)) -> Result<(), String> {
         let mut cfg = self.config.lock().unwrap();
         f(&mut cfg);
         self.store.save_config(&cfg).map_err(|e| e.to_string())?;
+        let saved = cfg.clone();
+        // Never hold both locks: the guard thread takes the config before the snapshot.
         drop(cfg);
+        self.shared.lock().unwrap().show_switches(&saved);
         self.send(Msg::Reload);
         Ok(())
     }
@@ -294,6 +309,9 @@ impl Worker {
             let busy = dirs.iter().flat_map(|d| &d.files).any(|f| f.status == Status::Busy);
             wait = if busy { RETRY } else { POLL };
 
+            // The switches as saved now, not as they were when this pass started: a setting
+            // changed meanwhile must not be shown with its old value again.
+            let latest = self.config.lock().unwrap().clone();
             let mut s = self.shared.lock().unwrap();
             // The details are phrased in the current language: right after a switch every
             // known problem would look new, so that pass logs none.
@@ -308,10 +326,7 @@ impl Worker {
                 let _ = self.store.save_history(&s.log);
             }
             s.dirs = dirs;
-            s.paused = cfg.paused;
-            s.auto_update = cfg.auto_update;
-            s.auto_update_app = cfg.auto_update_app;
-            s.auto_install_app = cfg.auto_install_app;
+            s.show_switches(&latest);
             s.checking = false;
             s.last_check = Some(now);
             drop(s);

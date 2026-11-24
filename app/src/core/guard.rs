@@ -140,10 +140,12 @@ impl<R: Remote> Guard<R> {
         (events, errors)
     }
 
+    /// Persist the state. A failed write keeps it dirty, so the next pass tries again (the
+    /// rollback checkpoint and the backups must not be lost); the cache is only pruned against
+    /// a state that is on disk.
     fn flush(&mut self) {
-        if self.dirty {
+        if self.dirty && self.store.save_state(&self.state).is_ok() {
             self.dirty = false;
-            let _ = self.store.save_state(&self.state);
             self.store.prune(&self.state);
         }
     }
@@ -403,7 +405,11 @@ impl<R: Remote> Guard<R> {
         }
         if m.signed_at > *seen {
             *seen = m.signed_at;
+            // Written right away, before anything from this manifest is installed, so a crash
+            // later in the pass cannot forget it. If the disk refuses, the manifest is still
+            // used (a full disk must not stop the guard) and the next flush retries.
             self.dirty = true;
+            self.flush();
         }
         Ok(m)
     }

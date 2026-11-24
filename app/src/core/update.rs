@@ -258,11 +258,14 @@ fn read_small(path: &Path, limit: u64) -> io::Result<Vec<u8>> {
 /// Where downloads live: `<data dir>\updates\`.
 pub struct Updates {
     dir: PathBuf,
+    /// A download in progress (`<data dir>\updates-staging\`): outside `dir`, so a pending
+    /// check meanwhile neither sees a half-written folder nor deletes it.
+    staging: PathBuf,
 }
 
 impl Updates {
     pub fn new(data_dir: &Path) -> Updates {
-        Updates { dir: data_dir.join("updates") }
+        Updates { dir: data_dir.join("updates"), staging: data_dir.join("updates-staging") }
     }
 
     fn data_dir(&self) -> Option<&Path> {
@@ -377,15 +380,24 @@ impl Updates {
         if let Some(p) = self.pending_with(current, verify).filter(|p| p.info == release.info) {
             return Ok(p);
         }
-        self.clear();
         let info = &release.info;
+        // Everything is written into the staging folder first and moved into `updates\` in
+        // one rename once complete.
+        let _ = fs::remove_dir_all(&self.staging);
+        let stage = self.staging.join(&info.version);
         let dir = self.dir.join(&info.version);
-        let res = fs::create_dir_all(&dir)
+        let res = fs::create_dir_all(&stage)
             .map_err(|e| e.to_string())
-            .and_then(|()| download(&dir.join(&info.name)))
-            .and_then(|()| fs::write(dir.join(UPDATE_JSON), &release.json).map_err(|e| e.to_string()))
-            .and_then(|()| fs::write(dir.join(UPDATE_SIG), &release.sig).map_err(|e| e.to_string()))
+            .and_then(|()| download(&stage.join(&info.name)))
+            .and_then(|()| fs::write(stage.join(UPDATE_JSON), &release.json).map_err(|e| e.to_string()))
+            .and_then(|()| fs::write(stage.join(UPDATE_SIG), &release.sig).map_err(|e| e.to_string()))
+            .and_then(|()| {
+                self.clear();
+                fs::create_dir_all(&self.dir).map_err(|e| e.to_string())?;
+                fs::rename(&stage, &dir).map_err(|e| e.to_string())
+            })
             .and_then(|()| self.verify_dir(&dir, current, verify));
+        let _ = fs::remove_dir_all(&self.staging);
         match res {
             Ok(locked) => Ok(locked.pending),
             Err(e) => {
@@ -729,6 +741,28 @@ pub(crate) mod tests {
     fn fetch(e: &Env, r: &Release, served: &[u8]) -> Result<Pending, String> {
         let served = served.to_vec();
         e.u.fetch_with(r, "1.0.0", &*e.verifier, |dest| fs::write(dest, &served).map_err(|e| e.to_string()))
+    }
+
+    /// A pending check while a download is still being written (quit / "Restart sekarang"
+    /// during a background fetch) neither sees nor deletes it.
+    #[test]
+    fn a_download_in_progress_is_left_alone() {
+        let e = env();
+        let r = release("1.1.0", b"installer", &*e.sign);
+        let served = b"installer".to_vec();
+        let p = e
+            .u
+            .fetch_with(&r, "1.0.0", &*e.verifier, |dest| {
+                // Mid-download: the installer is there, its JSON not yet.
+                fs::write(dest, &served).map_err(|e| e.to_string())?;
+                assert!(e.u.pending_with("1.0.0", &*e.verifier).is_none());
+                assert!(dest.is_file(), "the probe did not delete the download");
+                assert!(!e.u.dir.join("1.1.0").exists(), "not visible as pending yet");
+                Ok(())
+            })
+            .unwrap();
+        assert_eq!(e.u.pending_with("1.0.0", &*e.verifier), Some(p));
+        assert!(!e.u.staging.exists(), "staging is cleaned up");
     }
 
     #[test]
