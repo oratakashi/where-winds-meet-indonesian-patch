@@ -331,12 +331,16 @@ impl Updater {
         self.shared.lock().unwrap().app_update = self.updates.pending().map(|p| p.info.version);
         // A version whose installer failed: not downloaded again automatically, only when
         // the user presses "Periksa update".
-        let mut failed_version: Option<String> = None;
+        // Kept in `update-failed.json`, so it survives restarts.
+        let mut failed_version: Option<String> = self.updates.failed_version();
         if let Some(r) = self.updates.take_result() {
             let msg = if r.ok {
+                failed_version = None;
+                self.updates.set_failed_version(None);
                 LogMsg::AppUpdated { version: r.version.clone() }
             } else {
                 failed_version = Some(r.version.clone());
+                self.updates.set_failed_version(Some(&r.version));
                 LogMsg::AppUpdateFailed { version: r.version.clone(), code: r.code }
             };
             let mut s = self.shared.lock().unwrap();
@@ -360,8 +364,8 @@ impl Updater {
             if !manual && !self.config.lock().unwrap().auto_update_app {
                 continue;
             }
-            if manual {
-                failed_version = None;
+            if manual && failed_version.take().is_some() {
+                self.updates.set_failed_version(None);
             }
             self.shared.lock().unwrap().app_update_checking = true;
             on_change(&[]);
@@ -438,14 +442,17 @@ fn rewatch(watcher: Option<&mut RecommendedWatcher>, watched: &mut Vec<PathBuf>,
     }
 }
 
-/// New problems worth a history line; none on the pass right after a language switch,
-/// when every detail is phrased anew and would look like a new problem.
+/// New problems worth a history line. On the pass right after a language switch every detail
+/// is phrased anew, so a changed detail alone does not count then; new files and status
+/// changes still do.
 fn problem_lines(old: &[DirReport], old_lang: Lang, new: &[DirReport], lang: Lang) -> Vec<String> {
-    if old_lang == lang { new_problems(old, new) } else { Vec::new() }
+    new_problems(old, new, old_lang == lang)
 }
 
-/// Log a file the first time it turns unknown or fails, not on every poll.
-fn new_problems(old: &[DirReport], new: &[DirReport]) -> Vec<String> {
+/// Log a file the first time it turns unknown or fails, not on every poll. `same_lang`: also
+/// log when only the detail changed (after a language switch every detail is re-phrased, so
+/// then only a new file or a status change counts).
+fn new_problems(old: &[DirReport], new: &[DirReport], same_lang: bool) -> Vec<String> {
     let mut out = Vec::new();
     for d in new {
         for f in &d.files {
@@ -456,7 +463,7 @@ fn new_problems(old: &[DirReport], new: &[DirReport]) -> Vec<String> {
                 .iter()
                 .find(|o| o.path == d.path)
                 .and_then(|o| o.files.iter().find(|x| x.name == f.name));
-            if before.is_none_or(|b| b.status != f.status || b.detail != f.detail) {
+            if before.is_none_or(|b| b.status != f.status || (same_lang && b.detail != f.detail)) {
                 out.push(format!("{}: {}", f.name, f.detail));
             }
         }
@@ -494,6 +501,16 @@ mod tests {
         let en = dirs("version does not match");
         assert!(problem_lines(&old, Lang::Id, &en, Lang::En).is_empty(), "only re-phrased");
         assert_eq!(problem_lines(&en, Lang::En, &dirs("other"), Lang::En).len(), 1);
+    }
+
+    #[test]
+    fn a_status_change_during_a_language_switch_is_still_logged() {
+        let mut patched = dirs("");
+        patched[0].files[0].status = Status::Patched;
+        let unknown = dirs("version does not match");
+        assert_eq!(problem_lines(&patched, Lang::Id, &unknown, Lang::En).len(), 1);
+        // A file not seen before counts as new too.
+        assert_eq!(problem_lines(&[], Lang::Id, &unknown, Lang::En).len(), 1);
     }
 
     #[test]

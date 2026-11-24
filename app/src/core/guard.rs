@@ -10,6 +10,7 @@
 //! `original_sha256` in the release manifest is the only proof that a build belongs to a
 //! given game file, so nothing is ever installed over a file whose hash is unknown —
 //! except on an explicit, user-confirmed force install.
+use crate::i18n::{self, Lang};
 use crate::model::{Client, DirReport, Event, FileEntry, FileReport, Manifest, Profile, Status};
 use crate::remote::{Remote, extract};
 use crate::store::{Config, GuardDir, State, Store, copy_atomic, entry_key, sha256_file};
@@ -45,7 +46,9 @@ pub struct Guard<R: Remote> {
     state: State,
     dirty: bool,
     hashes: HashMap<PathBuf, (u64, Option<SystemTime>, String)>,
-    manifests: HashMap<Profile, (Instant, Result<Manifest, String>)>,
+    /// The last manifest fetch per profile, when it happened, and the language a failure was
+    /// phrased in (a failure is not reused after a language switch).
+    manifests: HashMap<Profile, (Instant, Result<Manifest, String>, Lang)>,
     pub(crate) settle: Duration,
     pub(crate) error_ttl: Duration,
 }
@@ -311,7 +314,7 @@ impl<R: Remote> Guard<R> {
     /// The release zip of the cached manifest, downloaded once per check pass.
     fn fetch_archive(&mut self, profile: Profile) -> Result<PathBuf, String> {
         let archive = match self.manifests.get(&profile) {
-            Some((_, Ok(m))) => m.archive.clone(),
+            Some((_, Ok(m), _)) => m.archive.clone(),
             _ => return Err(t!("guard.release_manifest_not_loaded").into()),
         };
         let zip = self.store.archive_path(&archive.sha256);
@@ -352,7 +355,9 @@ impl<R: Remote> Guard<R> {
             self.state.backups.insert(pkey.clone(), cur_sha.to_string());
             self.dirty = true;
         }
-        // Last check before the game folder is touched: never install a damaged cache.
+        // Last check before the game folder is touched: never install a damaged cache. The
+        // memoized digest (per size + mtime) is dropped first, so this really re-reads it.
+        self.hashes.remove(&self.store.patched_path(&entry.patched_sha256));
         let Some(src) = self.cached(&entry.patched_sha256) else {
             return Err((
                 Status::Error,
@@ -374,13 +379,14 @@ impl<R: Remote> Guard<R> {
         max_age: Duration,
     ) -> Result<Option<FileEntry>, String> {
         let error_ttl = self.error_ttl;
-        let fresh = self.manifests.get(&profile).is_some_and(|(at, m)| {
-            let ttl = if m.is_ok() { max_age } else { max_age.min(error_ttl) };
-            at.elapsed() < ttl
+        let lang = i18n::get();
+        let fresh = self.manifests.get(&profile).is_some_and(|(at, m, phrased)| match m {
+            Ok(_) => at.elapsed() < max_age,
+            Err(_) => *phrased == lang && at.elapsed() < max_age.min(error_ttl),
         });
         if !fresh {
             let m = self.remote.manifest(profile);
-            self.manifests.insert(profile, (Instant::now(), m));
+            self.manifests.insert(profile, (Instant::now(), m, lang));
         }
         match &self.manifests[&profile].1 {
             Ok(m) => Ok(m.entry(name).cloned()),
@@ -652,6 +658,38 @@ mod tests {
         assert_eq!(r.content(), b"patched-v1");
         assert_eq!(r.guard.remote.downloads.get(), 2, "the damaged copy was fetched again");
         assert_eq!(fs::read(&cache).unwrap(), b"patched-v1");
+    }
+
+    #[test]
+    fn cache_damaged_without_a_size_or_mtime_change_is_caught_at_install() {
+        let mut r = Rig::new(b"orig-v1");
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        r.check();
+        // Same length, same mtime: the memoized digest alone would still call it good.
+        let cache = r.guard.store.patched_path(&sha(b"patched-v1"));
+        let mtime = fs::metadata(&cache).unwrap().modified().unwrap();
+        fs::write(&cache, b"PATCHED-V1").unwrap();
+        fs::File::options().write(true).open(&cache).unwrap().set_modified(mtime).unwrap();
+        r.overwrite(b"orig-v1");
+        assert_eq!(r.check_with(Opts::default(), false).0, Status::Error);
+        assert_eq!(r.content(), b"orig-v1", "the damaged copy is not installed");
+        assert!(!cache.exists(), "and it is deleted");
+        assert_eq!(r.check(), (Status::Patched, vec![installed()]));
+        assert_eq!(r.content(), b"patched-v1");
+    }
+
+    #[test]
+    fn a_failed_fetch_is_not_reused_after_a_language_switch() {
+        let mut r = Rig::new(b"orig-v1");
+        i18n::set(Lang::Id);
+        r.check_with(Opts::default(), false);
+        assert_eq!(r.guard.remote.fetches.get(), 1);
+        i18n::set(Lang::En);
+        r.check_with(Opts::default(), false);
+        assert_eq!(r.guard.remote.fetches.get(), 2, "fetched again, phrased in English");
+        r.check_with(Opts::default(), false);
+        assert_eq!(r.guard.remote.fetches.get(), 2, "same language: the error TTL holds");
+        i18n::set(Lang::Id);
     }
 
     #[test]

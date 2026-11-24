@@ -38,6 +38,9 @@ const ARG_PENDING: &str = "--pending";
 const ARG_VERSION: &str = "--version";
 /// What the last update helper did, next to `updates\` (that folder is deleted afterwards).
 const RESULT_JSON: &str = "update-result.json";
+/// The version whose installer failed, next to `updates\`: kept until a manual check or a
+/// successful update, so automatic checks never download that installer again.
+const FAILED_JSON: &str = "update-failed.json";
 
 // ---------------------------------------------------------------- signatures
 
@@ -171,6 +174,31 @@ impl Updates {
 
     pub fn clear(&self) {
         let _ = fs::remove_dir_all(&self.dir);
+    }
+
+    fn failed_path(&self) -> Option<PathBuf> {
+        self.dir.parent().map(|d| d.join(FAILED_JSON))
+    }
+
+    /// The version whose installer failed, if one is remembered.
+    pub fn failed_version(&self) -> Option<String> {
+        let bytes = fs::read(self.failed_path()?).ok()?;
+        serde_json::from_slice::<String>(&bytes).ok().filter(|v| parse_version(v).is_some())
+    }
+
+    /// Remember (or, with `None`, forget) the version whose installer failed.
+    pub fn set_failed_version(&self, version: Option<&str>) {
+        let Some(path) = self.failed_path() else { return };
+        match version {
+            Some(v) => {
+                if let Ok(json) = serde_json::to_vec(v) {
+                    let _ = fs::write(path, json);
+                }
+            }
+            None => {
+                let _ = fs::remove_file(path);
+            }
+        }
     }
 
     /// The result the last update helper left behind, if any. Removed once read.
@@ -488,6 +516,20 @@ pub(crate) mod tests {
         assert_eq!(u.take_result(), Some(res));
         assert_eq!(u.take_result(), None, "deleted after the first read");
         assert_eq!(result_path(Path::new(r"C:\somewhere\else")), None);
+    }
+
+    #[test]
+    fn failed_version_survives_until_cleared() {
+        let tmp = tempfile::tempdir().unwrap();
+        let u = Updates::new(tmp.path());
+        assert_eq!(u.failed_version(), None);
+        u.set_failed_version(Some("0.6.1"));
+        // A new `Updates` = the next start of the app.
+        assert_eq!(Updates::new(tmp.path()).failed_version().as_deref(), Some("0.6.1"));
+        u.clear(); // a cleared download folder does not forget it
+        assert_eq!(u.failed_version().as_deref(), Some("0.6.1"));
+        u.set_failed_version(None);
+        assert_eq!(u.failed_version(), None);
     }
 
     #[test]

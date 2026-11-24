@@ -135,7 +135,7 @@ fn macro_calls(src: &str) -> Vec<Call> {
         };
         let ident_before = i > 0 && (b[i - 1].is_ascii_alphanumeric() || b[i - 1] == b'_');
         let line_start = src[..i].rfind('\n').map_or(0, |p| p + 1);
-        let comment = src[line_start..i].trim_start().starts_with("//");
+        let comment = in_line_comment(&src[line_start..i]);
         let mut j = i + len;
         while j < b.len() && b[j].is_ascii_whitespace() {
             j += 1;
@@ -178,7 +178,26 @@ fn macro_calls(src: &str) -> Vec<Call> {
             .filter(|n| is_ident(n))
             .collect();
         out.push(Call { line: src[..i].matches('\n').count() + 1, key, formatted, args });
-        i = k;
+        // Continue right after the key, not after the arguments: a `t!` nested in a `tf!`
+        // argument is a call of its own and must be checked too.
+        i = j + 1 + end + 1;
     }
     out
+}
+
+/// Whether `prefix` (the start of a line up to a macro call) opens a `//` comment outside a
+/// string literal, e.g. `foo(); // t!("x")`.
+fn in_line_comment(prefix: &str) -> bool {
+    let b = prefix.as_bytes();
+    let (mut i, mut in_str) = (0, false);
+    while i < b.len() {
+        match b[i] {
+            b'\\' if in_str => i += 1,
+            b'"' => in_str = !in_str,
+            b'/' if !in_str && b.get(i + 1) == Some(&b'/') => return true,
+            _ => {}
+        }
+        i += 1;
+    }
+    false
 }
