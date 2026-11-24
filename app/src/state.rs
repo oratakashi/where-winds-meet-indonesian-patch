@@ -71,12 +71,21 @@ impl AppState {
     /// Reload the engine's state (after every pass, and after every action).
     pub fn refresh(&mut self, cx: &mut Context<Self>) {
         self.snap = self.engine.snapshot();
+        self.mark_guarded();
         cx.notify();
+    }
+
+    /// Set each found folder's `guarded` from the config as it is now, so a folder removed (or
+    /// added) since the last scan is shown right, whatever scan result came in last.
+    fn mark_guarded(&mut self) {
+        let dirs = self.engine.config().dirs;
+        for f in &mut self.found {
+            f.guarded = dirs.iter().any(|d| locations::same_path(&d.path, &f.path));
+        }
     }
 
     /// Look for installed copies of the game again (Steam libraries, NetEase launchers).
     pub fn rescan(&mut self, cx: &mut Context<Self>) {
-        let dirs = self.engine.config().dirs;
         cx.spawn(async move |this, cx| {
             let found = cx
                 .background_executor()
@@ -86,7 +95,7 @@ impl AppState {
                         .map(|g| Found {
                             profile: g.profile,
                             client: Client::of(&g.path),
-                            guarded: dirs.iter().any(|d| locations::same_path(&d.path, &g.path)),
+                            guarded: false,
                             path: g.path,
                         })
                         .collect::<Vec<_>>()
@@ -94,6 +103,8 @@ impl AppState {
                 .await;
             let _ = this.update(cx, |s, cx| {
                 s.found = found;
+                // Against the config at publish time, not at scan start.
+                s.mark_guarded();
                 cx.notify();
             });
         })

@@ -50,7 +50,11 @@ pub struct Snapshot {
     pub dirs: Vec<DirReport>,
     pub paused: bool,
     pub auto_update: bool,
+    /// The window shows "checking" (passes the user or a file change asked for).
     pub checking: bool,
+    /// A pass is running, routine polls included: it may be writing game files. This, not
+    /// `checking`, is what quitting waits for.
+    pub running: bool,
     pub last_check: Option<u64>,
     pub log: Vec<LogLine>,
     /// Self-update switch (`Config::auto_update_app`).
@@ -186,7 +190,7 @@ impl Engine {
 
     /// The guard is in the middle of a pass (it may be writing game files).
     pub fn busy(&self) -> bool {
-        self.shared.lock().unwrap().checking
+        self.shared.lock().unwrap().running
     }
 
     /// Just the waiting update's version (what the tray needs, without copying the history).
@@ -308,10 +312,16 @@ impl Worker {
             if batch.reload {
                 rewatch(watcher.as_mut(), &mut watched, &cfg);
             }
-            // A routine poll runs quietly: no "checking" flash and no wake-up of the window
-            // before it, only after it (most polls change nothing and cost a few metadata calls).
-            if !batch.is_routine() {
-                self.shared.lock().unwrap().checking = true;
+            // Every pass counts as running (quitting waits for it); only a routine poll skips the
+            // "checking" flash and the wake-up of the window before it (most polls change
+            // nothing and cost a few metadata calls).
+            let routine = batch.is_routine();
+            {
+                let mut s = self.shared.lock().unwrap();
+                s.running = true;
+                s.checking |= !routine;
+            }
+            if !routine {
                 on_change(&[]);
             }
 
@@ -358,6 +368,7 @@ impl Worker {
             s.dirs = dirs;
             s.show_switches(&latest);
             s.checking = false;
+            s.running = false;
             s.last_check = Some(now);
             drop(s);
             drop(latest);
@@ -583,8 +594,10 @@ mod tests {
 
     #[test]
     fn own_temp_files_and_routine_polls() {
-        assert!(is_own_temp(std::path::Path::new(r"C:\g\.translate_words_map_en.wwmpg-tmp")));
-        assert!(!is_own_temp(std::path::Path::new(r"C:\g\translate_words_map_en")));
+        // Built with `join`, so the test means the same on every host.
+        let dir = std::path::Path::new("game").join("locale");
+        assert!(is_own_temp(&dir.join(".translate_words_map_en.wwmpg-tmp")));
+        assert!(!is_own_temp(&dir.join("translate_words_map_en")));
         assert!(Batch::default().is_routine());
         let mut b = Batch::default();
         b.absorb(Msg::Fs);

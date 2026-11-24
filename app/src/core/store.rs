@@ -86,10 +86,11 @@ pub struct State {
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Debug)]
 pub struct HashEntry {
     pub len: u64,
-    /// Last write / creation time, nanoseconds since the Unix epoch. The creation time changes
-    /// when a file is replaced by a rename, even if the size and write time stay the same.
-    pub modified: Option<u128>,
-    pub created: Option<u128>,
+    /// Last write / creation time, nanoseconds since the Unix epoch (negative before it). The
+    /// creation time changes when a file is replaced by a rename, even if the size and write
+    /// time stay the same.
+    pub modified: Option<i128>,
+    pub created: Option<i128>,
     pub sha256: String,
 }
 

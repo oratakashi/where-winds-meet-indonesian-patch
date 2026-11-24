@@ -501,7 +501,9 @@ impl<R: Remote> Guard<R> {
     fn hash(&mut self, path: &Path, meta: &fs::Metadata) -> io::Result<String> {
         let key = path_key(path);
         let (len, modified, created) = stamp(meta);
+        // Without a write time there is nothing reliable to compare: always re-read.
         if let Some(e) = self.hashes.get(&key)
+            && modified.is_some()
             && (e.len, e.modified, e.created) == (len, modified, created)
         {
             return Ok(e.sha256.clone());
@@ -532,11 +534,16 @@ impl<R: Remote> Guard<R> {
     }
 }
 
-fn stamp(meta: &fs::Metadata) -> (u64, Option<u128>, Option<u128>) {
-    let nanos = |t: io::Result<SystemTime>| {
-        t.ok()?.duration_since(UNIX_EPOCH).ok().map(|d| d.as_nanos())
-    };
-    (meta.len(), nanos(meta.modified()), nanos(meta.created()))
+fn stamp(meta: &fs::Metadata) -> (u64, Option<i128>, Option<i128>) {
+    (meta.len(), meta.modified().ok().map(signed_nanos), meta.created().ok().map(signed_nanos))
+}
+
+/// Nanoseconds since the Unix epoch, negative before it, so every distinct time stays distinct.
+fn signed_nanos(t: SystemTime) -> i128 {
+    match t.duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_nanos() as i128,
+        Err(e) => -(e.duration().as_nanos() as i128),
+    }
 }
 
 /// Whether `path` can be replaced right now: opened for delete access with full sharing, which
@@ -981,6 +988,14 @@ mod tests {
         assert_eq!(r.check(), (Status::Patched, vec![installed()]));
         assert_eq!(r.content(), b"patched-v1");
         assert_eq!(r.guard.locked_retry(), None, "back to the normal poll");
+    }
+
+    #[test]
+    fn times_before_1970_stay_distinct() {
+        let before = |s| UNIX_EPOCH - Duration::from_secs(s);
+        assert_ne!(signed_nanos(before(1)), signed_nanos(before(2)));
+        assert_eq!(signed_nanos(before(1)), -1_000_000_000);
+        assert_eq!(signed_nanos(UNIX_EPOCH + Duration::from_secs(1)), 1_000_000_000);
     }
 
     #[test]
