@@ -1,6 +1,6 @@
 <div align="center">
 
-# Where Winds Meet — Indonesian Patch
+# Where Winds Meet — Community Indonesian Patch
 
 **A community Indonesian translation for *Where Winds Meet*, plus the open-source toolkit that builds it.**
 

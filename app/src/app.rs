@@ -31,6 +31,8 @@ pub enum Cmd {
     Quit,
     /// The engine finished (or started) a pass; non-empty when it changed files.
     Engine(Vec<Event>),
+    /// The UI language changed: relabel the tray menu.
+    LanguageChanged,
 }
 
 pub fn run() {
@@ -84,8 +86,14 @@ pub fn run() {
                     Cmd::Quit => false,
                     Cmd::RestartForUpdate => true,
                     cmd => {
-                        if let (Cmd::Engine(_), Some(t)) = (&cmd, tray.as_ref()) {
-                            t.set_update(engine.snapshot().app_update.as_deref());
+                        if let Some(t) = tray.as_ref() {
+                            match &cmd {
+                                Cmd::Engine(_) => t.set_update(engine.snapshot().app_update.as_deref()),
+                                Cmd::LanguageChanged => {
+                                    t.relabel(engine.snapshot().app_update.as_deref())
+                                }
+                                _ => {}
+                            }
                         }
                         cx.update(|cx| handle(cmd, &loop_state, cx));
                         continue;
@@ -132,7 +140,7 @@ fn handle(cmd: Cmd, state: &Entity<AppState>, cx: &mut App) {
             state.update(cx, |s, cx| s.refresh(cx));
         }
         // Handled by the command loop in `run`.
-        Cmd::Quit | Cmd::RestartForUpdate => {}
+        Cmd::Quit | Cmd::RestartForUpdate | Cmd::LanguageChanged => {}
     }
 }
 
@@ -141,16 +149,14 @@ fn notify(events: &[Event], cx: &mut App) {
     let installed = events.iter().filter(|e| matches!(e, Event::Installed { .. })).count();
     let title = match (restored, installed) {
         (0, 0) => return,
-        (_, 0) => "Patch Indonesia dipasang kembali",
-        _ => "Patch Indonesia diperbarui",
+        (_, 0) => t!("notify.reinstalled"),
+        _ => t!("notify.updated"),
     };
+    let n = restored + installed;
     cx.show_system_notification(SystemNotification {
         tag: "patch-guard".into(),
         title: title.into(),
-        body: format!(
-            "{} file dipulihkan. Kalau game sedang berjalan, restart game supaya teksnya berubah.",
-            restored + installed
-        )
+        body: tf!("notify.files_restored", n = n)
         .into(),
         actions: Vec::new(),
     });
@@ -213,7 +219,8 @@ impl Root {
         let selected = self.state.read(cx).page == page;
         let state = self.state.clone();
         div()
-            .id(label)
+            // Not the label: it changes with the language.
+            .id(("nav", page as usize))
             .relative()
             .flex()
             .items_center()
@@ -292,9 +299,9 @@ impl Render for Root {
                             .font_weight(FontWeight::SEMIBOLD)
                             .child(PRODUCT_NAME),
                     )
-                    .child(self.nav_item(Page::Home, glyph::HOME, "Home", cx))
-                    .child(self.nav_item(Page::Settings, glyph::SETTINGS, "Settings", cx))
-                    .child(self.nav_item(Page::History, glyph::HISTORY, "History", cx))
+                    .child(self.nav_item(Page::Home, glyph::HOME, t!("common.home"), cx))
+                    .child(self.nav_item(Page::Settings, glyph::SETTINGS, t!("common.settings"), cx))
+                    .child(self.nav_item(Page::History, glyph::HISTORY, t!("common.history"), cx))
                     .child(div().flex_1())
                     .child(
                         div()
@@ -303,7 +310,10 @@ impl Render for Root {
                             .text_size(px(12.))
                             .line_height(px(16.))
                             .text_color(t.muted_fg)
-                            .child(format!("Versi {}", env!("CARGO_PKG_VERSION"))),
+                            .child({
+                                let v = env!("CARGO_PKG_VERSION");
+                                tf!("common.version", v = v)
+                            }),
                     ),
             )
             .child(
@@ -326,7 +336,7 @@ impl Render for Root {
                             .pb(px(24.))
                             .children(error.map(|e| {
                                 error_bar(
-                                    "Tidak berhasil",
+                                    t!("app.error_title"),
                                     e,
                                     Rc::new(move |_, _, cx| {
                                         dismiss_state.update(cx, |s, cx| s.dismiss_error(cx))
@@ -407,7 +417,7 @@ fn dialog(
                                 .on_click(move |_, _, cx| yes.update(cx, |s, cx| s.answer(true, cx))),
                         )
                         .child(
-                            Button::new("dialog-no", "Batal")
+                            Button::new("dialog-no", t!("dialog.cancel"))
                                 .wide()
                                 .on_click(move |_, _, cx| no.update(cx, |s, cx| s.answer(false, cx))),
                         ),

@@ -61,7 +61,7 @@ impl HttpRemote {
         io::Read::read_to_end(&mut io::Read::take(resp.into_reader(), limit + 1), &mut out)
             .map_err(|e| Some(e.to_string()))?;
         if out.len() as u64 > limit {
-            return Err(Some(format!("{name} terlalu besar")));
+            return Err(Some(tf!("remote.is_too_large", name = name)));
         }
         Ok(out)
     }
@@ -77,19 +77,26 @@ impl HttpRemote {
     }
 }
 
-impl Remote for HttpRemote {
-    fn manifest(&self, profile: Profile) -> Result<Manifest, String> {
-        let tag = profile.release_tag();
+impl HttpRemote {
+    /// `manifest.json` and its `.sig`, as served right now.
+    fn manifest_pair(&self, tag: &str) -> Result<(Vec<u8>, String), String> {
         let json = self.get_bytes(tag, "manifest.json", MANIFEST_MAX).map_err(|e| {
-            e.unwrap_or_else(|| "rilis belum punya manifest.json".to_string())
+            e.unwrap_or_else(|| t!("common.release_no_manifest").to_string())
         })?;
         let sig = self.get_bytes(tag, "manifest.json.sig", SIG_MAX).map_err(|e| {
             e.unwrap_or_else(|| {
-                "rilis belum bertanda tangan (manifest.json.sig tidak ada) — tunggu build berikutnya"
-                    .to_string()
+                t!("remote.the_release_is_not").to_string()
             })
         })?;
-        verified_manifest(&json, &String::from_utf8_lossy(&sig), profile)
+        Ok((json, String::from_utf8_lossy(&sig).into_owned()))
+    }
+}
+
+impl Remote for HttpRemote {
+    fn manifest(&self, profile: Profile) -> Result<Manifest, String> {
+        let tag = profile.release_tag();
+        let pair = with_sig_retry(SIG_TRIES, SIG_RETRY_WAIT, || self.manifest_pair(tag))?;
+        parse_manifest_json(&pair.0, profile)
     }
 
     fn download(&self, profile: Profile, archive: &Archive, dest: &Path) -> Result<(), String> {
@@ -97,11 +104,42 @@ impl Remote for HttpRemote {
     }
 }
 
+/// A release is replaced asset by asset, so `manifest.json` and its `.sig` can briefly belong
+/// to different builds. A signature mismatch is retried a few times before it counts.
+const SIG_TRIES: u32 = 3;
+const SIG_RETRY_WAIT: Duration = Duration::from_secs(3);
+
+/// Fetch (manifest, sig) with `fetch` until the signature verifies, at most `tries` times.
+/// Network errors are returned at once; only a bad signature is retried.
+fn with_sig_retry(
+    tries: u32,
+    wait: Duration,
+    mut fetch: impl FnMut() -> Result<(Vec<u8>, String), String>,
+) -> Result<(Vec<u8>, String), String> {
+    let mut last = String::new();
+    for i in 0..tries.max(1) {
+        if i > 0 {
+            std::thread::sleep(wait);
+        }
+        let (json, sig) = fetch()?;
+        match update::verify(&json, &sig) {
+            Ok(()) => return Ok((json, sig)),
+            Err(e) => last = e,
+        }
+    }
+    Err(tf!("remote.manifest_untrusted_retry", last = last))
+}
+
 /// Only a manifest signed with the release key is read at all.
+#[cfg(test)]
 fn verified_manifest(json: &[u8], sig: &str, profile: Profile) -> Result<Manifest, String> {
-    update::verify(json, sig).map_err(|e| format!("manifest.json tidak bisa dipercaya: {e}"))?;
+    update::verify(json, sig).map_err(|e| tf!("remote.manifest_untrusted", e = e))?;
+    parse_manifest_json(json, profile)
+}
+
+fn parse_manifest_json(json: &[u8], profile: Profile) -> Result<Manifest, String> {
     let v: serde_json::Value =
-        serde_json::from_slice(json).map_err(|e| format!("manifest.json tidak terbaca: {e}"))?;
+        serde_json::from_slice(json).map_err(|e| tf!("remote.manifest_unreadable", e = e))?;
     parse_manifest(v, profile)
 }
 
@@ -110,12 +148,13 @@ fn verified_manifest(json: &[u8], sig: &str, profile: Profile) -> Result<Manifes
 fn parse_manifest(v: serde_json::Value, profile: Profile) -> Result<Manifest, String> {
     let schema = v.get("schema").and_then(serde_json::Value::as_u64).unwrap_or(0);
     if schema != MANIFEST_SCHEMA as u64 {
-        return Err(format!("manifest skema {schema} tidak didukung — perbarui Patch Guard"));
+        return Err(tf!("remote.manifest_schema_is_not", schema = schema));
     }
     let m: Manifest =
-        serde_json::from_value(v).map_err(|e| format!("manifest.json tidak terbaca: {e}"))?;
+        serde_json::from_value(v).map_err(|e| tf!("remote.manifest_unreadable", e = e))?;
     if m.profile != profile.key() {
-        return Err(format!("manifest untuk profil lain ({})", m.profile));
+        let profile = &m.profile;
+        return Err(tf!("remote.manifest_is_for_another", profile = profile));
     }
     Ok(m)
 }
@@ -125,8 +164,8 @@ fn parse_manifest(v: serde_json::Value, profile: Profile) -> Result<Manifest, St
 pub fn extract(zip: &Path, name: &str, limit: u64, dest: &Path) -> Result<(), String> {
     let f = fs::File::open(zip).map_err(|e| e.to_string())?;
     let mut z = zip::ZipArchive::new(io::BufReader::new(f))
-        .map_err(|e| format!("zip rilis rusak: {e}"))?;
-    let entry = z.by_name(name).map_err(|_| format!("{name} tidak ada di zip rilis"))?;
+        .map_err(|e| tf!("remote.release_zip_is_damaged", e = e))?;
+    let entry = z.by_name(name).map_err(|_| tf!("remote.is_not_in_the", name = name))?;
     let mut out = fs::File::create(dest).map_err(|e| e.to_string())?;
     io::copy(&mut io::Read::take(entry, limit + 1), &mut out).map_err(|e| e.to_string())?;
     Ok(())
@@ -185,6 +224,28 @@ mod tests {
         // Signed by some other key: rejected too.
         let (_, sign) = crate::update::tests::test_key();
         assert!(verified_manifest(json, &sign(json), Profile::Global).is_err());
+    }
+
+    #[test]
+    fn signature_mismatch_is_retried_then_reported() {
+        let json = br#"{"schema": 2}"#.to_vec();
+        // Always unsigned: every try fails, the error says the release may be mid-update.
+        let mut calls = 0;
+        let e = with_sig_retry(3, Duration::ZERO, || {
+            calls += 1;
+            Ok((json.clone(), String::new()))
+        })
+        .unwrap_err();
+        assert_eq!(calls, 3);
+        assert!(e.contains("tidak bisa dipercaya") && e.contains("sedang diperbarui"), "{e}");
+        // A network error is not retried.
+        let mut calls = 0;
+        let e = with_sig_retry(3, Duration::ZERO, || {
+            calls += 1;
+            Err::<(Vec<u8>, String), _>("offline".to_string())
+        })
+        .unwrap_err();
+        assert_eq!((calls, e.as_str()), (1, "offline"));
     }
 
     #[test]

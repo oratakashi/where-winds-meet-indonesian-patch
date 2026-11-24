@@ -21,25 +21,22 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
     let no_dirs = dirs.is_empty();
 
     let app_update = s.snap.app_update.clone();
-    let mut out = vec![page_title("Home", cx).into_any_element()];
+    let mut out = vec![page_title(t!("common.home"), cx).into_any_element()];
     if let Some(v) = app_update {
         let restart = state.clone();
         out.push(
             info_bar(
                 "app-update",
-                format!("Patch Guard v{v} siap dipasang").into(),
-                "Sudah diunduh dan diverifikasi. Patch Guard akan ditutup sebentar lalu dibuka \
-                 lagi; kalau tidak sekarang, update dipasang saat keluar atau saat Windows \
-                 menyala berikutnya."
-                    .into(),
-                "Restart sekarang".into(),
+                tf!("home.patch_guard_v_is", v = v).into(),
+                t!("home.downloaded_and_verified_patch").into(),
+                t!("home.restart_now").into(),
                 Rc::new(move |_, _, cx| restart.update(cx, |s, cx| s.restart_for_update(cx))),
                 cx,
             )
             .into_any_element(),
         );
     }
-    out.push(subtitle("Status saat ini").into_any_element());
+    out.push(subtitle(t!("home.current_status")).into_any_element());
     out.push(hero(state, cx).into_any_element());
 
     let rescan = state.clone();
@@ -50,16 +47,16 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
             .items_center()
             .gap(px(8.))
             .mt(px(12.))
-            .child(subtitle("Folder aktif").flex_1())
+            .child(subtitle(t!("home.active_folders")).flex_1())
             .child(
-                Button::new("rescan", "Deteksi ulang")
+                Button::new("rescan", t!("home.detect_again"))
                     .icon(glyph::REFRESH)
                     .style(ButtonStyle::Subtle)
                     .small()
                     .on_click(move |_, _, cx| rescan.update(cx, |s, cx| s.rescan(cx))),
             )
             .child(
-                Button::new("pick", "Pilih folder manual")
+                Button::new("pick", t!("home.choose_folder_manually"))
                     .icon(glyph::FOLDER_OPEN)
                     .style(if nothing_found { ButtonStyle::Accent } else { ButtonStyle::Standard })
                     .small()
@@ -79,11 +76,8 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
             card(cx)
                 .gap(px(4.))
                 .p(px(16.))
-                .child(div().font_weight(FontWeight::MEDIUM).child("Game tidak ditemukan otomatis"))
-                .child(div().text_color(theme(cx).muted_fg).child(
-                    "Pilih folder instalasi Where Winds Meet secara manual (folder Steam, launcher, \
-                     atau folder game-nya). Folder bahasa di dalamnya dicari otomatis.",
-                ))
+                .child(div().font_weight(FontWeight::MEDIUM).child(t!("home.game_not_found_automatically")))
+                .child(div().text_color(theme(cx).muted_fg).child(t!("home.choose_the_where_winds")))
                 .into_any_element(),
         );
     }
@@ -97,19 +91,22 @@ fn hero(state: &Entity<AppState>, cx: &App) -> Div {
     let u = &s.snap;
     let files = || u.dirs.iter().flat_map(|d| &d.files);
     let (g, tone, title, sub) = if u.dirs.is_empty() {
-        (glyph::ADD, t.muted_fg, "Belum diatur", "Belum ada folder game yang dijaga.")
+        (glyph::ADD, t.muted_fg, t!("home.not_set_up"), t!("home.no_game_folder_is"))
     } else if u.paused {
-        (glyph::PAUSE, t.warning, "Penjaga dijeda", "File game tidak diubah sampai dilanjutkan.")
+        (glyph::PAUSE, t.warning, t!("home.guard_paused"), t!("home.game_files_are_left"))
     } else if files().any(|f| f.status == Status::Error) {
-        (glyph::ERROR, t.destructive, "Ada masalah", "Lihat History untuk detailnya.")
+        (glyph::ERROR, t.destructive, t!("home.something_needs_attention"), t!("home.see_history_for_details"))
     } else if files().any(|f| f.status == Status::Busy) {
-        (glyph::SYNC, t.info, "Menunggu file game", "File sedang ditulis atau dipakai; dicoba lagi otomatis.")
+        (glyph::SYNC, t.info, t!("home.waiting_for_game_files"), t!("home.files_are_being_written"))
     } else if files().any(|f| f.status == Status::Unknown) {
-        (glyph::WARNING, t.warning, "Menunggu rilis baru", "Versi file game belum punya patch yang cocok.")
+        (glyph::WARNING, t.warning, t!("home.waiting_for_a_new"), t!("home.this_game_file_version"))
     } else {
-        (glyph::ACCEPT, t.success, "Patch terjaga", "Akan dipasang ulang otomatis jika ditimpa.")
+        (glyph::ACCEPT, t.success, t!("home.patch_guarded"), t!("home.reinstalled_automatically_if_overwritten"))
     };
-    let last = u.last_check.map(|at| format!("Terakhir diperiksa {}", clock(at)));
+    let last = u.last_check.map(|at| {
+        let c = clock(at);
+        tf!("common.last_checked", c = c)
+    });
     let checking = u.checking;
     let disabled = u.checking || u.dirs.is_empty();
     let check = state.clone();
@@ -130,7 +127,7 @@ fn hero(state: &Entity<AppState>, cx: &App) -> Div {
                 .children(last.map(|l| caption(l, cx))),
         )
         .child(
-            Button::new("check", if checking { "Memeriksa…" } else { "Periksa sekarang" })
+            Button::new("check", if checking { t!("common.checking") } else { t!("common.check_now") })
                 .disabled(disabled)
                 .on_click(move |_, _, cx| check.update(cx, |s, cx| s.check_now(cx))),
         )
@@ -154,13 +151,13 @@ fn detected(pending: Vec<Found>, state: &Entity<AppState>, cx: &App) -> Div {
                     .flex_col()
                     .flex_1()
                     .min_w_0()
-                    .child(subtitle("Game terdeteksi"))
-                    .child(caption("Ditemukan di komputer ini, belum dijaga.", cx)),
+                    .child(subtitle(t!("home.games_detected")))
+                    .child(caption(t!("home.found_on_this_pc"), cx)),
             )
             .when(many, |el| {
                 let st = state.clone();
                 el.child(
-                    Button::new("guard-all", "Jaga semua")
+                    Button::new("guard-all", t!("home.guard_all"))
                         .style(ButtonStyle::Accent)
                         .small()
                         .on_click(move |_, _, cx| {
@@ -198,7 +195,7 @@ fn detected(pending: Vec<Found>, state: &Entity<AppState>, cx: &App) -> Div {
                         .child(caption(f.path.display().to_string(), cx)),
                 )
                 .child(
-                    Button::new(("guard", i), "Jaga")
+                    Button::new(("guard", i), t!("home.guard"))
                         .style(if many { ButtonStyle::Standard } else { ButtonStyle::Accent })
                         .small()
                         .on_click(move |_, _, cx| {
@@ -213,12 +210,12 @@ fn detected(pending: Vec<Found>, state: &Entity<AppState>, cx: &App) -> Div {
 
 fn status_badge(s: Status) -> (Tone, &'static str) {
     match s {
-        Status::Patched => (Tone::Success, "Terpasang"),
-        Status::Original => (Tone::Warning, "File asli"),
-        Status::Unknown => (Tone::Warning, "Tidak dikenal"),
-        Status::Missing => (Tone::Muted, "Tidak ada"),
-        Status::Busy => (Tone::Info, "Menunggu"),
-        Status::Error => (Tone::Error, "Gagal"),
+        Status::Patched => (Tone::Success, t!("home.status.installed")),
+        Status::Original => (Tone::Warning, t!("home.status.original")),
+        Status::Unknown => (Tone::Warning, t!("home.status.unknown")),
+        Status::Missing => (Tone::Muted, t!("home.status.missing")),
+        Status::Busy => (Tone::Info, t!("home.status.waiting")),
+        Status::Error => (Tone::Error, t!("home.status.failed")),
     }
 }
 
@@ -258,18 +255,14 @@ fn dir_card(i: usize, dir: DirReport, state: &Entity<AppState>, cx: &App) -> Div
             .px(px(16.))
             .py(px(12.))
             .when(has_unknown, |el| {
-                el.child(Button::new(("force", i), "Pasang paksa").small().on_click(move |_, _, cx| {
+                el.child(Button::new(("force", i), t!("home.force_install")).small().on_click(move |_, _, cx| {
                     let path = force_path.clone();
                     force_state.update(cx, |s, cx| {
                         s.ask(
                             Confirm {
-                                title: "Pasang paksa?".into(),
-                                body: "Pasang rilis terbaru di folder ini walau versi file game-nya \
-                                       tidak dikenali?\n\nLakukan ini hanya kalau game sudah versi \
-                                       terbaru (misalnya file itu patch lama yang dipasang manual). \
-                                       File yang ada sekarang disimpan sebagai cadangan."
-                                    .into(),
-                                primary: "Pasang paksa".into(),
+                                title: t!("home.force_install_title").into(),
+                                body: t!("home.force_install_body").into(),
+                                primary: t!("home.force_install").into(),
                                 action: Rc::new(move |s, cx| s.force_install(path.clone(), cx)),
                             },
                             cx,
@@ -278,7 +271,7 @@ fn dir_card(i: usize, dir: DirReport, state: &Entity<AppState>, cx: &App) -> Div
                 }))
             })
             .child(
-                Button::new(("remove", i), "Berhenti menjaga")
+                Button::new(("remove", i), t!("home.stop_guarding"))
                     .style(ButtonStyle::Subtle)
                     .small()
                     .on_click(move |_, _, cx| {

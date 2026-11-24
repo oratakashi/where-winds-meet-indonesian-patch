@@ -10,6 +10,7 @@
 //! `original_sha256` in the release manifest is the only proof that a build belongs to a
 //! given game file, so nothing is ever installed over a file whose hash is unknown —
 //! except on an explicit, user-confirmed force install.
+use crate::i18n::{self, Lang};
 use crate::model::{Client, DirReport, Event, FileEntry, FileReport, Manifest, Profile, Status};
 use crate::remote::{Remote, extract};
 use crate::store::{Config, GuardDir, State, Store, copy_atomic, entry_key, sha256_file};
@@ -23,6 +24,9 @@ use std::time::{Duration, Instant, SystemTime};
 const UPDATE_TTL: Duration = Duration::from_secs(6 * 3600);
 /// How often to look for a matching release while a file is unknown.
 const UNKNOWN_TTL: Duration = Duration::from_secs(10 * 60);
+/// A failed manifest fetch (offline, release mid-update) is retried this soon, whatever the
+/// TTL of a good one.
+const ERROR_TTL: Duration = Duration::from_secs(60);
 /// A file modified more recently than this may still be mid-write by the patcher.
 const SETTLE: Duration = Duration::from_secs(2);
 
@@ -42,8 +46,11 @@ pub struct Guard<R: Remote> {
     state: State,
     dirty: bool,
     hashes: HashMap<PathBuf, (u64, Option<SystemTime>, String)>,
-    manifests: HashMap<Profile, (Instant, Result<Manifest, String>)>,
+    /// The last manifest fetch per profile, when it happened, and the language a failure was
+    /// phrased in (a failure is not reused after a language switch).
+    manifests: HashMap<Profile, (Instant, Result<Manifest, String>, Lang)>,
     pub(crate) settle: Duration,
+    pub(crate) error_ttl: Duration,
 }
 
 impl<R: Remote> Guard<R> {
@@ -57,6 +64,7 @@ impl<R: Remote> Guard<R> {
             hashes: HashMap::new(),
             manifests: HashMap::new(),
             settle: SETTLE,
+            error_ttl: ERROR_TTL,
         }
     }
 
@@ -151,16 +159,16 @@ impl<R: Remote> Guard<R> {
         let path = dir.join(name);
         let meta = match fs::metadata(&path) {
             Ok(m) if m.is_file() => m,
-            _ => return (Status::Missing, "file tidak ada di folder ini".into(), None),
+            _ => return (Status::Missing, t!("guard.file_not_in_this").into(), None),
         };
         if let Ok(age) = meta.modified().and_then(|t| t.elapsed().map_err(io::Error::other)) {
             if age < self.settle {
-                return (Status::Busy, "sedang ditulis — dicek lagi sebentar".into(), None);
+                return (Status::Busy, t!("guard.being_written_checking_again").into(), None);
             }
         }
         let sha = match self.hash(&path, &meta) {
             Ok(s) => s,
-            Err(e) => return (Status::Busy, format!("belum bisa dibaca ({e})"), None),
+            Err(e) => return (Status::Busy, tf!("guard.cannot_be_read_yet", e = e), None),
         };
         let pkey = path_key(&path);
         let local = self.state.entries.get(&entry_key(profile, name)).cloned();
@@ -172,13 +180,13 @@ impl<R: Remote> Guard<R> {
                 }
                 if sha == l.original_sha256 {
                     if opts.paused {
-                        return (Status::Original, "file asli game (penjaga dijeda)".into(), None);
+                        return (Status::Original, t!("guard.game_s_original_file").into(), None);
                     }
-                    if self.store.patched_path(&l.patched_sha256).is_file() {
+                    if self.cached(&l.patched_sha256).is_some() {
                         return match self.install(&path, &sha, l) {
                             Ok(()) => (
                                 Status::Patched,
-                                "patch dipasang kembali".into(),
+                                t!("guard.patch_reinstalled").into(),
                                 Some(Event::Restored { profile, name: name.to_string() }),
                             ),
                             Err(f) => f,
@@ -189,9 +197,9 @@ impl<R: Remote> Guard<R> {
             if opts.paused {
                 let ours = self.state.installed.get(&pkey) == Some(&sha);
                 return if ours {
-                    (Status::Patched, "build lama".into(), None)
+                    (Status::Patched, t!("guard.older_build").into(), None)
                 } else {
-                    (Status::Unknown, "belum diperiksa (penjaga dijeda)".into(), None)
+                    (Status::Unknown, t!("guard.not_checked_guard_paused").into(), None)
                 };
             }
         }
@@ -199,15 +207,14 @@ impl<R: Remote> Guard<R> {
         let r = match self.remote_entry(profile, name, UNKNOWN_TTL) {
             Ok(Some(r)) => r,
             Ok(None) => {
-                return (Status::Unknown, "rilis terbaru tidak memuat file ini".into(), None);
+                return (Status::Unknown, t!("guard.the_latest_release_does").into(), None);
             }
-            Err(e) => return (Status::Unknown, format!("rilis tidak bisa diperiksa: {e}"), None),
+            Err(e) => return (Status::Unknown, tf!("guard.cannot_check_the_release", e = e), None),
         };
         if sha == r.patched_sha256 {
             // Installed by hand (or by an earlier run): adopt it and keep a cached copy.
-            let cache = self.store.patched_path(&r.patched_sha256);
-            if !cache.is_file() {
-                let _ = copy_atomic(&path, &cache);
+            if self.cached(&r.patched_sha256).is_none() {
+                let _ = copy_atomic(&path, &self.store.patched_path(&r.patched_sha256));
             }
             self.state.entries.insert(entry_key(profile, name), r.clone());
             self.state.installed.insert(pkey, r.patched_sha256);
@@ -218,7 +225,7 @@ impl<R: Remote> Guard<R> {
             return match self.fetch_and_install(profile, &path, &sha, &r) {
                 Ok(()) => (
                     Status::Patched,
-                    "patch dipasang".into(),
+                    t!("guard.patch_installed").into(),
                     Some(Event::Installed { profile, name: name.to_string() }),
                 ),
                 Err(f) => f,
@@ -227,13 +234,13 @@ impl<R: Remote> Guard<R> {
         if self.state.installed.get(&pkey) == Some(&sha) {
             return (
                 Status::Patched,
-                "build lama — file game di folder ini beda versi dari rilis terbaru".into(),
+                t!("guard.older_build_the_game").into(),
                 None,
             );
         }
         (
             Status::Unknown,
-            "versi file tidak cocok dengan rilis terbaru — dibiarkan, menunggu rilis baru".into(),
+            t!("guard.file_version_does_not").into(),
             None,
         )
     }
@@ -264,10 +271,10 @@ impl<R: Remote> Guard<R> {
         match self.fetch_and_install(profile, path, sha, &r) {
             Ok(()) => (
                 Status::Patched,
-                "terjemahan diperbarui".into(),
+                t!("guard.translation_updated").into(),
                 Some(Event::Installed { profile, name: local.name.clone() }),
             ),
-            Err((_, why, _)) => (Status::Patched, format!("pembaruan terjemahan gagal: {why}"), None),
+            Err((_, why, _)) => (Status::Patched, tf!("guard.translation_update_failed", why = why), None),
         }
     }
 
@@ -278,8 +285,8 @@ impl<R: Remote> Guard<R> {
         cur_sha: &str,
         r: &FileEntry,
     ) -> Result<(), Outcome> {
-        let cache = self.store.patched_path(&r.patched_sha256);
-        if !cache.is_file() {
+        if self.cached(&r.patched_sha256).is_none() {
+            let cache = self.store.patched_path(&r.patched_sha256);
             let part = self.store.download_path(&r.patched_sha256);
             let got = self
                 .fetch_archive(profile)
@@ -289,14 +296,14 @@ impl<R: Remote> Guard<R> {
                     if sha == r.patched_sha256 {
                         fs::rename(&part, &cache).map_err(|e| e.to_string())
                     } else {
-                        Err("isi zip tidak cocok dengan manifest".to_string())
+                        Err(t!("guard.zip_content_does_not").to_string())
                     }
                 });
             if let Err(e) = got {
                 let _ = fs::remove_file(&part);
                 self.store.clear_archives();
                 self.manifests.remove(&profile);
-                return Err((Status::Error, format!("gagal mengunduh: {e}"), None));
+                return Err((Status::Error, tf!("guard.download_failed", e = e), None));
             }
         }
         self.install(path, cur_sha, r)?;
@@ -307,8 +314,8 @@ impl<R: Remote> Guard<R> {
     /// The release zip of the cached manifest, downloaded once per check pass.
     fn fetch_archive(&mut self, profile: Profile) -> Result<PathBuf, String> {
         let archive = match self.manifests.get(&profile) {
-            Some((_, Ok(m))) => m.archive.clone(),
-            _ => return Err("manifest rilis belum dimuat".into()),
+            Some((_, Ok(m), _)) => m.archive.clone(),
+            _ => return Err(t!("guard.release_manifest_not_loaded").into()),
         };
         let zip = self.store.archive_path(&archive.sha256);
         if zip.is_file() {
@@ -327,7 +334,7 @@ impl<R: Remote> Guard<R> {
                     fs::rename(&part, &zip).map_err(|e| e.to_string())
                 } else {
                     // The rolling release can be replaced mid-download: just retry later.
-                    Err("unduhan tidak cocok dengan manifest".to_string())
+                    Err(t!("guard.download_does_not_match").to_string())
                 }
             });
         if got.is_err() {
@@ -348,7 +355,17 @@ impl<R: Remote> Guard<R> {
             self.state.backups.insert(pkey.clone(), cur_sha.to_string());
             self.dirty = true;
         }
-        copy_atomic(&self.store.patched_path(&entry.patched_sha256), path).map_err(write_failure)?;
+        // Last check before the game folder is touched: never install a damaged cache. The
+        // memoized digest (per size + mtime) is dropped first, so this really re-reads it.
+        self.hashes.remove(&self.store.patched_path(&entry.patched_sha256));
+        let Some(src) = self.cached(&entry.patched_sha256) else {
+            return Err((
+                Status::Error,
+                t!("guard.cached_patch_copy_is").into(),
+                None,
+            ));
+        };
+        copy_atomic(&src, path).map_err(write_failure)?;
         self.hashes.remove(path);
         self.state.installed.insert(pkey, entry.patched_sha256.clone());
         self.dirty = true;
@@ -361,14 +378,35 @@ impl<R: Remote> Guard<R> {
         name: &str,
         max_age: Duration,
     ) -> Result<Option<FileEntry>, String> {
-        let fresh = self.manifests.get(&profile).is_some_and(|(at, _)| at.elapsed() < max_age);
+        let error_ttl = self.error_ttl;
+        let lang = i18n::get();
+        let fresh = self.manifests.get(&profile).is_some_and(|(at, m, phrased)| match m {
+            Ok(_) => at.elapsed() < max_age,
+            Err(_) => *phrased == lang && at.elapsed() < max_age.min(error_ttl),
+        });
         if !fresh {
             let m = self.remote.manifest(profile);
-            self.manifests.insert(profile, (Instant::now(), m));
+            self.manifests.insert(profile, (Instant::now(), m, lang));
         }
         match &self.manifests[&profile].1 {
             Ok(m) => Ok(m.entry(name).cloned()),
             Err(e) => Err(e.clone()),
+        }
+    }
+
+    /// The cached patched build `sha`, if it is there and still has that hash. A damaged copy
+    /// (disk error, antivirus) is deleted so the next install downloads it again.
+    fn cached(&mut self, sha: &str) -> Option<PathBuf> {
+        let p = self.store.patched_path(sha);
+        let meta = fs::metadata(&p).ok().filter(|m| m.is_file())?;
+        match self.hash(&p, &meta) {
+            Ok(h) if h == sha => Some(p),
+            Ok(_) => {
+                let _ = fs::remove_file(&p);
+                self.hashes.remove(&p);
+                None
+            }
+            Err(_) => None,
         }
     }
 
@@ -393,7 +431,7 @@ fn path_key(path: &Path) -> String {
 
 /// A failed write is almost always the game or the patcher holding the file: retry.
 fn write_failure(e: io::Error) -> Outcome {
-    (Status::Busy, format!("belum bisa ditulis ({e}) — dicoba lagi"), None)
+    (Status::Busy, tf!("guard.cannot_be_written_yet", e = e), None)
 }
 
 #[cfg(test)]
@@ -431,7 +469,7 @@ mod tests {
         fn manifest(&self, _: Profile) -> Result<Manifest, String> {
             self.fetches.set(self.fetches.get() + 1);
             let b = self.build.borrow();
-            let (o, p) = b.as_ref().ok_or("rilis belum punya manifest.json")?;
+            let (o, p) = b.as_ref().ok_or(t!("common.release_no_manifest"))?;
             let zip = zip_of(&[(NAME, p)]);
             Ok(Manifest {
                 schema: MANIFEST_SCHEMA,
@@ -590,6 +628,68 @@ mod tests {
         // Fixed on the server: the next pass succeeds.
         *r.guard.remote.served.borrow_mut() = Some(zip_of(&[(NAME, b"patched-v1")]));
         assert_eq!(r.check(), (Status::Patched, vec![installed()]));
+    }
+
+    #[test]
+    fn failed_manifest_fetch_is_retried_soon() {
+        let mut r = Rig::new(b"orig-v1");
+        // Offline: the first pass fails to fetch the manifest.
+        assert_eq!(r.check_with(Opts::default(), false).0, Status::Unknown);
+        assert_eq!(r.guard.remote.fetches.get(), 1);
+        // Within the error TTL nothing is fetched again…
+        assert_eq!(r.check_with(Opts::default(), false).0, Status::Unknown);
+        assert_eq!(r.guard.remote.fetches.get(), 1);
+        // …after it, the next pass tries again and installs (not 10 min / 6 h later).
+        r.guard.error_ttl = Duration::ZERO;
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        assert_eq!(r.check_with(Opts::default(), false), (Status::Patched, vec![installed()]));
+        assert_eq!(r.guard.remote.fetches.get(), 2);
+    }
+
+    #[test]
+    fn damaged_cache_is_downloaded_again_not_installed() {
+        let mut r = Rig::new(b"orig-v1");
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        r.check();
+        let cache = r.guard.store.patched_path(&sha(b"patched-v1"));
+        fs::write(&cache, b"bit rot").unwrap();
+        r.overwrite(b"orig-v1");
+        assert_eq!(r.check(), (Status::Patched, vec![installed()]));
+        assert_eq!(r.content(), b"patched-v1");
+        assert_eq!(r.guard.remote.downloads.get(), 2, "the damaged copy was fetched again");
+        assert_eq!(fs::read(&cache).unwrap(), b"patched-v1");
+    }
+
+    #[test]
+    fn cache_damaged_without_a_size_or_mtime_change_is_caught_at_install() {
+        let mut r = Rig::new(b"orig-v1");
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        r.check();
+        // Same length, same mtime: the memoized digest alone would still call it good.
+        let cache = r.guard.store.patched_path(&sha(b"patched-v1"));
+        let mtime = fs::metadata(&cache).unwrap().modified().unwrap();
+        fs::write(&cache, b"PATCHED-V1").unwrap();
+        fs::File::options().write(true).open(&cache).unwrap().set_modified(mtime).unwrap();
+        r.overwrite(b"orig-v1");
+        assert_eq!(r.check_with(Opts::default(), false).0, Status::Error);
+        assert_eq!(r.content(), b"orig-v1", "the damaged copy is not installed");
+        assert!(!cache.exists(), "and it is deleted");
+        assert_eq!(r.check(), (Status::Patched, vec![installed()]));
+        assert_eq!(r.content(), b"patched-v1");
+    }
+
+    #[test]
+    fn a_failed_fetch_is_not_reused_after_a_language_switch() {
+        let mut r = Rig::new(b"orig-v1");
+        i18n::set(Lang::Id);
+        r.check_with(Opts::default(), false);
+        assert_eq!(r.guard.remote.fetches.get(), 1);
+        i18n::set(Lang::En);
+        r.check_with(Opts::default(), false);
+        assert_eq!(r.guard.remote.fetches.get(), 2, "fetched again, phrased in English");
+        r.check_with(Opts::default(), false);
+        assert_eq!(r.guard.remote.fetches.get(), 2, "same language: the error TTL holds");
+        i18n::set(Lang::Id);
     }
 
     #[test]

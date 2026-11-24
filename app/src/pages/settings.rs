@@ -1,8 +1,10 @@
-//! Settings: autostart, translation and app updates, pause, and putting the original files back.
-use crate::fluent::{Button, Toggle, caption, card, divider, page_title};
+//! Settings: language, autostart, translation and app updates, pause, and putting the
+//! original files back.
+use crate::fluent::{Button, ButtonStyle, Toggle, caption, card, divider, page_title};
+use crate::i18n::{self, Lang};
 use crate::state::{AppState, Confirm};
 use gpui::prelude::*;
-use gpui::{AnyElement, App, Div, Entity, FontWeight, Window, div, px};
+use gpui::{AnyElement, App, Div, Entity, FontWeight, SharedString, Window, div, px};
 use std::rc::Rc;
 
 pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
@@ -17,12 +19,13 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
     let (a, b, c, r) = (state.clone(), state.clone(), state.clone(), state.clone());
     let (u, chk) = (state.clone(), state.clone());
     vec![
-        page_title("Settings", cx).into_any_element(),
+        page_title(t!("common.settings"), cx).into_any_element(),
+        card(cx).child(language_row(state, cx)).into_any_element(),
         card(cx)
             .child(setting(
                 "autostart",
-                "Jalankan saat Windows menyala",
-                "Mulai di tray, tanpa membuka jendela.",
+                t!("settings.run_when_windows_starts"),
+                t!("settings.start_in_the_tray"),
                 autostart,
                 move |v, _, cx| a.update(cx, |s, cx| s.set_autostart(v, cx)),
                 cx,
@@ -30,8 +33,8 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
             .child(divider(cx))
             .child(setting(
                 "auto-update",
-                "Perbarui terjemahan otomatis",
-                "Pasang build terjemahan baru untuk versi game yang sama.",
+                t!("settings.update_the_translation_automatically"),
+                t!("settings.install_new_translation_builds"),
                 auto_update,
                 move |v, _, cx| b.update(cx, |s, cx| s.set_auto_update(v, cx)),
                 cx,
@@ -39,42 +42,50 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
             .child(divider(cx))
             .child(setting(
                 "paused",
-                "Jeda penjaga",
-                "Hanya memantau; tidak mengubah file game.",
+                t!("settings.pause_the_guard"),
+                t!("settings.only_watch_never_change"),
                 paused,
                 move |v, _, cx| c.update(cx, |s, cx| s.set_paused(v, cx)),
                 cx,
             ))
             .child(divider(cx))
             .child(
-                row("Kembalikan file asli", "Batalkan patch di semua folder dan jeda penjaga.", cx).child(
-                    Button::new("restore", "Kembalikan").disabled(no_dirs).on_click(move |_, _, cx| {
-                        r.update(cx, |s, cx| {
-                            s.ask(
-                                Confirm {
-                                    title: "Kembalikan file asli?".into(),
-                                    body: "Kembalikan file asli game di semua folder?\n\nPenjaga \
-                                           akan dijeda supaya patch tidak dipasang lagi."
-                                        .into(),
-                                    primary: "Kembalikan".into(),
-                                    action: Rc::new(|s, cx| s.restore_originals(cx)),
-                                },
-                                cx,
-                            )
-                        })
-                    }),
+                row(
+                    t!("settings.restore.row"),
+                    t!("settings.restore.hint"),
+                    cx,
+                )
+                .child(
+                    Button::new("restore", t!("settings.restore.button")).disabled(no_dirs).on_click(
+                        move |_, _, cx| {
+                            r.update(cx, |s, cx| {
+                                s.ask(
+                                    Confirm {
+                                        title: t!("settings.restore.title").into(),
+                                        body: t!("settings.restore.body").into(),
+                                        primary: t!("settings.restore.button").into(),
+                                        action: Rc::new(|s, cx| s.restore_originals(cx)),
+                                    },
+                                    cx,
+                                )
+                            })
+                        },
+                    ),
                 ),
             )
             .into_any_element(),
         div()
             .pt(px(8.))
-            .child(caption("Menutup jendela ini menyembunyikannya ke tray; penjaga tetap berjalan.", cx))
+            .child(caption(
+                t!("settings.closing_this_window_hides"),
+                cx,
+            ))
             .into_any_element(),
         card(cx)
             .child(setting(
                 "auto-update-app",
-                "Perbarui Patch Guard otomatis",
-                "Unduh versi baru di latar belakang, lalu tawarkan restart untuk memasangnya.",
+                t!("settings.update_patch_guard_automatically"),
+                t!("settings.download_new_versions_in"),
                 auto_update_app,
                 move |v, _, cx| u.update(cx, |s, cx| s.set_auto_update_app(v, cx)),
                 cx,
@@ -93,31 +104,59 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
                             .flex()
                             .flex_col()
                             .min_w_0()
-                            .child(
-                                div()
-                                    .font_weight(FontWeight::MEDIUM)
-                                    .child(format!("Versi {}", env!("CARGO_PKG_VERSION"))),
-                            )
+                            .child(div().font_weight(FontWeight::MEDIUM).child({
+                                let v = env!("CARGO_PKG_VERSION");
+                                tf!("common.version", v = v)
+                            }))
                             .child(caption(
                                 match (&ready, &note) {
-                                    (Some(v), _) => format!("Versi {v} siap dipasang — buka Home untuk restart."),
-                                    (None, Some(n)) => n.clone(),
-                                    (None, None) => "Update diperiksa otomatis setiap 6 jam.".to_string(),
+                                    (Some(v), _) => tf!("settings.version_is_ready_to", v = v),
+                                    (None, Some(n)) => n.text(),
+                                    (None, None) => t!("settings.updates_are_checked_automatically").to_string(),
                                 },
                                 cx,
                             )),
                     )
                     .child(
-                        Button::new("check-app-update", if app_checking { "Memeriksa…" } else { "Periksa update" })
-                            .disabled(app_checking)
-                            .on_click(move |_, _, cx| chk.update(cx, |s, cx| s.check_app_update(cx))),
+                        Button::new(
+                            "check-app-update",
+                            if app_checking {
+                                t!("common.checking")
+                            } else {
+                                t!("settings.check_for_updates")
+                            },
+                        )
+                        .disabled(app_checking)
+                        .on_click(move |_, _, cx| chk.update(cx, |s, cx| s.check_app_update(cx))),
                     ),
             )
             .into_any_element(),
     ]
 }
 
-fn row(title: &'static str, hint: &'static str, cx: &App) -> Div {
+/// "Bahasa / Language": one button per language, the current one highlighted. The label is
+/// bilingual so it can be found whichever language is on.
+fn language_row(state: &Entity<AppState>, cx: &App) -> Div {
+    let current = i18n::get();
+    let mut buttons = div().flex().gap(px(8.)).flex_none();
+    for lang in Lang::ALL {
+        let st = state.clone();
+        buttons = buttons.child(
+            Button::new(("lang", lang as usize), i18n::text_in(lang, "lang.name"))
+                .style(if lang == current { ButtonStyle::Accent } else { ButtonStyle::Standard })
+                .small()
+                .on_click(move |_, _, cx| st.update(cx, |s, cx| s.set_language(lang, cx))),
+        );
+    }
+    row(
+        t!("settings.language.title"),
+        t!("settings.language.hint"),
+        cx,
+    )
+    .child(buttons)
+}
+
+fn row(title: impl Into<SharedString>, hint: impl Into<SharedString>, cx: &App) -> Div {
     div()
         .flex()
         .items_center()
@@ -130,7 +169,7 @@ fn row(title: &'static str, hint: &'static str, cx: &App) -> Div {
                 .flex()
                 .flex_col()
                 .min_w_0()
-                .child(div().font_weight(FontWeight::MEDIUM).child(title))
+                .child(div().font_weight(FontWeight::MEDIUM).child(title.into()))
                 .child(caption(hint, cx)),
         )
 }

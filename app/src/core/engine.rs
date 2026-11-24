@@ -3,7 +3,8 @@
 //! request; the update thread looks for a newer Patch Guard and downloads it (see `update.rs`).
 use crate::guard::{Guard, Opts};
 use crate::locations;
-use crate::model::{DirReport, Event, LogLine, Status};
+use crate::i18n::{self, Lang};
+use crate::model::{DirReport, Event, LogLine, LogMsg, Status};
 use crate::remote::HttpRemote;
 use crate::store::{Config, Store};
 use crate::update::{self, Pending, Updates};
@@ -58,7 +59,40 @@ pub struct Snapshot {
     pub app_update: Option<String>,
     pub app_update_checking: bool,
     /// Outcome of the last app-update check, for the Settings page.
-    pub app_update_note: Option<String>,
+    pub app_update_note: Option<AppNote>,
+    /// The language the dirs' details were last phrased in.
+    pub lang: Lang,
+}
+
+/// The outcome of an app-update check, phrased when shown (so it follows a language switch).
+#[derive(Serialize, Clone, Debug, PartialEq, Eq)]
+pub enum AppNote {
+    Downloaded(String),
+    UpToDate,
+    /// The error text (from the network or the release check).
+    CheckFailed(String),
+    /// This version's installer failed before; not fetched again automatically.
+    SkippedFailed(String),
+    InstallFailed { version: String, code: Option<i32> },
+}
+
+impl AppNote {
+    pub fn text(&self) -> String {
+        match self {
+            AppNote::Downloaded(v) => {
+                tf!("engine.version_is_downloaded_and", v = v)
+            }
+            AppNote::UpToDate => {
+                let v = update::CURRENT;
+                tf!("engine.you_have_the_latest", v = v)
+            }
+            AppNote::CheckFailed(e) => tf!("engine.check_failed", e = e),
+            AppNote::SkippedFailed(v) => tf!("engine.updating_to_v_failed", v = v),
+            AppNote::InstallFailed { version, code } => {
+                LogMsg::AppUpdateFailed { version: version.clone(), code: *code }.text()
+            }
+        }
+    }
 }
 
 pub struct Engine {
@@ -78,7 +112,10 @@ impl Engine {
         if locations::migrate(&mut cfg.dirs) {
             let _ = store.save_config(&cfg);
         }
+        // Before any thread phrases a status detail or a history line.
+        i18n::set(cfg.language);
         let shared = Arc::new(Mutex::new(Snapshot {
+            lang: cfg.language,
             paused: cfg.paused,
             auto_update: cfg.auto_update,
             checking: !cfg.dirs.is_empty(),
@@ -235,25 +272,34 @@ impl Worker {
             on_change(&[]);
 
             let mut events = Vec::new();
-            let mut lines = Vec::new();
+            let mut lines: Vec<(String, Option<LogMsg>)> = Vec::new();
             if batch.uninstall {
                 let (ev, errs) = guard.uninstall(&cfg.dirs);
                 events.extend(ev);
-                lines.extend(errs.into_iter().map(|e| format!("Gagal mengembalikan {e}")));
+                lines.extend(
+                    errs.into_iter().map(|e| (tf!("engine.could_not_restore", e = e), None)),
+                );
             }
             let opts = Opts { force_remote: batch.force_remote, ..Opts::default() };
             let (dirs, ev) = guard.check_all(&cfg, opts, batch.force_dir.as_deref());
             events.extend(ev);
-            lines.extend(events.iter().map(describe));
+            lines.extend(events.iter().map(|e| {
+                let m = LogMsg::from(e);
+                (m.text(), Some(m))
+            }));
 
             let busy = dirs.iter().flat_map(|d| &d.files).any(|f| f.status == Status::Busy);
             wait = if busy { RETRY } else { POLL };
 
             let mut s = self.shared.lock().unwrap();
-            lines.extend(new_problems(&s.dirs, &dirs));
+            // The details are phrased in the current language: right after a switch every
+            // known problem would look new, so that pass logs none.
+            let lang = i18n::get();
+            lines.extend(problem_lines(&s.dirs, s.lang, &dirs, lang).into_iter().map(|t| (t, None)));
+            s.lang = lang;
             let now = unix_now();
             if !lines.is_empty() {
-                s.log.extend(lines.into_iter().map(|text| LogLine { at: now, text }));
+                s.log.extend(lines.into_iter().map(|(text, msg)| LogLine::new(now, text, msg)));
                 let extra = s.log.len().saturating_sub(LOG_MAX);
                 s.log.drain(..extra);
                 let _ = self.store.save_history(&s.log);
@@ -283,6 +329,28 @@ impl Updater {
         let remote = HttpRemote::new();
         // A download from an earlier run may still be waiting.
         self.shared.lock().unwrap().app_update = self.updates.pending().map(|p| p.info.version);
+        // A version whose installer failed: not downloaded again automatically, only when
+        // the user presses "Periksa update".
+        // Kept in `update-failed.json`, so it survives restarts.
+        let mut failed_version: Option<String> = self.updates.failed_version();
+        if let Some(r) = self.updates.take_result() {
+            let msg = if r.ok {
+                failed_version = None;
+                self.updates.set_failed_version(None);
+                LogMsg::AppUpdated { version: r.version.clone() }
+            } else {
+                failed_version = Some(r.version.clone());
+                self.updates.set_failed_version(Some(&r.version));
+                LogMsg::AppUpdateFailed { version: r.version.clone(), code: r.code }
+            };
+            let mut s = self.shared.lock().unwrap();
+            if !r.ok {
+                s.app_update_note = Some(AppNote::InstallFailed { version: r.version, code: r.code });
+            }
+            push_log(&mut s, &self.store, msg.text(), Some(msg));
+            drop(s);
+            on_change(&[]);
+        }
         let mut wait = UPDATE_FIRST;
         // The last automatic failure: logged once, not every six hours while offline.
         let mut last_error: Option<String> = None;
@@ -296,49 +364,70 @@ impl Updater {
             if !manual && !self.config.lock().unwrap().auto_update_app {
                 continue;
             }
+            if manual && failed_version.take().is_some() {
+                self.updates.set_failed_version(None);
+            }
             self.shared.lock().unwrap().app_update_checking = true;
             on_change(&[]);
 
+            let mut skipped = None;
             let res = update::check(&remote).and_then(|found| match found {
+                Some(info) if failed_version.as_deref() == Some(info.version.as_str()) => {
+                    skipped = Some(info.version);
+                    Ok(None)
+                }
                 Some(info) => self.updates.fetch(&remote, &info).map(Some),
                 None => Ok(None),
             });
-            let mut line = None;
+            let mut line: Option<(String, Option<LogMsg>)> = None;
             let (ready, note) = match res {
+                Ok(None) if skipped.is_some() => {
+                    last_error = None;
+                    (None, AppNote::SkippedFailed(skipped.unwrap_or_default()))
+                }
                 Ok(Some(p)) => {
                     last_error = None;
                     let v = p.info.version;
-                    (Some(v.clone()), format!("Versi {v} sudah diunduh dan siap dipasang."))
+                    (Some(v.clone()), AppNote::Downloaded(v))
                 }
                 Ok(None) => {
                     last_error = None;
-                    (None, format!("Sudah versi terbaru ({}).", update::CURRENT))
+                    (None, AppNote::UpToDate)
                 }
                 Err(e) => {
                     if manual || last_error.as_deref() != Some(e.as_str()) {
-                        line = Some(format!("Gagal memeriksa update Patch Guard: {e}"));
+                        line = Some((
+                            tf!("engine.could_not_check_for", e = e),
+                            None,
+                        ));
                     }
                     last_error = Some(e.clone());
-                    (self.updates.pending().map(|p| p.info.version), format!("Gagal memeriksa: {e}"))
+                    (self.updates.pending().map(|p| p.info.version), AppNote::CheckFailed(e))
                 }
             };
             let mut s = self.shared.lock().unwrap();
             if let Some(v) = ready.as_ref().filter(|v| s.app_update.as_ref() != Some(*v)) {
-                line = Some(format!("Patch Guard v{v} sudah diunduh — restart untuk memasang"));
+                let m = LogMsg::AppUpdateReady { version: v.clone() };
+                line = Some((m.text(), Some(m)));
             }
             s.app_update = ready;
             s.app_update_checking = false;
             s.app_update_note = Some(note);
-            if let Some(text) = line {
-                s.log.push(LogLine { at: unix_now(), text });
-                let extra = s.log.len().saturating_sub(LOG_MAX);
-                s.log.drain(..extra);
-                let _ = self.store.save_history(&s.log);
+            if let Some((text, msg)) = line {
+                push_log(&mut s, &self.store, text, msg);
             }
             drop(s);
             on_change(&[]);
         }
     }
+}
+
+/// Append one history line, keep the last `LOG_MAX`, persist.
+fn push_log(s: &mut Snapshot, store: &Store, text: String, msg: Option<LogMsg>) {
+    s.log.push(LogLine::new(unix_now(), text, msg));
+    let extra = s.log.len().saturating_sub(LOG_MAX);
+    s.log.drain(..extra);
+    let _ = store.save_history(&s.log);
 }
 
 fn rewatch(watcher: Option<&mut RecommendedWatcher>, watched: &mut Vec<PathBuf>, cfg: &Config) {
@@ -353,16 +442,17 @@ fn rewatch(watcher: Option<&mut RecommendedWatcher>, watched: &mut Vec<PathBuf>,
     }
 }
 
-fn describe(e: &Event) -> String {
-    match e {
-        Event::Restored { name, .. } => format!("{name}: ditimpa patcher, patch dipasang kembali"),
-        Event::Installed { name, .. } => format!("{name}: build terbaru dipasang"),
-        Event::Uninstalled { name, .. } => format!("{name}: file asli dikembalikan"),
-    }
+/// New problems worth a history line. On the pass right after a language switch every detail
+/// is phrased anew, so a changed detail alone does not count then; new files and status
+/// changes still do.
+fn problem_lines(old: &[DirReport], old_lang: Lang, new: &[DirReport], lang: Lang) -> Vec<String> {
+    new_problems(old, new, old_lang == lang)
 }
 
-/// Log a file the first time it turns unknown or fails, not on every poll.
-fn new_problems(old: &[DirReport], new: &[DirReport]) -> Vec<String> {
+/// Log a file the first time it turns unknown or fails, not on every poll. `same_lang`: also
+/// log when only the detail changed (after a language switch every detail is re-phrased, so
+/// then only a new file or a status change counts).
+fn new_problems(old: &[DirReport], new: &[DirReport], same_lang: bool) -> Vec<String> {
     let mut out = Vec::new();
     for d in new {
         for f in &d.files {
@@ -373,7 +463,7 @@ fn new_problems(old: &[DirReport], new: &[DirReport]) -> Vec<String> {
                 .iter()
                 .find(|o| o.path == d.path)
                 .and_then(|o| o.files.iter().find(|x| x.name == f.name));
-            if before.is_none_or(|b| b.status != f.status || b.detail != f.detail) {
+            if before.is_none_or(|b| b.status != f.status || (same_lang && b.detail != f.detail)) {
                 out.push(format!("{}: {}", f.name, f.detail));
             }
         }
@@ -383,4 +473,54 @@ fn new_problems(old: &[DirReport], new: &[DirReport]) -> Vec<String> {
 
 fn unix_now() -> u64 {
     SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::model::{Client, FileReport, Profile};
+
+    fn dirs(detail: &str) -> Vec<DirReport> {
+        vec![DirReport {
+            profile: Profile::Global,
+            client: Client::Launcher,
+            path: r"C:\game\locale".into(),
+            files: vec![FileReport {
+                name: "translate_words_map_en".into(),
+                status: Status::Unknown,
+                detail: detail.into(),
+            }],
+        }]
+    }
+
+    #[test]
+    fn a_problem_is_logged_once_and_not_again_after_a_language_switch() {
+        let (old, new) = (dirs("versi tidak cocok"), dirs("versi tidak cocok"));
+        assert_eq!(problem_lines(&[], Lang::Id, &old, Lang::Id).len(), 1, "new problem: logged");
+        assert!(problem_lines(&old, Lang::Id, &new, Lang::Id).is_empty(), "same problem: not again");
+        let en = dirs("version does not match");
+        assert!(problem_lines(&old, Lang::Id, &en, Lang::En).is_empty(), "only re-phrased");
+        assert_eq!(problem_lines(&en, Lang::En, &dirs("other"), Lang::En).len(), 1);
+    }
+
+    #[test]
+    fn a_status_change_during_a_language_switch_is_still_logged() {
+        let mut patched = dirs("");
+        patched[0].files[0].status = Status::Patched;
+        let unknown = dirs("version does not match");
+        assert_eq!(problem_lines(&patched, Lang::Id, &unknown, Lang::En).len(), 1);
+        // A file not seen before counts as new too.
+        assert_eq!(problem_lines(&[], Lang::Id, &unknown, Lang::En).len(), 1);
+    }
+
+    #[test]
+    fn app_notes_follow_the_language() {
+        let n = AppNote::Downloaded("0.6.0".into());
+        i18n::set(Lang::Id);
+        assert!(n.text().contains("sudah diunduh"));
+        i18n::set(Lang::En);
+        assert!(n.text().contains("downloaded"));
+        assert!(AppNote::InstallFailed { version: "0.6.0".into(), code: None }.text().contains("did not start"));
+        i18n::set(Lang::Id);
+    }
 }

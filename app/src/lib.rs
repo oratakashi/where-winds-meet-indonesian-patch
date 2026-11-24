@@ -2,6 +2,8 @@
 //! original locale files back. `core/` holds the rules and the background engine (no UI);
 //! `shell/` the OS integration (tray, single instance, autostart); `fluent/` + `pages/` the
 //! GPUI window, `app.rs` ties it together.
+#[macro_use]
+pub mod i18n;
 pub mod app;
 pub mod core;
 pub mod fluent;
