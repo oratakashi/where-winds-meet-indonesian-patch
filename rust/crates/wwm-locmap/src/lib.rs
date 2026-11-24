@@ -214,8 +214,10 @@ pub fn read_container_bytes(d: &[u8], ks: &Keystream) -> Result<(Header, Vec<Vec
         .filter(|&e| e <= d.len())
         .ok_or_else(|| Error(format!("tabel offset ({cnt} blok) melebihi ukuran file")))?;
     let offs: Vec<usize> = d[p..table_end]
-        .chunks_exact(4)
-        .map(|c| u32::from_le_bytes(c.try_into().unwrap()) as usize)
+        .as_chunks::<4>()
+        .0
+        .iter()
+        .map(|c| u32::from_le_bytes(*c) as usize)
         .collect();
     p = table_end;
     let base = p;
