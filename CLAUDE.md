@@ -279,7 +279,8 @@ context — only use one if the user explicitly asks for it by name.
   overlay the patcher re-downloads every launch. It never installs over a file whose hash matches no known original (a force install is
   user-confirmed). Build: `cargo build --release` in `app/`; installer: `cargo packager --release
   --formats nsis` (`cargo install cargo-packager --locked`; config in `[package.metadata.packager]`
-  of `app/Cargo.toml`). CI: `app-ci.yml` tests/builds PRs; on main
+  of `app/Cargo.toml`). CI: `app-ci.yml` tests/builds PRs, `dependency-audit.yml` runs `cargo audit`
+  on `app/` + `rust/` lockfiles (PRs, main, weekly); on main
   `release-patch.yml` rebuilds the installer only when `app/` changed (or dispatch `build_app`) and
   attaches it to the `latest` release as `wwm-patch-guard-setup.exe` — no separate app release.
   The app downloads the release zip once per check pass and extracts files by name (`remote.rs`).

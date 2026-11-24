@@ -1,0 +1,53 @@
+name: dependency-audit
+
+# Checks both Cargo lockfiles (Patch Guard app/ and the wwm toolchain rust/) against the
+# RustSec advisory database, so a vulnerable crate pinned in a lockfile shows up on the PR
+# that adds it, and new advisories against crates already pinned show up within a week.
+# A vulnerability fails the job; unmaintained/yanked warnings are only printed.
+
+on:
+  pull_request:
+    paths:
+      - "app/Cargo.lock"
+      - "app/Cargo.toml"
+      - "rust/Cargo.lock"
+      - "rust/Cargo.toml"
+      - "rust/crates/*/Cargo.toml"
+      - ".github/workflows/dependency-audit.yml"
+  push:
+    branches: [main]
+    paths:
+      - "app/Cargo.lock"
+      - "rust/Cargo.lock"
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch: {}
+
+concurrency:
+  group: dependency-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace: [app, rust]
+    defaults:
+      run:
+        working-directory: ${{ matrix.workspace }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: taiki-e/install-action@fe3acb53a98b62c772db35de75ce0e4595e7ca8c # v2.90.8
+        with:
+          tool: cargo-audit@0.23.0
+
+      - name: cargo audit
+        run: cargo audit --file Cargo.lock

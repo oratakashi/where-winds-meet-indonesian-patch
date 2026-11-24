@@ -283,6 +283,10 @@ cargo packager --release --formats nsis
   `release-patch.yml` rebuilds the installer, signs it, and writes `patch-guard-update.json`.
   Check that the `latest` release has all assets from the table above. Installed copies pick
   it up within 6 h.
+- Dependency advisories: `dependency-audit.yml` runs `cargo audit` on `app/Cargo.lock` and
+  `rust/Cargo.lock` on every PR that touches them, on `main` and weekly (Monday). A RustSec
+  vulnerability fails the job; fix it with `cargo update -p <crate> --precise <fixed>` when the
+  parent's version requirement allows it (v0.6.4: `url` 2.5.9 under `gpui-pre`).
 
 ## Version history
 
@@ -295,3 +299,4 @@ cargo packager --release --formats nsis
 | 0.6.1 | Update helper takes no paths and re-verifies the signed update before installing; signatures bound to their file name, manifest anti-rollback, active + backup key; installing on quit/start is opt-in (`auto_install_app`); CI signs in a separate `sign` job (environment `release`) |
 | 0.6.3 | Bugs: Berhenti menjaga restores the folder first and drops its backups, a broken `config.json` is kept as `.bad` and reported, durable JSON saves, leftover temp copies removed, a helper that cannot start is not retried every start, SID in the single-instance names |
 | 0.6.2 | Background cost: no copying over a locked game file (backoff instead), hashes kept across restarts, 30 s delay at autostart, background thread priority, quiet polls, offline backoff |
+| 0.6.4 | Dependency security: transitive `url` 2.5.8 → 2.5.9 (RUSTSEC-2026-0592, unbounded recursion in `Url::origin()` on nested `blob:` URLs); `cargo audit` in CI |

@@ -1,6 +1,6 @@
 [package]
 name = "wwm-patch-guard"
-version = "0.6.3"
+version = "0.6.4"
 description = "Keeps the Where Winds Meet Indonesian patch installed after NetEase's patcher restores the original locale files"
 authors = ["oratakashi"]
 license = "GPL-3.0-or-later"
