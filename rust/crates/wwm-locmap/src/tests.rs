@@ -243,7 +243,9 @@ fn container_errors() {
 }
 
 fn read_err(b: &[u8]) -> String {
-    read_container_bytes(b, &Keystream::Bytes(&[])).unwrap_err().0
+    read_container_bytes(b, &Keystream::Bytes(&[]))
+        .unwrap_err()
+        .0
 }
 
 /// Sizes read from the file must be checked before they are used to allocate (#34).
@@ -269,7 +271,10 @@ fn container_bounds() {
     b[blk0 + 5..blk0 + 9].copy_from_slice(&u32::MAX.to_le_bytes());
     assert_eq!(
         read_err(&b),
-        format!("blok 0: ukuran hasil dekompresi {} melebihi batas {MAX_BLOCK_RAW}", u32::MAX)
+        format!(
+            "blok 0: ukuran hasil dekompresi {} melebihi batas {MAX_BLOCK_RAW}",
+            u32::MAX
+        )
     );
 
     // compressed size larger than the block itself
@@ -312,12 +317,18 @@ fn shard_bounds() {
     // size far beyond capacity must be an error, not a huge allocation
     let mut blk = sample_shard();
     blk[8..16].copy_from_slice(&u64::MAX.to_le_bytes());
-    assert_eq!(parse_shard(&blk).unwrap_err().0, "jumlah slot terisi != size");
+    assert_eq!(
+        parse_shard(&blk).unwrap_err().0,
+        "jumlah slot terisi != size"
+    );
     // capacity far beyond the block
     let mut blk = sample_shard();
     blk[0..8].copy_from_slice(&u64::MAX.to_le_bytes());
     assert_eq!(parse_shard(&blk).unwrap_err().0, "shard terpotong (ctrl)");
-    assert_eq!(rebuild_shard(&blk, |_| None).unwrap_err().0, "shard terpotong");
+    assert_eq!(
+        rebuild_shard(&blk, |_| None).unwrap_err().0,
+        "shard terpotong"
+    );
 }
 
 #[test]
