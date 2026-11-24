@@ -512,11 +512,17 @@ pub fn helper_main(
     if !args.iter().any(|a| a == ARG_APPLY) {
         return None;
     }
-    let (Some(h), Some(data_dir)) = (parse_helper_args(&args), data_dir) else { return Some(2) };
+    let Some(h) = parse_helper_args(&args) else { return Some(2) };
     wait_for_exit(h.wait_pid, Duration::from_secs(60));
-    let updates = Updates::new(&data_dir);
     // Verified again here, and held open (no writes, no delete) until the installer is done.
-    let Some(locked) = updates.locked_with(CURRENT, &verify) else { return Some(2) };
+    // Nothing to install (or it no longer verifies): run nothing, but still bring the app
+    // back — it has already quit for this update.
+    let updates = data_dir.map(|d| Updates::new(&d));
+    let Some(locked) = updates.as_ref().and_then(|u| u.locked_with(CURRENT, &verify)) else {
+        relaunch(h.relaunch, installed_exe);
+        return Some(2);
+    };
+    let updates = updates.expect("checked above");
     let status = Command::new(&locked.pending.installer).arg("/S").status();
     let ok = status.as_ref().is_ok_and(|s| s.success());
     // Leave a note for the next start, so a failed install shows up in the History instead
@@ -534,15 +540,20 @@ pub fn helper_main(
     // on every start.
     drop(locked);
     updates.clear();
-    if let Some(exe) = (h.relaunch != Relaunch::No).then(installed_exe).flatten() {
+    relaunch(h.relaunch, installed_exe);
+    // The helper cannot delete its own folder while running; the next normal start does.
+    Some(if ok { 0 } else { 1 })
+}
+
+/// Start the installed Patch Guard again, as asked; never anything else.
+fn relaunch(how: Relaunch, installed_exe: impl FnOnce() -> Option<PathBuf>) {
+    if let Some(exe) = (how != Relaunch::No).then(installed_exe).flatten() {
         let mut cmd = Command::new(exe);
-        if h.relaunch == Relaunch::Minimized {
+        if how == Relaunch::Minimized {
             cmd.arg(ARG_MINIMIZED);
         }
         let _ = cmd.spawn();
     }
-    // The helper cannot delete its own folder while running; the next normal start does.
-    Some(if ok { 0 } else { 1 })
 }
 
 /// Delete the helper copies earlier updates left behind (they could not delete themselves).
