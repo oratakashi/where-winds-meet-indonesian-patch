@@ -213,6 +213,15 @@ pub struct Pending {
     pub installer: PathBuf,
 }
 
+/// `<data dir>\updates.lock`, see [`Updates::lock`].
+const LOCK_FILE: &str = "updates.lock";
+/// How long to wait for another holder of the lock (a scan takes a moment: it hashes the
+/// installer).
+const LOCK_WAIT: Duration = Duration::from_secs(30);
+
+/// Held while `updates\` is scanned, cleaned up or published into.
+struct UpdatesLock(#[allow(dead_code)] fs::File);
+
 /// A [`Pending`] plus the installer opened so that nothing can change, replace or delete it
 /// until this is dropped. The helper runs the installer while holding it.
 struct Locked {
@@ -283,15 +292,45 @@ impl Updates {
     }
 
     fn locked_with(&self, current: &str, verify: Verifier) -> Option<Locked> {
+        // Scan and clean up as one step against `fetch_with` publishing a download: without
+        // the lock a scan that found nothing could delete an update published right after it.
+        let _lock = self.lock().ok()?;
         let found = fs::read_dir(&self.dir)
-            .ok()?
+            .ok()
+            .into_iter()
+            .flatten()
             .flatten()
             .filter(|e| e.path().is_dir())
             .find_map(|e| self.verify_dir(&e.path(), current, verify).ok());
         if found.is_none() {
-            self.clear();
+            self.clear_unlocked();
         }
         found
+    }
+
+    /// Exclusive access to `updates\`, across every `Updates` and every process using this
+    /// data folder (the app at start, its update thread, the helper): `<data dir>\updates.lock`
+    /// opened without sharing. Held only for scans, clean-ups and the final rename — never
+    /// during a download.
+    fn lock(&self) -> Result<UpdatesLock, String> {
+        let path = self.data_dir().ok_or("no data folder")?.join(LOCK_FILE);
+        let deadline = std::time::Instant::now() + LOCK_WAIT;
+        loop {
+            let mut o = fs::OpenOptions::new();
+            o.read(true).write(true).create(true).truncate(false);
+            #[cfg(windows)]
+            {
+                use std::os::windows::fs::OpenOptionsExt;
+                o.share_mode(0);
+            }
+            match o.open(&path) {
+                Ok(f) => return Ok(UpdatesLock(f)),
+                Err(e) if std::time::Instant::now() >= deadline => {
+                    return Err(format!("{}: {e}", path.display()));
+                }
+                Err(_) => std::thread::sleep(Duration::from_millis(25)),
+            }
+        }
     }
 
     /// Check one `updates\<version>\` folder and lock its installer.
@@ -316,7 +355,14 @@ impl Updates {
         Ok(Locked { pending: Pending { info, installer }, _file: file })
     }
 
+    /// Drop the pending update (under the lock; skipped if the lock cannot be had).
     pub fn clear(&self) {
+        if let Ok(_lock) = self.lock() {
+            self.clear_unlocked();
+        }
+    }
+
+    fn clear_unlocked(&self) {
         let _ = fs::remove_dir_all(&self.dir);
     }
 
@@ -392,19 +438,22 @@ impl Updates {
             .and_then(|()| fs::write(stage.join(UPDATE_JSON), &release.json).map_err(|e| e.to_string()))
             .and_then(|()| fs::write(stage.join(UPDATE_SIG), &release.sig).map_err(|e| e.to_string()))
             .and_then(|()| {
-                self.clear();
-                fs::create_dir_all(&self.dir).map_err(|e| e.to_string())?;
-                fs::rename(&stage, &dir).map_err(|e| e.to_string())
-            })
-            .and_then(|()| self.verify_dir(&dir, current, verify));
+                // Publish: replace whatever `updates\` held, rename, verify — all under the
+                // lock, so no scan in between can see an empty folder and clean it up.
+                let _lock = self.lock()?;
+                let published = (|| {
+                    self.clear_unlocked();
+                    fs::create_dir_all(&self.dir).map_err(|e| e.to_string())?;
+                    fs::rename(&stage, &dir).map_err(|e| e.to_string())?;
+                    self.verify_dir(&dir, current, verify)
+                })();
+                if published.is_err() {
+                    self.clear_unlocked();
+                }
+                published
+            });
         let _ = fs::remove_dir_all(&self.staging);
-        match res {
-            Ok(locked) => Ok(locked.pending),
-            Err(e) => {
-                self.clear();
-                Err(e)
-            }
-        }
+        res.map(|locked| locked.pending)
     }
 }
 
@@ -775,6 +824,25 @@ pub(crate) mod tests {
         // Once this build is that version (or newer) it is not pending any more.
         assert_eq!(e.u.pending_with("1.1.0", &*e.verifier), None);
         assert!(!e.u.dir.exists(), "a stale pending update is cleaned up");
+    }
+
+    /// Two `Updates` on one data folder (the app at start and its update thread, or the
+    /// helper) take turns: the second waits until the first lets go.
+    #[cfg(windows)]
+    #[test]
+    fn the_updates_lock_is_exclusive_across_instances() {
+        let tmp = tempfile::tempdir().unwrap();
+        let a = Updates::new(tmp.path());
+        let held = a.lock().unwrap();
+        let data = tmp.path().to_path_buf();
+        let t = std::thread::spawn(move || {
+            let started = std::time::Instant::now();
+            let _l = Updates::new(&data).lock().unwrap();
+            started.elapsed()
+        });
+        std::thread::sleep(Duration::from_millis(300));
+        drop(held);
+        assert!(t.join().unwrap() >= Duration::from_millis(250), "the second one waited");
     }
 
     #[test]

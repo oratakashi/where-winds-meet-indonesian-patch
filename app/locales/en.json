@@ -32,6 +32,7 @@
   "guard.cannot_be_read_yet": "cannot be read yet ({e})",
   "guard.cannot_be_written_yet": "cannot be written yet ({e}) — retrying",
   "guard.cannot_check_the_release": "cannot check the release: {e}",
+  "guard.cannot_save_state": "state.json cannot be saved ({e}) — this release is not used yet, retrying later",
   "guard.download_does_not_match": "download does not match the manifest (the release may be updating)",
   "guard.download_failed": "download failed: {e}",
   "guard.file_not_in_this": "file not in this folder",

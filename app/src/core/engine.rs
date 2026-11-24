@@ -206,10 +206,11 @@ impl Engine {
         let mut cfg = self.config.lock().unwrap();
         f(&mut cfg);
         self.store.save_config(&cfg).map_err(|e| e.to_string())?;
-        let saved = cfg.clone();
-        // Never hold both locks: the guard thread takes the config before the snapshot.
+        // Published while the config is still locked. Lock order everywhere: config, then
+        // snapshot — so the guard thread, which publishes the same way, cannot slip an older
+        // config in between.
+        self.shared.lock().unwrap().show_switches(&cfg);
         drop(cfg);
-        self.shared.lock().unwrap().show_switches(&saved);
         self.send(Msg::Reload);
         Ok(())
     }
@@ -310,8 +311,10 @@ impl Worker {
             wait = if busy { RETRY } else { POLL };
 
             // The switches as saved now, not as they were when this pass started: a setting
-            // changed meanwhile must not be shown with its old value again.
-            let latest = self.config.lock().unwrap().clone();
+            // changed meanwhile must not be shown with its old value again. The config stays
+            // locked until they are published (lock order: config, then snapshot, as in
+            // `Engine::update_config`), so no newer save can land in between.
+            let latest = self.config.lock().unwrap();
             let mut s = self.shared.lock().unwrap();
             // The details are phrased in the current language: right after a switch every
             // known problem would look new, so that pass logs none.
@@ -330,6 +333,7 @@ impl Worker {
             s.checking = false;
             s.last_check = Some(now);
             drop(s);
+            drop(latest);
             on_change(&events);
         }
     }

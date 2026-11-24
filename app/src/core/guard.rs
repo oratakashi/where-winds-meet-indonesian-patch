@@ -404,12 +404,16 @@ impl<R: Remote> Guard<R> {
             return Err(t!("guard.manifest_is_older").into());
         }
         if m.signed_at > *seen {
-            *seen = m.signed_at;
-            // Written right away, before anything from this manifest is installed, so a crash
-            // later in the pass cannot forget it. If the disk refuses, the manifest is still
-            // used (a full disk must not stop the guard) and the next flush retries.
-            self.dirty = true;
-            self.flush();
+            // The checkpoint must be on disk before anything from this manifest is installed,
+            // or a restart could accept an older one again. When it cannot be written the
+            // manifest is refused (and retried on the next pass, like any failed fetch):
+            // a disk that cannot take a small state.json cannot take an 85 MB install either,
+            // so nothing that would have worked is lost.
+            let old = std::mem::replace(seen, m.signed_at);
+            if let Err(e) = self.store.save_state(&self.state) {
+                self.state.manifest_signed_at.insert(profile.key().to_string(), old);
+                return Err(tf!("guard.cannot_save_state", e = e));
+            }
         }
         Ok(m)
     }
@@ -581,6 +585,23 @@ mod tests {
         // Nothing more to do on the next pass.
         assert_eq!(r.check(), (Status::Patched, vec![]));
         assert_eq!(r.guard.remote.downloads.get(), 1);
+    }
+
+    #[test]
+    fn a_newer_manifest_is_not_used_until_its_checkpoint_is_saved() {
+        let mut r = Rig::new(b"orig-v1");
+        r.guard.remote.signed_at.set(2000);
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        // state.json cannot be written: a folder sits where the file goes.
+        let state = r.guard.store.base().join("state.json");
+        fs::create_dir_all(&state).unwrap();
+        assert!(r.guard.remote_entry(Profile::Global, NAME, Duration::ZERO).is_err());
+        assert_eq!(r.content(), b"orig-v1", "nothing installed from it");
+        assert_eq!(r.guard.state.manifest_signed_at.get("global"), Some(&0));
+        // Once the disk takes it, the same manifest is used.
+        fs::remove_dir(&state).unwrap();
+        assert!(r.guard.remote_entry(Profile::Global, NAME, Duration::ZERO).is_ok());
+        assert!(r.guard.store.load_state().manifest_signed_at.get("global") == Some(&2000));
     }
 
     #[test]

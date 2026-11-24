@@ -98,7 +98,9 @@ the installer, its `.sig` and `patch-guard-update.json(.sig)` from the previous 
   be passed off as another, and returns the timestamp. **Anti-rollback**: the guard keeps the
   newest manifest timestamp per profile in `state.json` (`manifest_signed_at`) and refuses an
   older one ("manifest.json … lebih lama"), so an old signed release served again cannot roll the
-  translation back; the self-update was already monotonic (only a newer `version` installs).
+  translation back. A newer timestamp is written to `state.json` **before** the manifest is used;
+  if that write fails the manifest is refused for now and retried next pass (a disk that cannot
+  take `state.json` cannot take an install either); the self-update was already monotonic (only a newer `version` installs).
   There is deliberately **no expiry date**: `cn-latest` is frozen and app releases can be months
   apart, so an expiring signature would break working installs; the player's clock is not used
   either (a wrong clock must not block the guard).
@@ -132,7 +134,10 @@ VS Code style: download in the background, install when the user restarts.
    name = signed `version`, version newer than the running build, installer size, sha256 and
    installer signature, the installer read through a handle that denies writes and deletes.
    Any failure deletes `updates\`; nothing unverified is ever run. `version` and `name` must be
-   plain file names (`[A-Za-z0-9.+_-]`, no `..`, the name ending in `.exe`).
+   plain file names (`[A-Za-z0-9.+_-]`, no `..`, the name ending in `.exe`). The download is
+   written to `<data>\updates-staging\` and moved into `updates\` in one rename; scans, clean-ups
+   and that rename hold `<data>\updates.lock` (opened without sharing, so it covers the app, its
+   update thread and the helper), never the download itself.
 4. The window shows an info bar **"Patch Guard vX siap dipasang — Restart sekarang"**, the tray
    menu gets **Restart untuk update ke vX**, and History logs it.
 5. Installing (`update::apply`): copy the running exe to a fresh folder

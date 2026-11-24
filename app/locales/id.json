@@ -32,6 +32,7 @@
   "guard.cannot_be_read_yet": "belum bisa dibaca ({e})",
   "guard.cannot_be_written_yet": "belum bisa ditulis ({e}) — dicoba lagi",
   "guard.cannot_check_the_release": "rilis tidak bisa diperiksa: {e}",
+  "guard.cannot_save_state": "state.json tidak bisa disimpan ({e}) — rilis ini belum dipakai, dicoba lagi nanti",
   "guard.download_does_not_match": "unduhan tidak cocok dengan manifest (rilis mungkin sedang diperbarui)",
   "guard.download_failed": "gagal mengunduh: {e}",
   "guard.file_not_in_this": "file tidak ada di folder ini",
