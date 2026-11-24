@@ -35,6 +35,7 @@
   "guard.cannot_save_state": "state.json cannot be saved ({e}) — this release is not used yet, retrying later",
   "guard.download_does_not_match": "download does not match the manifest (the release may be updating)",
   "guard.download_failed": "download failed: {e}",
+  "guard.file_is_in_use": "the file is in use by the game or the patcher — trying again later",
   "guard.file_not_in_this": "file not in this folder",
   "guard.file_version_does_not": "file version does not match the latest release — left alone, waiting for a new release",
   "guard.game_s_original_file": "game's original file (guard paused)",

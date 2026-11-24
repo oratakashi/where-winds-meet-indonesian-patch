@@ -35,6 +35,7 @@
   "guard.cannot_save_state": "state.json tidak bisa disimpan ({e}) — rilis ini belum dipakai, dicoba lagi nanti",
   "guard.download_does_not_match": "unduhan tidak cocok dengan manifest (rilis mungkin sedang diperbarui)",
   "guard.download_failed": "gagal mengunduh: {e}",
+  "guard.file_is_in_use": "file sedang dipakai game atau patcher — dicoba lagi nanti",
   "guard.file_not_in_this": "file tidak ada di folder ini",
   "guard.file_version_does_not": "versi file tidak cocok dengan rilis terbaru — dibiarkan, menunggu rilis baru",
   "guard.game_s_original_file": "file asli game (penjaga dijeda)",

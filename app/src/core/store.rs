@@ -3,11 +3,12 @@
 //!
 //! ```text
 //! config.json      folders to guard + switches
-//! history.json    what the guard did (shown on the History page)
+//! history.json     what the guard did (shown on the History page)
 //! state.json       which build is cached per file, which original each path had
+//! hashes.json      sha256 per file + the size/times it was computed for (skip re-hashing)
 //! patched/<sha>    cached patched builds, content-addressed
 //! originals/<sha>  files the guard replaced, content-addressed (for "restore original")
-//! updates/         a downloaded Patch Guard installer + pending.json (see `update.rs`)
+//! updates/         a downloaded, signed Patch Guard update (see `update.rs`)
 //! ```
 use crate::i18n::Lang;
 use crate::model::{FileEntry, LogLine, Profile};
@@ -80,6 +81,22 @@ pub struct State {
     pub manifest_signed_at: BTreeMap<String, u64>,
 }
 
+/// A file's sha256 as last computed, and the metadata it was computed for. Kept in
+/// `hashes.json`, so a start (autostart at login) does not re-read every 50–85 MB file.
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Debug)]
+pub struct HashEntry {
+    pub len: u64,
+    /// Last write / creation time, nanoseconds since the Unix epoch (negative before it). The
+    /// creation time changes when a file is replaced by a rename, even if the size and write
+    /// time stay the same.
+    pub modified: Option<i128>,
+    pub created: Option<i128>,
+    pub sha256: String,
+}
+
+/// Full path -> [`HashEntry`].
+pub type HashCache = BTreeMap<String, HashEntry>;
+
 pub fn entry_key(profile: Profile, name: &str) -> String {
     format!("{}/{}", profile.key(), name)
 }
@@ -145,6 +162,17 @@ impl Store {
 
     pub fn save_state(&self, s: &State) -> io::Result<()> {
         self.save("state.json", s)
+    }
+
+    /// Entries with a hash that is not plain sha256 are dropped.
+    pub fn load_hashes(&self) -> HashCache {
+        let mut h: HashCache = self.load("hashes.json");
+        h.retain(|_, e| is_sha256_hex(&e.sha256));
+        h
+    }
+
+    pub fn save_hashes(&self, h: &HashCache) -> io::Result<()> {
+        self.save("hashes.json", h)
     }
 
     pub fn load_history(&self) -> Vec<LogLine> {

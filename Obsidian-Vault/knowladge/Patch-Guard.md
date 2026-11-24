@@ -171,10 +171,34 @@ VS Code style: download in the background, install when the user restarts.
    in Settings, and the **automatic** check does not download that version again — only
    **Periksa update** retries it. (A helper from v0.5 writes no result file.)
 
+## Background cost (v0.6.2)
+
+The guard runs from login until "Keluar", so it must stay out of the game's way:
+
+- **Locked game file → no copy.** Before installing, `guard::replaceable` opens the game file
+  for delete access with full sharing; while the game or patcher holds it open that fails, and
+  nothing is copied (v0.6.1 and earlier wrote a full 50–85 MB temp copy every 5 s and threw it
+  away). The retry backs off 5 s → 10 s → … → 5 min (`Guard::locked_retry`) and resets once the
+  file is free.
+- **Hashes survive restarts**: `hashes.json` keeps sha256 + size + write time + creation time per
+  path, so autostart does not re-read every file. Entries for files that are gone are dropped
+  on save. After an install the file's cached hash is dropped, so the next look re-reads what
+  is really on disk (recording the patched hash would pair it with metadata read after the
+  rename, which another writer could have replaced; installs are rare, so one read is fine).
+- **Autostart waits 30 s** (`FIRST_PASS_AT_LOGIN` in `app.rs`, only with `--minimized`).
+- Both background threads run at `THREAD_MODE_BACKGROUND_BEGIN` (low CPU and disk I/O priority).
+- **Quiet polls**: the 30 s poll no longer flashes "checking" or wakes the window first; the main
+  thread only touches the tray menu when the update item changes and only reloads the window
+  state when a window is open. Our own `.wwmpg-tmp` files do not trigger passes.
+- The game-folder scan (`locations::discover`) never runs on the UI thread, and only after
+  actions that change the guarded folders.
+
 ## Robustness (v0.6)
 
 - A failed manifest fetch (offline, or the release mid-replacement) is cached for only 60 s
-  (`ERROR_TTL` in `guard.rs`), not the 10 min / 6 h TTL of a good manifest.
+  (`ERROR_TTL` in `guard.rs`), not the 10 min / 6 h TTL of a good manifest. Since v0.6.2 the
+  wait doubles with each failure in a row, up to 10 min (`ERROR_TTL_MAX`); a success or
+  **Periksa sekarang** resets it.
 - A signature mismatch between `manifest.json` and `.sig` is retried 3× with a 3 s pause
   (`remote.rs` `with_sig_retry`) before it is reported as "rilis mungkin sedang diperbarui".
 - A cached patched build (`patched/<sha>`) is re-hashed before it is installed (`Guard::cached`,
@@ -249,3 +273,4 @@ cargo packager --release --formats nsis
 | 0.5.0 | Self-update (VS Code style) and minisign signatures; unsigned manifests are rejected |
 | 0.6.0 | Indonesian/English UI; short error TTL, signature retry, cache re-verification; failed self-updates are reported |
 | 0.6.1 | Update helper takes no paths and re-verifies the signed update before installing; signatures bound to their file name, manifest anti-rollback, active + backup key; installing on quit/start is opt-in (`auto_install_app`); CI signs in a separate `sign` job (environment `release`) |
+| 0.6.2 | Background cost: no copying over a locked game file (backoff instead), hashes kept across restarts, 30 s delay at autostart, background thread priority, quiet polls, offline backoff |

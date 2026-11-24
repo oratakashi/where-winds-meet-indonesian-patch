@@ -50,7 +50,11 @@ pub struct Snapshot {
     pub dirs: Vec<DirReport>,
     pub paused: bool,
     pub auto_update: bool,
+    /// The window shows "checking" (passes the user or a file change asked for).
     pub checking: bool,
+    /// A pass is running, routine polls included: it may be writing game files. This, not
+    /// `checking`, is what quitting waits for.
+    pub running: bool,
     pub last_check: Option<u64>,
     pub log: Vec<LogLine>,
     /// Self-update switch (`Config::auto_update_app`).
@@ -118,7 +122,13 @@ pub struct Engine {
 
 impl Engine {
     /// `on_change` runs on the engine thread after every pass, with what the guard did.
-    pub fn start(store: Store, on_change: impl Fn(&[Event]) + Send + Sync + 'static) -> Engine {
+    /// `first_pass_after`: how long to wait before the first pass (autostart at login waits a
+    /// little, so the guard does not add disk and network load while Windows is starting).
+    pub fn start(
+        store: Store,
+        first_pass_after: Duration,
+        on_change: impl Fn(&[Event]) + Send + Sync + 'static,
+    ) -> Engine {
         let on_change: OnChange = Arc::new(on_change);
         let mut cfg = store.load_config();
         if locations::migrate(&mut cfg.dirs) {
@@ -130,7 +140,7 @@ impl Engine {
             lang: cfg.language,
             paused: cfg.paused,
             auto_update: cfg.auto_update,
-            checking: !cfg.dirs.is_empty(),
+            checking: !cfg.dirs.is_empty() && first_pass_after.is_zero(),
             log: store.load_history(),
             auto_update_app: cfg.auto_update_app,
             auto_install_app: cfg.auto_install_app,
@@ -144,6 +154,7 @@ impl Engine {
             store: store.clone(),
             config: config.clone(),
             shared: shared.clone(),
+            first_pass_after,
         };
         let guard_change = on_change.clone();
         thread::Builder::new()
@@ -179,7 +190,12 @@ impl Engine {
 
     /// The guard is in the middle of a pass (it may be writing game files).
     pub fn busy(&self) -> bool {
-        self.shared.lock().unwrap().checking
+        self.shared.lock().unwrap().running
+    }
+
+    /// Just the waiting update's version (what the tray needs, without copying the history).
+    pub fn app_update(&self) -> Option<String> {
+        self.shared.lock().unwrap().app_update.clone()
     }
 
     pub fn snapshot(&self) -> Snapshot {
@@ -226,6 +242,11 @@ struct Batch {
 }
 
 impl Batch {
+    /// Nothing asked for this pass: the poll timer ran out.
+    fn is_routine(&self) -> bool {
+        !(self.fs || self.force_remote || self.force_dir.is_some() || self.uninstall || self.reload)
+    }
+
     fn absorb(&mut self, m: Msg) {
         match m {
             Msg::Fs => self.fs = true,
@@ -246,21 +267,25 @@ struct Worker {
     store: Store,
     config: Arc<Mutex<Config>>,
     shared: Arc<Mutex<Snapshot>>,
+    first_pass_after: Duration,
 }
 
 impl Worker {
     fn run(self, on_change: &dyn Fn(&[Event])) {
+        background_priority();
         let mut guard = Guard::new(self.store.clone(), HttpRemote::new());
         let tx = self.tx.clone();
         let mut watcher = notify::recommended_watcher(move |res: notify::Result<notify::Event>| {
-            if res.is_ok() {
+            // Our own temp copies (`.<name>.wwmpg-tmp`) are not news; the rename onto the real
+            // name still is.
+            if res.is_ok_and(|e| !e.paths.iter().all(|p| is_own_temp(p))) {
                 let _ = tx.send(Msg::Fs);
             }
         })
         .ok();
         let mut watched: Vec<PathBuf> = Vec::new();
         let mut first = true;
-        let mut wait = Duration::ZERO;
+        let mut wait = self.first_pass_after;
         loop {
             let mut batch = Batch { reload: first, ..Batch::default() };
             first = false;
@@ -287,8 +312,18 @@ impl Worker {
             if batch.reload {
                 rewatch(watcher.as_mut(), &mut watched, &cfg);
             }
-            self.shared.lock().unwrap().checking = true;
-            on_change(&[]);
+            // Every pass counts as running (quitting waits for it); only a routine poll skips the
+            // "checking" flash and the wake-up of the window before it (most polls change
+            // nothing and cost a few metadata calls).
+            let routine = batch.is_routine();
+            {
+                let mut s = self.shared.lock().unwrap();
+                s.running = true;
+                s.checking |= !routine;
+            }
+            if !routine {
+                on_change(&[]);
+            }
 
             let mut events = Vec::new();
             let mut lines: Vec<(String, Option<LogMsg>)> = Vec::new();
@@ -308,7 +343,9 @@ impl Worker {
             }));
 
             let busy = dirs.iter().flat_map(|d| &d.files).any(|f| f.status == Status::Busy);
-            wait = if busy { RETRY } else { POLL };
+            // A file the game keeps open is retried less and less often (nothing is copied
+            // meanwhile); one still being written, soon.
+            wait = guard.locked_retry().unwrap_or(if busy { RETRY } else { POLL });
 
             // The switches as saved now, not as they were when this pass started: a setting
             // changed meanwhile must not be shown with its old value again. The config stays
@@ -331,6 +368,7 @@ impl Worker {
             s.dirs = dirs;
             s.show_switches(&latest);
             s.checking = false;
+            s.running = false;
             s.last_check = Some(now);
             drop(s);
             drop(latest);
@@ -349,6 +387,7 @@ struct Updater {
 
 impl Updater {
     fn run(self, on_change: &dyn Fn(&[Event])) {
+        background_priority();
         let remote = HttpRemote::new();
         // A download from an earlier run may still be waiting.
         self.shared.lock().unwrap().app_update = self.updates.pending().map(|p| p.info.version);
@@ -494,6 +533,23 @@ fn new_problems(old: &[DirReport], new: &[DirReport], same_lang: bool) -> Vec<St
     out
 }
 
+/// `.<name>.wwmpg-tmp`, the temp file `store::copy_atomic` writes next to a game file.
+fn is_own_temp(p: &std::path::Path) -> bool {
+    p.file_name().and_then(|n| n.to_str()).is_some_and(|n| n.starts_with('.') && n.ends_with(".wwmpg-tmp"))
+}
+
+/// Run this thread at background priority (CPU and disk I/O), so hashing and copying 85 MB
+/// files never competes with the game.
+fn background_priority() {
+    #[cfg(windows)]
+    unsafe {
+        use windows::Win32::System::Threading::{
+            GetCurrentThread, SetThreadPriority, THREAD_MODE_BACKGROUND_BEGIN,
+        };
+        let _ = SetThreadPriority(GetCurrentThread(), THREAD_MODE_BACKGROUND_BEGIN);
+    }
+}
+
 fn unix_now() -> u64 {
     SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0)
 }
@@ -534,6 +590,19 @@ mod tests {
         assert_eq!(problem_lines(&patched, Lang::Id, &unknown, Lang::En).len(), 1);
         // A file not seen before counts as new too.
         assert_eq!(problem_lines(&[], Lang::Id, &unknown, Lang::En).len(), 1);
+    }
+
+    #[test]
+    fn own_temp_files_and_routine_polls() {
+        // Built with `join`, so the test means the same on every host.
+        let dir = std::path::Path::new("game").join("locale");
+        assert!(is_own_temp(&dir.join(".translate_words_map_en.wwmpg-tmp")));
+        assert!(!is_own_temp(&dir.join("translate_words_map_en")));
+        assert!(Batch::default().is_routine());
+        let mut b = Batch::default();
+        b.absorb(Msg::Fs);
+        assert!(!b.is_routine());
+        assert!(!Batch { reload: true, ..Batch::default() }.is_routine());
     }
 
     #[test]

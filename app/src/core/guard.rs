@@ -13,12 +13,14 @@
 use crate::i18n::{self, Lang};
 use crate::model::{Client, DirReport, Event, FileEntry, FileReport, Manifest, Profile, Status};
 use crate::remote::{Remote, extract};
-use crate::store::{Config, GuardDir, State, Store, copy_atomic, entry_key, sha256_file};
+use crate::store::{
+    Config, GuardDir, HashCache, HashEntry, State, Store, copy_atomic, entry_key, sha256_file,
+};
 use std::collections::HashMap;
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
-use std::time::{Duration, Instant, SystemTime};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 /// How often to look for a newer translation while everything is patched.
 const UPDATE_TTL: Duration = Duration::from_secs(6 * 3600);
@@ -29,6 +31,14 @@ const UNKNOWN_TTL: Duration = Duration::from_secs(10 * 60);
 const ERROR_TTL: Duration = Duration::from_secs(60);
 /// A file modified more recently than this may still be mid-write by the patcher.
 const SETTLE: Duration = Duration::from_secs(2);
+/// A failed manifest fetch is retried after `error_ttl`, then twice as long each time it fails
+/// again, up to this (offline for hours = one attempt every 10 min, not every minute).
+const ERROR_TTL_MAX: Duration = Duration::from_secs(10 * 60);
+/// A game file the game or patcher keeps open is retried after this, doubling while it stays
+/// locked...
+const LOCKED_RETRY: Duration = Duration::from_secs(5);
+/// ...up to this. Nothing is copied while it is locked.
+const LOCKED_RETRY_MAX: Duration = Duration::from_secs(5 * 60);
 
 #[derive(Clone, Copy, Default, Debug)]
 pub struct Opts {
@@ -45,10 +55,18 @@ pub struct Guard<R: Remote> {
     pub(crate) remote: R,
     state: State,
     dirty: bool,
-    hashes: HashMap<PathBuf, (u64, Option<SystemTime>, String)>,
+    /// sha256 per path (`hashes.json`), so neither a poll nor a restart re-reads a file whose
+    /// size and times did not change.
+    hashes: HashCache,
+    hashes_dirty: bool,
     /// The last manifest fetch per profile, when it happened, and the language a failure was
     /// phrased in (a failure is not reused after a language switch).
     manifests: HashMap<Profile, (Instant, Result<Manifest, String>, Lang)>,
+    /// Failed manifest fetches in a row per profile (the retry backs off).
+    manifest_failures: HashMap<Profile, u32>,
+    /// A game file was locked in this pass / in this many passes in a row.
+    locked_now: bool,
+    locked_streak: u32,
     pub(crate) settle: Duration,
     pub(crate) error_ttl: Duration,
 }
@@ -56,13 +74,18 @@ pub struct Guard<R: Remote> {
 impl<R: Remote> Guard<R> {
     pub fn new(store: Store, remote: R) -> Guard<R> {
         let state = store.load_state();
+        let hashes = store.load_hashes();
         Guard {
             store,
             remote,
             state,
             dirty: false,
-            hashes: HashMap::new(),
+            hashes,
+            hashes_dirty: false,
             manifests: HashMap::new(),
+            manifest_failures: HashMap::new(),
+            locked_now: false,
+            locked_streak: 0,
             settle: SETTLE,
             error_ttl: ERROR_TTL,
         }
@@ -80,7 +103,9 @@ impl<R: Remote> Guard<R> {
         opts.auto_update = cfg.auto_update;
         if opts.force_remote {
             self.manifests.clear();
+            self.manifest_failures.clear();
         }
+        self.locked_now = false;
         let mut reports = Vec::new();
         let mut events = Vec::new();
         for d in &cfg.dirs {
@@ -100,8 +125,16 @@ impl<R: Remote> Guard<R> {
         }
         // The zip only serves the files fetched in this pass (both come from one download).
         self.store.clear_archives();
+        self.locked_streak = if self.locked_now { self.locked_streak + 1 } else { 0 };
         self.flush();
         (reports, events)
+    }
+
+    /// How soon to look again because a game file was locked: 5 s, doubling each pass it stays
+    /// locked, at most 5 min. `None` when nothing was locked in the last pass.
+    pub fn locked_retry(&self) -> Option<Duration> {
+        let n = self.locked_streak.checked_sub(1)?;
+        Some(LOCKED_RETRY.saturating_mul(1 << n.min(16)).min(LOCKED_RETRY_MAX))
     }
 
     /// Put back whatever each guarded file held before the guard first replaced it.
@@ -122,7 +155,7 @@ impl<R: Remote> Guard<R> {
                     Ok(cur) if cur == backup => {}
                     Ok(_) => match copy_atomic(&src, &path) {
                         Ok(()) => {
-                            self.hashes.remove(&path);
+                            self.forget_hash(&path);
                             self.state.installed.remove(&pkey);
                             self.dirty = true;
                             events.push(Event::Uninstalled {
@@ -147,6 +180,14 @@ impl<R: Remote> Guard<R> {
         if self.dirty && self.store.save_state(&self.state).is_ok() {
             self.dirty = false;
             self.store.prune(&self.state);
+        }
+        if self.hashes_dirty {
+            // Forget files that are gone (a removed folder, a pruned cache copy): the map must
+            // not grow over months of running.
+            self.hashes.retain(|p, _| Path::new(p).is_file());
+            if self.store.save_hashes(&self.hashes).is_ok() {
+                self.hashes_dirty = false;
+            }
         }
     }
 
@@ -347,6 +388,12 @@ impl<R: Remote> Guard<R> {
 
     /// Replace `path` (currently `cur_sha`) with the cached patched build of `entry`.
     fn install(&mut self, path: &Path, cur_sha: &str, entry: &FileEntry) -> Result<(), Outcome> {
+        // Held open by the game or the patcher: the final rename would fail anyway, so do not
+        // copy 50-85 MB just to throw it away (that happened every 5 s while the game ran).
+        if path.is_file() && !replaceable(path) {
+            self.locked_now = true;
+            return Err((Status::Busy, t!("guard.file_is_in_use").into(), None));
+        }
         let pkey = path_key(path);
         let ours = self.state.installed.get(&pkey).is_some_and(|s| s == cur_sha);
         if !ours && cur_sha != entry.patched_sha256 {
@@ -358,8 +405,8 @@ impl<R: Remote> Guard<R> {
             self.dirty = true;
         }
         // Last check before the game folder is touched: never install a damaged cache. The
-        // memoized digest (per size + mtime) is dropped first, so this really re-reads it.
-        self.hashes.remove(&self.store.patched_path(&entry.patched_sha256));
+        // memoized digest is dropped first, so this really re-reads it.
+        self.forget_hash(&self.store.patched_path(&entry.patched_sha256));
         let Some(src) = self.cached(&entry.patched_sha256) else {
             return Err((
                 Status::Error,
@@ -367,8 +414,15 @@ impl<R: Remote> Guard<R> {
                 None,
             ));
         };
-        copy_atomic(&src, path).map_err(write_failure)?;
-        self.hashes.remove(path);
+        if let Err(e) = copy_atomic(&src, path) {
+            self.locked_now = true;
+            return Err(write_failure(e));
+        }
+        // Forget the old digest; the next look re-reads what is really on disk. Recording the
+        // patched hash here would pair it with metadata read after the rename, and another
+        // writer could replace the file in between. An install is rare (once per game update),
+        // so one extra read is the price.
+        self.forget_hash(path);
         self.state.installed.insert(pkey, entry.patched_sha256.clone());
         self.dirty = true;
         Ok(())
@@ -380,7 +434,11 @@ impl<R: Remote> Guard<R> {
         name: &str,
         max_age: Duration,
     ) -> Result<Option<FileEntry>, String> {
-        let error_ttl = self.error_ttl;
+        let fails = self.manifest_failures.get(&profile).copied().unwrap_or(0);
+        let error_ttl = self
+            .error_ttl
+            .saturating_mul(1 << fails.saturating_sub(1).min(16))
+            .min(ERROR_TTL_MAX.max(self.error_ttl));
         let lang = i18n::get();
         let fresh = self.manifests.get(&profile).is_some_and(|(at, m, phrased)| match m {
             Ok(_) => at.elapsed() < max_age,
@@ -388,6 +446,11 @@ impl<R: Remote> Guard<R> {
         });
         if !fresh {
             let m = self.remote.manifest(profile).and_then(|m| self.not_older(profile, m));
+            if m.is_ok() {
+                self.manifest_failures.remove(&profile);
+            } else {
+                *self.manifest_failures.entry(profile).or_insert(0) += 1;
+            }
             self.manifests.insert(profile, (Instant::now(), m, lang));
         }
         match &self.manifests[&profile].1 {
@@ -427,25 +490,66 @@ impl<R: Remote> Guard<R> {
             Ok(h) if h == sha => Some(p),
             Ok(_) => {
                 let _ = fs::remove_file(&p);
-                self.hashes.remove(&p);
+                self.forget_hash(&p);
                 None
             }
             Err(_) => None,
         }
     }
 
-    /// sha256 of `path`, recomputed only when its size or mtime changed (the files are
-    /// 50–85 MB and this runs on every poll).
+    /// sha256 of `path`, recomputed only when its size, write time or creation time changed
+    /// (the files are 50-85 MB and this runs on every poll). A copy keeps the write time of
+    /// its source, so the creation time is what tells a replaced file apart.
     fn hash(&mut self, path: &Path, meta: &fs::Metadata) -> io::Result<String> {
-        let stamp = (meta.len(), meta.modified().ok());
-        if let Some((len, mtime, sha)) = self.hashes.get(path) {
-            if (*len, *mtime) == stamp {
-                return Ok(sha.clone());
-            }
+        let key = path_key(path);
+        let (len, modified, created) = stamp(meta);
+        // Without a write time there is nothing reliable to compare: always re-read.
+        if let Some(e) = self.hashes.get(&key)
+            && modified.is_some()
+            && (e.len, e.modified, e.created) == (len, modified, created)
+        {
+            return Ok(e.sha256.clone());
         }
         let sha = sha256_file(path)?;
-        self.hashes.insert(path.to_path_buf(), (stamp.0, stamp.1, sha.clone()));
+        self.hashes.insert(key, HashEntry { len, modified, created, sha256: sha.clone() });
+        self.hashes_dirty = true;
         Ok(sha)
+    }
+
+    fn forget_hash(&mut self, path: &Path) {
+        if self.hashes.remove(&path_key(path)).is_some() {
+            self.hashes_dirty = true;
+        }
+    }
+
+}
+
+fn stamp(meta: &fs::Metadata) -> (u64, Option<i128>, Option<i128>) {
+    (meta.len(), meta.modified().ok().map(signed_nanos), meta.created().ok().map(signed_nanos))
+}
+
+/// Nanoseconds since the Unix epoch, negative before it, so every distinct time stays distinct.
+fn signed_nanos(t: SystemTime) -> i128 {
+    match t.duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_nanos() as i128,
+        Err(e) => -(e.duration().as_nanos() as i128),
+    }
+}
+
+/// Whether `path` can be replaced right now: opened for delete access with full sharing, which
+/// fails while another process holds it open without delete sharing (the game, the patcher).
+fn replaceable(path: &Path) -> bool {
+    #[cfg(windows)]
+    {
+        use std::os::windows::fs::OpenOptionsExt;
+        const DELETE: u32 = 0x0001_0000;
+        const SHARE_ALL: u32 = 0x1 | 0x2 | 0x4;
+        fs::OpenOptions::new().access_mode(DELETE).share_mode(SHARE_ALL).open(path).is_ok()
+    }
+    #[cfg(not(windows))]
+    {
+        let _ = path;
+        true
     }
 }
 
@@ -860,8 +964,76 @@ mod tests {
         let held = fs::File::options().read(true).share_mode(1).open(&r.file).unwrap();
         assert_eq!(r.check(), (Status::Busy, vec![]));
         assert_eq!(r.content(), b"orig-v1");
+        // Nothing was copied into the game folder just to fail (no temp file left behind).
+        let dir = r.file.parent().unwrap().to_path_buf();
+        let tmp = fs::read_dir(&dir).unwrap().flatten().any(|e| e.file_name().to_string_lossy().ends_with(".wwmpg-tmp"));
+        assert!(!tmp);
+        // While it stays locked the retry backs off: 5 s, 10 s, 20 s…
+        assert_eq!(r.guard.locked_retry(), Some(Duration::from_secs(5)));
+        r.check();
+        assert_eq!(r.guard.locked_retry(), Some(Duration::from_secs(10)));
+        r.check();
+        assert_eq!(r.guard.locked_retry(), Some(Duration::from_secs(20)));
         drop(held);
         assert_eq!(r.check(), (Status::Patched, vec![installed()]));
         assert_eq!(r.content(), b"patched-v1");
+        assert_eq!(r.guard.locked_retry(), None, "back to the normal poll");
+    }
+
+    #[test]
+    fn times_before_1970_stay_distinct() {
+        let before = |s| UNIX_EPOCH - Duration::from_secs(s);
+        assert_ne!(signed_nanos(before(1)), signed_nanos(before(2)));
+        assert_eq!(signed_nanos(before(1)), -1_000_000_000);
+        assert_eq!(signed_nanos(UNIX_EPOCH + Duration::from_secs(1)), 1_000_000_000);
+    }
+
+    #[test]
+    fn hashes_survive_a_restart() {
+        let mut r = Rig::new(b"orig-v1");
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        r.check();
+        // The install drops the file's cached hash; the next pass reads it once and keeps it.
+        let key = r.file.to_string_lossy().into_owned();
+        assert!(!r.guard.store.load_hashes().contains_key(&key));
+        r.check();
+        let saved = r.guard.store.load_hashes();
+        assert_eq!(saved.get(&key).map(|e| e.sha256.as_str()), Some(sha(b"patched-v1").as_str()));
+        // A fresh guard (the next start) takes the stored hash instead of reading the file: a
+        // planted entry for the current size and times is believed as is.
+        let mut fake = saved.clone();
+        fake.get_mut(&key).unwrap().sha256 = "0".repeat(64);
+        r.guard.store.save_hashes(&fake).unwrap();
+        let mut g = Guard::new(r.guard.store.clone(), Fake::default());
+        let meta = fs::metadata(&r.file).unwrap();
+        assert_eq!(g.hash(&r.file, &meta).unwrap(), "0".repeat(64));
+        // Entries for files that are gone are dropped when saved.
+        g.hashes.insert(r.file.with_file_name("gone").to_string_lossy().into_owned(), saved[&key].clone());
+        g.hashes_dirty = true;
+        g.flush();
+        assert_eq!(r.guard.store.load_hashes().len(), saved.len());
+    }
+
+    #[test]
+    fn an_offline_release_is_retried_less_and_less_often() {
+        let mut r = Rig::new(b"orig-v1");
+        r.guard.error_ttl = Duration::from_secs(60);
+        for _ in 0..4 {
+            // No manifest: every forced fetch fails.
+            *r.guard.remote.build.borrow_mut() = None;
+            let _ = r.guard.remote_entry(Profile::Global, NAME, Duration::from_secs(3600));
+            r.guard.manifests.get_mut(&Profile::Global).unwrap().0 = Instant::now() - Duration::from_secs(3600);
+        }
+        assert_eq!(r.guard.manifest_failures[&Profile::Global], 4);
+        // After 4 failures the next attempt waits 8 min (60 s doubled three times)…
+        r.guard.manifests.get_mut(&Profile::Global).unwrap().0 = Instant::now() - Duration::from_secs(7 * 60);
+        let fetches = r.guard.remote.fetches.get();
+        let _ = r.guard.remote_entry(Profile::Global, NAME, Duration::from_secs(3600));
+        assert_eq!(r.guard.remote.fetches.get(), fetches, "not yet");
+        // …and a success resets it.
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        r.guard.manifests.get_mut(&Profile::Global).unwrap().0 = Instant::now() - Duration::from_secs(9 * 60);
+        assert!(r.guard.remote_entry(Profile::Global, NAME, Duration::from_secs(3600)).is_ok());
+        assert!(!r.guard.manifest_failures.contains_key(&Profile::Global));
     }
 }
