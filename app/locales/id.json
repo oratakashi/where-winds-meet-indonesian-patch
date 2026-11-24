@@ -37,6 +37,7 @@
   "guard.file_not_in_this": "file tidak ada di folder ini",
   "guard.file_version_does_not": "versi file tidak cocok dengan rilis terbaru — dibiarkan, menunggu rilis baru",
   "guard.game_s_original_file": "file asli game (penjaga dijeda)",
+  "guard.manifest_is_older": "manifest.json rilis ini lebih lama dari yang sudah dipakai — tidak dipakai",
   "guard.not_checked_guard_paused": "belum diperiksa (penjaga dijeda)",
   "guard.older_build": "build lama",
   "guard.older_build_the_game": "build lama — file game di folder ini beda versi dari rilis terbaru",
@@ -58,6 +59,7 @@
   "home.choose_the_where_winds": "Pilih folder instalasi Where Winds Meet secara manual (folder Steam, launcher, atau folder game-nya). Folder bahasa di dalamnya dicari otomatis.",
   "home.current_status": "Status saat ini",
   "home.detect_again": "Deteksi ulang",
+  "home.downloaded_and_verified_manual": "Sudah diunduh dan diverifikasi. Patch Guard akan ditutup sebentar lalu dibuka lagi. Update hanya dipasang saat kamu menekan Restart sekarang (atau aktifkan pemasangan otomatis di Pengaturan).",
   "home.downloaded_and_verified_patch": "Sudah diunduh dan diverifikasi. Patch Guard akan ditutup sebentar lalu dibuka lagi; kalau tidak sekarang, update dipasang saat keluar atau saat Windows menyala berikutnya.",
   "home.files_are_being_written": "File sedang ditulis atau dipakai; dicoba lagi otomatis.",
   "home.force_install": "Pasang paksa",
@@ -114,6 +116,8 @@
   "settings.closing_this_window_hides": "Menutup jendela ini menyembunyikannya ke tray; penjaga tetap berjalan.",
   "settings.download_new_versions_in": "Unduh versi baru di latar belakang, lalu tawarkan restart untuk memasangnya.",
   "settings.install_new_translation_builds": "Pasang build terjemahan baru untuk versi game yang sama.",
+  "settings.install_updates_automatically": "Pasang update Patch Guard otomatis",
+  "settings.install_when_quitting_or_starting": "Pasang update yang sudah diunduh saat keluar atau saat start berikutnya, tanpa menunggu \"Restart sekarang\".",
   "settings.language.hint": "Bahasa tampilan Patch Guard.",
   "settings.language.title": "Bahasa / Language",
   "settings.only_watch_never_change": "Hanya memantau; tidak mengubah file game.",
@@ -151,5 +155,7 @@
   "update.pending_folder_mismatch": "folder update tidak cocok dengan versi {version}",
   "update.public_key_is_damaged": "public key rusak: {e}",
   "update.signature_does_not_match": "tanda tangan tidak cocok",
-  "update.signature_is_damaged": "tanda tangan rusak: {e}"
+  "update.signature_for_another_file": "tanda tangan ini dibuat untuk file lain ({file})",
+  "update.signature_is_damaged": "tanda tangan rusak: {e}",
+  "update.signature_without_timestamp": "tanda tangan tidak punya waktu penandatanganan"
 }

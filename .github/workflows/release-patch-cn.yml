@@ -32,6 +32,8 @@ concurrency:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+    # The signing secrets live in the `release` environment (see release-patch.yml).
+    environment: release
     permissions:
       contents: write
     env:
@@ -77,17 +79,20 @@ jobs:
 
       # Patch Guard >= 0.5 only reads a signed manifest.json (manifest.json.sig, same key as the
       # global release: secrets PATCH_GUARD_SIGN_KEY + PATCH_GUARD_SIGN_KEY_PASSWORD).
+      # Exact version (same as release-patch.yml): this binary holds the signing key.
       - uses: taiki-e/install-action@v2
         with:
-          tool: cargo-packager
+          tool: cargo-packager@0.11.8
 
+      # The key goes in through cargo-packager's own environment variables, not the command
+      # line (visible in the process list).
       - name: Sign manifest.json
         env:
-          KEY: ${{ secrets.PATCH_GUARD_SIGN_KEY }}
-          PW: ${{ secrets.PATCH_GUARD_SIGN_KEY_PASSWORD }}
+          CARGO_PACKAGER_SIGN_PRIVATE_KEY: ${{ secrets.PATCH_GUARD_SIGN_KEY }}
+          CARGO_PACKAGER_SIGN_PRIVATE_KEY_PASSWORD: ${{ secrets.PATCH_GUARD_SIGN_KEY_PASSWORD }}
         run: |
-          [ -n "$KEY" ] || { echo "::error::secret PATCH_GUARD_SIGN_KEY is not set"; exit 1; }
-          cargo packager signer sign -k "$KEY" --password "$PW" patched-cn/manifest.json
+          [ -n "$CARGO_PACKAGER_SIGN_PRIVATE_KEY" ] || { echo "::error::secret PATCH_GUARD_SIGN_KEY is not set"; exit 1; }
+          cargo packager signer sign patched-cn/manifest.json
 
       - name: Compute progress summary
         id: progress

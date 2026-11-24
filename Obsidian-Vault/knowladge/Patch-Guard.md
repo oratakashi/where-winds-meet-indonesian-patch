@@ -61,30 +61,58 @@ Built by `.github/workflows/release-patch.yml` on every push to `main` (rolling 
 | --- | --- | --- |
 | `wwm-indonesian-patch.zip` | `wwm manifest --archive` | the patched files, flat, by name; trusted through its sha256 in the manifest |
 | `manifest.json` (schema 2) | `wwm manifest` | original + patched sha256/size per file, zip sha256/size |
-| `manifest.json.sig` | workflow "Sign manifest.json" | **required** from v0.5: a manifest without a valid signature is not read at all |
+| `manifest.json.sig` | `sign` job | **required** from v0.5: a manifest without a valid signature is not read at all |
 | `wwm-patch-guard-setup.exe` | `build-app` job (cargo-packager NSIS) | the installer, only rebuilt when `app/` changed or `build_app` is dispatched |
-| `wwm-patch-guard-setup.exe.sig` | `build-app` job | installer signature |
-| `patch-guard-update.json` (+ `.sig`) | `build-app` job | `{version, name, sha256, size, signature, notes, pub_date}` for the self-update |
+| `wwm-patch-guard-setup.exe.sig` | `sign` job | installer signature |
+| `patch-guard-update.json` (+ `.sig`) | `sign` job | `{version, name, sha256, size, signature, notes, pub_date}` for the self-update |
+
+Jobs (since v0.6.1): `changes` → `build-app` (Windows, optional) and `build-patch` (Ubuntu) build
+**without any secret** and upload unsigned artifacts → `sign` (environment `release`, no checkout,
+no cache, pinned `cargo-packager@0.11.8`) signs them → `publish` (`contents: write`) uploads.
 
 The "Remove stale release assets" step deletes everything else; when the app was not rebuilt,
 the installer, its `.sig` and `patch-guard-update.json(.sig)` from the previous run are kept.
 
 ## Signing (minisign)
 
-- One key pair, made with `cargo packager signer generate` (minisign format, base64-wrapped the
-  cargo-packager/Tauri way). Public key: `app/signing/patch-guard.pub`, compiled into the app
-  (`include_str!` in `core/update.rs`). The private key never enters the repo.
+- Key pairs made with `cargo packager signer generate` (minisign format, base64-wrapped the
+  cargo-packager/Tauri way). Since v0.6.1 the app trusts a **list** (`KEYS` in `core/update.rs`,
+  `include_str!`): `app/signing/patch-guard.pub` (**active**, CI signs with it) and
+  `app/signing/patch-guard-backup.pub` (**backup**, generated 2026-11-24; its private key is only
+  on the owner's PC in `~\.wwm-patch-guard\patch-guard-backup.key` and must be copied to offline
+  storage — it is never put in GitHub until it is needed). Private keys never enter the repo.
 - CI secrets: **`PATCH_GUARD_SIGN_KEY`** (the private key file's content) and
-  **`PATCH_GUARD_SIGN_KEY_PASSWORD`** (optional: GitHub rejects empty secrets, so leave it unset for a key without a password — an unset secret reads as an empty string). Signing runs
-  `cargo packager signer sign -k "$KEY" --password "$PW" <file>`; the password is always passed
-  explicitly, because minisign prompts for one when it is missing. A missing secret fails the run.
+  **`PATCH_GUARD_SIGN_KEY_PASSWORD`** (optional: GitHub rejects empty secrets, so leave it unset for a
+  key without a password). Keep them as secrets of the **environment `release`** (Settings →
+  Environments → `release`: deployment branches = `main` only; a required reviewer is possible but
+  would hold every translation release until approved), not as repository secrets. Only the
+  `sign` job (and the CN workflow's single job) use that environment. They reach cargo-packager as
+  `CARGO_PACKAGER_SIGN_PRIVATE_KEY` / `CARGO_PACKAGER_SIGN_PRIVATE_KEY_PASSWORD` environment
+  variables, never on the command line. A missing secret fails the run.
 - Signed: `manifest.json` (global and CN), the installer, `patch-guard-update.json`.
   `make_manifest.py` / `wwm manifest` stay unsigned and unchanged, so the parity check is unaffected.
-- After the secret is first added, dispatch `release-patch-cn.yml` once so `cn-latest` gets
-  its `manifest.json.sig` too: v0.5+ reads `cn-latest` and rejects it otherwise.
-- **Rotating the key**: ship an app version with the new `patch-guard.pub` first (signed with the
-  old key, so installed copies can still update to it), then switch the secrets. Releases signed
-  only with the new key are rejected by every older copy.
+- **What a signature vouches for** (v0.6.1+): besides the bytes, the minisign *trusted comment*,
+  which the global signature covers. cargo-packager writes `timestamp:<unix secs>\tfile:<name>`;
+  `update::verify(data, sig, file)` requires `file` to be the asset it was fetched as
+  (`manifest.json`, `patch-guard-update.json`, the installer's `name`), so one signed asset cannot
+  be passed off as another, and returns the timestamp. **Anti-rollback**: the guard keeps the
+  newest manifest timestamp per profile in `state.json` (`manifest_signed_at`) and refuses an
+  older one ("manifest.json … lebih lama"), so an old signed release served again cannot roll the
+  translation back; the self-update was already monotonic (only a newer `version` installs).
+  There is deliberately **no expiry date**: `cn-latest` is frozen and app releases can be months
+  apart, so an expiring signature would break working installs; the player's clock is not used
+  either (a wrong clock must not block the guard).
+- `cn-latest` has **no `manifest.json.sig`** (last built 2026-10-21, before signing): v0.5+ cannot
+  read it. Dispatch `release-patch-cn.yml` once if CN guarding should work again.
+- **Rotation (planned)**: (1) every shipped build already trusts the backup key; (2) generate a new
+  backup pair, put its `.pub` in `app/signing/` as the new backup and the old backup as active,
+  drop the old active `.pub`; (3) replace the `release` environment's `PATCH_GUARD_SIGN_KEY` with
+  the old backup's private key; (4) push `app/` (version bump) — that release is signed with a key
+  every copy trusts, and the build it installs no longer trusts the retired key.
+- **Revocation (key leaked)**: same steps, immediately. Removing a key from `KEYS` is the
+  revocation; copies that have not updated yet still trust it until they install that release,
+  so also delete the leaked secret and re-run the release at once. If *both* keys are lost, every
+  installed copy must be reinstalled by hand from a build with new keys.
 - Why it is required, not optional: the manifest's hashes decide what gets written into the game
   folder, and the installer runs on the player's PC. A signature ties both to the owner's key.
 
@@ -123,10 +151,14 @@ VS Code style: download in the background, install when the user restarts.
    from. Leftover helper folders (and v0.6.0's `%TEMP%` copies) are deleted on the next normal
    start. `main` also calls `SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS)` first.
 6. When it installs:
-   - **Restart sekarang** (window) or the tray item → install, then start again.
-   - **Keluar** from the tray with an update waiting → install, no restart.
-   - Start with an update still waiting (e.g. the PC was shut down) → install first, then start
-     with the same arguments (`--minimized` from autostart stays).
+   - **Restart sekarang** (window) or the tray item → install, then start again. Always.
+   - Only with **Pasang update Patch Guard otomatis** on (Settings; `Config::auto_install_app`,
+     v0.6.1+, **default off**, a config without the field = off):
+     - **Keluar** from the tray with an update waiting → install, no restart.
+     - Start with an update still waiting (e.g. the PC was shut down) → install first, then start
+       the installed copy the same way (`--minimized` from autostart stays).
+   - With it off, a downloaded update just waits for "Restart sekarang" (the info bar says so).
+     Downloading in the background stays on by default (`auto_update_app`).
    - It first waits (up to 1 min) for a guard pass that may be writing game files.
 7. If the installer fails, the helper still clears `updates\` and starts the old version, so it
    cannot loop. Since v0.6 the next start reads `update-result.json` (then deletes it), logs
@@ -211,3 +243,4 @@ cargo packager --release --formats nsis
 | 0.4.0 | Native GPUI port (no WebView2), WinUI-style UI |
 | 0.5.0 | Self-update (VS Code style) and minisign signatures; unsigned manifests are rejected |
 | 0.6.0 | Indonesian/English UI; short error TTL, signature retry, cache re-verification; failed self-updates are reported |
+| 0.6.1 (in progress) | Update helper takes no paths and re-verifies the signed update before installing; signatures bound to their file name, manifest anti-rollback, active + backup key; installing on quit/start is opt-in (`auto_install_app`); CI signs in a separate `sign` job (environment `release`) |

@@ -51,8 +51,9 @@ pub fn run() {
     let data_dir = store.base().to_path_buf();
     update::clean_helpers(&data_dir);
     // An update downloaded earlier and never installed (the PC was shut down while the app
-    // ran): install it now and come back the way we were started.
-    if Updates::new(&data_dir).pending().is_some() {
+    // ran): install it now and come back the way we were started — only when the user turned
+    // on "install automatically"; otherwise it waits for "Restart sekarang".
+    if store.load_config().auto_install_app && Updates::new(&data_dir).pending().is_some() {
         let again = if minimized { Relaunch::Minimized } else { Relaunch::Window };
         if update::apply(&data_dir, again).is_ok() {
             return;
@@ -107,7 +108,9 @@ pub fn run() {
                     }
                     cx.background_executor().timer(Duration::from_millis(500)).await;
                 }
-                if engine.pending_update().is_some() {
+                // Quitting installs a waiting update only with "install automatically" on.
+                let install = relaunch || engine.config().auto_install_app;
+                if install && engine.pending_update().is_some() {
                     let again = if relaunch { Relaunch::Window } else { Relaunch::No };
                     if let Err(e) = update::apply(&data_dir, again) {
                         if relaunch {

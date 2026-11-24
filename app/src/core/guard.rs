@@ -385,13 +385,27 @@ impl<R: Remote> Guard<R> {
             Err(_) => *phrased == lang && at.elapsed() < max_age.min(error_ttl),
         });
         if !fresh {
-            let m = self.remote.manifest(profile);
+            let m = self.remote.manifest(profile).and_then(|m| self.not_older(profile, m));
             self.manifests.insert(profile, (Instant::now(), m, lang));
         }
         match &self.manifests[&profile].1 {
             Ok(m) => Ok(m.entry(name).cloned()),
             Err(e) => Err(e.clone()),
         }
+    }
+
+    /// Refuse a manifest signed before the newest one this profile already used (an old
+    /// signed release served again); remember a newer one.
+    fn not_older(&mut self, profile: Profile, m: Manifest) -> Result<Manifest, String> {
+        let seen = self.state.manifest_signed_at.entry(profile.key().to_string()).or_insert(0);
+        if m.signed_at < *seen {
+            return Err(t!("guard.manifest_is_older").into());
+        }
+        if m.signed_at > *seen {
+            *seen = m.signed_at;
+            self.dirty = true;
+        }
+        Ok(m)
     }
 
     /// The cached patched build `sha`, if it is there and still has that hash. A damaged copy
@@ -456,6 +470,8 @@ mod tests {
         served: RefCell<Option<Vec<u8>>>,
         downloads: Cell<u32>,
         fetches: Cell<u32>,
+        /// The signing time the next manifest carries.
+        signed_at: Cell<u64>,
     }
 
     impl Fake {
@@ -488,6 +504,7 @@ mod tests {
                     patched_sha256: sha(p),
                     patched_size: p.len() as u64,
                 }],
+                signed_at: self.signed_at.get(),
             })
         }
 
@@ -558,6 +575,28 @@ mod tests {
         // Nothing more to do on the next pass.
         assert_eq!(r.check(), (Status::Patched, vec![]));
         assert_eq!(r.guard.remote.downloads.get(), 1);
+    }
+
+    #[test]
+    fn an_older_signed_manifest_is_refused() {
+        let mut r = Rig::new(b"orig-v1");
+        r.guard.remote.signed_at.set(2000);
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        assert_eq!(r.check().0, Status::Patched);
+        // The release is swapped for an older signed build with another translation.
+        r.guard.remote.signed_at.set(1000);
+        r.guard.remote.publish(b"orig-v1", b"patched-v0");
+        r.check();
+        assert_eq!(r.content(), b"patched-v1", "no rollback");
+        // Even after a restart (the time is kept in state.json).
+        let store = r.guard.store.clone();
+        let mut g = Guard::new(store, Fake::default());
+        g.remote.signed_at.set(1000);
+        g.remote.publish(b"orig-v1", b"patched-v0");
+        assert!(g.remote_entry(Profile::Global, NAME, Duration::ZERO).is_err());
+        // A newer one is fine.
+        g.remote.signed_at.set(3000);
+        assert!(g.remote_entry(Profile::Global, NAME, Duration::ZERO).is_ok());
     }
 
     #[test]

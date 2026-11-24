@@ -17,9 +17,22 @@ name: release-patch
 #   - wwm-patch-guard-setup.exe.sig, patch-guard-update.json(.sig)
 #                               -> auto-update Patch Guard (versi, sha256, ukuran, tanda tangan)
 #
+# Alur job (kunci tanda tangan hanya ada di job `sign`):
+#   changes -> build-app (opsional, windows, TANPA secret) ─┐
+#           -> build-patch (ubuntu, TANPA secret) ──────────┴-> sign (environment `release`)
+#                                                              -> publish (contents: write)
+# Job `sign` tidak checkout repo dan tidak memakai cache: ia hanya menerima artifact hasil
+# build, jadi build.rs / dependency / tools repo tidak pernah berjalan di job yang memegang
+# kunci. Trusted comment tiap .sig (`timestamp:<unix>\tfile:<nama>`, ditulis cargo-packager)
+# dicek Patch Guard >= 0.6.1: nama file harus cocok, dan manifest tidak boleh lebih tua dari
+# yang sudah pernah dipakai (anti-rollback).
+#
 # Tanda tangan: secret PATCH_GUARD_SIGN_KEY (private key `cargo packager signer generate`,
-# isi file-nya) + PATCH_GUARD_SIGN_KEY_PASSWORD (opsional: jangan dibuat kalau key tanpa password). Public key-nya ada di
-# app/signing/patch-guard.pub. Lihat Obsidian-Vault/knowladge/Patch-Guard.md.
+# isi file-nya) + PATCH_GUARD_SIGN_KEY_PASSWORD (opsional: jangan dibuat kalau key tanpa
+# password). Simpan keduanya sebagai secret ENVIRONMENT `release` (Settings → Environments →
+# release: deployment branch hanya `main`, opsional required reviewer), bukan secret repo.
+# Public key-nya (aktif + cadangan) ada di app/signing/. Lihat Obsidian-Vault/knowladge/Patch-Guard.md
+# (bagian "Signing keys") untuk rotasi dan pencabutan.
 #
 # Tooling: binary Rust `wwm` (default, di-cache per hash source rust/) dengan script Python
 # sebagai failsafe — lihat .github/actions/wwm-toolchain dan docs/Rust-Toolchain.md.
@@ -58,6 +71,11 @@ env:
   ZIP: wwm-indonesian-patch.zip
   APP_EXE: wwm-patch-guard-setup.exe
   APP_UPDATE: patch-guard-update.json
+  # Versi pasti: binary ini yang memegang kunci tanda tangan. Naikkan dengan sengaja.
+  CARGO_PACKAGER: cargo-packager@0.11.8
+
+permissions:
+  contents: read
 
 jobs:
   changes:
@@ -77,6 +95,8 @@ jobs:
     needs: changes
     if: needs.changes.outputs.app == 'true'
     runs-on: windows-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     defaults:
       run:
         working-directory: app
@@ -91,7 +111,7 @@ jobs:
 
       - uses: taiki-e/install-action@v2
         with:
-          tool: cargo-packager
+          tool: ${{ env.CARGO_PACKAGER }}
 
       # The guard rules (what may be written over which file) are covered here.
       - name: Test
@@ -110,52 +130,24 @@ jobs:
           [ "$#" -eq 1 ] || { echo "::error::expected one NSIS installer, got $#"; exit 1; }
           cp "$1" "$APP_EXE"
 
-      # Auto-update (app/src/core/update.rs): installer + patch-guard-update.json, keduanya
-      # ditandatangani. Password dikirim eksplisit (boleh kosong) supaya minisign tidak meminta
-      # password secara interaktif.
-      - name: Sign installer + write update info
+      - name: Version
+        id: version
         shell: bash
-        env:
-          KEY: ${{ secrets.PATCH_GUARD_SIGN_KEY }}
-          PW: ${{ secrets.PATCH_GUARD_SIGN_KEY_PASSWORD }}
-        run: |
-          [ -n "$KEY" ] || { echo "::error::secret PATCH_GUARD_SIGN_KEY belum di-set"; exit 1; }
-          cargo packager signer sign -k "$KEY" --password "$PW" "$APP_EXE"
-          version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n1)
-          VERSION="$version" python - <<'PY'
-          import hashlib, json, os, datetime
-          exe = os.environ["APP_EXE"]
-          data = open(exe, "rb").read()
-          info = {
-              "version": os.environ["VERSION"],
-              "name": exe,
-              "sha256": hashlib.sha256(data).hexdigest(),
-              "size": len(data),
-              "signature": open(exe + ".sig").read().strip(),
-              "notes": "",
-              "pub_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-          }
-          open(os.environ["APP_UPDATE"], "w").write(json.dumps(info, indent=2) + "\n")
-          PY
-          cargo packager signer sign -k "$KEY" --password "$PW" "$APP_UPDATE"
+        run: echo "version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n1)" >> "$GITHUB_OUTPUT"
 
+      # Belum ditandatangani: job `sign` yang melakukannya.
       - uses: actions/upload-artifact@v4
         with:
-          name: wwm-patch-guard-windows
-          path: |
-            app/${{ env.APP_EXE }}
-            app/${{ env.APP_EXE }}.sig
-            app/${{ env.APP_UPDATE }}
-            app/${{ env.APP_UPDATE }}.sig
+          name: app-unsigned
+          path: app/${{ env.APP_EXE }}
           if-no-files-found: error
 
-  build-and-release:
-    needs: [changes, build-app]
-    # build-app dilewati (app tidak berubah) = tetap rilis; build-app gagal = jangan rilis.
-    if: always() && needs.changes.result == 'success' && (needs.build-app.result == 'success' || needs.build-app.result == 'skipped')
+  build-patch:
+    needs: changes
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    outputs:
+      progress: ${{ steps.progress.outputs.line }}
+      app_version: ${{ steps.app.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -176,20 +168,6 @@ jobs:
       - name: Write zip + manifest.json
         run: sh tools/wwm.sh manifest --outdir patched --archive "$ZIP"
 
-      # Patch Guard >= 0.5 hanya membaca manifest.json yang ditandatangani (manifest.json.sig);
-      # zip-nya dipercaya lewat sha256 di manifest itu.
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-packager
-
-      - name: Sign manifest.json
-        env:
-          KEY: ${{ secrets.PATCH_GUARD_SIGN_KEY }}
-          PW: ${{ secrets.PATCH_GUARD_SIGN_KEY_PASSWORD }}
-        run: |
-          [ -n "$KEY" ] || { echo "::error::secret PATCH_GUARD_SIGN_KEY belum di-set"; exit 1; }
-          cargo packager signer sign -k "$KEY" --password "$PW" patched/manifest.json
-
       # strings.jsonl tidak ter-track (>100 MB sejak v2.3) — Python butuh dump dari binary
       # (blok progress juga memuat coverage _diff sejak hotfix v2.3); Rust men-decode
       # binary langsung.
@@ -208,16 +186,91 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Patch Guard version
+        id: app
+        run: echo "version=$(sed -n 's/^version = "\(.*\)"/\1/p' app/Cargo.toml | head -n1)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: patch-unsigned
+          path: |
+            ${{ env.ZIP }}
+            patched/manifest.json
+          if-no-files-found: error
+
+  # Satu-satunya job yang memegang kunci. Tanpa checkout, tanpa cache, tanpa kode repo.
+  sign:
+    needs: [changes, build-app, build-patch]
+    # build-app dilewati (app tidak berubah) = tetap rilis; build-app gagal = jangan rilis.
+    if: always() && needs.build-patch.result == 'success' && (needs.build-app.result == 'success' || needs.build-app.result == 'skipped')
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: patch-unsigned
+          path: out
+
       - name: Download Patch Guard installer
         if: needs.build-app.result == 'success'
         uses: actions/download-artifact@v4
         with:
-          name: wwm-patch-guard-windows
-          path: app-dist
+          name: app-unsigned
+          path: out
 
-      - name: Patch Guard version
-        id: app
-        run: echo "version=$(sed -n 's/^version = "\(.*\)"/\1/p' app/Cargo.toml | head -n1)" >> "$GITHUB_OUTPUT"
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: ${{ env.CARGO_PACKAGER }}
+
+      # Kunci lewat environment variable (dibaca cargo-packager sendiri), bukan argumen
+      # command line yang terlihat di daftar proses.
+      - name: Sign manifest.json (+ installer and update info)
+        working-directory: out
+        env:
+          CARGO_PACKAGER_SIGN_PRIVATE_KEY: ${{ secrets.PATCH_GUARD_SIGN_KEY }}
+          CARGO_PACKAGER_SIGN_PRIVATE_KEY_PASSWORD: ${{ secrets.PATCH_GUARD_SIGN_KEY_PASSWORD }}
+          VERSION: ${{ needs.build-app.outputs.version }}
+        run: |
+          [ -n "$CARGO_PACKAGER_SIGN_PRIVATE_KEY" ] || { echo "::error::secret PATCH_GUARD_SIGN_KEY belum di-set (environment release)"; exit 1; }
+          cargo packager signer sign patched/manifest.json
+          if [ -f "$APP_EXE" ]; then
+            [ -n "$VERSION" ] || { echo "::error::versi Patch Guard tidak diketahui"; exit 1; }
+            cargo packager signer sign "$APP_EXE"
+            python3 - <<'PY'
+          import hashlib, json, os, datetime
+          exe = os.environ["APP_EXE"]
+          data = open(exe, "rb").read()
+          info = {
+              "version": os.environ["VERSION"],
+              "name": exe,
+              "sha256": hashlib.sha256(data).hexdigest(),
+              "size": len(data),
+              "signature": open(exe + ".sig").read().strip(),
+              "notes": "",
+              "pub_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+          }
+          open(os.environ["APP_UPDATE"], "w").write(json.dumps(info, indent=2) + "\n")
+          PY
+            cargo packager signer sign "$APP_UPDATE"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-signed
+          path: out/
+          if-no-files-found: error
+
+  publish:
+    needs: [build-app, build-patch, sign]
+    if: always() && needs.sign.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-signed
+          path: dist
 
       - name: Publish rolling release
         uses: softprops/action-gh-release@v2
@@ -238,12 +291,12 @@ jobs:
             Ini adalah build **terbaru dari `main`** (rolling release). File di release ini selalu
             ter-overwrite tiap kali ada perbaikan terjemahan yang di-push ke `main`.
 
-            ${{ steps.progress.outputs.line }}
+            ${{ needs.build-patch.outputs.progress }}
 
             > [!NOTE]
             > Cara pakai: lihat [`README.md`](https://github.com/oratakashi/where-winds-meet-indonesian-patch#player-installation-guide) repo untuk petunjuk instalasi ke folder game.
 
-            ### WWM Patch Guard (Windows) — v${{ steps.app.outputs.version }}
+            ### WWM Patch Guard (Windows) — v${{ needs.build-patch.outputs.app_version }}
 
             Patcher NetEase mengembalikan file bahasa asli setiap ada update game. **`wwm-patch-guard-setup.exe`**
             adalah app kecil (system tray) yang memasang ulang patch ini secara otomatis — tidak perlu
@@ -272,19 +325,20 @@ jobs:
 
             **Donate via Saweria:** [https://saweria.co/oratakashi](https://saweria.co/oratakashi)
           files: |
-            ${{ env.ZIP }}
-            patched/manifest.json
-            patched/manifest.json.sig
-            app-dist/${{ env.APP_EXE }}
-            app-dist/${{ env.APP_EXE }}.sig
-            app-dist/${{ env.APP_UPDATE }}
-            app-dist/${{ env.APP_UPDATE }}.sig
+            dist/${{ env.ZIP }}
+            dist/patched/manifest.json
+            dist/patched/manifest.json.sig
+            dist/${{ env.APP_EXE }}
+            dist/${{ env.APP_EXE }}.sig
+            dist/${{ env.APP_UPDATE }}
+            dist/${{ env.APP_UPDATE }}.sig
 
       # softprops tidak menghapus asset lama: buang semua yang bukan zip/manifest/installer/
       # file auto-update (mis. file translate_words_map_* mentah dari rilis sebelumnya).
       - name: Remove stale release assets
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           gh release view latest --json assets --jq '.assets[].name' | while read -r name; do
             case "$name" in

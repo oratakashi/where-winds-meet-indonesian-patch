@@ -102,8 +102,10 @@ impl HttpRemote {
 impl Remote for HttpRemote {
     fn manifest(&self, profile: Profile) -> Result<Manifest, String> {
         let tag = profile.release_tag();
-        let pair = with_sig_retry(SIG_TRIES, SIG_RETRY_WAIT, || self.manifest_pair(tag))?;
-        parse_manifest_json(&pair.0, profile)
+        let (json, signed) = with_sig_retry(SIG_TRIES, SIG_RETRY_WAIT, || self.manifest_pair(tag))?;
+        let mut m = parse_manifest_json(&json, profile)?;
+        m.signed_at = signed.at;
+        Ok(m)
     }
 
     fn download(&self, profile: Profile, archive: &Archive, dest: &Path) -> Result<(), String> {
@@ -116,21 +118,24 @@ impl Remote for HttpRemote {
 const SIG_TRIES: u32 = 3;
 const SIG_RETRY_WAIT: Duration = Duration::from_secs(3);
 
+/// The name `manifest.json`'s signature must have been made for.
+const MANIFEST_JSON: &str = "manifest.json";
+
 /// Fetch (manifest, sig) with `fetch` until the signature verifies, at most `tries` times.
 /// Network errors are returned at once; only a bad signature is retried.
 fn with_sig_retry(
     tries: u32,
     wait: Duration,
     mut fetch: impl FnMut() -> Result<(Vec<u8>, String), String>,
-) -> Result<(Vec<u8>, String), String> {
+) -> Result<(Vec<u8>, update::Signed), String> {
     let mut last = String::new();
     for i in 0..tries.max(1) {
         if i > 0 {
             std::thread::sleep(wait);
         }
         let (json, sig) = fetch()?;
-        match update::verify(&json, &sig) {
-            Ok(()) => return Ok((json, sig)),
+        match update::verify(&json, &sig, MANIFEST_JSON) {
+            Ok(signed) => return Ok((json, signed)),
             Err(e) => last = e,
         }
     }
@@ -140,7 +145,7 @@ fn with_sig_retry(
 /// Only a manifest signed with the release key is read at all.
 #[cfg(test)]
 fn verified_manifest(json: &[u8], sig: &str, profile: Profile) -> Result<Manifest, String> {
-    update::verify(json, sig).map_err(|e| tf!("remote.manifest_untrusted", e = e))?;
+    update::verify(json, sig, MANIFEST_JSON).map_err(|e| tf!("remote.manifest_untrusted", e = e))?;
     parse_manifest_json(json, profile)
 }
 
@@ -250,7 +255,7 @@ mod tests {
         assert!(e.contains("tidak bisa dipercaya"), "{e}");
         // Signed by some other key: rejected too.
         let (_, sign) = crate::update::tests::test_key();
-        assert!(verified_manifest(json, &sign(json), Profile::Global).is_err());
+        assert!(verified_manifest(json, &sign(json, "manifest.json"), Profile::Global).is_err());
     }
 
     #[test]

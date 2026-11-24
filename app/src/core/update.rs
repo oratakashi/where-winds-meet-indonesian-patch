@@ -37,8 +37,15 @@ use std::time::Duration;
 /// The update description on the `latest` release.
 pub const UPDATE_JSON: &str = "patch-guard-update.json";
 const UPDATE_SIG: &str = "patch-guard-update.json.sig";
-/// The minisign public key (cargo-packager format: base64 of the `.pub` text).
-const PUBKEY: &str = include_str!("../../signing/patch-guard.pub");
+/// The minisign public keys a release may be signed with (cargo-packager format: base64 of the
+/// `.pub` text). The first is the one CI signs with today; the backup's private key is kept
+/// offline, so a leaked or lost active key can be replaced without reinstalling every copy:
+/// sign the next release with the backup and ship a build whose list no longer has the old
+/// key (that is the revocation). See `Obsidian-Vault/knowladge/Patch-Guard.md`.
+const KEYS: [&str; 2] = [
+    include_str!("../../signing/patch-guard.pub"),
+    include_str!("../../signing/patch-guard-backup.pub"),
+];
 /// Largest installer we accept, whatever the JSON says.
 const INSTALLER_MAX: u64 = 200 << 20;
 const UPDATE_JSON_MAX: u64 = 64 << 10;
@@ -62,32 +69,62 @@ const LEGACY_HELPER_PREFIX: &str = "wwm-patch-guard-updater-";
 
 // ---------------------------------------------------------------- signatures
 
+/// What a valid signature vouches for besides the bytes: its trusted comment, which minisign's
+/// global signature covers. cargo-packager writes `timestamp:<unix secs>\tfile:<file name>`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Signed {
+    /// When CI signed it (unix seconds): only ever goes up from one release to the next.
+    pub at: u64,
+}
+
 /// Check a cargo-packager / minisign signature (`.sig` content) of `data` against the
-/// built-in key. Debug builds accept `WWM_PATCH_GUARD_PUBKEY` instead (local testing).
-pub fn verify(data: &[u8], sig: &str) -> Result<(), String> {
+/// built-in keys, and that it was made for a file called `file` (so one signed release asset
+/// cannot be passed off as another). Debug builds accept `WWM_PATCH_GUARD_PUBKEY` instead
+/// (local testing).
+pub fn verify(data: &[u8], sig: &str, file: &str) -> Result<Signed, String> {
     #[cfg(debug_assertions)]
     if let Ok(k) = std::env::var("WWM_PATCH_GUARD_PUBKEY") {
         if !k.trim().is_empty() {
-            return verify_with(k.trim(), data, sig);
+            return verify_with(&[k.trim()], data, sig, file);
         }
     }
-    verify_with(PUBKEY.trim(), data, sig)
+    verify_with(&KEYS, data, sig, file)
 }
 
-fn verify_with(pubkey_b64: &str, data: &[u8], sig_b64: &str) -> Result<(), String> {
+fn verify_with(keys: &[&str], data: &[u8], sig_b64: &str, file: &str) -> Result<Signed, String> {
     let text = |b64: &str| -> Result<String, String> {
         let raw = STANDARD.decode(b64.trim()).map_err(|_| t!("update.not_base64").to_string())?;
         String::from_utf8(raw).map_err(|_| t!("update.not_text").to_string())
     };
-    let pk = minisign_verify::PublicKey::decode(&text(pubkey_b64)?)
-        .map_err(|e| tf!("update.public_key_is_damaged", e = e))?;
     let sig = minisign_verify::Signature::decode(&text(sig_b64)?)
         .map_err(|e| tf!("update.signature_is_damaged", e = e))?;
-    pk.verify(data, &sig, false).map_err(|_| t!("update.signature_does_not_match").to_string())
+    let mut ok = false;
+    for key in keys {
+        let pk = minisign_verify::PublicKey::decode(&text(key)?)
+            .map_err(|e| tf!("update.public_key_is_damaged", e = e))?;
+        if pk.verify(data, &sig, false).is_ok() {
+            ok = true;
+            break;
+        }
+    }
+    if !ok {
+        return Err(t!("update.signature_does_not_match").to_string());
+    }
+    let tc = sig.trusted_comment();
+    let field = |key: &str| tc.split('\t').find_map(|kv| kv.strip_prefix(key)?.strip_prefix(':'));
+    match field("file") {
+        Some(f) if f == file => {}
+        other => {
+            let signed = other.unwrap_or("?");
+            return Err(tf!("update.signature_for_another_file", file = signed));
+        }
+    }
+    let at = field("timestamp").and_then(|t| t.parse::<u64>().ok());
+    at.map(|at| Signed { at }).ok_or_else(|| t!("update.signature_without_timestamp").to_string())
 }
 
 /// How a signature is checked: [`verify`] in the app, a test key in the tests.
-type Verifier<'a> = &'a dyn Fn(&[u8], &str) -> Result<(), String>;
+type Verifier<'a> = &'a dyn Fn(&[u8], &str, &str) -> Result<Signed, String>;
 
 // ---------------------------------------------------------------- versions
 
@@ -146,7 +183,7 @@ pub fn parse_info(json: &[u8], sig: &str) -> Result<UpdateInfo, String> {
 }
 
 fn parse_info_with(json: &[u8], sig: &str, verify: Verifier) -> Result<UpdateInfo, String> {
-    verify(json, sig).map_err(|e| format!("{UPDATE_JSON}: {e}"))?;
+    verify(json, sig, UPDATE_JSON).map_err(|e| format!("{UPDATE_JSON}: {e}"))?;
     decode_info(json)
 }
 
@@ -366,7 +403,7 @@ fn check_installer(data: &[u8], info: &UpdateInfo, verify: Verifier) -> Result<(
     if sha256_bytes(data) != info.sha256.to_ascii_lowercase() {
         return Err(t!("update.installer_hash_does_not").into());
     }
-    verify(data, &info.signature).map_err(|e| format!("installer: {e}"))
+    verify(data, &info.signature, &info.name).map(|_| ()).map_err(|e| format!("installer: {e}"))
 }
 
 /// Ask the release for a newer version. `Ok(None)` = this build is the latest.
@@ -548,34 +585,63 @@ pub(crate) mod tests {
     use super::*;
     use std::io::Cursor;
 
-    /// A throwaway key pair: (public key, sign fn) in cargo-packager's base64 format.
-    pub(crate) fn test_key() -> (String, impl Fn(&[u8]) -> String) {
+    /// A throwaway key pair: (public key, sign fn) in cargo-packager's base64 format. The
+    /// sign fn writes cargo-packager's trusted comment for `file`, at timestamp 1000.
+    pub(crate) fn test_key() -> (String, impl Fn(&[u8], &str) -> String) {
+        let (pk, sign) = test_key_raw();
+        (pk, move |data: &[u8], file: &str| sign(data, &format!("timestamp:1000\tfile:{file}")))
+    }
+
+    /// Like [`test_key`], with the trusted comment given verbatim.
+    pub(crate) fn test_key_raw() -> (String, impl Fn(&[u8], &str) -> String) {
         let kp = minisign::KeyPair::generate_unencrypted_keypair().unwrap();
         let pk = STANDARD.encode(kp.pk.to_box().unwrap().to_string());
         let sk = kp.sk;
-        let sign = move |data: &[u8]| {
-            let b = minisign::sign(None, &sk, Cursor::new(data), Some("t"), None).unwrap();
+        let sign = move |data: &[u8], comment: &str| {
+            let b = minisign::sign(None, &sk, Cursor::new(data), Some(comment), None).unwrap();
             STANDARD.encode(b.to_string())
         };
         (pk, sign)
     }
 
     #[test]
-    fn built_in_key_decodes() {
-        let text = String::from_utf8(STANDARD.decode(PUBKEY.trim()).unwrap()).unwrap();
-        minisign_verify::PublicKey::decode(&text).unwrap();
+    fn built_in_keys_decode_and_differ() {
+        let texts: Vec<String> = KEYS
+            .iter()
+            .map(|k| {
+                let text = String::from_utf8(STANDARD.decode(k.trim()).unwrap()).unwrap();
+                minisign_verify::PublicKey::decode(&text).unwrap();
+                text
+            })
+            .collect();
+        assert_ne!(texts[0], texts[1], "the backup key must be another key");
     }
 
     #[test]
     fn signature_checks() {
         let (pk, sign) = test_key();
-        let sig = sign(b"hello");
-        verify_with(&pk, b"hello", &sig).unwrap();
-        assert!(verify_with(&pk, b"hellO", &sig).is_err());
+        let sig = sign(b"hello", "a.json");
+        assert_eq!(verify_with(&[&pk], b"hello", &sig, "a.json"), Ok(Signed { at: 1000 }));
+        assert!(verify_with(&[&pk], b"hellO", &sig, "a.json").is_err());
         let (other, _) = test_key();
-        assert!(verify_with(&other, b"hello", &sig).is_err());
-        assert!(verify_with(&pk, b"hello", "not base64!").is_err());
-        assert!(verify_with(&pk, b"hello", "").is_err());
+        assert!(verify_with(&[&other], b"hello", &sig, "a.json").is_err());
+        // Any key of the list will do: the backup key keeps working after a rotation.
+        assert!(verify_with(&[&other, &pk], b"hello", &sig, "a.json").is_ok());
+        assert!(verify_with(&[&pk], b"hello", "not base64!", "a.json").is_err());
+        assert!(verify_with(&[&pk], b"hello", "", "a.json").is_err());
+    }
+
+    #[test]
+    fn a_signature_is_bound_to_its_file_name_and_has_a_time() {
+        let (pk, sign) = test_key();
+        // manifest.json's signature cannot vouch for an installer with the same bytes.
+        let sig = sign(b"x", "manifest.json");
+        let e = verify_with(&[&pk], b"x", &sig, "setup.exe").unwrap_err();
+        assert!(e.contains("manifest.json"), "{e}");
+        let (pk, raw) = test_key_raw();
+        assert!(verify_with(&[&pk], b"x", &raw(b"x", "t"), "x").is_err(), "no file, no time");
+        assert!(verify_with(&[&pk], b"x", &raw(b"x", "file:x"), "x").is_err(), "no time");
+        assert!(verify_with(&[&pk], b"x", &raw(b"x", "timestamp:9\tfile:x\tother:1"), "x").is_ok());
     }
 
     #[test]
@@ -617,23 +683,23 @@ pub(crate) mod tests {
     }
 
     /// A signed release for version `v` with installer bytes `exe`, using `sign`.
-    fn release(v: &str, exe: &[u8], sign: &dyn Fn(&[u8]) -> String) -> Release {
+    fn release(v: &str, exe: &[u8], sign: &dyn Fn(&[u8], &str) -> String) -> Release {
         let info = UpdateInfo {
             version: v.into(),
             name: "setup.exe".into(),
             sha256: sha256_bytes(exe),
             size: exe.len() as u64,
-            signature: sign(exe),
+            signature: sign(exe, "setup.exe"),
             notes: String::new(),
             pub_date: String::new(),
         };
         let json = serde_json::to_vec(&info).unwrap();
-        let sig = sign(&json);
+        let sig = sign(&json, UPDATE_JSON);
         Release { info, json, sig }
     }
 
-    type SignFn = Box<dyn Fn(&[u8]) -> String>;
-    type VerifyFn = Box<dyn Fn(&[u8], &str) -> Result<(), String>>;
+    type SignFn = Box<dyn Fn(&[u8], &str) -> String>;
+    type VerifyFn = Box<dyn Fn(&[u8], &str, &str) -> Result<Signed, String>>;
 
     struct Env {
         _tmp: tempfile::TempDir,
@@ -646,7 +712,7 @@ pub(crate) mod tests {
         let tmp = tempfile::tempdir().unwrap();
         let u = Updates::new(tmp.path());
         let (pk, sign) = test_key();
-        Env { _tmp: tmp, u, sign: Box::new(sign), verifier: Box::new(move |d, s| verify_with(&pk, d, s)) }
+        Env { _tmp: tmp, u, sign: Box::new(sign), verifier: Box::new(move |d, s, f| verify_with(&[&pk], d, s, f)) }
     }
 
     fn fetch(e: &Env, r: &Release, served: &[u8]) -> Result<Pending, String> {

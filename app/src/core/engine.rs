@@ -55,6 +55,8 @@ pub struct Snapshot {
     pub log: Vec<LogLine>,
     /// Self-update switch (`Config::auto_update_app`).
     pub auto_update_app: bool,
+    /// Install it on quit / next start without asking (`Config::auto_install_app`).
+    pub auto_install_app: bool,
     /// A newer Patch Guard is downloaded, verified and waiting: its version.
     pub app_update: Option<String>,
     pub app_update_checking: bool,
@@ -121,6 +123,7 @@ impl Engine {
             checking: !cfg.dirs.is_empty(),
             log: store.load_history(),
             auto_update_app: cfg.auto_update_app,
+            auto_install_app: cfg.auto_install_app,
             ..Snapshot::default()
         }));
         let config = Arc::new(Mutex::new(cfg));
@@ -308,6 +311,7 @@ impl Worker {
             s.paused = cfg.paused;
             s.auto_update = cfg.auto_update;
             s.auto_update_app = cfg.auto_update_app;
+            s.auto_install_app = cfg.auto_install_app;
             s.checking = false;
             s.last_check = Some(now);
             drop(s);

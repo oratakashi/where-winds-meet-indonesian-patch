@@ -40,6 +40,10 @@ pub struct Config {
     /// Download new Patch Guard versions in the background and offer to restart.
     #[serde(default = "yes")]
     pub auto_update_app: bool,
+    /// Install a downloaded update on quit / the next start without asking. Off by default:
+    /// otherwise only "Restart sekarang" (window or tray) installs it.
+    #[serde(default)]
+    pub auto_install_app: bool,
     /// UI language; a config from before v0.6 has none and gets Indonesian.
     #[serde(default)]
     pub language: Lang,
@@ -52,6 +56,7 @@ impl Default for Config {
             auto_update: true,
             paused: false,
             auto_update_app: true,
+            auto_install_app: false,
             language: Lang::Id,
         }
     }
@@ -69,6 +74,10 @@ pub struct State {
     /// Tells "an older build of ours" apart from a file the guard knows nothing about.
     #[serde(default)]
     pub installed: BTreeMap<String, String>,
+    /// Profile key -> signing time (unix secs) of the newest release manifest used. Never
+    /// goes down, so an older signed manifest is refused (anti-rollback).
+    #[serde(default)]
+    pub manifest_signed_at: BTreeMap<String, u64>,
 }
 
 pub fn entry_key(profile: Profile, name: &str) -> String {
@@ -228,6 +237,7 @@ mod tests {
         let c: Config = serde_json::from_str(r#"{"dirs": [], "paused": false}"#).unwrap();
         assert_eq!(c.language, Lang::Id);
         assert!(c.auto_update && c.auto_update_app);
+        assert!(!c.auto_install_app, "installing without asking is opt-in");
         let tmp = tempfile::tempdir().unwrap();
         let s = Store::new(tmp.path()).unwrap();
         s.save_config(&Config { language: Lang::En, ..Config::default() }).unwrap();
