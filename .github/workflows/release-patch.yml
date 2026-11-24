@@ -61,11 +61,13 @@ on:
         options: [auto, rust, python]
         default: auto
 
-# Kalau ada beberapa push beruntun dalam waktu singkat (10x/hari), cukup build
-# yang paling terakhir yang perlu selesai — batalkan run lama yang masih antre.
+# Run beruntun antre satu per satu: run yang sedang mengunggah asset tidak boleh
+# dibatalkan di tengah jalan (bisa meninggalkan zip baru dengan manifest lama). GitHub
+# hanya menyimpan SATU run yang menunggu per grup, jadi push beruntun tetap berakhir
+# di build terbaru.
 concurrency:
   group: release-patch
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   ZIP: wwm-indonesian-patch.zip
@@ -83,8 +85,8 @@ jobs:
     outputs:
       app: ${{ steps.filter.outputs.app == 'true' || inputs.build_app == true }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3.0.4
         id: filter
         with:
           filters: |
@@ -101,15 +103,17 @@ jobs:
       run:
         working-directory: app
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable branch
+        with:
+          toolchain: stable
 
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           workspaces: app
 
-      - uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@fe3acb53a98b62c772db35de75ce0e4595e7ca8c # v2.90.8
         with:
           tool: ${{ env.CARGO_PACKAGER }}
 
@@ -136,7 +140,7 @@ jobs:
         run: echo "version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n1)" >> "$GITHUB_OUTPUT"
 
       # Belum ditandatangani: job `sign` yang melakukannya.
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: app-unsigned
           path: app/${{ env.APP_EXE }}
@@ -149,7 +153,7 @@ jobs:
       progress: ${{ steps.progress.outputs.line }}
       app_version: ${{ steps.app.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       # Rust `wwm` (default) or the Python scripts (repo variable WWM_TOOLCHAIN=python,
       # the dispatch input, or automatically when the Rust build fails). Every step
@@ -159,14 +163,10 @@ jobs:
         with:
           toolchain: ${{ (inputs.toolchain != 'auto' && inputs.toolchain) || vars.WWM_TOOLCHAIN || 'rust' }}
 
-      - name: Build patched files
-        run: sh tools/wwm.sh patch-all --outdir patched --level 19
-
-      # Menulis zip rilis (hanya file patched, flat — Patch Guard mengambil file dari zip
-      # ini berdasarkan nama) + manifest.json berisi hash original/patched per file dan
-      # hash zip; app memakai manifest untuk tahu apakah build cocok dengan file game.
-      - name: Write zip + manifest.json
-        run: sh tools/wwm.sh manifest --outdir patched --archive "$ZIP"
+      # Gate QA: sama dengan translation-qa.yml. Gagal di sini = job ini gagal, jadi `sign`
+      # dan `publish` tidak berjalan dan release `latest` tidak berubah.
+      - name: Validate translation files
+        run: sh tools/wwm.sh qa --locale "locale/*.jsonl"
 
       # strings.jsonl tidak ter-track (>100 MB sejak v2.3) — Python butuh dump dari binary
       # (blok progress juga memuat coverage _diff sejak hotfix v2.3); Rust men-decode
@@ -177,20 +177,35 @@ jobs:
           sh tools/wwm.sh dump translate_words_map_en strings.jsonl
           sh tools/wwm.sh dump translate_words_map_en_diff strings_diff.jsonl
 
+      - name: Progress block is up to date
+        run: sh tools/wwm.sh progress --check
+
+      - name: Build patched files
+        run: sh tools/wwm.sh patch-all --outdir patched --level 19
+
+      # Menulis zip rilis (hanya file patched, flat — Patch Guard mengambil file dari zip
+      # ini berdasarkan nama) + manifest.json berisi hash original/patched per file dan
+      # hash zip; app memakai manifest untuk tahu apakah build cocok dengan file game.
+      - name: Write zip + manifest.json
+        run: sh tools/wwm.sh manifest --outdir patched --archive "$ZIP"
+
       - name: Compute progress summary
         id: progress
+        # Delimiter acak: output yang kebetulan memuat baris delimiter tidak bisa
+        # menutup blok lebih awal dan menyuntik output lain.
         run: |
+          d="EOF_$(openssl rand -hex 16)"
           {
-            echo "line<<EOF"
+            echo "line<<$d"
             sh tools/wwm.sh progress
-            echo "EOF"
+            echo "$d"
           } >> "$GITHUB_OUTPUT"
 
       - name: Patch Guard version
         id: app
         run: echo "version=$(sed -n 's/^version = "\(.*\)"/\1/p' app/Cargo.toml | head -n1)" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: patch-unsigned
           path: |
@@ -206,19 +221,19 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: patch-unsigned
           path: out
 
       - name: Download Patch Guard installer
         if: needs.build-app.result == 'success'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: app-unsigned
           path: out
 
-      - uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@fe3acb53a98b62c772db35de75ce0e4595e7ca8c # v2.90.8
         with:
           tool: ${{ env.CARGO_PACKAGER }}
 
@@ -254,7 +269,7 @@ jobs:
             cargo packager signer sign "$APP_UPDATE"
           fi
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: release-signed
           path: out/
@@ -267,13 +282,13 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: release-signed
           path: dist
 
       - name: Publish rolling release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
           tag_name: latest
           name: "Patch Terjemahan Indonesia — WWM v2.4 Across Autumn Waters (build terbaru)"
