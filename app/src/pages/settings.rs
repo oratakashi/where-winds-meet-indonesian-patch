@@ -12,12 +12,13 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
     let (autostart, auto_update, paused) = (s.autostart, s.snap.auto_update, s.snap.paused);
     let no_dirs = s.snap.dirs.is_empty();
     let auto_update_app = s.snap.auto_update_app;
+    let auto_install_app = s.snap.auto_install_app;
     let app_checking = s.snap.app_update_checking;
     let ready = s.snap.app_update.clone();
     let note = s.snap.app_update_note.clone();
 
     let (a, b, c, r) = (state.clone(), state.clone(), state.clone(), state.clone());
-    let (u, chk) = (state.clone(), state.clone());
+    let (u, ia, chk) = (state.clone(), state.clone(), state.clone());
     vec![
         page_title(t!("common.settings"), cx).into_any_element(),
         card(cx).child(language_row(state, cx)).into_any_element(),
@@ -88,6 +89,15 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
                 t!("settings.download_new_versions_in"),
                 auto_update_app,
                 move |v, _, cx| u.update(cx, |s, cx| s.set_auto_update_app(v, cx)),
+                cx,
+            ))
+            .child(divider(cx))
+            .child(setting(
+                "auto-install-app",
+                t!("settings.install_updates_automatically"),
+                t!("settings.install_when_quitting_or_starting"),
+                auto_install_app,
+                move |v, _, cx| ia.update(cx, |s, cx| s.set_auto_install_app(v, cx)),
                 cx,
             ))
             .child(divider(cx))

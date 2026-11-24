@@ -157,6 +157,11 @@ impl AppState {
         self.done(r, cx);
     }
 
+    pub fn set_auto_install_app(&mut self, enabled: bool, cx: &mut Context<Self>) {
+        let r = self.engine.update_config(|c| c.auto_install_app = enabled);
+        self.done(r, cx);
+    }
+
     pub fn check_app_update(&mut self, cx: &mut Context<Self>) {
         self.engine.check_app_update();
         self.snap.app_update_checking = true;

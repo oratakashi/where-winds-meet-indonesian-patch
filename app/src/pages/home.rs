@@ -28,7 +28,12 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
             info_bar(
                 "app-update",
                 tf!("home.patch_guard_v_is", v = v).into(),
-                t!("home.downloaded_and_verified_patch").into(),
+                if s.snap.auto_install_app {
+                    t!("home.downloaded_and_verified_patch")
+                } else {
+                    t!("home.downloaded_and_verified_manual")
+                }
+                .into(),
                 t!("home.restart_now").into(),
                 Rc::new(move |_, _, cx| restart.update(cx, |s, cx| s.restart_for_update(cx))),
                 cx,

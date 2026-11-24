@@ -6,6 +6,7 @@
 //! (`Manifest::archive`) holding every patched file flat, by name. The zip is trusted through
 //! its sha256 in the signed manifest.
 use crate::model::{Archive, MANIFEST_SCHEMA, Manifest, Profile};
+use crate::store::is_sha256_hex;
 use crate::update;
 use std::fs;
 use std::io;
@@ -32,16 +33,22 @@ pub struct HttpRemote {
 }
 
 impl HttpRemote {
-    /// `WWM_PATCH_GUARD_BASE_URL` points the app at another server (local testing):
-    /// it must serve `<base>/<tag>/manifest.json` and `<base>/<tag>/<archive name>`.
+    /// Debug builds: `WWM_PATCH_GUARD_BASE_URL` points the app at another server (local
+    /// testing, plain http allowed); it must serve `<base>/<tag>/manifest.json` and
+    /// `<base>/<tag>/<archive name>`. Release builds always use GitHub, over https only,
+    /// redirects included (GitHub sends downloads on to its asset host).
     pub fn new() -> HttpRemote {
+        #[cfg(debug_assertions)]
         let base = std::env::var("WWM_PATCH_GUARD_BASE_URL")
             .ok()
             .filter(|s| !s.is_empty())
             .unwrap_or_else(|| DEFAULT_BASE.to_string());
+        #[cfg(not(debug_assertions))]
+        let base = DEFAULT_BASE.to_string();
         let agent = ureq::AgentBuilder::new()
             .timeout_connect(Duration::from_secs(15))
             .timeout_read(Duration::from_secs(60))
+            .https_only(!cfg!(debug_assertions))
             .user_agent(concat!("wwm-patch-guard/", env!("CARGO_PKG_VERSION")))
             .build();
         HttpRemote { base: base.trim_end_matches('/').to_string(), agent }
@@ -95,8 +102,10 @@ impl HttpRemote {
 impl Remote for HttpRemote {
     fn manifest(&self, profile: Profile) -> Result<Manifest, String> {
         let tag = profile.release_tag();
-        let pair = with_sig_retry(SIG_TRIES, SIG_RETRY_WAIT, || self.manifest_pair(tag))?;
-        parse_manifest_json(&pair.0, profile)
+        let (json, signed) = with_sig_retry(SIG_TRIES, SIG_RETRY_WAIT, || self.manifest_pair(tag))?;
+        let mut m = parse_manifest_json(&json, profile)?;
+        m.signed_at = signed.at;
+        Ok(m)
     }
 
     fn download(&self, profile: Profile, archive: &Archive, dest: &Path) -> Result<(), String> {
@@ -109,21 +118,24 @@ impl Remote for HttpRemote {
 const SIG_TRIES: u32 = 3;
 const SIG_RETRY_WAIT: Duration = Duration::from_secs(3);
 
+/// The name `manifest.json`'s signature must have been made for.
+const MANIFEST_JSON: &str = "manifest.json";
+
 /// Fetch (manifest, sig) with `fetch` until the signature verifies, at most `tries` times.
 /// Network errors are returned at once; only a bad signature is retried.
 fn with_sig_retry(
     tries: u32,
     wait: Duration,
     mut fetch: impl FnMut() -> Result<(Vec<u8>, String), String>,
-) -> Result<(Vec<u8>, String), String> {
+) -> Result<(Vec<u8>, update::Signed), String> {
     let mut last = String::new();
     for i in 0..tries.max(1) {
         if i > 0 {
             std::thread::sleep(wait);
         }
         let (json, sig) = fetch()?;
-        match update::verify(&json, &sig) {
-            Ok(()) => return Ok((json, sig)),
+        match update::verify(&json, &sig, MANIFEST_JSON) {
+            Ok(signed) => return Ok((json, signed)),
             Err(e) => last = e,
         }
     }
@@ -133,7 +145,7 @@ fn with_sig_retry(
 /// Only a manifest signed with the release key is read at all.
 #[cfg(test)]
 fn verified_manifest(json: &[u8], sig: &str, profile: Profile) -> Result<Manifest, String> {
-    update::verify(json, sig).map_err(|e| tf!("remote.manifest_untrusted", e = e))?;
+    update::verify(json, sig, MANIFEST_JSON).map_err(|e| tf!("remote.manifest_untrusted", e = e))?;
     parse_manifest_json(json, profile)
 }
 
@@ -156,7 +168,27 @@ fn parse_manifest(v: serde_json::Value, profile: Profile) -> Result<Manifest, St
         let profile = &m.profile;
         return Err(tf!("remote.manifest_is_for_another", profile = profile));
     }
+    // Hashes become file names in the data folder and the zip name part of a URL: even a
+    // signed manifest must not carry anything else.
+    let bad = |field: &str| Err(tf!("remote.manifest_bad_field", field = field));
+    if !is_sha256_hex(&m.archive.sha256) {
+        return bad("archive.sha256");
+    }
+    if !plain_asset_name(&m.archive.name) {
+        return bad("archive.name");
+    }
+    for f in &m.files {
+        if !is_sha256_hex(&f.original_sha256) || !is_sha256_hex(&f.patched_sha256) {
+            return bad(&f.name);
+        }
+    }
     Ok(m)
+}
+
+fn plain_asset_name(s: &str) -> bool {
+    !s.is_empty()
+        && !s.contains("..")
+        && s.bytes().all(|b| b.is_ascii_alphanumeric() || matches!(b, b'.' | b'-' | b'_'))
 }
 
 /// Copy entry `name` of the zip at `zip` to `dest`, reading at most `limit + 1` bytes
@@ -223,7 +255,7 @@ mod tests {
         assert!(e.contains("tidak bisa dipercaya"), "{e}");
         // Signed by some other key: rejected too.
         let (_, sign) = crate::update::tests::test_key();
-        assert!(verified_manifest(json, &sign(json), Profile::Global).is_err());
+        assert!(verified_manifest(json, &sign(json, "manifest.json"), Profile::Global).is_err());
     }
 
     #[test]
@@ -257,14 +289,27 @@ mod tests {
 
     #[test]
     fn schema_2_manifest_parses() {
+        let (a, o, p) = ("a".repeat(64), "0".repeat(64), "f".repeat(64));
         let v = json!({
             "schema": 2, "profile": "global",
-            "archive": {"name": "p.zip", "sha256": "ab", "size": 3},
-            "files": [{"name": "x", "original_sha256": "o", "original_size": 1,
-                       "patched_sha256": "p", "patched_size": 2}]
+            "archive": {"name": "p.zip", "sha256": a, "size": 3},
+            "files": [{"name": "x", "original_sha256": o, "original_size": 1,
+                       "patched_sha256": p, "patched_size": 2}]
         });
         let m = parse_manifest(v.clone(), Profile::Global).unwrap();
         assert_eq!(m.archive.name, "p.zip");
-        assert!(parse_manifest(v, Profile::Cn).is_err());
+        assert!(parse_manifest(v.clone(), Profile::Cn).is_err());
+
+        // Anything that is not a plain sha256 / file name is refused, signed or not.
+        let with = |set: &dyn Fn(&mut serde_json::Value)| {
+            let mut v = v.clone();
+            set(&mut v);
+            parse_manifest(v, Profile::Global)
+        };
+        assert!(with(&|v| v["archive"]["sha256"] = json!(r"..\..\x")).is_err());
+        assert!(with(&|v| v["archive"]["sha256"] = json!("A".repeat(64))).is_err());
+        assert!(with(&|v| v["archive"]["name"] = json!("../p.zip")).is_err());
+        assert!(with(&|v| v["files"][0]["patched_sha256"] = json!(r"..\config.json")).is_err());
+        assert!(with(&|v| v["files"][0]["original_sha256"] = json!("o")).is_err());
     }
 }

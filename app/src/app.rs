@@ -8,7 +8,7 @@ use crate::shell::system::{self, IDENTIFIER, PRODUCT_NAME};
 use crate::shell::{autostart, instance, tray};
 use crate::state::{AppState, Page};
 use crate::store::Store;
-use crate::update::{self, Updates};
+use crate::update::{self, Relaunch, Updates};
 use gpui::prelude::*;
 use gpui::{
     App, Bounds, Context, Entity, FocusHandle, FontWeight, KeyBinding, QuitMode, Role, SharedString,
@@ -48,12 +48,14 @@ pub fn run() {
     let Some(store) = system::data_dir().and_then(|d| Store::new(d).ok()) else {
         return;
     };
-    update::clean_helpers();
+    let data_dir = store.base().to_path_buf();
+    update::clean_helpers(&data_dir);
     // An update downloaded earlier and never installed (the PC was shut down while the app
-    // ran): install it now and come back with the same arguments.
-    if let Some(p) = Updates::new(store.base()).pending() {
-        let args: Vec<String> = std::env::args().skip(1).collect();
-        if update::apply(&p, Some(&args)).is_ok() {
+    // ran): install it now and come back the way we were started — only when the user turned
+    // on "install automatically"; otherwise it waits for "Restart sekarang".
+    if store.load_config().auto_install_app && Updates::new(&data_dir).pending().is_some() {
+        let again = if minimized { Relaunch::Minimized } else { Relaunch::Window };
+        if update::apply(&data_dir, again).is_ok() {
             return;
         }
     }
@@ -106,9 +108,11 @@ pub fn run() {
                     }
                     cx.background_executor().timer(Duration::from_millis(500)).await;
                 }
-                if let Some(p) = engine.pending_update() {
-                    let args: &[String] = &[];
-                    if let Err(e) = update::apply(&p, relaunch.then_some(args)) {
+                // Quitting installs a waiting update only with "install automatically" on.
+                let install = relaunch || engine.config().auto_install_app;
+                if install && engine.pending_update().is_some() {
+                    let again = if relaunch { Relaunch::Window } else { Relaunch::No };
+                    if let Err(e) = update::apply(&data_dir, again) {
                         if relaunch {
                             cx.update(|cx| loop_state.update(cx, |s, cx| s.show_error(e, cx)));
                             continue;

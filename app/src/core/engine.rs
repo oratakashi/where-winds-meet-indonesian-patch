@@ -55,6 +55,8 @@ pub struct Snapshot {
     pub log: Vec<LogLine>,
     /// Self-update switch (`Config::auto_update_app`).
     pub auto_update_app: bool,
+    /// Install it on quit / next start without asking (`Config::auto_install_app`).
+    pub auto_install_app: bool,
     /// A newer Patch Guard is downloaded, verified and waiting: its version.
     pub app_update: Option<String>,
     pub app_update_checking: bool,
@@ -74,6 +76,16 @@ pub enum AppNote {
     /// This version's installer failed before; not fetched again automatically.
     SkippedFailed(String),
     InstallFailed { version: String, code: Option<i32> },
+}
+
+impl Snapshot {
+    /// Copy the Settings switches from the saved config.
+    fn show_switches(&mut self, cfg: &Config) {
+        self.paused = cfg.paused;
+        self.auto_update = cfg.auto_update;
+        self.auto_update_app = cfg.auto_update_app;
+        self.auto_install_app = cfg.auto_install_app;
+    }
 }
 
 impl AppNote {
@@ -121,6 +133,7 @@ impl Engine {
             checking: !cfg.dirs.is_empty(),
             log: store.load_history(),
             auto_update_app: cfg.auto_update_app,
+            auto_install_app: cfg.auto_install_app,
             ..Snapshot::default()
         }));
         let config = Arc::new(Mutex::new(cfg));
@@ -187,10 +200,16 @@ impl Engine {
     }
 
     /// Change the config, persist it and make the engine pick it up.
+    /// The switches in the snapshot follow at once (the window refreshes from it right after),
+    /// not only when the next guard pass ends.
     pub fn update_config(&self, f: impl FnOnce(&mut Config)) -> Result<(), String> {
         let mut cfg = self.config.lock().unwrap();
         f(&mut cfg);
         self.store.save_config(&cfg).map_err(|e| e.to_string())?;
+        // Published while the config is still locked. Lock order everywhere: config, then
+        // snapshot — so the guard thread, which publishes the same way, cannot slip an older
+        // config in between.
+        self.shared.lock().unwrap().show_switches(&cfg);
         drop(cfg);
         self.send(Msg::Reload);
         Ok(())
@@ -291,6 +310,11 @@ impl Worker {
             let busy = dirs.iter().flat_map(|d| &d.files).any(|f| f.status == Status::Busy);
             wait = if busy { RETRY } else { POLL };
 
+            // The switches as saved now, not as they were when this pass started: a setting
+            // changed meanwhile must not be shown with its old value again. The config stays
+            // locked until they are published (lock order: config, then snapshot, as in
+            // `Engine::update_config`), so no newer save can land in between.
+            let latest = self.config.lock().unwrap();
             let mut s = self.shared.lock().unwrap();
             // The details are phrased in the current language: right after a switch every
             // known problem would look new, so that pass logs none.
@@ -305,12 +329,11 @@ impl Worker {
                 let _ = self.store.save_history(&s.log);
             }
             s.dirs = dirs;
-            s.paused = cfg.paused;
-            s.auto_update = cfg.auto_update;
-            s.auto_update_app = cfg.auto_update_app;
+            s.show_switches(&latest);
             s.checking = false;
             s.last_check = Some(now);
             drop(s);
+            drop(latest);
             on_change(&events);
         }
     }
@@ -372,11 +395,11 @@ impl Updater {
 
             let mut skipped = None;
             let res = update::check(&remote).and_then(|found| match found {
-                Some(info) if failed_version.as_deref() == Some(info.version.as_str()) => {
-                    skipped = Some(info.version);
+                Some(rel) if failed_version.as_deref() == Some(rel.info.version.as_str()) => {
+                    skipped = Some(rel.info.version);
                     Ok(None)
                 }
-                Some(info) => self.updates.fetch(&remote, &info).map(Some),
+                Some(rel) => self.updates.fetch(&remote, &rel).map(Some),
                 None => Ok(None),
             });
             let mut line: Option<(String, Option<LogMsg>)> = None;

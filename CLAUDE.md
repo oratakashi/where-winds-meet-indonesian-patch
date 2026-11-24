@@ -282,14 +282,25 @@ context — only use one if the user explicitly asks for it by name.
   attaches it to the `latest` release as `wwm-patch-guard-setup.exe` — no separate app release.
   The app downloads the release zip once per check pass and extracts files by name (`remote.rs`).
   Since v0.5 every release file it trusts is **minisign-signed** (`manifest.json.sig` is required;
-  public key `app/signing/patch-guard.pub`, CI secrets `PATCH_GUARD_SIGN_KEY` /
-  `PATCH_GUARD_SIGN_KEY_PASSWORD` (optional, unset for a key without a password); `release-patch-cn.yml` signs `cn-latest` too) and it **updates
+  trusted public keys `app/signing/patch-guard.pub` (active) + `patch-guard-backup.pub` (backup,
+  private key kept offline — rotation/revocation in the vault page); since v0.6.1 a signature's
+  trusted comment must name the file it was fetched as and a manifest older than one already used
+  is refused (anti-rollback); CI secrets `PATCH_GUARD_SIGN_KEY` /
+  `PATCH_GUARD_SIGN_KEY_PASSWORD` (optional, unset for a key without a password) live in the
+  environment `release` and are used only by the `sign` job of `release-patch.yml` (no checkout,
+  pinned `cargo-packager@0.11.8`); `release-patch-cn.yml` signs `cn-latest` too) and it **updates
   itself** (`core/update.rs`): `patch-guard-update.json(.sig)` + `wwm-patch-guard-setup.exe(.sig)`
-  on `latest` are downloaded and verified in the background, then installed by a `%TEMP%` copy of
-  the exe (`--apply-update`, silent NSIS `/S`) on "Restart sekarang", tray quit or next start.
+  on `latest` are downloaded and verified in the background into `updates\<version>\` (installer
+  + the signed JSON and `.sig`, no unsigned `pending.json`), then installed by a copy of the exe in
+  a fresh `<data>\updater\<id>\` folder (`--apply-update --wait-pid N [--relaunch [--minimized]]`,
+  silent NSIS `/S`) on "Restart sekarang" (tray quit / next start only with the opt-in
+  `auto_install_app`, default off). The helper takes **no paths**
+  from its command line: it re-verifies both signatures, hash and version, holds the installer
+  locked while it runs, and relaunches only the installed exe (uninstall entry `InstallLocation`).
   Full write-up: `Obsidian-Vault/knowladge/Patch-Guard.md`.
-  `WWM_PATCH_GUARD_BASE_URL` / `WWM_PATCH_GUARD_DATA_DIR` point it at a local release server /
-  data folder for testing.
+  In **debug builds only**, `WWM_PATCH_GUARD_BASE_URL` / `WWM_PATCH_GUARD_DATA_DIR` /
+  `WWM_PATCH_GUARD_PUBKEY` point it at a local release server / data folder / test key; release
+  builds ignore them and download over https only.
 - `tools/profiles.json` — per-profile paths/variants/dumps/phases (`global`, `cn`), loaded by
   `tools/profiles.py` and by `wwm`; `--profile` on
   every tool. `tools/bridge.py` — the global→CN keyHash/text bridge.

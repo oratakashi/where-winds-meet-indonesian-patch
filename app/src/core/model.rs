@@ -104,6 +104,11 @@ pub struct Manifest {
     pub built_at: String,
     pub archive: Archive,
     pub files: Vec<FileEntry>,
+    /// When CI signed this manifest (unix seconds, from the signature's trusted comment, not
+    /// from the JSON). The guard never goes back to an older one: an old signed release served
+    /// again cannot roll the translation back.
+    #[serde(skip)]
+    pub signed_at: u64,
 }
 
 impl Manifest {

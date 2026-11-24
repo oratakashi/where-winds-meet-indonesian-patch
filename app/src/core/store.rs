@@ -40,6 +40,10 @@ pub struct Config {
     /// Download new Patch Guard versions in the background and offer to restart.
     #[serde(default = "yes")]
     pub auto_update_app: bool,
+    /// Install a downloaded update on quit / the next start without asking. Off by default:
+    /// otherwise only "Restart sekarang" (window or tray) installs it.
+    #[serde(default)]
+    pub auto_install_app: bool,
     /// UI language; a config from before v0.6 has none and gets Indonesian.
     #[serde(default)]
     pub language: Lang,
@@ -52,6 +56,7 @@ impl Default for Config {
             auto_update: true,
             paused: false,
             auto_update_app: true,
+            auto_install_app: false,
             language: Lang::Id,
         }
     }
@@ -69,6 +74,10 @@ pub struct State {
     /// Tells "an older build of ours" apart from a file the guard knows nothing about.
     #[serde(default)]
     pub installed: BTreeMap<String, String>,
+    /// Profile key -> signing time (unix secs) of the newest release manifest used. Never
+    /// goes down, so an older signed manifest is refused (anti-rollback).
+    #[serde(default)]
+    pub manifest_signed_at: BTreeMap<String, u64>,
 }
 
 pub fn entry_key(profile: Profile, name: &str) -> String {
@@ -124,8 +133,14 @@ impl Store {
         self.save("config.json", c)
     }
 
+    /// Entries whose hashes are not plain sha256 are dropped: those hashes are used as file
+    /// names under `patched/` and `originals/`.
     pub fn load_state(&self) -> State {
-        self.load("state.json")
+        let mut s: State = self.load("state.json");
+        s.entries.retain(|_, e| is_sha256_hex(&e.original_sha256) && is_sha256_hex(&e.patched_sha256));
+        s.backups.retain(|_, sha| is_sha256_hex(sha));
+        s.installed.retain(|_, sha| is_sha256_hex(sha));
+        s
     }
 
     pub fn save_state(&self, s: &State) -> io::Result<()> {
@@ -182,7 +197,22 @@ pub fn sha256_file(path: &Path) -> io::Result<String> {
         }
         h.update(&buf[..n]);
     }
-    Ok(h.finalize().iter().map(|b| format!("{b:02x}")).collect())
+    Ok(hex(&h.finalize()))
+}
+
+/// sha256 of bytes already in memory, as lowercase hex.
+pub fn sha256_bytes(data: &[u8]) -> String {
+    hex(&Sha256::digest(data))
+}
+
+fn hex(digest: &[u8]) -> String {
+    digest.iter().map(|b| format!("{b:02x}")).collect()
+}
+
+/// A sha256 as this app writes it: 64 lowercase hex digits. Hashes from the manifest and from
+/// `state.json` become file names under the data folder, so nothing else is accepted.
+pub fn is_sha256_hex(s: &str) -> bool {
+    s.len() == 64 && s.bytes().all(|b| matches!(b, b'0'..=b'9' | b'a'..=b'f'))
 }
 
 /// Copy `src` over `dest` through a temp file in `dest`'s folder, so a reader never sees a
@@ -207,6 +237,7 @@ mod tests {
         let c: Config = serde_json::from_str(r#"{"dirs": [], "paused": false}"#).unwrap();
         assert_eq!(c.language, Lang::Id);
         assert!(c.auto_update && c.auto_update_app);
+        assert!(!c.auto_install_app, "installing without asking is opt-in");
         let tmp = tempfile::tempdir().unwrap();
         let s = Store::new(tmp.path()).unwrap();
         s.save_config(&Config { language: Lang::En, ..Config::default() }).unwrap();
