@@ -128,7 +128,10 @@ pub const MAX_TOTAL_RAW: usize = 1 << 30;
 /// decompressed sizes must stay under `MAX_BLOCK_RAW` / `MAX_TOTAL_RAW` (they are used
 /// as allocation sizes). Returns the (start, end) byte range of each block.
 fn block_ranges(d: &[u8], base: usize, offs: &[usize]) -> Result<Vec<(usize, usize)>> {
-    let mut ranges = Vec::with_capacity(offs.len());
+    let mut ranges = Vec::new();
+    ranges
+        .try_reserve_exact(offs.len())
+        .map_err(|_| Error("gagal mengalokasi tabel blok".into()))?;
     let (mut prev, mut total) = (0usize, 0usize);
     for (i, &o) in offs.iter().enumerate() {
         if o < prev {
@@ -213,12 +216,16 @@ pub fn read_container_bytes(d: &[u8], ks: &Keystream) -> Result<(Header, Vec<Vec
         .and_then(|n| n.checked_add(p))
         .filter(|&e| e <= d.len())
         .ok_or_else(|| Error(format!("tabel offset ({cnt} blok) melebihi ukuran file")))?;
-    let offs: Vec<usize> = d[p..table_end]
-        .as_chunks::<4>()
-        .0
-        .iter()
-        .map(|c| u32::from_le_bytes(*c) as usize)
-        .collect();
+    let mut offs: Vec<usize> = Vec::new();
+    offs.try_reserve_exact(cnt)
+        .map_err(|_| Error("gagal mengalokasi tabel offset".into()))?;
+    offs.extend(
+        d[p..table_end]
+            .as_chunks::<4>()
+            .0
+            .iter()
+            .map(|c| u32::from_le_bytes(*c) as usize),
+    );
     p = table_end;
     let base = p;
     if base + offs[cnt - 1] != d.len() {
@@ -267,6 +274,13 @@ pub fn read_container_bytes(d: &[u8], ks: &Keystream) -> Result<(Header, Vec<Vec
                     CODEC_ZSTD_DICT if dict.is_some() => dict.as_mut().unwrap(),
                     _ => bail!("codec tak dikenal: {codec}"),
                 };
+                // Same check as the Python codec, which would allocate a size declared
+                // in the frame header; a corrupt header is left to decompress().
+                if let Ok(Some(fcs)) = zstd::zstd_safe::get_frame_content_size(payload)
+                    && fcs != us as u64
+                {
+                    bail!("blok {i}: ukuran hasil dekompresi {fcs} != {us}");
+                }
                 let raw = dc
                     .decompress(payload, us)
                     .map_err(|e| Error(format!("blok {i}: zstd: {e}")))?;

@@ -177,7 +177,16 @@ def read_container_ex(path, keystream=None):
         codec, cs, us = struct.unpack_from('<BII', b, 0)
         if codec not in dctx:
             raise ValueError("codec tak dikenal: %d" % codec)
-        raw = dctx[codec].decompress(b[9:9 + cs], max_output_size=us)
+        payload = b[9:9 + cs]
+        # zstandard allocates a size declared in the frame header, ignoring
+        # max_output_size, so a known size must match `us` before decompressing.
+        try:
+            fcs = zstd.frame_content_size(payload)
+        except zstd.ZstdError:
+            fcs = -1  # corrupt header: let decompress() report it
+        if fcs >= 0 and fcs != us:
+            raise ValueError("blok %d: ukuran hasil dekompresi %d != %d" % (i, fcs, us))
+        raw = dctx[codec].decompress(payload, max_output_size=us)
         if len(raw) != us:
             raise ValueError("blok %d: ukuran hasil dekompresi %d != %d"
                              % (i, len(raw), us))
@@ -243,7 +252,11 @@ def parse_index(blk):
 def parse_shard(blk):
     cap, size, seed = struct.unpack_from('<QQQ', blk, 0)
     ctrl = blk[24:24 + cap]
-    if blk[24 + cap] != 0xFF:
+    if len(ctrl) != cap:
+        raise ValueError("shard terpotong (ctrl)")
+    if size > cap:
+        raise ValueError("jumlah slot terisi != size")
+    if blk[24 + cap:25 + cap] != b'\xff':
         raise ValueError("sentinel hilang — layout tidak cocok")
     S = _slots_off(cap)
     out = []

@@ -282,6 +282,15 @@ fn container_bounds() {
     b[blk0 + 1..blk0 + 5].copy_from_slice(&u32::MAX.to_le_bytes());
     assert_eq!(read_err(&b), "blok 0: payload terpotong");
 
+    // frame header declares a content size other than the block header's
+    let mut b = bytes.clone();
+    let us = u32::from_le_bytes(b[blk0 + 5..blk0 + 9].try_into().unwrap());
+    b[blk0 + 5..blk0 + 9].copy_from_slice(&(us - 1).to_le_bytes());
+    assert_eq!(
+        read_err(&b),
+        format!("blok 0: ukuran hasil dekompresi {us} != {}", us - 1)
+    );
+
     // offsets going backwards
     let mut b = bytes.clone();
     b[20..24].copy_from_slice(&1u32.to_le_bytes()); // offset of block 1 < block 0 end
