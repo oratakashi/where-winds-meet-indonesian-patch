@@ -835,11 +835,16 @@ pub(crate) mod tests {
         let a = Updates::new(tmp.path());
         let held = a.lock().unwrap();
         let data = tmp.path().to_path_buf();
+        let (ready_tx, ready_rx) = std::sync::mpsc::channel();
         let t = std::thread::spawn(move || {
             let started = std::time::Instant::now();
+            ready_tx.send(()).unwrap();
             let _l = Updates::new(&data).lock().unwrap();
             started.elapsed()
         });
+        // The hold interval starts only once the other thread is about to ask for the lock,
+        // so a slow thread start cannot make it look like it did not wait.
+        ready_rx.recv().unwrap();
         std::thread::sleep(Duration::from_millis(300));
         drop(held);
         assert!(t.join().unwrap() >= Duration::from_millis(250), "the second one waited");

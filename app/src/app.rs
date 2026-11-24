@@ -21,6 +21,9 @@ use std::time::Duration;
 
 actions!(patch_guard, [FocusNext, FocusPrev, Dismiss]);
 
+/// How long the first guard pass waits when autostart launched the app at login.
+const FIRST_PASS_AT_LOGIN: Duration = Duration::from_secs(30);
+
 /// Work for the main thread, sent from the tray, the second-instance listener and the engine.
 pub enum Cmd {
     Show,
@@ -60,7 +63,10 @@ pub fn run() {
         }
     }
     let engine_tx = tx.clone();
-    let engine = Arc::new(Engine::start(store, move |events| {
+    // Started by autostart at login: let Windows settle before the first pass (it is cheap with
+    // the stored hashes, but may still download a release).
+    let first_pass_after = if minimized { FIRST_PASS_AT_LOGIN } else { Duration::ZERO };
+    let engine = Arc::new(Engine::start(store, first_pass_after, move |events| {
         let _ = engine_tx.try_send(Cmd::Engine(events.to_vec()));
     }));
 
@@ -83,6 +89,8 @@ pub fn run() {
         let loop_state = state.clone();
         cx.spawn(async move |cx| {
             let mut tray = tray;
+            // What the tray's update item shows; it is only touched when this changes.
+            let mut tray_update: Option<String> = None;
             while let Ok(cmd) = rx.recv().await {
                 let relaunch = match cmd {
                     Cmd::Quit => false,
@@ -90,9 +98,16 @@ pub fn run() {
                     cmd => {
                         if let Some(t) = tray.as_ref() {
                             match &cmd {
-                                Cmd::Engine(_) => t.set_update(engine.snapshot().app_update.as_deref()),
+                                Cmd::Engine(_) => {
+                                    let now = engine.app_update();
+                                    if now != tray_update {
+                                        t.set_update(now.as_deref());
+                                        tray_update = now;
+                                    }
+                                }
                                 Cmd::LanguageChanged => {
-                                    t.relabel(engine.snapshot().app_update.as_deref())
+                                    tray_update = engine.app_update();
+                                    t.relabel(tray_update.as_deref())
                                 }
                                 _ => {}
                             }
@@ -141,7 +156,11 @@ fn handle(cmd: Cmd, state: &Entity<AppState>, cx: &mut App) {
         Cmd::CheckNow => state.update(cx, |s, cx| s.check_now(cx)),
         Cmd::Engine(events) => {
             notify(&events, cx);
-            state.update(cx, |s, cx| s.refresh(cx));
+            // Nothing to redraw while only the tray icon is there (most of the time); the
+            // window reloads the engine state when it opens.
+            if !cx.windows().is_empty() {
+                state.update(cx, |s, cx| s.refresh(cx));
+            }
         }
         // Handled by the command loop in `run`.
         Cmd::Quit | Cmd::RestartForUpdate | Cmd::LanguageChanged => {}

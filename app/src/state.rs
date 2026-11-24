@@ -100,11 +100,17 @@ impl AppState {
         .detach();
     }
 
-    /// Show the outcome of an action, then reload everything.
+    /// Show the outcome of an action, then reload the engine state.
     fn done(&mut self, r: Result<(), String>, cx: &mut Context<Self>) {
         self.error = r.err().map(Into::into);
         self.autostart = autostart::is_enabled();
         self.refresh(cx);
+    }
+
+    /// Like [`done`](Self::done), for actions that change the guarded folders: the list of
+    /// game folders found on this machine is scanned again too (in the background).
+    fn done_folders(&mut self, r: Result<(), String>, cx: &mut Context<Self>) {
+        self.done(r, cx);
         self.rescan(cx);
     }
 
@@ -216,7 +222,7 @@ impl AppState {
 
     pub fn remove_folder(&mut self, path: PathBuf, cx: &mut Context<Self>) {
         let r = self.engine.update_config(|c| c.dirs.retain(|d| d.path != path));
-        self.done(r, cx);
+        self.done_folders(r, cx);
     }
 
     pub fn clear_history(&mut self, cx: &mut Context<Self>) {
@@ -224,18 +230,24 @@ impl AppState {
         self.done(Ok(()), cx);
     }
 
-    /// Guard detected folders. Only folders `locations::discover` reports are accepted.
+    /// Guard detected folders. Only folders `locations::discover` reports are accepted. The
+    /// scan (registry, Steam library files) runs in the background, not on the UI thread.
     pub fn add_detected(&mut self, paths: Vec<PathBuf>, cx: &mut Context<Self>) {
-        let found = locations::discover();
-        let r = self.engine.update_config(|c| {
-            for g in found {
-                let known = c.dirs.iter().any(|d| locations::same_path(&d.path, &g.path));
-                if paths.contains(&g.path) && !known {
-                    c.dirs.push(g);
-                }
-            }
-        });
-        self.done(r, cx);
+        cx.spawn(async move |this, cx| {
+            let found = cx.background_executor().spawn(async { locations::discover() }).await;
+            let _ = this.update(cx, |s, cx| {
+                let r = s.engine.update_config(|c| {
+                    for g in found {
+                        let known = c.dirs.iter().any(|d| locations::same_path(&d.path, &g.path));
+                        if paths.contains(&g.path) && !known {
+                            c.dirs.push(g);
+                        }
+                    }
+                });
+                s.done_folders(r, cx);
+            });
+        })
+        .detach();
     }
 
     /// Ask for a folder and guard every locale folder found from it.
@@ -275,7 +287,7 @@ impl AppState {
                             }
                         })
                 };
-                s.done(r, cx);
+                s.done_folders(r, cx);
             });
         })
         .detach();
