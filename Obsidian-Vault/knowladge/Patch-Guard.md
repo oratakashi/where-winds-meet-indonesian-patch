@@ -243,4 +243,4 @@ cargo packager --release --formats nsis
 | 0.4.0 | Native GPUI port (no WebView2), WinUI-style UI |
 | 0.5.0 | Self-update (VS Code style) and minisign signatures; unsigned manifests are rejected |
 | 0.6.0 | Indonesian/English UI; short error TTL, signature retry, cache re-verification; failed self-updates are reported |
-| 0.6.1 (in progress) | Update helper takes no paths and re-verifies the signed update before installing; signatures bound to their file name, manifest anti-rollback, active + backup key; installing on quit/start is opt-in (`auto_install_app`); CI signs in a separate `sign` job (environment `release`) |
+| 0.6.1 | Update helper takes no paths and re-verifies the signed update before installing; signatures bound to their file name, manifest anti-rollback, active + backup key; installing on quit/start is opt-in (`auto_install_app`); CI signs in a separate `sign` job (environment `release`) |
