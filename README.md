@@ -12,7 +12,8 @@
 
 [**⬇ Download — Global client**](../../releases/tag/latest) &nbsp;·&nbsp;
 [⬇ China client (燕云十六声) — **no longer maintained**](../../releases/tag/cn-latest) &nbsp;·&nbsp;
-[Installation guide](#player-installation-guide)
+[Installation guide](#player-installation-guide) &nbsp;·&nbsp;
+[▶ Video tutorials](#video-tutorials)
 
 </div>
 
@@ -34,7 +35,7 @@
 ## Contents
 
 - [Translation Progress](#translation-progress)
-- [Player Installation Guide](#player-installation-guide)
+- [Player Installation Guide](#player-installation-guide) · [Video tutorials](#video-tutorials)
 - [Auto-reinstall app (Windows)](#auto-reinstall--wwm-patch-guard-windows)
 - [Updating & Uninstalling](#updating--uninstalling)
 - [FAQ](#faq)
@@ -72,6 +73,22 @@ No Python or tools needed — just copy two files into the game folder. On Windo
 > - **Reinstall the patch after every game update**, even small hotfixes — updates put the
 >   original files back.
 
+### Video Tutorials
+
+Prefer to follow along on screen? These step-by-step walkthroughs (narrated in Indonesian) cover
+every supported way to install the patch, from download to the first Indonesian line in-game.
+
+| Platform | Video tutorial | Best for |
+|---|---|---|
+| 🛡️ **WWM Patch Guard** (Windows) | [▶ Watch on YouTube](https://youtu.be/wc1SCwodB0Q) | The easiest option — install once and the patch keeps itself in place after game updates |
+| 🖥️ **PC — Official launcher** | [▶ Watch on YouTube](https://youtu.be/J9cIKz72sY8) | A manual install on the NetEase launcher, with full text coverage |
+| 🎮 **PC — Steam** | [▶ Watch on YouTube](https://youtu.be/mUm92zQdhaQ) | A manual install on the Steam build |
+| 📱 **Android** | [▶ Watch on YouTube](https://youtu.be/3Y9l-f-Dnwo) | Installing on a phone or tablet |
+
+> [!TIP]
+> On Windows, start with the **WWM Patch Guard** video — it is the quickest setup and saves you
+> from reinstalling by hand after every update.
+
 ### Which platform works best?
 
 | Platform | Locale folder | Full patch (`_diff` text) | After a game update |
@@ -82,6 +99,8 @@ No Python or tools needed — just copy two files into the game folder. On Windo
 | [PC — China client](#pc--china-client-燕云十六声) ⚠️ unmaintained | `<InstallDir>\yysls_fast\LocalData\Patch\HD\v2\locale\` | ✅ Yes (except cutscene subtitles) | Reinstall |
 
 ### Auto-reinstall — WWM Patch Guard (Windows)
+
+> ▶ **Video walkthrough:** [Installing the patch with WWM Patch Guard](https://youtu.be/wc1SCwodB0Q)
 
 Game updates and in-game hot-patches put the original files back, sometimes without the launcher
 showing any update. **WWM Patch Guard** is a small tray app that watches the game's locale folder
@@ -124,6 +143,8 @@ the manual install.
 
 ### PC — Official WWM Launcher
 
+> ▶ **Video walkthrough:** [Installing the patch on the official launcher](https://youtu.be/J9cIKz72sY8)
+
 1. Open the launcher's install folder (right-click the launcher shortcut → **Open file location**).
    The game lives in a subfolder named after the variant you downloaded, e.g. `wwm_lite`.
 2. Open `<InstallDir>\<variant>\LocalData\Patch\HD\oversea\locale\`.
@@ -132,6 +153,8 @@ the manual install.
 5. Start the game and set **Settings → Language → Game Language = English**.
 
 ### Android
+
+> ▶ **Video walkthrough:** [Installing the patch on Android](https://youtu.be/3Y9l-f-Dnwo)
 
 The locale folder is
 `Internal Storage/Android/data/com.netease.yysls/files/LocalData/Patch/HD/oversea/locale/`
@@ -212,6 +235,8 @@ To restore the originals, repeat step 10 with the files from `backup\locale\`.
 </details>
 
 ### PC — Steam
+
+> ▶ **Video walkthrough:** [Installing the patch on Steam](https://youtu.be/mUm92zQdhaQ)
 
 1. In Steam, right-click **Where Winds Meet** → **Manage → Browse Local Files**.
 2. Open `Package\HD\oversea\locale\`.
