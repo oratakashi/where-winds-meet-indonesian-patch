@@ -53,7 +53,7 @@ for at the start of each session (see [[Current-Status]] §Batch size).
 | Update-3E (done) | 655,919 – 685,918 | 30,000 | additional (v2.4) | — | — | `locale/update3e.jsonl` |
 | Update-3F (done) | 685,919 – 715,918 | 30,000 | additional (v2.4) | — | — | `locale/update3f.jsonl` |
 | Update-3G (done) | 715,919 – 733,661 | 17,743 | additional (v2.4) | — | — | `locale/update3g.jsonl` |
-| Update-3H (**active**, v2.4 additional update) | 733,662 – 736,933 | 3,272 | additional (`_diff` only) | — | — | `locale/update3h.jsonl` |
+| Update-3H (done, v2.4 additional update) | 733,662 – 736,933 | 3,272 | additional (`_diff` only) | — | — | `locale/update3h.jsonl` |
 
 \* Percentage of the 963,050 total lines in the pre-update `strings.jsonl`,
 based on its frequency distribution. Figures from Phase 2 onward are rough
@@ -111,7 +111,8 @@ entries. `rebuild_unique_strings.py` appended **197,743** new strings as idx
 `translate_words_map_en` is byte-identical; only `translate_words_map_en_diff`
 changed (334,882 → 341,784 parsed entries, 1,783 tombstones, +6,917 / −15 keys).
 `rebuild-unique` appended **3,272** new strings as idx 733,662–736,933. Like
-Update-2D it takes the next letter of the current version's block. See
+Update-2D it takes the next letter of the current version's block. Completed the
+same day (session 159). See
 [[Update-3]] and [[Update-3H]].
 
 **Naming convention going forward:** a game-update string batch (appended by

@@ -9,6 +9,10 @@ see [[Current-Status]].
 
 
 
+## 2026-11-26 — Session 159: Update-3H (idx 733,662–736,933)
+
+Translated the whole Update-3H block (3,272 rows): 63 number-only variants filled automatically from existing translations, 3,209 by 6 parallel subagents (user-authorized). Merged in idx order into `locale/update3h.jsonl`; gear labels and recurring terms harmonised across chunks. `qa --locale "locale/*.jsonl"` clean (0 PROMPT_LEAK / MARKUP / EMPTY / IDX). Overall: 736,934 / 736,934 unique strings (100.00%), in-game coverage 100.00% (base) / 100.00% (`_diff`). Details: [[Update-3H]].
+
 ## 2026-11-26 — Session 158: additional v2.4 update → Update-3H setup
 
 No translation — migration only. The additional v2.4 update left `translate_words_map_en` byte-identical and changed only `translate_words_map_en_diff` (341,784 parsed entries, 1,783 tombstones, +6,917 / −15 keys, 3,972 values changed). `rebuild-unique` appended 3,272 strings as idx 733,662–736,933 → **Update-3H** (`tools/profiles.json`, region Hutuo "Phase 8"); `release-patch.yml` text updated. The first base file handed in was an already-patched copy from the game folder and was replaced with the pristine one. Overall: 733,662 / 736,934 unique strings (99.56%), in-game coverage 100.00% (base) / 97.62% (`_diff`). See [[Update-3H]].

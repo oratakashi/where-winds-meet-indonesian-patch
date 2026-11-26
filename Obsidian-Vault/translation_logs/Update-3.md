@@ -43,7 +43,7 @@ Split per 30,000 strings at the user's request.
 | Update-3E | 655,919–685,918 | 30,000 | `locale/update3e.jsonl` |
 | Update-3F | 685,919–715,918 | 30,000 | `locale/update3f.jsonl` |
 | Update-3G | 715,919–733,661 | 17,743 | `locale/update3g.jsonl` |
-| Update-3H | 733,662–736,933 | 3,272 | `locale/update3h.jsonl` (additional update, see below) |
+| Update-3H | 733,662–736,933 | 3,272 | `locale/update3h.jsonl` (additional update, see below; done, session 159) |
 
 ## Additional v2.4 update (session 158, 2026-11-26)
 

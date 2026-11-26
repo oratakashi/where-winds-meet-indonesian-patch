@@ -6,4 +6,12 @@ All 3,272 strings come from `translate_words_map_en_diff` — the update left th
 
 ## Batches
 
+- 2026-11-26 (session 159): idx 733,662–736,933 (3,272 rows). 63 rows filled automatically from already-translated strings that differ only in numbers; the other 3,209 translated by 6 parallel subagents (user-authorized), merged in idx order into `locale/update3h.jsonl`, QA clean on `locale/*.jsonl` (0 PROMPT_LEAK / MARKUP / EMPTY / IDX). **Update-3H complete: 3,272/3,272.** Overall: 736,934 / 736,934 unique strings (100.00%), in-game coverage 100.00% (base) / 100.00% (`_diff`).
+
 ## Decisions & notes
+
+- Cross-chunk harmonisation after the merge, following the majority precedent: `Tier N … Set/Piece/Bolt/Wings/Chest` item labels (with or without `Common:`/`Supreme:`) stay English; `mountain demon` -> `iblis gunung`; `Junior`/`Senior Brother/Sister` -> `Adik`/`Kakak Seperguruan` (still listed in [[Open-Questions]]; older blocks are mixed and were not changed); `envoy` -> `utusan`; `Today's Deals` -> `Penawaran Hari Ini`; `Union Knot` kept.
+- Jianghu Tactics `Piece` -> `Bidak`, `tile` -> `petak`; `Rhubarb` and `Reaper of Tears` kept (new source wording for the former "Weeping Reaper").
+- `Attribute Penetration` (new source wording without "Attack") kept as written.
+- Formal letters, verse and item flavour text use aku/kau/hamba instead of gue/lo.
+- Known leftover outside this block: a few older Update-3G labels read `… Bidak Swift Gale Tier N` although they are gear item names; not changed here.

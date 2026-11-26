@@ -47,8 +47,8 @@
 
 ## Translation Progress
 
-The global client is **100% translated for game v2.4 [Across Autumn Waters]**; the additional v2.4 update of
-2026-11-26 only changed `_diff` (3,272 new strings, block Update-3H, not yet translated). Each new game update adds new text,
+The global client is **100% translated for game v2.4 [Across Autumn Waters]**, including the additional v2.4
+update of 2026-11-26. Each new game update adds new text,
 which shows in English until it is translated (the China client is no longer maintained, so it keeps some Chinese).
 New releases are built automatically whenever translations are added.
 
@@ -301,7 +301,7 @@ The China client is the exception: keep it on Chinese.
 <details>
 <summary><b>Some text is still in English (or Chinese). Is the patch broken?</b></summary>
 
-No. v2.4 is fully translated except the 3,272 `_diff` strings of the 2026-11-26 update (Update-3H), and every new game update adds new text, and on Steam the `_diff`
+No. v2.4 is fully translated, but every new game update adds new text, and on Steam the `_diff`
 layer is restored on every launch. Check [Translation Progress](#translation-progress) and the
 platform table above.
 </details>

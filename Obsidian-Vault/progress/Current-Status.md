@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-11-26 — session 158: the additional v2.4 update (2026-11-26, `_diff` only) set up as Update-3H (idx 733,662–736,933, not translated yet); everything before it is 100%.** This is the single source of truth for "how
+**Last updated: 2026-11-26 — session 159: Update-3H completed (idx 733,662–736,933); every block is at 100%.** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]]; for the
@@ -18,11 +18,11 @@ fails a PR whose block is stale (`progress --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **733,662** | **736,934** | **99.56%** |
+| **Unique strings translated (all)** | **736,934** | **736,934** | **100.00%** |
 | ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
-| ↳ game-update strings (Update-N) | 303,775 | 307,047 | 98.93% |
+| ↳ game-update strings (Update-N) | 307,047 | 307,047 | 100.00% |
 | **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,116,561** | **1,116,561** | **100.00%** |
-| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **331,910** | **340,001** | **97.62%** |
+| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **340,001** | **340,001** | **100.00%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -33,15 +33,7 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | **Qinghe, Kaifeng, Hexi** (Phase 0–17) | 0–429,886 | done | — | 429,887 / 429,887 | 100.00% |
 | **Hidden Mountain** (Update-1) | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
 | **Qingzhou** (Update-2) | 461,704–535,918 | done | — | 74,215 / 74,215 | 100.00% |
-| **Hutuo** (Update-3) | 535,919–736,933 | **active** | 733,662 | 197,743 / 201,015 | 98.37% |
-| ↳ Hutuo Phase 1 (`Update-3A`) | 535,919–565,918 | done | — | 30,000 / 30,000 | 100.00% |
-| ↳ Hutuo Phase 2 (`Update-3B`) | 565,919–595,918 | done | — | 30,000 / 30,000 | 100.00% |
-| ↳ Hutuo Phase 3 (`Update-3C`) | 595,919–625,918 | done | — | 30,000 / 30,000 | 100.00% |
-| ↳ Hutuo Phase 4 (`Update-3D`) | 625,919–655,918 | done | — | 30,000 / 30,000 | 100.00% |
-| ↳ Hutuo Phase 5 (`Update-3E`) | 655,919–685,918 | done | — | 30,000 / 30,000 | 100.00% |
-| ↳ Hutuo Phase 6 (`Update-3F`) | 685,919–715,918 | done | — | 30,000 / 30,000 | 100.00% |
-| ↳ Hutuo Phase 7 (`Update-3G`) | 715,919–733,661 | done | — | 17,743 / 17,743 | 100.00% |
-| ↳ Hutuo Phase 8 (`Update-3H`) | 733,662–736,933 | not started | 733,662 | 0 / 3,272 | 0.00% |
+| **Hutuo** (Update-3) | 535,919–736,933 | done | — | 201,015 / 201,015 | 100.00% |
 
 <!-- progress:end -->
 
@@ -70,9 +62,18 @@ coverage of both `translate_words_map_en` and `_diff`.
 
 **Additional v2.4 update (2026-11-26, session 158)** left `translate_words_map_en`
 byte-identical and only changed `translate_words_map_en_diff`; its 3,272 new strings
-are **Update-3H** (idx 733,662–736,933, `locale/update3h.jsonl`) — the **active
-block**, next idx **733,662**. Its effect shows only in the `_diff` coverage row.
-See [[Update-3]] and [[Update-3H]].
+are **Update-3H** (idx 733,662–736,933, `locale/update3h.jsonl`), **completed in
+session 159** — no block is active until the next game update. Its effect shows only
+in the `_diff` coverage row. See [[Update-3]] and [[Update-3H]].
+
+## 2026-11-26 — Session 159: Update-3H completed (idx 733,662–736,933)
+
+3,272 rows into `locale/update3h.jsonl` (63 number-only variants filled from existing
+translations, 3,209 by 6 subagents), terminology harmonised across chunks, QA clean.
+
+Overall: 736,934 / 736,934 unique strings (100.00%), in-game coverage 100.00% (base) / 100.00% (`_diff`).
+
+See [[Update-3H]].
 
 ## 2026-11-26 — Session 158: additional v2.4 update → Update-3H setup
 
