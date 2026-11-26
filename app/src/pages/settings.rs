@@ -2,6 +2,7 @@
 //! original files back.
 use crate::fluent::{Button, ButtonStyle, Toggle, caption, card, divider, page_title};
 use crate::i18n::{self, Lang};
+use crate::model::TaskKind;
 use crate::state::{AppState, Confirm};
 use gpui::prelude::*;
 use gpui::{AnyElement, App, Div, Entity, FontWeight, SharedString, Window, div, px};
@@ -16,6 +17,11 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
     let app_checking = s.snap.app_update_checking;
     let ready = s.snap.app_update.clone();
     let note = s.snap.app_update_note.clone();
+    // A download running now: its stage, as on Home.
+    let downloading = s.snap.tasks.iter().find_map(|t| match &t.kind {
+        TaskKind::AppUpdate { version } => Some(format!("v{version} — {}", t.stage.text())),
+        _ => None,
+    });
 
     let (a, b, c, r) = (state.clone(), state.clone(), state.clone(), state.clone());
     let (u, ia, chk) = (state.clone(), state.clone(), state.clone());
@@ -120,6 +126,7 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
                             }))
                             .child(caption(
                                 match (&ready, &note) {
+                                    _ if downloading.is_some() => downloading.clone().unwrap_or_default(),
                                     (Some(v), _) => tf!("settings.version_is_ready_to", v = v),
                                     (None, Some(n)) => n.text(),
                                     (None, None) => t!("settings.updates_are_checked_automatically").to_string(),

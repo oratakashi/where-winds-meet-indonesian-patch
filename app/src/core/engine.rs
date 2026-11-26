@@ -4,7 +4,7 @@
 use crate::guard::{Guard, Opts};
 use crate::locations;
 use crate::i18n::{self, Lang};
-use crate::model::{DirReport, Event, LogLine, LogMsg, Status};
+use crate::model::{DirReport, Event, LogLine, LogMsg, Stage, Status, Task, TaskKind};
 use crate::remote::HttpRemote;
 use crate::store::{Config, Store};
 use crate::update::{self, Pending, Updates};
@@ -71,6 +71,27 @@ pub struct Snapshot {
     pub app_update_note: Option<AppNote>,
     /// The language the dirs' details were last phrased in.
     pub lang: Lang,
+    /// Downloads / installs running or just finished (the Home "Aktivitas" card).
+    pub tasks: Vec<Task>,
+}
+
+impl Snapshot {
+    /// Put `kind`'s row at `stage` (one row per profile, one for the app update).
+    fn set_task(&mut self, kind: TaskKind, stage: Stage) {
+        let at = unix_now();
+        let same = |t: &Task| match (&t.kind, &kind) {
+            (TaskKind::AppUpdate { .. }, TaskKind::AppUpdate { .. }) => true,
+            (a, b) => a == b,
+        };
+        match self.tasks.iter_mut().find(|t| same(t)) {
+            Some(t) => *t = Task { kind, stage, at },
+            None => self.tasks.push(Task { kind, stage, at }),
+        }
+    }
+
+    fn drop_app_task(&mut self) {
+        self.tasks.retain(|t| !matches!(t.kind, TaskKind::AppUpdate { .. }));
+    }
 }
 
 /// The outcome of an app-update check, phrased when shown (so it follows a language switch).
@@ -168,7 +189,7 @@ impl Engine {
         let guard_change = on_change.clone();
         thread::Builder::new()
             .name("guard".into())
-            .spawn(move || worker.run(&*guard_change))
+            .spawn(move || worker.run(guard_change))
             .expect("spawn guard thread");
 
         let updates = Arc::new(Updates::new(store.base()));
@@ -301,9 +322,17 @@ struct Worker {
 }
 
 impl Worker {
-    fn run(self, on_change: &dyn Fn(&[Event])) {
+    fn run(self, on_change: OnChange) {
         background_priority();
         let mut guard = Guard::new(self.store.clone(), HttpRemote::new());
+        {
+            let shared = self.shared.clone();
+            let change = on_change.clone();
+            guard.on_progress(move |profile, stage| {
+                shared.lock().unwrap().set_task(TaskKind::Patch { profile }, stage.clone());
+                change(&[]);
+            });
+        }
         let tx = self.tx.clone();
         let mut watcher = notify::recommended_watcher(move |res: notify::Result<notify::Event>| {
             // Our own temp copies (`.<name>.wwmpg-tmp`) are not news; the rename onto the real
@@ -350,6 +379,14 @@ impl Worker {
                 let mut s = self.shared.lock().unwrap();
                 s.running = true;
                 s.checking |= !routine;
+                // A pass someone asked for starts with a clean list; a row still waiting for
+                // the game to close stays.
+                if !routine {
+                    s.tasks.retain(|t| {
+                        !matches!(t.kind, TaskKind::Patch { .. })
+                            || !matches!(t.stage, Stage::Done | Stage::Failed { .. })
+                    });
+                }
             }
             if !routine {
                 on_change(&[]);
@@ -487,7 +524,11 @@ impl Updater {
             if manual && failed_version.take().is_some() {
                 self.updates.set_failed_version(None);
             }
-            self.shared.lock().unwrap().app_update_checking = true;
+            {
+                let mut s = self.shared.lock().unwrap();
+                s.app_update_checking = true;
+                s.drop_app_task();
+            }
             on_change(&[]);
 
             let mut skipped = None;
@@ -496,7 +537,15 @@ impl Updater {
                     skipped = Some(rel.info.version);
                     Ok(None)
                 }
-                Some(rel) => self.updates.fetch(&remote, &rel).map(Some),
+                Some(rel) => {
+                    let kind = TaskKind::AppUpdate { version: rel.info.version.clone() };
+                    self.updates
+                        .fetch(&remote, &rel, &mut |stage| {
+                            self.shared.lock().unwrap().set_task(kind.clone(), stage);
+                            on_change(&[]);
+                        })
+                        .map(Some)
+                }
                 None => Ok(None),
             });
             let mut line: Option<(String, Option<LogMsg>)> = None;
@@ -531,6 +580,15 @@ impl Updater {
                 }
             };
             let mut s = self.shared.lock().unwrap();
+            // A finished download is shown by the "siap dipasang" bar instead; a failed one
+            // stays in the list with its reason.
+            match (&note, s.tasks.iter().find(|t| matches!(t.kind, TaskKind::AppUpdate { .. }))) {
+                (AppNote::CheckFailed(e), Some(t)) => {
+                    let kind = t.kind.clone();
+                    s.set_task(kind, Stage::Failed { error: e.clone() });
+                }
+                _ => s.drop_app_task(),
+            }
             if let Some(v) = ready.as_ref().filter(|v| s.app_update.as_ref() != Some(*v)) {
                 let m = LogMsg::AppUpdateReady { version: v.clone() };
                 line = Some((m.text(), Some(m)));

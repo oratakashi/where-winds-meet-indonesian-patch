@@ -23,6 +23,7 @@
 //! folder and the installed exe itself — so starting it by hand can only ever install a
 //! signed, newer Patch Guard. The copy is needed because the installer replaces the exe the
 //! app runs from.
+use crate::model::{Stage, percent};
 use crate::remote::{HttpRemote, LATEST_TAG};
 use crate::store::sha256_bytes;
 use base64::Engine as _;
@@ -410,9 +411,15 @@ impl Updates {
     }
 
     /// Download and verify `release`'s installer, then keep it as the pending update.
-    pub fn fetch(&self, remote: &HttpRemote, release: &Release) -> Result<Pending, String> {
-        self.fetch_with(release, CURRENT, &verify, |dest| {
-            remote.download_to(LATEST_TAG, &release.info.name, release.info.size, dest)
+    /// Download and verify `release`, telling `progress` how far it got.
+    pub fn fetch(
+        &self,
+        remote: &HttpRemote,
+        release: &Release,
+        progress: &mut dyn FnMut(Stage),
+    ) -> Result<Pending, String> {
+        self.fetch_with(release, CURRENT, &verify, progress, |dest, on_bytes| {
+            remote.download_to(LATEST_TAG, &release.info.name, release.info.size, dest, on_bytes)
         })
     }
 
@@ -421,7 +428,8 @@ impl Updates {
         release: &Release,
         current: &str,
         verify: Verifier,
-        download: impl FnOnce(&Path) -> Result<(), String>,
+        progress: &mut dyn FnMut(Stage),
+        download: impl FnOnce(&Path, &mut dyn FnMut(u64)) -> Result<(), String>,
     ) -> Result<Pending, String> {
         if let Some(p) = self.pending_with(current, verify).filter(|p| p.info == release.info) {
             return Ok(p);
@@ -432,12 +440,23 @@ impl Updates {
         let _ = fs::remove_dir_all(&self.staging);
         let stage = self.staging.join(&info.version);
         let dir = self.dir.join(&info.version);
+        progress(Stage::Downloading { percent: 0 });
+        let mut last = 0u8;
         let res = fs::create_dir_all(&stage)
             .map_err(|e| e.to_string())
-            .and_then(|()| download(&stage.join(&info.name)))
+            .and_then(|()| {
+                download(&stage.join(&info.name), &mut |n| {
+                    let p = percent(n, info.size);
+                    if p != last {
+                        last = p;
+                        progress(Stage::Downloading { percent: p });
+                    }
+                })
+            })
             .and_then(|()| fs::write(stage.join(UPDATE_JSON), &release.json).map_err(|e| e.to_string()))
             .and_then(|()| fs::write(stage.join(UPDATE_SIG), &release.sig).map_err(|e| e.to_string()))
             .and_then(|()| {
+                progress(Stage::Verifying);
                 // Publish: replace whatever `updates\` held, rename, verify — all under the
                 // lock, so no scan in between can see an empty folder and clean it up.
                 let _lock = self.lock()?;
@@ -789,7 +808,9 @@ pub(crate) mod tests {
 
     fn fetch(e: &Env, r: &Release, served: &[u8]) -> Result<Pending, String> {
         let served = served.to_vec();
-        e.u.fetch_with(r, "1.0.0", &*e.verifier, |dest| fs::write(dest, &served).map_err(|e| e.to_string()))
+        e.u.fetch_with(r, "1.0.0", &*e.verifier, &mut |_| {}, |dest, _| {
+            fs::write(dest, &served).map_err(|e| e.to_string())
+        })
     }
 
     /// A pending check while a download is still being written (quit / "Restart sekarang"
@@ -801,7 +822,7 @@ pub(crate) mod tests {
         let served = b"installer".to_vec();
         let p = e
             .u
-            .fetch_with(&r, "1.0.0", &*e.verifier, |dest| {
+            .fetch_with(&r, "1.0.0", &*e.verifier, &mut |_| {}, |dest, _| {
                 // Mid-download: the installer is there, its JSON not yet.
                 fs::write(dest, &served).map_err(|e| e.to_string())?;
                 assert!(e.u.pending_with("1.0.0", &*e.verifier).is_none());
@@ -812,6 +833,33 @@ pub(crate) mod tests {
             .unwrap();
         assert_eq!(e.u.pending_with("1.0.0", &*e.verifier), Some(p));
         assert!(!e.u.staging.exists(), "staging is cleaned up");
+    }
+
+    #[test]
+    fn a_download_reports_its_stages() {
+        let e = env();
+        let r = release("1.1.0", b"installer", &*e.sign);
+        let mut seen = Vec::new();
+        e.u.fetch_with(&r, "1.0.0", &*e.verifier, &mut |s| seen.push(s), |dest, on_bytes| {
+            on_bytes(4);
+            on_bytes(4); // same percentage: not reported twice
+            on_bytes(9);
+            fs::write(dest, b"installer").map_err(|e| e.to_string())
+        })
+        .unwrap();
+        assert_eq!(
+            seen,
+            [
+                Stage::Downloading { percent: 0 },
+                Stage::Downloading { percent: 44 },
+                Stage::Downloading { percent: 100 },
+                Stage::Verifying,
+            ]
+        );
+        // Already downloaded: nothing to report.
+        seen.clear();
+        e.u.fetch_with(&r, "1.0.0", &*e.verifier, &mut |s| seen.push(s), |_, _| unreachable!()).unwrap();
+        assert!(seen.is_empty(), "{seen:?}");
     }
 
     #[test]

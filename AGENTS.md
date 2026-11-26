@@ -281,7 +281,9 @@ context — only use one if the user explicitly asks for it by name.
   WinUI 3 look-alike (theme tokens, Button, Toggle, badge, InfoBar; Segoe UI Variable + Segoe
   Fluent Icons glyphs, Segoe UI / MDL2 Assets on Windows 10, Mica only from build 22621),
   `state.rs` the window state + actions, `app.rs` the window/NavigationView/ContentDialog and the
-  main-thread command loop, `pages/` one file per page (Home, Settings, History), `i18n.rs` the
+  main-thread command loop, `pages/` one file per page (Home, Settings, History; Home's
+  **Aktivitas** card shows each download/install as text — `Mengunduh 25%`, `Memasang` — from
+  `Snapshot::tasks`, fed by `Guard::on_progress` and `Updates::fetch`), `i18n.rs` the
   UI language (Indonesian default, English; all texts in `app/locales/{id,en}.json`, used by key
   as `t!("home.restart_now")`, checked by `app/build.rs`). GPUI quits on
   the last window by default on Windows — `app.rs` sets `QuitMode::Explicit` so the guard keeps
