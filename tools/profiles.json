@@ -35,13 +35,14 @@
       ["Update-3D", "update3d.jsonl", 625919, 655918],
       ["Update-3E", "update3e.jsonl", 655919, 685918],
       ["Update-3F", "update3f.jsonl", 685919, 715918],
-      ["Update-3G", "update3g.jsonl", 715919, 733661]
+      ["Update-3G", "update3g.jsonl", 715919, 733661],
+      ["Update-3H", "update3h.jsonl", 733662, 736933]
     ],
     "regions": [
       ["Qinghe, Kaifeng, Hexi", "Phase 0–17", [["0", "Phase 0"], ["1", "Phase 1"], ["2", "Phase 2"], ["3", "Phase 3"], ["4", "Phase 4"], ["5", "Phase 5"], ["6", "Phase 6"], ["7", "Phase 7"], ["8", "Phase 8"], ["9", "Phase 9"], ["10", "Phase 10"], ["11", "Phase 11"], ["12", "Phase 12"], ["13", "Phase 13"], ["14", "Phase 14"], ["15", "Phase 15"], ["16", "Phase 16"], ["17", "Phase 17"]]],
       ["Hidden Mountain", "Update-1", [["Update-1", "Update-1"]]],
       ["Qingzhou", "Update-2", [["Update-2A", "Part A"], ["Update-2B", "Part B"], ["Update-2C", "Part C"], ["Update-2D", "Part D"]]],
-      ["Hutuo", "Update-3", [["Update-3A", "Phase 1"], ["Update-3B", "Phase 2"], ["Update-3C", "Phase 3"], ["Update-3D", "Phase 4"], ["Update-3E", "Phase 5"], ["Update-3F", "Phase 6"], ["Update-3G", "Phase 7"]]]
+      ["Hutuo", "Update-3", [["Update-3A", "Phase 1"], ["Update-3B", "Phase 2"], ["Update-3C", "Phase 3"], ["Update-3D", "Phase 4"], ["Update-3E", "Phase 5"], ["Update-3F", "Phase 6"], ["Update-3G", "Phase 7"], ["Update-3H", "Phase 8"]]]
     ],
     "files": ["translate_words_map_en", "translate_words_map_en_diff", "translate_words_map_en_mobile"],
     "dumps": [["translate_words_map_en", "strings.jsonl"], ["translate_words_map_en_diff", "strings_diff.jsonl"]],

@@ -10,7 +10,8 @@ session-by-session timeline, see [[Session-History]].
 
 The original 429,887 unique strings (461,704 after [[Update-1]], 534,257
 after [[Update-2]] for game v2.3, 535,919 after the v2.3 hotfix, 733,662
-after [[Update-3]] for game v2.4) are too
+after [[Update-3]] for game v2.4, 736,934 after the additional v2.4
+update) are too
 much for one session (even several small ones). To keep each session light and the output careful (not just
 haphazard translation), the work is split into **phases** based on `idx`
 ranges in `translation_work/unique_strings.jsonl` (already sorted by
@@ -45,13 +46,14 @@ for at the start of each session (see [[Current-Status]] §Batch size).
 | Update-2B (done)  | 491,704 – 521,703 | 30,000       | additional (v2.3)           | —                       | done                  | `locale/update2b.jsonl` |
 | Update-2C (done)  | 521,704 – 534,256 | 12,553       | additional (v2.3)           | —                       | done                  | `locale/update2c.jsonl` |
 | Update-2D (done, v2.3 hotfix) | 534,257 – 535,918 | 1,662 | additional (`_diff` only)   | —                       | done                  | `locale/update2d.jsonl` |
-| Update-3A (**active**) | 535,919 – 565,918 | 30,000 | additional (v2.4) | — | — | `locale/update3a.jsonl` |
-| Update-3B (pending) | 565,919 – 595,918 | 30,000 | additional (v2.4) | — | — | `locale/update3b.jsonl` |
-| Update-3C (pending) | 595,919 – 625,918 | 30,000 | additional (v2.4) | — | — | `locale/update3c.jsonl` |
-| Update-3D (pending) | 625,919 – 655,918 | 30,000 | additional (v2.4) | — | — | `locale/update3d.jsonl` |
-| Update-3E (pending) | 655,919 – 685,918 | 30,000 | additional (v2.4) | — | — | `locale/update3e.jsonl` |
+| Update-3A (done) | 535,919 – 565,918 | 30,000 | additional (v2.4) | — | — | `locale/update3a.jsonl` |
+| Update-3B (done) | 565,919 – 595,918 | 30,000 | additional (v2.4) | — | — | `locale/update3b.jsonl` |
+| Update-3C (done) | 595,919 – 625,918 | 30,000 | additional (v2.4) | — | — | `locale/update3c.jsonl` |
+| Update-3D (done) | 625,919 – 655,918 | 30,000 | additional (v2.4) | — | — | `locale/update3d.jsonl` |
+| Update-3E (done) | 655,919 – 685,918 | 30,000 | additional (v2.4) | — | — | `locale/update3e.jsonl` |
 | Update-3F (done) | 685,919 – 715,918 | 30,000 | additional (v2.4) | — | — | `locale/update3f.jsonl` |
-| Update-3G (pending) | 715,919 – 733,661 | 17,743 | additional (v2.4) | — | — | `locale/update3g.jsonl` |
+| Update-3G (done) | 715,919 – 733,661 | 17,743 | additional (v2.4) | — | — | `locale/update3g.jsonl` |
+| Update-3H (**active**, v2.4 additional update) | 733,662 – 736,933 | 3,272 | additional (`_diff` only) | — | — | `locale/update3h.jsonl` |
 
 \* Percentage of the 963,050 total lines in the pre-update `strings.jsonl`,
 based on its frequency distribution. Figures from Phase 2 onward are rough
@@ -62,7 +64,9 @@ the matched share; 2026-09-24: 64.2% of the base file's 826,388 entries;
 2026-10-18, v2.3 hotfix before any Update-2D work: 100% of the base and
 73.01% of the 11,015 live `_diff` entries — `tools/progress.py` now reports
 both; 2026-11-13, game v2.4 before any Update-3 work: 76.86% of 1,116,561 base
-entries and 95.35% of 333,110 live `_diff` entries).
+entries and 95.35% of 333,110 live `_diff` entries; 2026-11-26, additional v2.4
+update before any Update-3H work: 100% of the base and 97.62% of 340,001 live
+`_diff` entries).
 
 **Update-1** (formerly labeled "Phase 9") was added on 2026-09-16 after a
 game update — it is not part of the original 429,887 unique strings.
@@ -102,6 +106,13 @@ places/items), and `translate_words_map_en_diff` grew from 12,934 to 334,882
 entries. `rebuild_unique_strings.py` appended **197,743** new strings as idx
 535,919–733,661, split into 30,000-string blocks **Update-3A … 3G** (3G =
 17,743). See [[Update-3]].
+
+**Update-3H** (2026-11-26) is the **additional v2.4 update**. The base
+`translate_words_map_en` is byte-identical; only `translate_words_map_en_diff`
+changed (334,882 → 341,784 parsed entries, 1,783 tombstones, +6,917 / −15 keys).
+`rebuild-unique` appended **3,272** new strings as idx 733,662–736,933. Like
+Update-2D it takes the next letter of the current version's block. See
+[[Update-3]] and [[Update-3H]].
 
 **Naming convention going forward:** a game-update string batch (appended by
 `rebuild_unique_strings.py`, always a disjoint idx block above the current

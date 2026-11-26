@@ -5,6 +5,7 @@ name: release-patch
 # supaya pemain punya SATU link download yang selalu berisi build terbaru.
 # Target: game v2.4 [Across Autumn Waters] — hanya translate_words_map_en + _diff
 # (__small/__small_diff sudah tidak dikirim NetEase sejak v2.3). v2.4 mengubah base dan _diff.
+# Update tambahan v2.4 (2026-11-26) hanya mengubah _diff (blok Update-3H).
 #
 # Attachment release `latest` (selain ini dihapus tiap rilis):
 #   - wwm-indonesian-patch.zip  -> semua file patched (flat)
@@ -300,7 +301,9 @@ jobs:
             **Untuk Where Winds Meet versi 2.4 [Across Autumn Waters].** Download
             **`wwm-indonesian-patch.zip`** lalu ekstrak — isinya `translate_words_map_en` dan
             `translate_words_map_en_diff`. v2.4 memperbarui keduanya, jadi pastikan kedua file
-            disalin ulang. Semua teks v2.4 sudah **100% diterjemahkan**. File `__small` /
+            disalin ulang. Update tambahan v2.4 (26 November 2026) hanya mengubah `_diff`; teks
+            barunya (blok Update-3H) sedang diterjemahkan, sisanya tetap tampil dalam bahasa
+            Inggris. File `__small` /
             `__small_diff` sudah tidak ada sejak v2.3, jadi tidak perlu disalin lagi.
 
             Ini adalah build **terbaru dari `main`** (rolling release). File di release ini selalu
