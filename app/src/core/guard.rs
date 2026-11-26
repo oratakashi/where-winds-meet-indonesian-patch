@@ -11,13 +11,15 @@
 //! given game file, so nothing is ever installed over a file whose hash is unknown —
 //! except on an explicit, user-confirmed force install.
 use crate::i18n::{self, Lang};
-use crate::model::{Client, DirReport, Event, FileEntry, FileReport, Manifest, Profile, Status};
+use crate::model::{
+    Client, DirReport, Event, FileEntry, FileReport, Manifest, Profile, Stage, Status, percent,
+};
 use crate::remote::{Remote, extract};
 use crate::store::{
     Config, GuardDir, HashCache, HashEntry, State, Store, copy_atomic, entry_key, sha256_file,
     temp_path,
 };
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
@@ -51,6 +53,9 @@ pub struct Opts {
 
 type Outcome = (Status, String, Option<Event>);
 
+/// Gets every stage of a download / install as it happens (the "Aktivitas" card).
+pub type OnProgress = Box<dyn FnMut(Profile, &Stage)>;
+
 pub struct Guard<R: Remote> {
     store: Store,
     pub(crate) remote: R,
@@ -70,6 +75,10 @@ pub struct Guard<R: Remote> {
     locked_streak: u32,
     pub(crate) settle: Duration,
     pub(crate) error_ttl: Duration,
+    progress: Option<OnProgress>,
+    /// Profiles that reported a stage in this pass, and the outcome each ends the pass with.
+    touched: HashSet<Profile>,
+    outcome: HashMap<Profile, Stage>,
 }
 
 impl<R: Remote> Guard<R> {
@@ -89,6 +98,35 @@ impl<R: Remote> Guard<R> {
             locked_streak: 0,
             settle: SETTLE,
             error_ttl: ERROR_TTL,
+            progress: None,
+            touched: HashSet::new(),
+            outcome: HashMap::new(),
+        }
+    }
+
+    /// Report every download / install stage to `f` while a pass runs. A pass that only
+    /// looks at files reports nothing.
+    pub fn on_progress(&mut self, f: impl FnMut(Profile, &Stage) + 'static) {
+        self.progress = Some(Box::new(f));
+    }
+
+    fn report(&mut self, profile: Profile, stage: Stage) {
+        self.touched.insert(profile);
+        if let Some(f) = self.progress.as_mut() {
+            f(profile, &stage);
+        }
+    }
+
+    /// Record how this pass ends for `profile`: a failure wins over a file still waiting,
+    /// which wins over done. Reported once the pass is over.
+    fn finish(&mut self, profile: Profile, stage: Stage) {
+        let rank = |s: &Stage| match s {
+            Stage::Failed { .. } => 3,
+            Stage::Waiting => 2,
+            _ => 1,
+        };
+        if self.outcome.get(&profile).is_none_or(|old| rank(&stage) >= rank(old)) {
+            self.outcome.insert(profile, stage);
         }
     }
 
@@ -107,6 +145,8 @@ impl<R: Remote> Guard<R> {
             self.manifest_failures.clear();
         }
         self.locked_now = false;
+        self.touched.clear();
+        self.outcome.clear();
         let mut reports = Vec::new();
         let mut events = Vec::new();
         for d in &cfg.dirs {
@@ -126,6 +166,11 @@ impl<R: Remote> Guard<R> {
                 path: d.path.to_string_lossy().into_owned(),
                 files,
             });
+        }
+        let mut ends: Vec<(Profile, Stage)> = self.outcome.drain().collect();
+        ends.sort_by_key(|(p, _)| *p);
+        for (profile, stage) in ends {
+            self.report(profile, stage);
         }
         // The zip only serves the files fetched in this pass (both come from one download).
         self.store.clear_archives();
@@ -257,7 +302,7 @@ impl<R: Remote> Guard<R> {
                         return (Status::Original, t!("guard.game_s_original_file").into(), None);
                     }
                     if self.cached(&l.patched_sha256).is_some() {
-                        return match self.install(&path, &sha, l) {
+                        return match self.install(profile, &path, &sha, l) {
                             Ok(()) => (
                                 Status::Patched,
                                 t!("guard.patch_reinstalled").into(),
@@ -364,7 +409,10 @@ impl<R: Remote> Guard<R> {
             let part = self.store.download_path(&r.patched_sha256);
             let got = self
                 .fetch_archive(profile)
-                .and_then(|zip| extract(&zip, &r.name, r.patched_size, &part))
+                .and_then(|zip| {
+                    self.report(profile, Stage::Verifying);
+                    extract(&zip, &r.name, r.patched_size, &part)
+                })
                 .and_then(|()| sha256_file(&part).map_err(|e| e.to_string()))
                 .and_then(|sha| {
                     if sha == r.patched_sha256 {
@@ -377,10 +425,12 @@ impl<R: Remote> Guard<R> {
                 let _ = fs::remove_file(&part);
                 self.store.clear_archives();
                 self.manifests.remove(&profile);
+                // The row already says "Gagal:"; the folder card keeps the longer text.
+                self.finish(profile, Stage::Failed { error: e.clone() });
                 return Err((Status::Error, tf!("guard.download_failed", e = e), None));
             }
         }
-        self.install(path, cur_sha, r)?;
+        self.install(profile, path, cur_sha, r)?;
         self.state.entries.insert(entry_key(profile, &r.name), r.clone());
         Ok(())
     }
@@ -399,9 +449,20 @@ impl<R: Remote> Guard<R> {
             fs::create_dir_all(dir).map_err(|e| e.to_string())?;
         }
         let part = zip.with_extension("part");
+        self.report(profile, Stage::Downloading { percent: 0 });
+        let progress = &mut self.progress;
+        let mut last = 0u8;
         let got = self
             .remote
-            .download(profile, &archive, &part)
+            .download(profile, &archive, &part, &mut |n| {
+                let p = percent(n, archive.size);
+                if p != last {
+                    last = p;
+                    if let Some(f) = progress.as_mut() {
+                        f(profile, &Stage::Downloading { percent: p });
+                    }
+                }
+            })
             .and_then(|()| sha256_file(&part).map_err(|e| e.to_string()))
             .and_then(|sha| {
                 if sha == archive.sha256 {
@@ -418,13 +479,36 @@ impl<R: Remote> Guard<R> {
     }
 
     /// Replace `path` (currently `cur_sha`) with the cached patched build of `entry`.
-    fn install(&mut self, path: &Path, cur_sha: &str, entry: &FileEntry) -> Result<(), Outcome> {
+    fn install(
+        &mut self,
+        profile: Profile,
+        path: &Path,
+        cur_sha: &str,
+        entry: &FileEntry,
+    ) -> Result<(), Outcome> {
         // Held open by the game or the patcher: the final rename would fail anyway, so do not
         // copy 50-85 MB just to throw it away (that happened every 5 s while the game ran).
         if path.is_file() && !replaceable(path) {
             self.locked_now = true;
+            // Shown only when this pass downloaded something: a reinstall that keeps waiting
+            // for the game to close is not news every few seconds.
+            if self.touched.contains(&profile) {
+                self.finish(profile, Stage::Waiting);
+            }
             return Err((Status::Busy, t!("guard.file_is_in_use").into(), None));
         }
+        self.report(profile, Stage::Installing);
+        let res = self.install_now(path, cur_sha, entry);
+        let end = match &res {
+            Ok(()) => Stage::Done,
+            Err((Status::Busy, _, _)) => Stage::Waiting,
+            Err((_, why, _)) => Stage::Failed { error: why.clone() },
+        };
+        self.finish(profile, end);
+        res
+    }
+
+    fn install_now(&mut self, path: &Path, cur_sha: &str, entry: &FileEntry) -> Result<(), Outcome> {
         let pkey = path_key(path);
         let ours = self.state.installed.get(&pkey).is_some_and(|s| s == cur_sha);
         if !ours && cur_sha != entry.patched_sha256 {
@@ -653,9 +737,19 @@ mod tests {
             })
         }
 
-        fn download(&self, _: Profile, _: &Archive, dest: &Path) -> Result<(), String> {
+        fn download(
+            &self,
+            _: Profile,
+            _: &Archive,
+            dest: &Path,
+            on_progress: &mut dyn FnMut(u64),
+        ) -> Result<(), String> {
             self.downloads.set(self.downloads.get() + 1);
-            fs::write(dest, self.served.borrow().as_ref().unwrap()).map_err(|e| e.to_string())
+            let data = self.served.borrow().clone().unwrap();
+            // Two chunks, so the test sees a percentage in between.
+            on_progress(data.len() as u64 / 2);
+            on_progress(data.len() as u64);
+            fs::write(dest, data).map_err(|e| e.to_string())
         }
     }
 
@@ -817,6 +911,57 @@ mod tests {
         assert_eq!((status, evs.len()), (Status::Patched, 1));
         assert_eq!(r.content(), b"patched-v1");
         assert_eq!(r.guard.remote.downloads.get(), 0, "restored from the adopted copy");
+    }
+
+    /// Every stage the guard reports, in order.
+    fn record(r: &mut Rig) -> std::rc::Rc<RefCell<Vec<Stage>>> {
+        let seen = std::rc::Rc::new(RefCell::new(Vec::new()));
+        let s = seen.clone();
+        r.guard.on_progress(move |p, stage| {
+            assert_eq!(p, Profile::Global);
+            s.borrow_mut().push(stage.clone());
+        });
+        seen
+    }
+
+    #[test]
+    fn an_install_reports_download_verify_install_done() {
+        let mut r = Rig::new(b"orig-v1");
+        let seen = record(&mut r);
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        r.check();
+        assert_eq!(
+            *seen.borrow(),
+            [
+                Stage::Downloading { percent: 0 },
+                Stage::Downloading { percent: 50 },
+                Stage::Downloading { percent: 100 },
+                Stage::Verifying,
+                Stage::Installing,
+                Stage::Done,
+            ]
+        );
+        // A pass with nothing to do reports nothing.
+        seen.borrow_mut().clear();
+        r.check();
+        assert!(seen.borrow().is_empty(), "{:?}", seen.borrow());
+        // The patcher puts the original back: reinstalled from the cache, no download.
+        r.overwrite(b"orig-v1");
+        r.check();
+        assert_eq!(*seen.borrow(), [Stage::Installing, Stage::Done]);
+    }
+
+    #[test]
+    fn a_failed_download_is_reported_with_its_reason() {
+        let mut r = Rig::new(b"orig-v1");
+        let seen = record(&mut r);
+        r.guard.remote.publish(b"orig-v1", b"patched-v1");
+        *r.guard.remote.served.borrow_mut() = Some(zip_of(&[(NAME, b"something else")]));
+        r.check();
+        let seen = seen.borrow();
+        assert_eq!(seen.first(), Some(&Stage::Downloading { percent: 0 }));
+        assert!(matches!(seen.last(), Some(Stage::Failed { .. })), "{seen:?}");
+        assert!(!seen.contains(&Stage::Installing));
     }
 
     #[test]

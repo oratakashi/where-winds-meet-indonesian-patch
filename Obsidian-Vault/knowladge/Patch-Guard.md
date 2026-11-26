@@ -171,6 +171,35 @@ VS Code style: download in the background, install when the user restarts.
    in Settings, and the **automatic** check does not download that version again — only
    **Periksa update** retries it. (A helper from v0.5 writes no result file.)
 
+## Download / install progress (v0.7)
+
+Before v0.7 a press of **Periksa sekarang** looked like it did nothing while the release zip
+downloaded and installed, and an app update just turned up when it was done. Now Home has an
+**Aktivitas** card (like the update list of Windows Update): one row per profile being patched,
+plus one for a Patch Guard download, each with a line of status text and no progress bar:
+`Mengunduh 25%` → `Memverifikasi` → `Memasang` → `Selesai · 14:32`, or
+`Menunggu game ditutup` / `Gagal: <reason>`. While a row is still running, the hero reads
+**Sedang memperbarui patch**.
+
+- Model: `model::{Task, TaskKind, Stage}` in `Snapshot::tasks`. `Stage::text()` phrases it in
+  the current language (`task.*` keys).
+- Bytes: `remote::copy_with_progress` (64 KiB chunks, still capped at `size + 1`) feeds
+  `Remote::download` / `HttpRemote::download_to`. The percentage comes from the **signed**
+  size (`archive.size`, `UpdateInfo.size`), never from `Content-Length`, and a stage is only
+  reported when the whole percentage changes (≤ 101 window refreshes per download).
+- Patch: `Guard::on_progress` gets `Downloading` (in `fetch_archive`), `Verifying` (extract +
+  sha256), `Installing` (in `install`, after the locked-file check), and at the end of the pass
+  one outcome per profile, where a failure beats a file still waiting, which beats done. A
+  pass that only looks at files reports nothing, and a reinstall that is blocked by the game
+  holding the file reports nothing either, so a running game does not add a row every few
+  seconds (only a pass that downloaded something shows `Menunggu game ditutup`).
+- Rows: a pass someone asked for (Check, a file change, a setting) drops the finished patch
+  rows first; a waiting row stays. The 30 s poll leaves them alone.
+- App update: `Updates::fetch` reports `Downloading` / `Verifying`. Once verified, the row goes
+  away and the existing **siap dipasang** bar takes over (the install runs in the helper after
+  the app quits, so the app never shows "Memasang" for itself). A failed download stays as
+  `Gagal: …`. Settings shows the same stage under **Periksa update**.
+
 ## Background cost (v0.6.2)
 
 The guard runs from login until "Keluar", so it must stay out of the game's way:
@@ -300,3 +329,4 @@ cargo packager --release --formats nsis
 | 0.6.3 | Bugs: Berhenti menjaga restores the folder first and drops its backups, a broken `config.json` is kept as `.bad` and reported, durable JSON saves, leftover temp copies removed, a helper that cannot start is not retried every start, SID in the single-instance names |
 | 0.6.2 | Background cost: no copying over a locked game file (backoff instead), hashes kept across restarts, 30 s delay at autostart, background thread priority, quiet polls, offline backoff |
 | 0.6.4 | Dependency security: transitive `url` 2.5.8 → 2.5.9 (RUSTSEC-2026-0592, unbounded recursion in `Url::origin()` on nested `blob:` URLs); `cargo audit` in CI |
+| 0.7.0 | Download / install progress: Home **Aktivitas** card with a status line per patch and app update (`Mengunduh 25%`, `Memverifikasi`, `Memasang`, `Selesai`) |

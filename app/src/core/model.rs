@@ -215,6 +215,62 @@ impl From<&Event> for LogMsg {
     }
 }
 
+/// What a row of the Home "Aktivitas" card is about.
+#[derive(Serialize, Clone, PartialEq, Eq, Debug)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum TaskKind {
+    /// The translation patch of one profile (its release zip, then its files).
+    Patch { profile: Profile },
+    /// A newer Patch Guard being downloaded.
+    AppUpdate { version: String },
+}
+
+/// Where a download / install stands, shown as text ("Mengunduh 25%", "Memasang").
+#[derive(Serialize, Clone, PartialEq, Eq, Debug)]
+#[serde(tag = "stage", rename_all = "snake_case")]
+pub enum Stage {
+    Downloading { percent: u8 },
+    /// Hash / signature checks and extraction.
+    Verifying,
+    Installing,
+    /// Downloaded, but the game file is in use: installed once it is free.
+    Waiting,
+    Done,
+    Failed { error: String },
+}
+
+impl Stage {
+    /// No more progress is coming for this pass.
+    pub fn is_final(&self) -> bool {
+        matches!(self, Stage::Waiting | Stage::Done | Stage::Failed { .. })
+    }
+
+    pub fn text(&self) -> String {
+        match self {
+            Stage::Downloading { percent } => tf!("task.downloading", percent = percent),
+            Stage::Verifying => t!("task.verifying").into(),
+            Stage::Installing => t!("task.installing").into(),
+            Stage::Waiting => t!("task.waiting").into(),
+            Stage::Done => t!("task.done").into(),
+            Stage::Failed { error } => tf!("task.failed", error = error),
+        }
+    }
+}
+
+/// `done` of `total` bytes as a whole percentage, never above 100.
+pub fn percent(done: u64, total: u64) -> u8 {
+    (done.min(total) * 100).checked_div(total).unwrap_or(0) as u8
+}
+
+/// One row of the "Aktivitas" card.
+#[derive(Serialize, Clone, PartialEq, Eq, Debug)]
+pub struct Task {
+    pub kind: TaskKind,
+    pub stage: Stage,
+    /// Unix seconds of the last change.
+    pub at: u64,
+}
+
 /// Something the guard did, worth a log line and a notification.
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub enum Event {
@@ -230,6 +286,25 @@ pub enum Event {
 mod tests {
     use super::*;
     use crate::i18n::{self, Lang};
+
+    #[test]
+    fn percent_is_whole_and_capped() {
+        assert_eq!(percent(0, 0), 0);
+        assert_eq!(percent(1, 3), 33);
+        assert_eq!(percent(3, 3), 100);
+        // The download reads one byte past the expected size to catch an oversized asset.
+        assert_eq!(percent(4, 3), 100);
+    }
+
+    #[test]
+    fn stage_texts_follow_the_language() {
+        i18n::set(Lang::En);
+        assert_eq!(Stage::Downloading { percent: 25 }.text(), "Downloading 25%");
+        i18n::set(Lang::Id);
+        assert_eq!(Stage::Downloading { percent: 25 }.text(), "Mengunduh 25%");
+        assert_eq!(Stage::Installing.text(), "Memasang");
+        assert!(Stage::Done.is_final() && !Stage::Verifying.is_final());
+    }
 
     #[test]
     fn old_history_lines_still_load_and_show_their_text() {

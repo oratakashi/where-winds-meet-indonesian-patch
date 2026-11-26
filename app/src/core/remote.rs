@@ -15,8 +15,15 @@ use std::time::Duration;
 
 pub trait Remote {
     fn manifest(&self, profile: Profile) -> Result<Manifest, String>;
-    /// Download the release zip `archive` to `dest`. The caller verifies the hash.
-    fn download(&self, profile: Profile, archive: &Archive, dest: &Path) -> Result<(), String>;
+    /// Download the release zip `archive` to `dest`, calling `on_progress` with the bytes
+    /// written so far. The caller verifies the hash.
+    fn download(
+        &self,
+        profile: Profile,
+        archive: &Archive,
+        dest: &Path,
+        on_progress: &mut dyn FnMut(u64),
+    ) -> Result<(), String>;
 }
 
 /// The release Patch Guard updates itself from.
@@ -74,12 +81,20 @@ impl HttpRemote {
     }
 
     /// Download asset `name` to `dest`, reading at most `size + 1` bytes (the caller verifies).
-    pub fn download_to(&self, tag: &str, name: &str, size: u64, dest: &Path) -> Result<(), String> {
+    /// `on_progress` gets the bytes written so far after every chunk.
+    pub fn download_to(
+        &self,
+        tag: &str,
+        name: &str,
+        size: u64,
+        dest: &Path,
+        on_progress: &mut dyn FnMut(u64),
+    ) -> Result<(), String> {
         let resp = self.agent.get(&self.url(tag, name)).call().map_err(|e| e.to_string())?;
         let mut out = fs::File::create(dest).map_err(|e| e.to_string())?;
         // Never trust the server for the length: stop a little past what we expect.
-        let mut body = io::Read::take(resp.into_reader(), size + 1);
-        io::copy(&mut body, &mut out).map_err(|e| e.to_string())?;
+        copy_with_progress(resp.into_reader(), &mut out, size + 1, on_progress)
+            .map_err(|e| e.to_string())?;
         Ok(())
     }
 }
@@ -108,9 +123,40 @@ impl Remote for HttpRemote {
         Ok(m)
     }
 
-    fn download(&self, profile: Profile, archive: &Archive, dest: &Path) -> Result<(), String> {
-        self.download_to(profile.release_tag(), &archive.name, archive.size, dest)
+    fn download(
+        &self,
+        profile: Profile,
+        archive: &Archive,
+        dest: &Path,
+        on_progress: &mut dyn FnMut(u64),
+    ) -> Result<(), String> {
+        self.download_to(profile.release_tag(), &archive.name, archive.size, dest, on_progress)
     }
+}
+
+/// Copy at most `limit` bytes from `from` to `to`, calling `on_progress` with the total
+/// written after every chunk. Returns the bytes copied.
+pub fn copy_with_progress(
+    from: impl io::Read,
+    to: &mut impl io::Write,
+    limit: u64,
+    on_progress: &mut dyn FnMut(u64),
+) -> io::Result<u64> {
+    let mut from = io::Read::take(from, limit);
+    let mut buf = vec![0u8; 64 * 1024];
+    let mut done = 0u64;
+    loop {
+        let n = match io::Read::read(&mut from, &mut buf) {
+            Ok(0) => break,
+            Ok(n) => n,
+            Err(e) if e.kind() == io::ErrorKind::Interrupted => continue,
+            Err(e) => return Err(e),
+        };
+        to.write_all(&buf[..n])?;
+        done += n as u64;
+        on_progress(done);
+    }
+    Ok(done)
 }
 
 /// A release is replaced asset by asset, so `manifest.json` and its `.sig` can briefly belong
@@ -238,6 +284,18 @@ mod tests {
         let out = tmp.path().join("out");
         extract(&z, "a", 10, &out).unwrap();
         assert_eq!(fs::read(&out).unwrap().len(), 11);
+    }
+
+    #[test]
+    fn copy_reports_progress_and_stops_at_the_limit() {
+        let data = vec![7u8; 200 * 1024];
+        let mut out = Vec::new();
+        let mut seen = Vec::new();
+        let n = copy_with_progress(&data[..], &mut out, 150 * 1024, &mut |d| seen.push(d)).unwrap();
+        assert_eq!(n, 150 * 1024);
+        assert_eq!(out.len(), 150 * 1024);
+        assert_eq!(seen.last(), Some(&(150 * 1024)));
+        assert!(seen.windows(2).all(|w| w[0] < w[1]), "{seen:?}");
     }
 
     #[test]

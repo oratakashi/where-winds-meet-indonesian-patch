@@ -5,7 +5,7 @@ use crate::fluent::{
     BODY, Button, ButtonStyle, Tone, badge, caption, card, divider, glyph, icon, info_bar,
     page_title, subtitle, theme,
 };
-use crate::model::{DirReport, FileReport, Status};
+use crate::model::{DirReport, FileReport, Stage, Status, Task, TaskKind};
 use crate::state::{AppState, Confirm, Found};
 use gpui::prelude::*;
 use gpui::{App, AnyElement, Div, Entity, FontWeight, SharedString, div, px};
@@ -43,6 +43,11 @@ pub fn render(state: &Entity<AppState>, cx: &mut App) -> Vec<AnyElement> {
     }
     out.push(subtitle(t!("home.current_status")).into_any_element());
     out.push(hero(state, cx).into_any_element());
+    let tasks = state.read(cx).snap.tasks.clone();
+    if !tasks.is_empty() {
+        out.push(subtitle(t!("home.activity")).mt(px(12.)).into_any_element());
+        out.push(activity(tasks, cx).into_any_element());
+    }
 
     let rescan = state.clone();
     let pick = state.clone();
@@ -95,10 +100,13 @@ fn hero(state: &Entity<AppState>, cx: &App) -> Div {
     let s = state.read(cx);
     let u = &s.snap;
     let files = || u.dirs.iter().flat_map(|d| &d.files);
+    let working = u.tasks.iter().any(|t| !t.stage.is_final());
     let (g, tone, title, sub) = if u.dirs.is_empty() {
         (glyph::ADD, t.muted_fg, t!("home.not_set_up"), t!("home.no_game_folder_is"))
     } else if u.paused {
         (glyph::PAUSE, t.warning, t!("home.guard_paused"), t!("home.game_files_are_left"))
+    } else if working {
+        (glyph::SYNC, t.info, t!("home.updating"), t!("home.see_activity_below"))
     } else if files().any(|f| f.status == Status::Error) {
         (glyph::ERROR, t.destructive, t!("home.something_needs_attention"), t!("home.see_history_for_details"))
     } else if files().any(|f| f.status == Status::Busy) {
@@ -136,6 +144,53 @@ fn hero(state: &Entity<AppState>, cx: &App) -> Div {
                 .disabled(disabled)
                 .on_click(move |_, _, cx| check.update(cx, |s, cx| s.check_now(cx))),
         )
+}
+
+/// What is being downloaded / installed, one row each, like the update list of Windows
+/// Update: a name and a line of status text ("Mengunduh 25%", "Memasang", "Selesai").
+fn activity(tasks: Vec<Task>, cx: &App) -> Div {
+    let t = theme(cx).clone();
+    let mut c = card(cx);
+    for (i, task) in tasks.into_iter().enumerate() {
+        let title: SharedString = match &task.kind {
+            TaskKind::Patch { profile } => profile_title(*profile).into(),
+            TaskKind::AppUpdate { version } => tf!("home.task_app_update", v = version).into(),
+        };
+        let (g, tone) = match task.stage {
+            Stage::Done => (glyph::ACCEPT, t.success),
+            Stage::Failed { .. } => (glyph::ERROR, t.destructive),
+            _ => (glyph::SYNC, t.info),
+        };
+        let status = match task.stage {
+            Stage::Done | Stage::Failed { .. } => {
+                let c = clock(task.at);
+                format!("{} · {c}", task.stage.text())
+            }
+            _ => task.stage.text(),
+        };
+        if i > 0 {
+            c = c.child(divider(cx));
+        }
+        c = c.child(
+            div()
+                .flex()
+                .items_center()
+                .gap(px(12.))
+                .px(px(16.))
+                .py(px(10.))
+                .child(icon(g, 16., tone, cx))
+                .child(
+                    div()
+                        .flex()
+                        .flex_col()
+                        .flex_1()
+                        .min_w_0()
+                        .child(div().font_weight(FontWeight::MEDIUM).child(title))
+                        .child(caption(status, cx)),
+                ),
+        );
+    }
+    c
 }
 
 /// Game folders found on this machine that are not guarded yet.
