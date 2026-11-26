@@ -1,6 +1,6 @@
 # Current Status
 
-**Last updated: 2026-11-23 — the whole dictionary is 100% translated (game v2.4, Update-3 finished in session 157).** This is the single source of truth for "how
+**Last updated: 2026-11-26 — session 158: the additional v2.4 update (2026-11-26, `_diff` only) set up as Update-3H (idx 733,662–736,933, not translated yet); everything before it is 100%.** This is the single source of truth for "how
 far are we" — it gets overwritten each session, not appended to. For the
 full timeline, see [[Session-History]]; for the phase plan, see
 [[Phase-Roadmap]]; for the resume checklist, see [[Resume-Procedure]]; for the
@@ -18,11 +18,11 @@ fails a PR whose block is stale (`progress --check`).
 
 | Measure | Done | Total | % |
 | --- | ---: | ---: | ---: |
-| **Unique strings translated (all)** | **733,662** | **733,662** | **100.00%** |
+| **Unique strings translated (all)** | **733,662** | **736,934** | **99.56%** |
 | ↳ original corpus (Phases 0–17) | 429,887 | 429,887 | 100.00% |
-| ↳ game-update strings (Update-N) | 303,775 | 303,775 | 100.00% |
+| ↳ game-update strings (Update-N) | 303,775 | 307,047 | 98.93% |
 | **In-game text coverage** — `translate_words_map_en` entries (`strings.jsonl`) | **1,116,561** | **1,116,561** | **100.00%** |
-| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **333,110** | **333,110** | **100.00%** |
+| **In-game text coverage** — `translate_words_map_en_diff` entries (`strings_diff.jsonl`) | **331,910** | **340,001** | **97.62%** |
 
 Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`. In-game coverage counts every entry of the dumped file whose text has a translation — higher than the unique share because the earliest phases hold the most frequent strings.
 
@@ -33,7 +33,15 @@ Unique strings = rows of `unique_strings.jsonl` with a translation in `locale/`.
 | **Qinghe, Kaifeng, Hexi** (Phase 0–17) | 0–429,886 | done | — | 429,887 / 429,887 | 100.00% |
 | **Hidden Mountain** (Update-1) | 429,887–461,703 | done | — | 31,817 / 31,817 | 100.00% |
 | **Qingzhou** (Update-2) | 461,704–535,918 | done | — | 74,215 / 74,215 | 100.00% |
-| **Hutuo** (Update-3) | 535,919–733,661 | done | — | 197,743 / 197,743 | 100.00% |
+| **Hutuo** (Update-3) | 535,919–736,933 | **active** | 733,662 | 197,743 / 201,015 | 98.37% |
+| ↳ Hutuo Phase 1 (`Update-3A`) | 535,919–565,918 | done | — | 30,000 / 30,000 | 100.00% |
+| ↳ Hutuo Phase 2 (`Update-3B`) | 565,919–595,918 | done | — | 30,000 / 30,000 | 100.00% |
+| ↳ Hutuo Phase 3 (`Update-3C`) | 595,919–625,918 | done | — | 30,000 / 30,000 | 100.00% |
+| ↳ Hutuo Phase 4 (`Update-3D`) | 625,919–655,918 | done | — | 30,000 / 30,000 | 100.00% |
+| ↳ Hutuo Phase 5 (`Update-3E`) | 655,919–685,918 | done | — | 30,000 / 30,000 | 100.00% |
+| ↳ Hutuo Phase 6 (`Update-3F`) | 685,919–715,918 | done | — | 30,000 / 30,000 | 100.00% |
+| ↳ Hutuo Phase 7 (`Update-3G`) | 715,919–733,661 | done | — | 17,743 / 17,743 | 100.00% |
+| ↳ Hutuo Phase 8 (`Update-3H`) | 733,662–736,933 | not started | 733,662 | 0 / 3,272 | 0.00% |
 
 <!-- progress:end -->
 
@@ -58,9 +66,37 @@ is 100% as well.
 English of ~305k base entries and grew the `_diff` to ~335k entries. **All of
 Update-3A–3G is complete (sessions 151–157)**, so every block of the dictionary —
 Phases 0–17, Update-1, Update-2 and Update-3 — is at 100%, and so is the in-game
-coverage of both `translate_words_map_en` and `_diff`. There is no active block:
-the next translation work starts with the next game update (new `Update-4` block via
-the `wwm-game-update` skill). See [[Update-3]].
+coverage of both `translate_words_map_en` and `_diff`.
+
+**Additional v2.4 update (2026-11-26, session 158)** left `translate_words_map_en`
+byte-identical and only changed `translate_words_map_en_diff`; its 3,272 new strings
+are **Update-3H** (idx 733,662–736,933, `locale/update3h.jsonl`) — the **active
+block**, next idx **733,662**. Its effect shows only in the `_diff` coverage row.
+See [[Update-3]] and [[Update-3H]].
+
+## 2026-11-26 — Session 158: additional v2.4 update → Update-3H setup
+
+No translation in this session — migration only (same as sessions 148 and 150).
+
+| File | Entries | Tombstones | Change vs v2.4 (2026-11-13) | Unique texts not yet in the dictionary |
+| --- | ---: | ---: | --- | ---: |
+| `translate_words_map_en` | 1,116,561 | 0 | **byte-identical** | 0 |
+| `translate_words_map_en_diff` | 341,784 parsed (v2.4: 334,882), index total 1,141,967 | 1,783 (v2.4: 1,772) | +6,917 keys, −15 keys, 3,972 values changed | 3,272 |
+
+- The first copy of `translate_words_map_en` handed in was an already-patched
+  (Indonesian) file taken from the game folder; it was replaced with the pristine
+  file before the migration. Always copy the locale files from an unpatched install.
+- Re-dumped `strings.jsonl` / `strings_diff.jsonl`; `rebuild-unique` appended
+  **3,272** strings as idx 733,662–736,933 (old idx untouched; `unique_strings.jsonl`
+  ~77.3 MB).
+- Added **Update-3H** (region Hutuo, "Phase 8") to `tools/profiles.json`;
+  `release-patch.yml` header and body mention the `_diff`-only update. No other CI change
+  (same two dumps).
+- Before any Update-3H work: base 100.00%, `_diff` 97.62% (331,910 / 340,001).
+
+Overall: 733,662 / 736,934 unique strings (99.56%), in-game coverage 100.00% (base) / 97.62% (`_diff`).
+
+See [[Update-3H]].
 
 ## 2026-11-14 – 2026-11-22 — Sessions 151–157: Update-3 (game v2.4) translated
 

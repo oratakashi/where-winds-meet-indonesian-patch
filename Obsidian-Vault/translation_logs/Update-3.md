@@ -1,4 +1,4 @@
-# Update-3 Translation Log (idx 535,919–733,661)
+# Update-3 Translation Log (idx 535,919–736,933)
 
 Update-3 is the batch of strings added by **game v2.4 [Across Autumn Waters]**
 (2026-11-13) — not a continuation of the original `unique_strings.jsonl`.
@@ -43,6 +43,19 @@ Split per 30,000 strings at the user's request.
 | Update-3E | 655,919–685,918 | 30,000 | `locale/update3e.jsonl` |
 | Update-3F | 685,919–715,918 | 30,000 | `locale/update3f.jsonl` |
 | Update-3G | 715,919–733,661 | 17,743 | `locale/update3g.jsonl` |
+| Update-3H | 733,662–736,933 | 3,272 | `locale/update3h.jsonl` (additional update, see below) |
+
+## Additional v2.4 update (session 158, 2026-11-26)
+
+NetEase shipped an additional v2.4 update that left `translate_words_map_en`
+byte-identical and changed only `translate_words_map_en_diff`: 341,784 parsed
+entries (was 334,882), 1,783 tombstones (was 1,772), +6,917 / −15 keys, 3,972
+values changed. `rebuild-unique` appended **3,272** new strings (~349k characters)
+as idx 733,662–736,933 → block **Update-3H** ([[Update-3H]]). Before any Update-3H
+work the `_diff` coverage is 97.62% (331,910 / 340,001); the base stays at 100%.
+Sampled new text: Bellstrike - Bolt weapon/skill texts ("Common: Tier 100
+Bellstrike Bolt", "Dual Spears"), Shooting Star Charm, Jianghu Tactics piece
+buffs, Greater Fortune Slips, Golden Colossus Taicu, plus new dialogue.
 
 ## Batches
 

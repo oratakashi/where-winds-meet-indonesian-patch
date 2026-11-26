@@ -73,7 +73,7 @@ class Profile:
 # Riwayat fase global: Phase 0–17 = korpus awal; Update-1 = Hidden Mountain; Update-2A–2C =
 # string baru game v2.3 (2026-10-15) per 30.000; Update-2D = hotfix v2.3 (2026-10-17, hanya
 # _diff); Update-3A–3G = game v2.4 "Across Autumn Waters" (2026-11-13), 197.743 string per
-# 30.000. CN: korpus 159.176 teks khusus CN (client 2026-10-20) per 30.000 -> Phase 1..6.
+# 30.000; Update-3H = update tambahan v2.4 (2026-11-26, hanya _diff, 3.272 string). CN: korpus 159.176 teks khusus CN (client 2026-10-20) per 30.000 -> Phase 1..6.
 PROFILES_JSON = os.path.join(ROOT, "tools", "profiles.json")
 
 
