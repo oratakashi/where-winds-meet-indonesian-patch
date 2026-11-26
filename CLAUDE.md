@@ -282,8 +282,9 @@ context — only use one if the user explicitly asks for it by name.
   user-confirmed). Build: `cargo build --release` in `app/`; installer: `cargo packager --release
   --formats nsis` (`cargo install cargo-packager --locked`; config in `[package.metadata.packager]`
   of `app/Cargo.toml`). CI: `app-ci.yml` tests/builds PRs, `dependency-audit.yml` runs `cargo audit`
-  on `app/` + `rust/` lockfiles (PRs, main, weekly) and warns while the bundled libzstd (Rust
-  `zstd-sys`, Python `zstandard`) is older than 1.6.0 (CVE-2026-124851, issue #35); on main
+  on `app/` + `rust/` lockfiles (PRs, main, weekly) and checks the bundled libzstd against 1.6.0
+  (CVE-2026-124851, issue #35): Rust `zstd-sys` is on 1.6.0 and fails below it, Python `zstandard`
+  only warns until a release bundles 1.6.0; on main
   `release-patch.yml` rebuilds the installer only when `app/` changed (or dispatch `build_app`) and
   attaches it to the `latest` release as `wwm-patch-guard-setup.exe` — no separate app release.
   The app downloads the release zip once per check pass and extracts files by name (`remote.rs`).

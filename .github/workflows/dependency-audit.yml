@@ -8,8 +8,9 @@ name: dependency-audit
 # cargo audit only knows RustSec advisories, not CVEs in bundled C libraries, so the
 # `native-zstd` job also reports which libzstd the wwm toolchain really bundles (Rust:
 # the `+zstd.X.Y.Z` suffix of zstd-sys in rust/Cargo.lock; Python fallback: zstandard's
-# ZSTD_VERSION) and warns while it is older than 1.6.0 (CVE-2026-124851, issue #35).
-# It only warns: no wrapper ships 1.6.0 yet. Make it fail once both have been upgraded.
+# ZSTD_VERSION) against 1.6.0 (CVE-2026-124851, issue #35). Rust bundles 1.6.0 since
+# zstd-sys 2.2.0, so an older Rust libzstd fails the job (no regression). Python only warns:
+# no zstandard release ships 1.6.0 yet. Make Python fail too once it has been upgraded.
 
 on:
   pull_request:
@@ -83,24 +84,28 @@ jobs:
           import zstandard
 
           minimum = tuple(int(x) for x in os.environ["MIN_ZSTD"].split("."))
-          found = {}
+          found = {}  # name -> (version, strict)
 
           lock = open("rust/Cargo.lock", encoding="utf-8").read()
           m = re.search(r'name = "zstd-sys"\s+version = "([^"]+)"', lock)
           if not m or "+zstd." not in m.group(1):
               sys.exit("zstd-sys with a +zstd.X.Y.Z version not found in rust/Cargo.lock")
-          found[f"Rust zstd-sys {m.group(1)}"] = tuple(int(x) for x in m.group(1).split("+zstd.")[1].split("."))
+          found[f"Rust zstd-sys {m.group(1)}"] = (tuple(int(x) for x in m.group(1).split("+zstd.")[1].split(".")), True)
 
-          found[f"Python zstandard {zstandard.__version__}"] = tuple(zstandard.ZSTD_VERSION)
+          found[f"Python zstandard {zstandard.__version__}"] = (tuple(zstandard.ZSTD_VERSION), False)
 
           summary = ["| Toolchain | libzstd | Status |", "|---|---|---|"]
-          for name, ver in found.items():
+          failed = False
+          for name, (ver, strict) in found.items():
               v = ".".join(map(str, ver))
               ok = ver >= minimum
               print(f"{name}: libzstd {v}")
               if not ok:
-                  print(f"::warning::{name} bundles libzstd {v} < {os.environ['MIN_ZSTD']} (CVE-2026-124851, see issue #35)")
+                  level = "error" if strict else "warning"
+                  failed |= strict
+                  print(f"::{level}::{name} bundles libzstd {v} < {os.environ['MIN_ZSTD']} (CVE-2026-124851, see issue #35)")
               summary.append(f"| {name} | {v} | {'ok' if ok else 'below ' + os.environ['MIN_ZSTD']} |")
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
               f.write("\n".join(summary) + "\n")
+          sys.exit(1 if failed else 0)
           PY
